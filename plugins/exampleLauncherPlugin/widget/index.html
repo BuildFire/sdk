@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="home">
+<head>
+    <style>
+        .widgetIcon{
+            width:32px;
+            height:32px;
+        }
+    </style>
+    <script src="../../../scripts/buildfire.js"></script>
+    <script>
+        buildfire.init(['angular']);
+    </script>
+</head>
+<body>
+    <div ng-controller="homeCtrl"  >
+        <img id="logo" ng-src="{{logoUrl}}" />
+        <div id="carousel">
+            <img ng-repeat="imgUrl in images" ng-src="{{imgUrl}}" />
+        </div>
+        <div id="widgetContainer">
+            <a ng-repeat="w in widgets" href="#widget/{{appContentId}}/{{w.widgetType}}/{{w.widgetId}}/{{w.title}}">
+                <img class="widgetIcon" ng-src="{{w.icon}}"/>
+                <span>{{w.title}}</span>
+            </a>
+        </div>
+    </div>
+    <script src="../../../scripts/angular/angular.min.js"></script>
+    <script src="homeCtrl.js"></script>
+</body>
+</html>

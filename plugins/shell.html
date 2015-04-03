@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <style>
+        body{background-color:gray;}
+        iframe{vertical-align: top; background-color:white;}
+    </style>
+    <script>
+            function initFramaes(){
+                var widgetFolder = window.location.hash.replace('#','');
+                if(!widgetFolder) widgetFolder = 'examplePlugin';
+                control.src='./' + widgetFolder + '/control/index.html';
+                widget.src='./' + widgetFolder + '/widget/index.html';
+            }
+    </script>
+</head>
+<body onload="initFramaes()" onhashchange="initFramaes()">
+    <iframe id="control" style="border:none;width:640px;margin:100px 100px 25px;" seamless  sandbox="allow-scripts allow-forms"></iframe>
+    <iframe id="widget" style="border:none;width:350px;margin-top:100px;height:595px" seamless sandbox="allow-scripts allow-forms"></iframe>
+</body>
+</html>
