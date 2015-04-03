@@ -18,6 +18,7 @@
             position: absolute;
             height: 26%;
             overflow: visible;
+            width:100%;
         }
 
             .cus-logo-contain:before, .cus-logo-contain:after {
@@ -38,7 +39,7 @@
             height: 35%;
         }
 
-        #widgetContainer {
+        #widget-container {
             position: absolute;
             bottom: 1em;
             height: 20%;
@@ -46,18 +47,30 @@
         }
 
         .widget-launcher-icon-and-text {
-            max-width:25%;
-            padding:.5em;
+            max-width: 25%;
+            padding: .5em;
         }
 
-        .widgetIcon {
+        .widget-icon-container {
             width: 80%;
+            margin: 0 auto;
+            max-width: 120px;
+            border-radius: 3px;
+            -webkit-border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .widget-icon {
+            width: 100%;
             height: auto;
-            max-width: 100px;
+            padding-top: 100%;
+            background-size: cover;
+            margin: 0 auto;
+            background-position: center center;
         }
 
         /* ----  CSS we want to add to structure ------*/
-        
+
         /* ---- center objects in the middle of container, Container must have a before and after value of display none ----*/
         .h-v-center {
             position: relative;
@@ -152,6 +165,12 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+
+        /*---- make full height and full width ------*/
+        .fill {
+            height:100%;
+            width:100%;
+        }
     </style>
     <script src="../../../scripts/buildfire.js"></script>
     <script>
@@ -167,10 +186,13 @@
         <div id="carousel" class="row">
             <img ng-repeat="imgUrl in images" ng-src="{{imgUrl}}" />
         </div>
-
-        <div id="widgetContainer" class="row flex-row">
+        <div id="widget-container" class="row flex-row">
             <div ng-repeat="w in widgets" class="flex-item text-center widget-launcher-icon-and-text" onclick="window.location='#widget/{{appContentId}}/{{w.widgetType}}/{{w.widgetId}}/{{w.title}}'">
-                <img class="widgetIcon" ng-src="{{w.icon}}">
+                <div class="widget-icon-container">
+                    <div class="widget-icon" style="background-image:url({{w.icon}});">
+                        <!--ng-src="{{w.icon}}"-->
+                    </div>
+                </div>
                 <div class="caption clipText2">
                     {{w.title}}
                 </div>
@@ -179,5 +201,10 @@
     </div>
     <script src="../../../scripts/angular/angular.min.js"></script>
     <script src="homeCtrl.js"></script>
+    <script> $(function () {
+     $('.widgetIcon').each(function () {
+         $(this).height($(this).width());
+     });
+ });</script>
 </body>
 </html>
