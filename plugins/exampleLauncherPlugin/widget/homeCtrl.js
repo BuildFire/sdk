@@ -1,5 +1,5 @@
 ﻿var $home = angular.module('home',[]);
-
+var counter=0;
 $home.controller('homeCtrl', ['$scope'
     , function ($scope) {
         $scope.logoUrl = "http://startupweekend.org/wp-content/blogs.dir/1/files/2013/04/CokeLogo1.png";
@@ -7,11 +7,22 @@ $home.controller('homeCtrl', ['$scope'
             ,"http://www.pd4pic.com/images/fancy-design-banner-curved-blank-decoration.png"];
 
         $scope.appContentId = 123;
+
+        var fn = function(w){
+            //$scope.logoUrl = 'http://cdn.sstatic.net/stackoverflow/img/sprites.svg?v=1bc6a0c03b68';
+            buildfire.navigateTo(w.widgetId,w.instanceId);
+        };
+        $scope.click=fn;
+
         var widgets = [
-            {title:"widget1", widgetId:'examplePlugin', icon:"http://www.graphicsfuel.com/wp-content/uploads/2012/07/steel-app-icon-512.png", requiresConnection:false }
-            ,{title:"widget2", widgetId:'examplePlugin' , icon:"http://www.canadatechblog.com/wp-content/uploads/2013/08/mzl.iqdiiykr.png", requiresConnection:true}
+            {click:fn, title:"widget1", widgetId:'examplePlugin',instanceId:123, icon:"http://www.graphicsfuel.com/wp-content/uploads/2012/07/steel-app-icon-512.png", requiresConnection:false }
+            ,{click:fn,title:"widget2", widgetId:'examplePlugin',instanceId:321, icon:"http://www.canadatechblog.com/wp-content/uploads/2013/08/mzl.iqdiiykr.png", requiresConnection:true}
         ];
 
+
+
         $scope.widgets=widgets;
+
+
     }
 ]);

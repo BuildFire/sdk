@@ -1,0 +1,19 @@
+{
+  "control":{
+    "content":{
+      "rootPage":"index.html"
+      ,"enabled":true
+    }
+    , "design":{
+      "rootPage":"index.html"
+      ,"enabled":true
+    }
+    , "settings":{
+      "rootPage":"index.html"
+      ,"enabled":true
+    }
+  }
+  ,"widget":{
+      "rootPage":"index.html"
+  }
+}
