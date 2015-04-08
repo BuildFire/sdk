@@ -9,8 +9,7 @@ $home.controller('homeCtrl', ['$scope'
         $scope.appContentId = 123;
 
         var fn = function(w){
-            //$scope.logoUrl = 'http://cdn.sstatic.net/stackoverflow/img/sprites.svg?v=1bc6a0c03b68';
-            buildfire.navigateTo(w.widgetId,w.instanceId);
+            buildfire.navigateTo(w.widgetId,w.instanceId, w.title);
         };
         $scope.click=fn;
 
@@ -19,10 +18,7 @@ $home.controller('homeCtrl', ['$scope'
             ,{click:fn,title:"widget2", widgetId:'examplePlugin',instanceId:321, icon:"http://www.canadatechblog.com/wp-content/uploads/2013/08/mzl.iqdiiykr.png", requiresConnection:true}
         ];
 
-
-
         $scope.widgets=widgets;
-
 
     }
 ]);
