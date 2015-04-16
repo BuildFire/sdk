@@ -25,7 +25,10 @@ var buildfire = {
         window.addEventListener('message',eventHandler,false);
         buildfire.appearance.attachCSSFiles();
         buildfire.getContext(function(err,context){
-            if(err) console.error(err);
+            if(err){
+                debugger;
+                console.error(err);
+            }
             else buildfire.context = context;
         });
     }
@@ -47,17 +50,12 @@ var buildfire = {
             buildfire.sendPacket(p, callback);
         }
         ,attachCSSFiles: function(){
-            buildfire.appearance.getCSSFiles(function(files){
-                ///because this may happen after document is ready this may cause a flicker
-                if(!(files && files.length)) return;
-                var header = document.querySelector('head');
-                for(var i = 0 ; i < files.length; i++ ){
-                    css = document.createElement('link');
-                    css.rel="stylesheet";
-                    css.href=files[i];
-                    header.appendChild(css);
-                }
-            });
+            var base = document.createElement('base').href;
+            var seg = base.split('/');
+            base="";
+            for(var i = 0 ; i < seg.length -1 && seg[i] != 'plugins'; i++)
+                base += seg[i] + "/"
+            document.write('<link rel="stylesheet" href="' + base + 'styles/bootstrap.min.css"/>');
         }
     }
     ,sendPacket: function(packet,callback){
@@ -72,7 +70,20 @@ var buildfire = {
         ,post:function(data,callback){
 
         }
-        ,save:this.post
+        ,delete:function(data,callback){
+
+        }
+    }
+    ,imageStore:{
+        getAll:function(callback){
+
+        }
+        ,post:function(img,callback){
+
+        }
+        ,show:function(imgUrl,callback){
+
+        }
     }
 };
 buildfire.init();
