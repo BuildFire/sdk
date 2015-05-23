@@ -6,21 +6,48 @@
     <script src="../../../../scripts/angular/angular.min.js"></script>
 </head>
 <body ng-controller="textPluginCtrl">
-    <div>background Image URL</div>
-    <input id="imageUrl" type="url" ng-model="data.imageUrl" />
-    <div>Text</div>
-    <textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
-    <script>
-        var textPluginApp = angular.module('textPlugin',[]);
+<div>background Image URL</div>
+<input id="imageUrl" type="url" ng-model="data.imageUrl" />
+<div>Text</div>
+<textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
+<script>
+    var textPluginApp = angular.module('textPlugin',[]);
 
-        textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
-            buildfire.dataStore.get(function(data){
-                $scope.data = data;
-                $scope.$apply()
+    textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
+        /*
+        * Go pull any previously saved data
+        * */
+        buildfire.dataStore.get(function(data){
+            $scope.data = data;
+            //$scope.$apply()
+        });
+
+        /*
+        * Call the datastore to save the data object
+        */
+        var saveData = function(newObj){
+            buildfire.dataStore.save(newObj,function(err,result){
+                if(err || !result)
+                    alert(err);
+                else
+                    console.log('data saved');
             });
+        };
 
-            $scope.$watch('data',buildfire.dataStore.save,true);
-        }]);
-    </script>
+        /*
+        * create an artificial delay so api isnt called on every character entered
+        * */
+        var tmrDelay = null;
+        var saveDataWithDelay = function(newObj){
+            if(tmrDelay)clearTimeout(tmrDelay);
+            tmrDelay = setTimeout(function(){saveData(newObj);},500);
+        };
+
+        /*
+        * watch for changes in data and trigger the saveDataWithDelay function on change
+        * */
+        $scope.$watch('data',saveDataWithDelay ,true);
+    }]);
+</script>
 </body>
 </html>

@@ -64,15 +64,32 @@ var buildfire = {
         parent.postMessage( JSON.stringify(packet) ,"*");
     }
     ,dataStore:{
-        get:function(callback){
+        get:function(tag,callback){
+            var tagType = typeof(tag);
+            if(tagType == "undefined")
+                tag='';
+            else if(tagType=="function" && typeof(callback)=="undefined"){
+                callback=tag;
+                tag='';
+            }
+
+            var p = new Packet(null, 'datastore.get',tag);
+            buildfire.sendPacket(p, callback);
 
         }
-        ,post:function(data,callback){
+        ,save:function(obj,tag,callback){
+            var tagType = typeof(tag);
+            if(tagType == "undefined")
+                tag='';
+            else if(tagType=="function" && typeof(callback)=="undefined"){
+                callback=tag;
+                tag='';
+            }
 
+            var p = new Packet(null, 'datastore.get',{tag:tag,obj:obj});
+            buildfire.sendPacket(p, callback);
         }
-        ,delete:function(data,callback){
 
-        }
     }
     ,imageStore:{
         getAll:function(callback){

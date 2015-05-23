@@ -2,6 +2,7 @@
 var counter=0;
 $home.controller('homeCtrl', ['$scope'
     , function ($scope) {
+
         $scope.logoUrl = "http://startupweekend.org/wp-content/blogs.dir/1/files/2013/04/CokeLogo1.png";
         $scope.images = ["http://www.pd4pic.com/images/black-design-banner-blank-ornate-decoration.png"
             ,"http://www.pd4pic.com/images/fancy-design-banner-curved-blank-decoration.png"];

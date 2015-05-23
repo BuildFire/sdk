@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html ng-app="textPlugin">
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+</head>
+<body ng-controller="textPluginCtrl">
+    <div>background Image URL</div>
+    <input id="imageUrl" type="url" ng-model="data.imageUrl" />
+    <div>Text</div>
+    <textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
+    <script>
+        var textPluginApp = angular.module('textPlugin',[]);
+
+        textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
+            buildfire.dataStore.get(function(data){
+                $scope.data = data;
+                //$scope.$apply()
+            });
+
+            $scope.$watch('data',function(newObj){
+                buildfire.dataStore.save(newObj,function(err,result){
+                    if(err || !result)
+                        alert(err);
+                    else
+                        console.log('data saved');
+                })
+            } ,true);
+        }]);
+    </script>
+</body>
+</html>
