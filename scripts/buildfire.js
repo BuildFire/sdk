@@ -9,7 +9,7 @@ var buildfire = {
      _callbacks:{}
     ,init:function(){
 
-        function eventHandler(e) {
+        var eventHandler = function (e) {
             var packet = JSON.parse(e.data);
             if(packet.id && buildfire._callbacks[packet.id]){
                 buildfire._callbacks[packet.id](packet.error,packet.data);
@@ -19,7 +19,7 @@ var buildfire = {
                 console.warn( window.location + ' unhandled packet',packet);
                 //alert('parent sent: ' + packet.data);
             }
-        }
+        };
         // Listen to message from child window
         window.removeEventListener('message',eventHandler,false);
         window.addEventListener('message',eventHandler,false);
@@ -50,11 +50,14 @@ var buildfire = {
             buildfire.sendPacket(p, callback);
         }
         ,attachCSSFiles: function(){
-            var base = document.createElement('base').href;
-            var seg = base.split('/');
-            base="";
-            for(var i = 0 ; i < seg.length -1 && seg[i] != 'plugins'; i++)
-                base += seg[i] + "/"
+            var base;
+            var scripts = document.getElementsByTagName("script");
+            for(var i = 0 ; i < scripts.length ; i++)
+                if (scripts[i].src.indexOf('buildfire.js') > 0 ) {
+                    base =scripts[i].src.replace('scripts/buildfire.js','');
+                    break;
+                }
+
             document.write('<link rel="stylesheet" href="' + base + 'styles/bootstrap.min.css"/>');
         }
     }
@@ -77,7 +80,7 @@ var buildfire = {
             buildfire.sendPacket(p, callback);
 
         }
-        ,save:function(obj,tag,callback){
+        ,set:function(obj,tag,callback){
             var tagType = typeof(tag);
             if(tagType == "undefined")
                 tag='';
@@ -86,10 +89,9 @@ var buildfire = {
                 tag='';
             }
 
-            var p = new Packet(null, 'datastore.get',{tag:tag,obj:obj});
+            var p = new Packet(null, 'datastore.set',{tag:tag,obj:obj});
             buildfire.sendPacket(p, callback);
         }
-
     }
     ,imageStore:{
         getAll:function(callback){
