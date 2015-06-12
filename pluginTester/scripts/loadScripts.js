@@ -20,7 +20,6 @@ _ScriptLoader.prototype ={
         document.write('<script type="text/javascript" src="' + url  + '" ></script>');
     }
     ,init:function(){
-
         if(this.scripts.length==0) return;
         var useAlt = !this.fileExists(this.scripts[0].src);
         for(var i=0; i< this.scripts.length ; i++)

@@ -25,7 +25,8 @@ var shell= {
     , loadFrames: function (pluginFolder, config) {
         var root = '../plugins/';
         ///load widget
-        plugin.src = root + pluginFolder + '/widget/' + config.widget.rootPage;
+
+        window.widget.src = root + pluginFolder + '/widget/' + config.widget.rootPage;
         var loadCPPage = true;
         ///load control
         if (config.control.content.enabled) {

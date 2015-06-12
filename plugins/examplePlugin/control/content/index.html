@@ -6,10 +6,15 @@
     <script src="../../../../scripts/angular/angular.min.js"></script>
 </head>
 <body ng-controller="textPluginCtrl">
-<div>background Image URL</div>
-<input id="imageUrl" type="url" ng-model="data.imageUrl" />
-<div>Text</div>
-<textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
+
+    <div ng-form="frmMain" >
+    <div>background Image URL</div>
+        <input id="imageUrl" type="url" ng-model="data.imageUrl" />
+
+        <div>Text</div>
+        <textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
+    </div>
+
 <script>
     var textPluginApp = angular.module('textPlugin',[]);
 
@@ -17,16 +22,23 @@
         /*
         * Go pull any previously saved data
         * */
-        buildfire.dataStore.get(function(data){
+        buildfire.dataStore.get(function(err,data){
             $scope.data = data;
-            //$scope.$apply()
+            $scope.$apply()
         });
 
         /*
         * Call the datastore to save the data object
         */
         var saveData = function(newObj){
-            buildfire.dataStore.save(newObj,function(err,result){
+
+            if(newObj == undefined)return;
+            if($scope.frmMain.$invalid ){
+                console.log('invalid data NO SAVE');
+                return;
+            }
+
+            buildfire.dataStore.set(newObj,function(err,result){
                 if(err || !result)
                     alert(err);
                 else

@@ -81,6 +81,7 @@ var buildfire = {
 
         }
         ,set:function(obj,tag,callback){
+
             var tagType = typeof(tag);
             if(tagType == "undefined")
                 tag='';
