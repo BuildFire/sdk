@@ -10,7 +10,10 @@ var buildfire = {
     ,init:function(){
 
         var eventHandler = function (e) {
+            if (e.source === window) return;//e.origin != "null"
             var packet = JSON.parse(e.data);
+            console.log('buildfire.js received << ' + packet);
+
             if(packet.id && buildfire._callbacks[packet.id]){
                 buildfire._callbacks[packet.id](packet.error,packet.data);
                 delete buildfire._callbacks[packet.id];
@@ -75,7 +78,10 @@ var buildfire = {
     ,sendPacket: function(packet,callback){
         if(typeof (callback) =="function")
             buildfire._callbacks[packet.id] = callback;
-        parent.postMessage( JSON.stringify(packet) ,"*");
+
+        var p = JSON.stringify(packet);
+        console.log("BuildFire.js Send >> " + p);
+        parent.postMessage( p ,"*");
     }
     ,datastore:{
         get:function(tag,callback){
