@@ -15,6 +15,17 @@ var buildfire = {
                 buildfire._callbacks[packet.id](packet.error,packet.data);
                 delete buildfire._callbacks[packet.id];
             }
+            else if(packet.cmd){
+
+                var sequence = packet.cmd.split('.');
+                var obj = buildfire;
+                var parent=buildfire;
+                for (var i = 0; i < sequence.length; i++){
+                    if(i>0)parent=obj;
+                    obj = obj[sequence[i]];
+                }
+                obj.apply(parent,[packet.data]);
+            }
             else{
                 console.warn( window.location + ' unhandled packet',packet);
                 //alert('parent sent: ' + packet.data);
@@ -66,7 +77,7 @@ var buildfire = {
             buildfire._callbacks[packet.id] = callback;
         parent.postMessage( JSON.stringify(packet) ,"*");
     }
-    ,dataStore:{
+    ,datastore:{
         get:function(tag,callback){
             var tagType = typeof(tag);
             if(tagType == "undefined")
@@ -80,7 +91,7 @@ var buildfire = {
             buildfire.sendPacket(p, callback);
 
         }
-        ,set:function(obj,tag,callback){
+        ,save:function(obj,tag,callback){
 
             var tagType = typeof(tag);
             if(tagType == "undefined")
@@ -90,8 +101,17 @@ var buildfire = {
                 tag='';
             }
 
-            var p = new Packet(null, 'datastore.set',{tag:tag,obj:obj});
+            var p = new Packet(null, 'datastore.save',{tag:tag,obj:obj});
             buildfire.sendPacket(p, callback);
+        }
+        ,onUpdate:function(callback){
+            document.addEventListener('datastoreOnUpdate',callback,false);
+        }
+        ,triggerOnUpdated: function(data){
+
+            var onUpdateEvent = new CustomEvent('datastoreOnUpdate',{'detail':data});
+            console.log("Announce the data has changed!!!");
+            document.dispatchEvent(onUpdateEvent);
         }
     }
     ,imageStore:{

@@ -22,9 +22,10 @@
         /*
         * Go pull any previously saved data
         * */
-        buildfire.dataStore.get(function(err,data){
+        buildfire.datastore.get(function(err,data){
             $scope.data = data;
-            $scope.$apply()
+            $scope.$digest();
+            if(tmrDelay)clearTimeout(tmrDelay);
         });
 
         /*
@@ -38,7 +39,7 @@
                 return;
             }
 
-            buildfire.dataStore.set(newObj,function(err,result){
+            buildfire.datastore.save(newObj,function(err,result){
                 if(err || !result)
                     alert(err);
                 else

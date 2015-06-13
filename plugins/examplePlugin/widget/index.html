@@ -1,19 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html ng-App="textPlugin">
 <head lang="en">
     <meta charset="UTF-8">
     <title>example Text widget</title>
 
-    <script type="text/javascript" src="../../../scripts/buildfire.js" ></script>
+    <script src="../../../scripts/angular/angular.min.js"></script>
+    <script type="text/javascript" src="../../../scripts/buildfire.js"></script>
 
 </head>
 <body>
-
-<div class="jumbotron">
-    <h1>Text Widget</h1>
-    Current Date: <script>document.write(new Date()); </script>
-
+<div ng-controller="textPluginCtrl" ng-cloak style="background-image: url({{data.imageUrl}});">
+    {{data.text}}
 </div>
+<script>
+
+    var textPluginApp = angular.module('textPlugin', []);
+
+    textPluginApp.controller('textPluginCtrl', ['$scope', function ($scope) {
+        /*
+         * Go pull saved data
+         * */
+        buildfire.datastore.get(function (err, data) {
+
+            $scope.data = data;
+            $scope.$digest();
+
+        });
+
+        /*
+         Listen in if an update occurred on the control panel
+         */
+        buildfire.datastore.onUpdate(function (e) {
+            $scope.data = e.detail.obj;
+            $scope.$digest();
+        });
+
+    }]);
+</script>
 
 </body>
 </html>
