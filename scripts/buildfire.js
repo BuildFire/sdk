@@ -50,8 +50,8 @@ var buildfire = {
         var p = new Packet(null, 'getContext');
         buildfire.sendPacket(p, callback);
     }
-    ,navigateTo:function(widgetId,instanceId, title){
-        var p = new Packet(null, 'navigateTo',{widgetId:widgetId,instanceId:instanceId, title:title});
+    ,navigateTo:function(pluginId,instanceId, title){
+        var p = new Packet(null, 'navigateTo',{pluginId:pluginId,instanceId:instanceId, title:title});
         this.sendPacket(p);
     }
     ,navigateHome:function(){
