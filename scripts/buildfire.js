@@ -108,7 +108,10 @@ var buildfire = {
             }
 
             var p = new Packet(null, 'datastore.save',{tag:tag,obj:obj});
-            buildfire.sendPacket(p, callback);
+            buildfire.sendPacket(p, function(err, result){
+                if(result)buildfire.datastore.triggerOnUpdated(result);
+                callback(err, result);
+            });
         }
         ,onUpdate:function(callback){
             document.addEventListener('datastoreOnUpdate',callback,false);
