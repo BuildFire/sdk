@@ -2,23 +2,21 @@
   "author":"Daniel Hindi"
   ,"pluginName":"example Plugin - Simple Text Plugin"
   ,"pluginDescription":"this is a simple plugin to illustrate how to to communicate with the data store and control panel "
+  ,"supportEmail":"support@buildfire.com"
   ,"pluginIcon":"icon.png"
   ,"licenseKey": "a4sd6-as654asd6as545a65s4d6a-65asd564a"
   ,"control":{
     "content":{
-      "rootPage":"index.html"
-      ,"enabled":true
+      "enabled":true
     }
     , "design":{
-      "rootPage":"index.html"
-      ,"enabled":true
+      "enabled":true
     }
     , "settings":{
-      "rootPage":"index.html"
-      ,"enabled":true
+      "enabled":false
     }
   }
   ,"widget":{
-      "rootPage":"index.html"
+
   }
 }

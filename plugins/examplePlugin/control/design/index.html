@@ -1,10 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="textPluginDesign">
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
 </head>
-<body>
-no design
+<body ng-controller="textPluginCtrl">
+
+<div ng-form="frmMain" >
+    <h2>border type</h2>
+    <input type="radio" id="style1" name="style" value="style1"
+           ng-checked="data.design.style=='style1'" ng-model="data.design.style" ng-change="saveData()" ng-required="data.design.style">
+    <label for="style1">Red</label>
+
+    <input type="radio" id="style2" name="style" value="style2"
+           ng-checked="data.design.style=='style2'"  ng-model="data.design.style" ng-change="saveData()" ng-required="data.design.style">
+    <label for="style2">Blue</label>
+</div>
+
+<script>
+    var textPluginApp = angular.module('textPluginDesign',[]);
+
+    textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
+        /*
+         * Go pull any previously saved data
+         * */
+        buildfire.datastore.get(function(err,data){
+            $scope.data = data;
+            $scope.$digest();
+        });
+
+        /*
+         * Call the datastore to save the data object
+         */
+        var saveData = function(newObj){
+            if(newObj == undefined)return;
+
+            buildfire.datastore.save(newObj,function(err,result){
+                if(err || !result)
+                    alert(err);
+                else
+                    console.log('data saved');
+            });
+        };
+
+        /*
+         * watch for changes in data and trigger the saveDataWithDelay function on change
+         * */
+        $scope.$watch('data',saveData ,true);
+    }]);
+</script>
 </body>
 </html>

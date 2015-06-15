@@ -7,9 +7,18 @@
     <script src="../../../scripts/angular/angular.min.js"></script>
     <script type="text/javascript" src="../../../scripts/buildfire.js"></script>
 
+    <style>
+        .style1{
+            border: 5px solid red;
+        }
+
+        .style2{
+            border: 5px solid blue;
+        }
+    </style>
 </head>
 <body>
-<div ng-controller="textPluginCtrl" ng-cloak style="background-image: url({{data.imageUrl}});">
+<div ng-controller="textPluginCtrl" ng-cloak style="background-image: url({{data.imageUrl}});" class="{{data.design.style}}" >
     {{data.text}}
 </div>
 <script>
