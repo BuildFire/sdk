@@ -83,6 +83,12 @@ var buildfire = {
         console.log("BuildFire.js Send >> " + p);
         parent.postMessage( p ,"*");
     }
+    ,analytics: {
+        send: function(obj) {
+            var p = new Packet(null, "analytics.send", obj);
+            buildfire.sendPacket(p, function() { });
+        }
+    }
     ,datastore:{
         get:function(tag,callback){
             var tagType = typeof(tag);
