@@ -8,35 +8,9 @@ function Packet(id,cmd,data){
 var buildfire = {
      _callbacks:{}
     ,init:function(){
-
-        var eventHandler = function (e) {
-            if (e.source === window) return;//e.origin != "null"
-            var packet = JSON.parse(e.data);
-            console.log('buildfire.js received << ' + packet);
-
-            if(packet.id && buildfire._callbacks[packet.id]){
-                buildfire._callbacks[packet.id](packet.error,packet.data);
-                delete buildfire._callbacks[packet.id];
-            }
-            else if(packet.cmd){
-
-                var sequence = packet.cmd.split('.');
-                var obj = buildfire;
-                var parent=buildfire;
-                for (var i = 0; i < sequence.length; i++){
-                    if(i>0)parent=obj;
-                    obj = obj[sequence[i]];
-                }
-                obj.apply(parent,[packet.data]);
-            }
-            else{
-                console.warn( window.location + ' unhandled packet',packet);
-                //alert('parent sent: ' + packet.data);
-            }
-        };
         // Listen to message from child window
-        window.removeEventListener('message',eventHandler,false);
-        window.addEventListener('message',eventHandler,false);
+        window.removeEventListener('message',buildfire.postMessageHandler,false);
+        window.addEventListener('message',buildfire.postMessageHandler,false);
         buildfire.appearance.attachCSSFiles();
         buildfire.getContext(function(err,context){
             if(err){
@@ -45,6 +19,34 @@ var buildfire = {
             }
             else buildfire.context = context;
         });
+    }
+    , postMessageHandler: function (e) {
+        if (e.source === window) return;//e.origin != "null"
+        console.log('buildfire.js received << ' + e.data);
+		var packet = JSON.parse(e.data);
+
+        if(packet.id && buildfire._callbacks[packet.id]){
+            buildfire._callbacks[packet.id](packet.error,packet.data);
+            delete buildfire._callbacks[packet.id];
+        }
+        else if(packet.cmd){
+
+            var sequence = packet.cmd.split('.');
+            var obj = buildfire;
+            var parent=buildfire;
+            for (var i = 0; i < sequence.length; i++){
+                if(i>0)parent=obj;
+                if(obj[sequence[i]])
+                    obj = obj[sequence[i]];
+                else
+                    return; // sorry i cant help you
+            }
+            obj.apply(parent,[packet.data]);
+        }
+        else{
+            console.warn( window.location + ' unhandled packet',packet);
+            //alert('parent sent: ' + packet.data);
+        }
     }
     ,getContext: function (callback) {
         var p = new Packet(null, 'getContext');
@@ -81,7 +83,7 @@ var buildfire = {
 
         var p = JSON.stringify(packet);
         console.log("BuildFire.js Send >> " + p);
-        parent.postMessage( p ,"*");
+        if(parent)parent.postMessage( p ,"*");
     }
     ,analytics: {
         trackAction: function(actionName, metadata) {
@@ -133,7 +135,6 @@ var buildfire = {
             document.addEventListener('datastoreOnUpdate',callback,false);
         }
         ,triggerOnUpdated: function(data){
-
             var onUpdateEvent = new CustomEvent('datastoreOnUpdate',{'detail':data});
             console.log("Announce the data has changed!!!");
             document.dispatchEvent(onUpdateEvent);
