@@ -44,6 +44,8 @@
             $scope.$digest();
         });
 
+        buildfire.analytics.send({ type: 'action', value: 'widget loaded'});
+
     }]);
 </script>
 

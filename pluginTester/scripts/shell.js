@@ -26,12 +26,12 @@ var shell= {
         var root = '../plugins/';
         ///load widget
 
-        window.widget.src = root + pluginFolder + '/widget/' + config.widget.rootPage;
+        window.widget.src = root + pluginFolder + '/widget/index.html';
         var loadCPPage = true;
         ///load control
         if (config.control.content.enabled) {
             btnLoadContent.onclick = function () {
-                control.src = root + pluginFolder + '/control/content/' + config.control.content.rootPage;
+                control.src = root + pluginFolder + '/control/content/index.html';
             };
             btnLoadContent.style.display = 'inline';
             btnLoadContent.click();
@@ -40,7 +40,7 @@ var shell= {
 
         if (config.control.design.enabled) {
             btnLoadDesign.onclick = function () {
-                control.src = root + pluginFolder + '/control/design/' + config.control.design.rootPage;
+                control.src = root + pluginFolder + '/control/design/index.html';
             };
             btnLoadDesign.style.display = 'inline';
             if (loadCPPage)btnLoadDesign.click();
@@ -49,7 +49,7 @@ var shell= {
 
         if (config.control.settings.enabled) {
             btnLoadDesign.onclick = function () {
-                control.src = root + pluginFolder + '/control/settings/' + config.control.settings.rootPage;
+                control.src = root + pluginFolder + '/control/settings/index.html';
             };
             btnLoadSettings.style.display = 'inline';
             if (loadCPPage)btnLoadSettings.click();
