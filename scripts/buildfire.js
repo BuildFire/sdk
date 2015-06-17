@@ -11,8 +11,8 @@ var buildfire = {
 
         var eventHandler = function (e) {
             if (e.source === window) return;//e.origin != "null"
+            console.log('buildfire.js received << ' + e.data);
             var packet = JSON.parse(e.data);
-            console.log('buildfire.js received << ' + packet);
 
             if(packet.id && buildfire._callbacks[packet.id]){
                 buildfire._callbacks[packet.id](packet.error,packet.data);
