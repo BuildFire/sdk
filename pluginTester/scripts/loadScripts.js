@@ -4,6 +4,8 @@ function _ScriptLoader(){
     this.scripts = [
         {src: pluginAPIPath + "datastoreAPI.js"
             ,altSrc: altPluginAPIPath + "datastoreAPI.js"}
+        ,{src: pluginAPIPath + "analyticsAPI.js"
+            ,altSrc: altPluginAPIPath + "analyticsAPI.js"}
         ,{src: pluginAPIPath + "pluginAPI.js"
             ,altSrc: altPluginAPIPath + "pluginAPI.js"}
     ];

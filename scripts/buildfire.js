@@ -22,8 +22,8 @@ var buildfire = {
     }
     ,postMessageHandler: function (e) {
         if (e.source === window) return;//e.origin != "null"
-        var packet = JSON.parse(e.data);
         console.log('buildfire.js received << ' + e.data);
+		var packet = JSON.parse(e.data);
 
         if(packet.id && buildfire._callbacks[packet.id]){
             buildfire._callbacks[packet.id](packet.error,packet.data);
@@ -90,9 +90,19 @@ var buildfire = {
         if(parent)parent.postMessage( p ,"*");
     }
     ,analytics: {
-        send: function(obj) {
-            var p = new Packet(null, "analytics.send", obj);
-            buildfire.sendPacket(p, function() { });
+        trackAction: function(actionName, metadata) {
+            var p = new Packet(null, "analytics.trackActionCommand", {
+                value: actionName,
+                metadata: metadata
+            }); // wrap object to follow the command(obj, callback)
+            buildfire.sendPacket(p);
+        },
+        trackView: function(actionName, metadata) {
+            var p = new Packet(null, "analytics.trackViewCommand", {
+                value: actionName,
+                metadata: metadata
+            }); // wrap object to follow the command(obj, callback)
+            buildfire.sendPacket(p);
         }
     }
     ,datastore:{

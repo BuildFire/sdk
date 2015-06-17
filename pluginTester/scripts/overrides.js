@@ -17,3 +17,11 @@ pluginAPI.datastore.onUpdate(function(updateObj){
     }
 
 });
+
+pluginAPI.analytics.trackAction = function(actionName, metadata) {
+  console.log('analytics mock track action [' + actionName + ']', metadata);
+};
+
+pluginAPI.analytics.trackView = function(viewName, metadata) {
+    console.log('analytics mock track view [' + viewName + ']', metadata);
+};
