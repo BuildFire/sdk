@@ -84,9 +84,19 @@ var buildfire = {
         parent.postMessage( p ,"*");
     }
     ,analytics: {
-        send: function(obj) {
-            var p = new Packet(null, "analytics.send", obj);
-            buildfire.sendPacket(p, function() { });
+        trackAction: function(actionName, metadata) {
+            var p = new Packet(null, "analytics.trackActionCommand", {
+                value: actionName,
+                metadata: metadata
+            }); // wrap object to follow the command(obj, callback)
+            buildfire.sendPacket(p);
+        },
+        trackView: function(actionName, metadata) {
+            var p = new Packet(null, "analytics.trackViewCommand", {
+                value: actionName,
+                metadata: metadata
+            }); // wrap object to follow the command(obj, callback)
+            buildfire.sendPacket(p);
         }
     }
     ,datastore:{
