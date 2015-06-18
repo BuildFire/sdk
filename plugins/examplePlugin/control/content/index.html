@@ -7,14 +7,11 @@
 </head>
 <body ng-controller="textPluginCtrl">
 
-    <div ng-form="frmMain" >
-    <div>background Image URL</div>
-        <input id="imageUrl" type="url" ng-model="data.imageUrl" />
-
-        <div>Text</div>
-        <textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
-    </div>
-
+    <div ng-form="frmMain">
+		<h4>Text</h4>
+		<textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
+	</div>		
+	
 <script>
     var textPluginApp = angular.module('textPlugin',[]);
 
