@@ -152,7 +152,8 @@ var buildfire = {
 
         }
         ,show:function(imgUrl,callback){
-
+            var p = new Packet(null, 'imageLibAPI.showDialog',null);
+            buildfire.sendPacket(p, callback);
         }
     }
 };
