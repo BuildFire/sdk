@@ -20,8 +20,8 @@
         /*
         * Go pull any previously saved data
         * */
-        buildfire.datastore.get(function(err,data){
-            $scope.data = data;
+        buildfire.datastore.get(function (err, result) {
+            $scope.data = result.data;
             $scope.$digest();
             if(tmrDelay)clearTimeout(tmrDelay);
         });
@@ -36,13 +36,24 @@
                 console.log('invalid data NO SAVE');
                 return;
             }
+            if (newObj.id) {
+                buildfire.datastore.update(newObj, function (err, result) {
+                    if (err || !result)
+                        alert(err);
+                    else
+                        console.log('data updated');
 
-            buildfire.datastore.save(newObj,function(err,result){
-                if(err || !result)
-                    alert(err);
-                else
-                    console.log('data saved');
-            });
+                });
+            }
+            else {
+                buildfire.datastore.insert(newObj, function (err, result) {
+                    if (err || !result)
+                        alert(err);
+                    else
+                        console.log('data inserted');
+
+                });
+            }
         };
 
         /*
