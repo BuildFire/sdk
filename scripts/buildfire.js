@@ -119,7 +119,7 @@ var buildfire = {
             buildfire.sendPacket(p, callback);
 
         }
-        ,save:function(obj,tag,callback){
+        ,insert:function(obj,tag,callback){
 
             var tagType = typeof(tag);
             if(tagType == "undefined")
@@ -129,7 +129,39 @@ var buildfire = {
                 tag='';
             }
 
-            var p = new Packet(null, 'datastore.save',{tag:tag,obj:obj});
+            var p = new Packet(null, 'datastore.insert',{tag:tag,obj:obj});
+            buildfire.sendPacket(p, function(err, result){
+                if(result)buildfire.datastore.triggerOnUpdated(result);
+                callback(err, result);
+            });
+        }
+         ,update:function(obj,tag,callback){
+
+            var tagType = typeof(tag);
+            if(tagType == "undefined")
+                tag='';
+            else if(tagType=="function" && typeof(callback)=="undefined"){
+                callback=tag;
+                tag='';
+            }
+
+            var p = new Packet(null, 'datastore.update',{tag:tag,obj:obj});
+            buildfire.sendPacket(p, function(err, result){
+                if(result)buildfire.datastore.triggerOnUpdated(result);
+                callback(err, result);
+            });
+        }
+         ,search:function(obj,tag,callback){
+
+            var tagType = typeof(tag);
+            if(tagType == "undefined")
+                tag='';
+            else if(tagType=="function" && typeof(callback)=="undefined"){
+                callback=tag;
+                tag='';
+            }
+
+            var p = new Packet(null, 'datastore.search',{tag:tag,obj:obj});
             buildfire.sendPacket(p, function(err, result){
                 if(result)buildfire.datastore.triggerOnUpdated(result);
                 callback(err, result);
