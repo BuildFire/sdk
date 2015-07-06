@@ -67,18 +67,13 @@ var buildfire = {
         }
         ,attachCSSFiles: function(){
             var base;
-            if(window.location.pathname.indexOf('/control/') > 0)
-                base ='/';
-            else {
-                var scripts = document.getElementsByTagName("script");
-                for (var i = 0; i < scripts.length; i++)
-                    if (scripts[i].src.indexOf('buildfire.js') > 0) {
-                        base = scripts[i].src.replace('scripts/buildfire.js', '');
-                        break;
-                    }
-            }
+            var scripts = document.getElementsByTagName("script");
+            for (var i = 0; i < scripts.length; i++)
+                if (scripts[i].src.indexOf('buildfire.js') > 0) {
+                    base = scripts[i].src.replace('scripts/buildfire.js', '');
+                    break;
+                }
             document.write('<link rel="stylesheet" href="' + base + 'styles/bootstrap.css"/>');
-
         }
     }
     ,sendPacket: function(packet,callback){
