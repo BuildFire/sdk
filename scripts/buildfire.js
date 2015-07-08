@@ -67,13 +67,23 @@ var buildfire = {
         }
         ,attachCSSFiles: function(){
             var base;
-            var scripts = document.getElementsByTagName("script");
-            for (var i = 0; i < scripts.length; i++)
-                if (scripts[i].src.indexOf('buildfire.js') > 0) {
-                    base = scripts[i].src.replace('scripts/buildfire.js', '');
-                    break;
-                }
+            if(window.location.pathname.indexOf('/control/') > 0){
+                base='/';
+            }
+            else {
+
+                var scripts = document.getElementsByTagName("script");
+                for (var i = 0; i < scripts.length; i++)
+                    if (scripts[i].src.indexOf('buildfire.js') > 0) {
+                        base = scripts[i].src.replace('scripts/buildfire.js', '');
+                        break;
+                    }
+            }
             document.write('<link rel="stylesheet" href="' + base + 'styles/bootstrap.css"/>');
+        }
+        ,autosizeContainer:function(){
+            var p = new Packet(null, 'appearance.autosizeContainer',{height: document.body.offsetHeight });
+            buildfire.sendPacket(p);
         }
     }
     ,sendPacket: function(packet,callback){
@@ -153,3 +163,7 @@ var buildfire = {
     }
 };
 buildfire.init();
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    buildfire.appearance.autosizeContainer();
+});
