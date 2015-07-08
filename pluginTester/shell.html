@@ -5,10 +5,10 @@
     <base href="./"/>
 
 	<!-- CSS -->
-    <link href="/inject/styles/bootstrap.css" rel="stylesheet">
-    <link href="/inject/styles/siteStyle.css" rel="stylesheet">
-    <link href="/inject/styles/build.css" rel="stylesheet">
-    <link href="/inject/styles/siteScreen.css" rel="stylesheet">
+    <link href="http://int2.myapp.buildfire.com/styles/bootstrap.css" rel="stylesheet">
+    <link href="http://int2.myapp.buildfire.com/styles/siteStyle.css" rel="stylesheet">
+    <link href="http://int2.myapp.buildfire.com/styles/build.css" rel="stylesheet">
+    <link href="http://int2.myapp.buildfire.com/styles/siteScreen.css" rel="stylesheet">
 
 	<!-- JS -->
     <script type="text/javascript" src="scripts/appConfig.js"></script>
@@ -27,12 +27,21 @@
 		<section id="main-content">
             <div role="alert"></div>
             <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
+				<div class="header clearfix">
+					<h4 class="margin-zero">SDK</h4>
+				</div>
 				<div class="padded clearfix">
-					<div class="controlButtons">
-				        <button class="btn btn-default transition-third active" id="btnLoadContent">Content</button>
-				        <button class="btn btn-default transition-third" id="btnLoadDesign">Design</button>
-				        <button class="btn btn-default transition-third" id="btnLoadSettings">Settings</button>
-				    </div>
+					<ul class="nav nav-tabs nav-justified">
+						<li>
+							<a id="btnLoadContent" class="active">Content</a>
+						</li>
+						<li>
+							<a id="btnLoadDesign">Design</a>
+						</li>
+						<li>
+							<a id="btnLoadSettings">Settings</a>
+						</li>
+					</ul>
 			    	<iframe class="" sandbox="allow-scripts allow-forms"></iframe>
 				</div>
 		    </section>
