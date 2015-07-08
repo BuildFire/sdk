@@ -114,7 +114,7 @@ var buildfire = {
             buildfire.sendPacket(p, callback);
 
         }
-        ,insert:function(obj,tag,callback){
+        ,save:function(obj,tag,callback){
 
             var tagType = typeof(tag);
             if(tagType == "undefined")
@@ -124,7 +124,7 @@ var buildfire = {
                 tag='';
             }
 
-            var p = new Packet(null, 'datastore.insert',{tag:tag,obj:obj});
+            var p = new Packet(null, 'datastore.save',{tag:tag,obj:obj});
             buildfire.sendPacket(p, function(err, result){
                 if(result)buildfire.datastore.triggerOnUpdated(result);
                 callback(err, result);
