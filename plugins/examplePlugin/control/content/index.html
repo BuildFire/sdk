@@ -36,24 +36,13 @@
                 console.log('invalid data NO SAVE');
                 return;
             }
-            if (newObj.id) {
-                buildfire.datastore.update(newObj, function (err, result) {
-                    if (err || !result)
-                        alert(err);
-                    else
-                        console.log('data updated');
 
-                });
-            }
-            else {
-                buildfire.datastore.insert(newObj, function (err, result) {
-                    if (err || !result)
-                        alert(err);
-                    else
-                        console.log('data inserted');
-
-                });
-            }
+            buildfire.datastore.save(newObj, function (err, result) {
+                if (err || !result)
+                    alert(err);
+                else
+                    console.log('data saved');
+            });
         };
 
         /*
