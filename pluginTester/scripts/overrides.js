@@ -2,7 +2,7 @@
  * Created by Daniel on 5/23/2015.
  */
 logger = console;
-pluginAPI.init(window.appConfig.appId, 0, 1, 0);
+pluginAPI.init(window.appContext.currentApp.appId, 0, 1, 0);
 pluginAPI.datastore.dataStoreUrl = 'http://int.ds.buildfire.com:88';
 
 pluginAPI.datastore.onUpdate(function(updateObj){
