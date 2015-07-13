@@ -3,7 +3,7 @@ function _ScriptLoader(){
     //debugger;
     //this.pluginAPIPath ="http://localhost:3000/app/scripts/framework/pluginAPI/";
 
-    this.scripts = ["datastoreAPI.js","analyticsAPI.js","pluginAPI.js" ];
+    this.scripts = ["datastoreAPI.js","analyticsAPI.js","appearanceAPI.js","pluginAPI.js" ];
 }
 
 _ScriptLoader.prototype ={

@@ -17,11 +17,16 @@ pluginAPI.datastore.onUpdate(function(updateObj){
 
 });
 
-pluginAPI.appearance= {
-    getCSSFiles:function(data, callback){
-        callback(null,['/styles/bootstrap.css']);
-    }
+
+pluginAPI.appearance.getCSSFiles =function(data, callback){
+    callback(null,['/styles/bootstrap.css']);
 };
+
+pluginAPI.appearance._autosizeContainerHandler= function(height){
+    var iframeControl = document.getElementById('iframeControl');
+    iframeControl.style.height = height +'px';
+};
+
 
 
 pluginAPI.analytics.trackAction = function(actionName, metadata) {
@@ -31,3 +36,5 @@ pluginAPI.analytics.trackAction = function(actionName, metadata) {
 pluginAPI.analytics.trackView = function(viewName, metadata) {
     console.log('analytics mock track view [' + viewName + ']', metadata);
 };
+
+
