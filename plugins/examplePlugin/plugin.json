@@ -4,7 +4,6 @@
   ,"pluginDescription":"[Plugin Description that will be shown to the app owner]"
   ,"supportEmail":"[Email where the app owner can reach out for help]"
   ,"pluginIcon":"[this is the default icon that will be used when creating a new instance of your plugin]"
-  ,"licenseKey": "a4sd6-as654asd6as545a65s4d6a-65asd564a"
   ,"control":{
     "content":{
       "enabled":true

@@ -2,7 +2,13 @@
  * Created by Daniel on 5/23/2015.
  */
 logger = console;
-pluginAPI.init(window.siteConfig.appId, 0, 1, 0);
+
+if(window.appContext.currentApp.appId == null){
+    alert('Please sing up for a dev account and get your app id. then replace it in here');
+    return;
+}
+
+pluginAPI.init(window.appContext.currentApp.appId, 0, 1, 0);
 
 pluginAPI.datastore.onUpdate(function(updateObj){
 
