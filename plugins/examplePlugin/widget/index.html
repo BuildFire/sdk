@@ -29,9 +29,9 @@
         /*
          * Go pull saved data
          * */
-        buildfire.datastore.get(function (err, data) {
+        buildfire.datastore.get(function (err, result) {
 
-            $scope.data = data;
+            $scope.data = result.data;
             $scope.$digest();
 
         });

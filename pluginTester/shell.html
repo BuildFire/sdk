@@ -1,30 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="buildfire">
 <head lang="en">
     <meta charset="UTF-8"/>
-    <style>
-        body{background-color:gray;}
-        iframe{vertical-align: top; background-color:white;}
-        #btnLoadContent,#btnLoadDesign,#btnLoadSettings{display:none}
-    </style>
-    <script type="text/javascript" src="scripts/appConfig.js"></script>
+    <base href="./"/>
+
+	<!-- CSS -->
+    <link href="http://int2.myapp.buildfire.com/styles/bootstrap.css" rel="stylesheet">
+    <link href="http://int2.myapp.buildfire.com/styles/siteStyle.css" rel="stylesheet">
+    <link href="http://int2.myapp.buildfire.com/styles/build.css" rel="stylesheet">
+    <link href="http://int2.myapp.buildfire.com/styles/siteScreen.css" rel="stylesheet">
+
+	<!-- JS -->
+	<script type="text/javascript" src="../scripts/angular/angular.min.js"></script>
+
+    <script type="text/javascript" src="scripts/siteConfig.js"></script>
+	<script type="text/javascript" src="scripts/appContext.js"></script>
     <script type="text/javascript" src="scripts/loadScripts.js"></script>
     <script type="text/javascript" src="scripts/overrides.js"></script>
-    <script type="text/javascript" src="scripts/shell.js"></script>
-
-
+	<script type="text/javascript" src="scripts/app.js"></script>
+	<script type="text/javascript" src="scripts/shellCtrl.js"></script>
 </head>
-<body onload="shell.initFrames()" onhashchange="initFramaes()">
-    <div class="controlButtons" style="margin:100px 100px 25px;">
-        <button id="btnLoadContent">Content</button>
-        <button id="btnLoadDesign">Design</button>
-        <button id="btnLoadSettings">Settings</button>
-    </div>
-    <iframe id="control" style="border:none;width:640px;margin:0px 100px 25px;height:595px;" seamless sandbox="allow-scripts allow-forms"></iframe>
-
-    <iframe id="widget" style="border:none;width:350px;margin-top:0px;height:595px" seamless sandbox="allow-scripts allow-forms"></iframe>
-
-
-
+<body onhashchange="init()" ng-controller="shellCtrl" >
+	<div id="container">
+		<header class="navbar-fixed-top border-bottom-grey">
+			<div class="contain">
+				<div class="alert alert-danger site-alert transition-half text-center">Error Message.</div>
+			</div>
+		</header>
+		<nav></nav>
+		<section id="main-content">
+			<div class="shell-sdk holder">		
+            	<div role="alert"></div>
+	            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
+					<div class="header clearfix">
+						<h4 class="margin-zero">SDK</h4>
+					</div>
+					<div class="layout padded clearfix">
+						<div class="hidden">
+							<div class="item clearfix row">
+								<div class="labels col-md-3 padding-right-zero pull-left">
+									<span>Icon</span>
+								</div>
+								<div class="main col-md-9 pull-right">
+									<div class="screens clearfix">
+										<div class="screen pull-left">
+											<a class="border-grey border-radius-three default-background-hover" onclick="alert('Open Media Library');"></a>
+											<span class="icon btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<hr class="none">
+							<div class="item clearfix row">
+								<div class="labels col-md-3 padding-right-zero pull-left">
+									<span>Title</span>
+								</div>
+								<div class="main col-md-9 pull-right">
+									<input type="text" class="form-control" placeholder="Plugin Title">
+								</div>
+							</div>
+							<hr class="none">
+							<div class="item clearfix row">
+								<div class="labels col-md-3 padding-right-zero pull-left">
+									<span>Deep Link URL</span>
+								</div>
+								<div class="main col-md-9 pull-right">
+									<span>http://wwww.buildfire.com/102AFH</span>
+								</div>
+							</div>
+							<hr class="none">
+						</div>
+						<ul class="nav nav-tabs nav-justified">
+							<li>
+								<a id="btnLoadContent" class="active" onclick="alert('')" ng-show="$scope.contentSrc">Content</a>
+							</li>
+							<li>
+								<a id="btnLoadDesign" ng-show="$scope.designSrc">Design</a>
+							</li>
+							<li>
+								<a id="btnLoadSettings" ng-show="$scope.settingsSrc">Settings</a>
+							</li>
+						</ul>
+				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>
+					</div>
+			    </section>
+	            <section id="emulator" class="pull-right">
+	           		<div id="emulatorContainer" class="border-grey" >
+	          			<span class="emulatorlabel">iOS / Android</span>
+					    <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey" seamless sandbox="allow-scripts allow-forms"></iframe>
+	                </div>
+	            </section>	
+			</div>
+        </section>
+	</div>
 </body>
 </html>

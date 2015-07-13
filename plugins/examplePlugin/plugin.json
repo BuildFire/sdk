@@ -1,10 +1,9 @@
 {
-  "author":"Daniel Hindi"
-  ,"pluginName":"Plugin Name"
-  ,"pluginDescription":"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-  ,"supportEmail":"support@buildfire.com"
-  ,"pluginIcon":"icon.png"
-  ,"licenseKey": "a4sd6-as654asd6as545a65s4d6a-65asd564a"
+  "author":"[Developer Name]"
+  ,"pluginName":"[Plugin Name]"
+  ,"pluginDescription":"[Plugin Description that will be shown to the app owner]"
+  ,"supportEmail":"[Email where the app owner can reach out for help]"
+  ,"pluginIcon":"[this is the default icon that will be used when creating a new instance of your plugin]"
   ,"control":{
     "content":{
       "enabled":true

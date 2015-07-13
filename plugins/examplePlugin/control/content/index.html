@@ -10,6 +10,7 @@
     <div ng-form="frmMain">
 		<h4>Text</h4>
 		<textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
+        <button id="btnUpload" onclick="buildfire.imageStore.show();">upload</button>
 	</div>		
 	
 <script>
@@ -19,8 +20,8 @@
         /*
         * Go pull any previously saved data
         * */
-        buildfire.datastore.get(function(err,data){
-            $scope.data = data;
+        buildfire.datastore.get(function (err, result) {
+            $scope.data = result.data;
             $scope.$digest();
             if(tmrDelay)clearTimeout(tmrDelay);
         });
@@ -36,8 +37,8 @@
                 return;
             }
 
-            buildfire.datastore.save(newObj,function(err,result){
-                if(err || !result)
+            buildfire.datastore.save(newObj, function (err, result) {
+                if (err || !result)
                     alert(err);
                 else
                     console.log('data saved');
