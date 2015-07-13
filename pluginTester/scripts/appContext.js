@@ -1,6 +1,7 @@
 window.appContext = {
     currentApp: {
         appId : null // [Place your app ID here]
+        ,keys:{datastoreKey:'a1234-34f34-1awe234-23423'}
     }
     ,currentPlugin:{
         pluginId: "48567-84579-sd54d-d4565"
