@@ -17,6 +17,7 @@ Plugins consists of three major components:
   * Design
   * Settings
 * the Widget
+* Resources
 
 
 #### the Config (plugin.json)
@@ -36,7 +37,7 @@ The Widget is the part that is rendered on the device. It consumes the configura
 ![Control Panel](https://s3-us-west-2.amazonaws.com/pluginserver/docResources/Control+Panel.png?v=1)
 
 
-
+#### Resources (folder)
+This is a folder that has images pertaining to the plugin
 
 ### for full documentation on how to develop a plugin click here to see the wiki https://github.com/BuildFire/pluginTemplate/wiki
-
