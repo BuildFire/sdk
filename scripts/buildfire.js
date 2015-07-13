@@ -1,3 +1,4 @@
+"use strict";
 
 function Packet(id,cmd,data){
     this.id= id?id:new Date().toISOString();
@@ -66,20 +67,33 @@ var buildfire = {
             buildfire.sendPacket(p, callback);
         }
         ,attachCSSFiles: function(){
-            var base;
+            var files;
             if(window.location.pathname.indexOf('/control/') > 0){
-                base='/';
+                files=[
+                    '/styles/cpBootstrap.css'
+                    ,'/styles/build.css'
+                    ,'/styles/icons.css'
+                    ,'/styles/siteStyle.css'
+                ];
             }
             else {
-
-                var scripts = document.getElementsByTagName("script");
-                for (var i = 0; i < scripts.length; i++)
-                    if (scripts[i].src.indexOf('buildfire.js') > 0) {
-                        base = scripts[i].src.replace('scripts/buildfire.js', '');
-                        break;
-                    }
+                files=[
+                    '/styles/bootstrap.css'
+                ];
             }
-            document.write('<link rel="stylesheet" href="' + base + 'styles/bootstrap.css"/>');
+
+            var base;
+            var scripts = document.getElementsByTagName("script");
+            for (var i = 0; i < scripts.length; i++) {
+                if (scripts[i].src.indexOf('buildfire.js') > 0) {
+                    base = scripts[i].src.replace('scripts/buildfire.js', '');
+                    break;
+                }
+            }
+
+            for(var i =0; i < files.length ; i++)
+                document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
+
         }
         ,autosizeContainer:function(){
             var p = new Packet(null, 'appearance.autosizeContainer',{height: document.body.offsetHeight });

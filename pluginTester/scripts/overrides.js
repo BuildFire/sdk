@@ -2,8 +2,7 @@
  * Created by Daniel on 5/23/2015.
  */
 logger = console;
-pluginAPI.init(window.appConfig.appId, 0, 1, 0);
-pluginAPI.datastore.dataStoreUrl = 'http://int.ds.buildfire.com:88';
+pluginAPI.init(window.siteConfig.appId, 0, 1, 0);
 
 pluginAPI.datastore.onUpdate(function(updateObj){
 
@@ -17,6 +16,13 @@ pluginAPI.datastore.onUpdate(function(updateObj){
     }
 
 });
+
+pluginAPI.appearance= {
+    getCSSFiles:function(data, callback){
+        callback(null,['/styles/bootstrap.css']);
+    }
+};
+
 
 pluginAPI.analytics.trackAction = function(actionName, metadata) {
   console.log('analytics mock track action [' + actionName + ']', metadata);

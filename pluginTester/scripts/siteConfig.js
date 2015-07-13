@@ -1,7 +1,7 @@
-window.appConfig = {
+window.siteConfig = {
     appId : 202
     , endPoints : {
-        datastoreHost: 'http://ds.buildfire.com:88'
+        datastoreHost: 'http://int2.ds.buildfire.com'
     }
     ,keys: {
         datastoreKey:'123-ASD-TEST'

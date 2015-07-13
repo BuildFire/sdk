@@ -1,5 +1,8 @@
 function _ScriptLoader(){
     this.pluginAPIPath ="http://int2.myapp.buildfire.com/app/scripts/framework/pluginAPI/";
+    debugger;
+    this.pluginAPIPath ="http://localhost:3000/app/scripts/framework/pluginAPI/";
+
     this.scripts = ["datastoreAPI.js","analyticsAPI.js","pluginAPI.js" ];
 }
 
