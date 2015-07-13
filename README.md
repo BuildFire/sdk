@@ -34,3 +34,9 @@ The Widget is the part that is rendered on the device. It consumes the configura
 
 
 ![Control Panel](https://s3-us-west-2.amazonaws.com/pluginserver/docResources/Control+Panel.png?v=1)
+
+
+
+
+### for full documentation on how to develop a plugin click here to see the wiki https://github.com/BuildFire/pluginTemplate/wiki
+
