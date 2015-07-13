@@ -29,32 +29,68 @@
 		</header>
 		<nav></nav>
 		<section id="main-content">
-            <div role="alert"></div>
-            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
-				<div class="header clearfix">
-					<h4 class="margin-zero">SDK</h4>
-				</div>
-				<div class="padded clearfix">
-					<ul class="nav nav-tabs nav-justified">
-						<li>
-							<a id="btnLoadContent" class="active" onclick="alert('')" ng-show="$scope.contentSrc">Content</a>
-						</li>
-						<li>
-							<a id="btnLoadDesign" ng-show="$scope.designSrc">Design</a>
-						</li>
-						<li>
-							<a id="btnLoadSettings" ng-show="$scope.settingsSrc">Settings</a>
-						</li>
-					</ul>
-			    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>
-				</div>
-		    </section>
-            <section id="emulator" class="pull-right">
-           		<div id="emulatorContainer" class="border-radius-four border-grey" >
-          			<span class="emulatorlabel">iOS / Android</span>
-				    <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey" seamless sandbox="allow-scripts allow-forms"></iframe>
-                </div>
-            </section>
+			<div class="shell-sdk holder">		
+            	<div role="alert"></div>
+	            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
+					<div class="header clearfix">
+						<h4 class="margin-zero">SDK</h4>
+					</div>
+					<div class="layout padded clearfix">
+						<div class="hidden">
+							<div class="item clearfix row">
+								<div class="labels col-md-3 padding-right-zero pull-left">
+									<span>Icon</span>
+								</div>
+								<div class="main col-md-9 pull-right">
+									<div class="screens clearfix">
+										<div class="screen pull-left">
+											<a class="border-grey border-radius-three default-background-hover" onclick="alert('Open Media Library');"></a>
+											<span class="icon btn-icon btn-delete-icon btn-danger transition-third" onclick="window.openDialog('remove.html', null, 'sm', null)"><span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<hr class="none">
+							<div class="item clearfix row">
+								<div class="labels col-md-3 padding-right-zero pull-left">
+									<span>Title</span>
+								</div>
+								<div class="main col-md-9 pull-right">
+									<input type="text" class="form-control" placeholder="Plugin Title">
+								</div>
+							</div>
+							<hr class="none">
+							<div class="item clearfix row">
+								<div class="labels col-md-3 padding-right-zero pull-left">
+									<span>Deep Link URL</span>
+								</div>
+								<div class="main col-md-9 pull-right">
+									<span>http://wwww.buildfire.com/102AFH</span>
+								</div>
+							</div>
+							<hr class="none">
+						</div>
+						<ul class="nav nav-tabs nav-justified">
+							<li>
+								<a id="btnLoadContent" class="active" onclick="alert('')" ng-show="$scope.contentSrc">Content</a>
+							</li>
+							<li>
+								<a id="btnLoadDesign" ng-show="$scope.designSrc">Design</a>
+							</li>
+							<li>
+								<a id="btnLoadSettings" ng-show="$scope.settingsSrc">Settings</a>
+							</li>
+						</ul>
+				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>
+					</div>
+			    </section>
+	            <section id="emulator" class="pull-right">
+	           		<div id="emulatorContainer" class="border-grey" >
+	          			<span class="emulatorlabel">iOS / Android</span>
+					    <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey" seamless sandbox="allow-scripts allow-forms"></iframe>
+	                </div>
+	            </section>	
+			</div>
         </section>
 	</div>
 </body>
