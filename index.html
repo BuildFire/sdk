@@ -1,10 +1,35 @@
 ﻿<!DOCTYPE html>
 <html lang="en" ng-app="home">
 <head>
-  
-</head>
-<body>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  Welcome to BuildFire plugins
+    <link href="styles/bootstrap.css" rel="stylesheet"/>
+</head>
+<body style="width:1024px;margin:auto;">
+<div>
+    <div class="jumbotron">
+        <h1>Welcome to the BuildFire plugins SDK.</h1>
+
+    </div>
+    <h2>Getting Started</h2>
+    <ul>
+        <li>To get started sign up for the developer program at <a href="http://developer.buildfire.com">http://developer.buildfire.com</a>.
+        </li>
+        <li>Once you've done so you should be issued an App ID that you can use test your plugin.</li>
+        <li>Open scripts/appContext.js and change the appId in window.appContext.currentApp .</li>
+        <li>Now you can begin developing in plugins/myPlugin.</li>
+        <li><i>if you choose to change that folder name make sure
+            you change it as well in the scripts/appContext.js file</i>
+        </li>
+    </ul>
+    <a class="btn btn-primary btn-lg" href="https://github.com/BuildFire/pluginTemplate/wiki" role="button">Learn
+        more</a>
+
+    <h2>Testing Locally</h2>
+    Once you've developed you plugin just click here to test
+    <a class="btn btn-success btn-lg" href="pluginTester/shell.html" role="button">Test Plugin</a>
+</div>
 </body>
 </html>
