@@ -20,14 +20,17 @@ Plugins consists of three major components:
 
 
 #### the Config (plugin.json)
-The configuration of each plugin is placed in a file on the root of the plugin called *plugin.json*. This JSON file consists of all the settings the plugin requires
+The configuration of each plugin is placed in a file on the root of the plugin called __plugin.json__. This JSON file consists of all the settings the plugin requires
 
 #### the Control (folder)
 The Control is the part of the code that is added to the App Control Panel to help configure your plugin
-the control has 3 sections:
-1. content
-2. design
-3. settings
+the control has 3 sections/__sub folder__ *each of which have their own index.html start page*:
+* content
+* design
+* settings
 
 #### the Widget (folder)
 The Widget is the part that is rendered on the device. It consumes the configuration made from the control and displays the output.
+
+
+![Control Panel](https://s3-us-west-2.amazonaws.com/pluginserver/docResources/Control+Panel.png?v=1)
