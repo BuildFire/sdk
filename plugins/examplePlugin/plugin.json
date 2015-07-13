@@ -18,5 +18,7 @@
   }
   ,"widget":{
 
-  }
+  },
+  "features" : [{"name" : "GPS"} ,{"name" : "Bluetooth"}],
+  "languages" : ["en" , "fr"]
 }
