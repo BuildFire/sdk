@@ -154,6 +154,22 @@ var buildfire = {
                 callback(err, result);
             });
         }
+         ,insert:function(obj,tag,callback){
+
+            var tagType = typeof(tag);
+            if(tagType == "undefined")
+                tag='';
+            else if(tagType=="function" && typeof(callback)=="undefined"){
+                callback=tag;
+                tag='';
+            }
+
+            var p = new Packet(null, 'datastore.insert',{tag:tag,obj:obj});
+            buildfire.sendPacket(p, function(err, result){
+                if(result)buildfire.datastore.triggerOnUpdated(result);
+                callback(err, result);
+            });
+        }
          ,update:function(obj,tag,callback){
 
             var tagType = typeof(tag);
