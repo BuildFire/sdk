@@ -67,21 +67,12 @@ var buildfire = {
                 buildfire.sendPacket(p, callback);
             }
             , attachCSSFiles: function () {
-                var files;
-                if (window.location.pathname.indexOf('/control/') > 0) {
-                    files = [
-                        '/styles/cpBootstrap.css'
-                        , '/styles/build.css'
-                        , '/styles/icons.css'
-                        , '/styles/siteStyle.css'
-                    ];
-                }
-                else {
-                    files = [
-                        '/styles/bootstrap.css'
-                        ,'/styles/theme.css'
-                    ];
-                }
+                var files = ['/styles/bootstrap.css'];
+                if (window.location.pathname.indexOf('/control/') > 0)
+                    files.push('/styles/siteStyle.css');
+                else
+                    files.push('/styles/appTheme.css');
+
 
                 var base;
                 var scripts = document.getElementsByTagName("script");
