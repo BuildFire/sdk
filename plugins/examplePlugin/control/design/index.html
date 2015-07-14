@@ -26,8 +26,10 @@
          * Go pull any previously saved data
          * */
         buildfire.datastore.get(function(err,data){
-            $scope.data = data;
-            $scope.$digest();
+            if(data) {
+                $scope.data = data;
+                $scope.$digest();
+            }
         });
 
         /*

@@ -1,9 +1,8 @@
 {
-  "author":"[Developer Name]"
-  ,"pluginName":"[Plugin Name]"
-  ,"pluginDescription":"[Plugin Description that will be shown to the app owner]"
-  ,"supportEmail":"[Email where the app owner can reach out for help]"
-  ,"pluginIcon":"[this is the default icon that will be used when creating a new instance of your plugin]"
+  "author":"Daniel Hindi"
+  ,"pluginName":"Example Plugin"
+  ,"pluginDescription":"This is a simple test plugin"
+  ,"supportEmail":"support@buildfire.com"
   ,"control":{
     "content":{
       "enabled":true
