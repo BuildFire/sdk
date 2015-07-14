@@ -94,7 +94,7 @@ var buildfire = {
                 for (var i = 0; i < files.length; i++)
                     document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
-                document.write('<link rel="stylesheet" href="/api/app/styles/appearance.css">');
+                document.write('<link rel="stylesheet" href="/api/app/styles/theme.css">');
 
             }
             ,_resized:false
