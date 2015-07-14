@@ -3,7 +3,6 @@
   ,"pluginName":"[Plugin Name]"
   ,"pluginDescription":"[Plugin Description that will be shown to the app owner]"
   ,"supportEmail":"[Email where the app owner can reach out for help]"
-  ,"pluginIcon":"[this is the default icon that will be used when creating a new instance of your plugin]"
   ,"control":{
     "content":{
       "enabled":true
