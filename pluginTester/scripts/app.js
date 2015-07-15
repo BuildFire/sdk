@@ -9,7 +9,7 @@ $app.config(['$sceDelegateProvider',function ($sceDelegateProvider) {
         // Allow same origin resource loads.
         'self',
         // Allow loading from our assets domain.  Notice the difference between * and **.
-        window.siteConfig.endPoints.pluginHost + '**'
+        window.siteConfig.endPoints.pluginHost + '/**'
     ]);
 
 }]);
