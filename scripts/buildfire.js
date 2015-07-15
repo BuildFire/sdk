@@ -67,20 +67,12 @@ var buildfire = {
                 buildfire.sendPacket(p, callback);
             }
             , attachCSSFiles: function () {
-                var files;
-                if (window.location.pathname.indexOf('/control/') > 0) {
-                    files = [
-                        '/styles/cpBootstrap.css'
-                        , '/styles/build.css'
-                        , '/styles/icons.css'
-                        , '/styles/siteStyle.css'
-                    ];
-                }
-                else {
-                    files = [
-                        '/styles/bootstrap.css'
-                    ];
-                }
+                var files = ['/styles/bootstrap.css'];
+                if (window.location.pathname.indexOf('/control/') > 0)
+                    files.push('/styles/siteStyle.css');
+                else
+                    files.push('/styles/appTheme.css');
+
 
                 var base;
                 var scripts = document.getElementsByTagName("script");
@@ -94,7 +86,6 @@ var buildfire = {
                 for (var i = 0; i < files.length; i++)
                     document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
-                document.write('<link rel="stylesheet" href="/api/app/styles/theme.css">');
 
             }
             ,_resized:false
