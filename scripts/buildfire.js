@@ -14,11 +14,10 @@ var buildfire = {
             window.addEventListener('message', buildfire.postMessageHandler, false);
             buildfire.appearance.attachCSSFiles();
             buildfire.getContext(function (err, context) {
-                if (err) {
-                    debugger;
+                if (err)
                     console.error(err);
-                }
-                else buildfire.context = context;
+                else
+                    buildfire.context = context;
             });
         }
         , postMessageHandler: function (e) {
@@ -90,22 +89,30 @@ var buildfire = {
             }
             ,_resized:false
             , autosizeContainer: function () {
-                if (buildfire.appearance._resized || document.body.offsetHeight < 100) return;
-                var p = new Packet(null, 'appearance.autosizeContainer', {height: document.body.offsetHeight});
+                var height = Math.max(
+                    document.documentElement.clientHeight,
+                    document.body.scrollHeight,
+                    document.documentElement.scrollHeight,
+                    document.body.offsetHeight,
+                    document.documentElement.offsetHeight
+                );
+                if (buildfire.appearance._resized || height < 100) return;
+                var p = new Packet(null, 'appearance.autosizeContainer', {height: height});
                 buildfire.sendPacket(p);
                 buildfire.appearance._resized = true;
             }
         }
         , sendPacket: function (packet, callback) {
-            if (typeof (callback) == "function")
-                buildfire._callbacks[packet.id] = callback;
+            if (typeof (callback) != "function")// handels better on response
+                callback= function(err, result){ console.log('buildfire.js ignored callback ' + JSON.stringify(arguments)) };
+
+            buildfire._callbacks[packet.id] = callback;
 
             var p = JSON.stringify(packet);
             console.log("BuildFire.js Send >> " + p);
             if (parent)parent.postMessage(p, "*");
         }
-        ,
-        analytics: {
+        , analytics: {
             trackAction: function (actionName, metadata) {
                 var p = new Packet(null, "analytics.trackActionCommand", {
                     value: actionName,
@@ -122,8 +129,7 @@ var buildfire = {
                 buildfire.sendPacket(p);
             }
         }
-        ,
-        datastore: {
+        , datastore: {
             get: function (tag, callback) {
                 var tagType = typeof(tag);
                 if (tagType == "undefined")
@@ -208,7 +214,9 @@ var buildfire = {
             }
             ,
             onUpdate: function (callback) {
-                document.addEventListener('datastoreOnUpdate', callback, false);
+                document.addEventListener('datastoreOnUpdate',function(err,data){
+                    if(callback)callback(err,data);
+                }, false);
             }
             ,
             triggerOnUpdated: function (data) {
@@ -217,18 +225,9 @@ var buildfire = {
                 document.dispatchEvent(onUpdateEvent);
             }
         }
-        ,
-        imageStore: {
-            getAll: function (callback) {
-
-            }
-            ,
-            post: function (img, callback) {
-
-            }
-            ,
-            show: function (imgUrl, callback) {
-                var p = new Packet(null, 'imageLibAPI.showDialog', null);
+        , imageLib: {
+            showDialog: function (allowMultiSelect, callback) {
+                var p = new Packet(null, 'imageLib.showDialog', {allowMultiSelect:allowMultiSelect});
                 buildfire.sendPacket(p, callback);
             }
         }
@@ -236,5 +235,8 @@ var buildfire = {
     ;
 buildfire.init();
 document.addEventListener("DOMContentLoaded", function (event) {
+    buildfire.appearance.autosizeContainer();
+});
+document.addEventListener("resize", function (event) {
     buildfire.appearance.autosizeContainer();
 });
