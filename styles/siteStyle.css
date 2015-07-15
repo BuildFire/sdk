@@ -94,6 +94,9 @@ header a.logo img{
 header .usermenus{
 	padding:15px 20px;
 }
+header .appid p{
+	margin-top:6px;
+}
 header .usermenus .dropdown .dropdown-toggle:hover,
 header .usermenus .dropdown.open .dropdown-toggle{
 	background:#fff !important;
@@ -102,8 +105,14 @@ header .usermenus .dropdown + .dropdown,
 header .usermenus .button{
 	margin-left:15px;
 }
+header .usermenus .button{
+	width:100px;
+}
 header .usermenus .dropdown .dropdown-menu{
 	border-radius:0 0 4px 4px;
+}
+header .usermenus .dropdown .caret{
+	height:20px;
 }
 
 
@@ -403,6 +412,10 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	display:inline-block;
 	margin-top:6px;
 }
+#main-content .holder .well.no-plugins{
+	padding-top:60px;
+	padding-bottom:60px;
+}
 
 
 /* Launcher Plugin */
@@ -432,6 +445,12 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 .plugin-manager.holder .plugin-settings .labels{
 	margin-top:6px;
+}
+#main-content .plugin-manager.holder .accordion-holder img.icon{
+	max-width:38px;
+	max-height:38px;
+	height:auto;
+	width:auto;
 }
 
 /* Side Menu/Associate Plugin Page */
@@ -822,16 +841,18 @@ body.rtl .pagination > li + li{
 	margin-left:0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Plugin iFrame */
+#iframeControl{
+	width:100%;
+	min-width:100%;
+	max-width:100%;
+	min-height:600px;
+}
+html.plugin-iframe,
+.plugin-iframe body{
+	width:100%;
+	min-width:100%;
+	max-width:100%;
+	background:none;
+	overflow-x:hidden;
+}

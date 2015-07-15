@@ -2,6 +2,13 @@
 and targeted by Bootstrap like classes */
 
 /***** Transitions *****/
+/* No Transition */
+.transition-none{
+  	-moz-transition:none !important;
+  	-o-transition:none !important;
+  	-webkit-transition:none !important;
+  	transition:none !important;
+}
 /* 0.3s transition */
 .transition-third{
 	-moz-transition: all 0.35s;

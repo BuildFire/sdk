@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="textPlugin">
+<html class="plugin-iframe" ng-app="textPlugin">
 <head lang="en">
     <meta charset="UTF-8">
     <script src="../../../../scripts/buildfire.js"></script>
@@ -7,7 +7,52 @@
 </head>
 <body ng-controller="textPluginCtrl">
 
-    <div ng-form="frmMain">
+	<div class="item clearfix row margin-top-thirty">
+		<div class="labels col-xs-3 padding-right-zero pull-left">
+			<span>Body Content</span>
+		</div>
+		<div class="main col-xs-9 pull-right">
+			<textarea class="form-control" placeholder="WYSIWYG"></textarea>
+		</div>
+	</div>
+	<hr>
+	<div class="item clearfix row">
+		<div class="labels col-xs-3 padding-right-zero pull-left">
+			<span>Address Title</span>
+		</div>
+		<div class="main col-xs-9 pull-right">
+			<input type="text" class="form-control" placeholder="Address Title">
+		</div>
+	</div>
+	<hr>
+	<div class="item clearfix row">
+		<div class="labels col-xs-3 padding-right-zero pull-left">
+			<span>Address</span>
+		</div>
+		<div class="main col-xs-9 pull-right">
+			<input type="text" class="form-control" placeholder="Street Address">
+			<div class="display-map margin-top-ten">
+				<div class="checkbox checkbox-primary">
+					<input type="checkbox" id="display_map">
+					<label for="display_map">Display Map</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div class="item clearfix row">
+		<div class="labels col-xs-3 padding-right-zero pull-left">
+			<span>Dynamic Links</span>
+		</div>
+		<div class="main col-xs-9 pull-right">
+			Dynamic Links
+		</div>
+	</div>
+    <hr>
+	<hr>
+	<hr>
+	<p>Default Code</p>
+	<div ng-form="frmMain">
 		<h4>Text</h4>
 		<textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
         <button id="btnUpload" onclick="buildfire.imageStore.show(true,function(images){});">upload</button>
