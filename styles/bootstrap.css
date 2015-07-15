@@ -2632,7 +2632,8 @@ textarea.form-control {
   height: auto;
   max-width:100%;
   min-width:100%;
-  /* max-height:300px; */
+  min-height:80px;
+  max-height:140px;
 }
 input[type="search"] {
   -webkit-appearance: none;

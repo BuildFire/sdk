@@ -40,20 +40,6 @@ iframe{
 	outline:none;
 	width:100%;
 }
-#iframeControl{
-	width:100%;
-	min-width:100%;
-	max-width:100%;
-	min-height:600px;
-}
-html.plugin-iframe,
-.plugin-iframe body{
-	width:100%;
-	min-width:100%;
-	max-width:100%;
-	background:none;
-	overflow-x:hidden;
-}
 ul{
 	padding:0;
 	margin:0;
@@ -853,4 +839,20 @@ body.rtl .pagination > li{
 body.rtl .pagination > li + li{
 	margin-right:4px;
 	margin-left:0;
+}
+
+/* Plugin iFrame */
+#iframeControl{
+	width:100%;
+	min-width:100%;
+	max-width:100%;
+	min-height:600px;
+}
+html.plugin-iframe,
+.plugin-iframe body{
+	width:100%;
+	min-width:100%;
+	max-width:100%;
+	background:none;
+	overflow-x:hidden;
 }
