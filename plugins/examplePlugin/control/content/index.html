@@ -1,53 +1,55 @@
 <!DOCTYPE html>
-<html ng-app="textPlugin">
+<html class="plugin-iframe" ng-app="textPlugin">
 <head lang="en">
     <meta charset="UTF-8">
     <script src="../../../../scripts/buildfire.js"></script>
     <script src="../../../../scripts/angular/angular.min.js"></script>
 </head>
 <body ng-controller="textPluginCtrl">
-	
-	<div class="item clearfix row margin-top-thirty">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>Body Content</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			<textarea class="form-control" placeholder="WYSIWYG"></textarea>
-		</div>
-	</div>
-	<hr>
-	<div class="item clearfix row">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>Address Title</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			<input type="text" class="form-control" placeholder="Address Title">
-		</div>
-	</div>
-	<hr>
-	<div class="item clearfix row">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>Address</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			<input type="text" class="form-control" placeholder="Street Address">
-			<div class="display-map margin-top-ten">
-				<div class="checkbox checkbox-primary">
-					<input type="checkbox" id="display_map">
-					<label for="display_map">Display Map</label>
+
+
+			<div class="item clearfix row margin-top-thirty">
+				<div class="labels col-xs-3 padding-right-zero pull-left">
+					<span>Body Content</span>
+				</div>
+				<div class="main col-xs-9 pull-right">
+					<textarea class="form-control" placeholder="WYSIWYG"></textarea>
+				</div>
+			</div>
+			<hr>
+			<div class="item clearfix row">
+				<div class="labels col-xs-3 padding-right-zero pull-left">
+					<span>Address Title</span>
+				</div>
+				<div class="main col-xs-9 pull-right">
+					<input type="text" class="form-control" placeholder="Address Title">
+				</div>
+			</div>
+			<hr>
+			<div class="item clearfix row">
+				<div class="labels col-xs-3 padding-right-zero pull-left">
+					<span>Address</span>
+				</div>
+				<div class="main col-xs-9 pull-right">
+					<input type="text" class="form-control" placeholder="Street Address">
+					<div class="display-map margin-top-ten">
+						<div class="checkbox checkbox-primary">
+							<input type="checkbox" id="display_map">
+							<label for="display_map">Display Map</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div class="item clearfix row">
+				<div class="labels col-xs-3 padding-right-zero pull-left">
+					<span>Dynamic Links</span>
+				</div>
+				<div class="main col-xs-9 pull-right">
+					Dynamic Links
 				</div>
 			</div>
 		</div>
-	</div>
-	<hr>
-	<div class="item clearfix row">
-		<div class="labels col-md-3 padding-right-zero pull-left">
-			<span>Dynamic Links</span>
-		</div>
-		<div class="main col-md-9 pull-right">
-			Dynamic Links
-		</div>
-	</div>	
 	
 <script>
     var textPluginApp = angular.module('textPlugin',[]);
