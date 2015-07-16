@@ -7,35 +7,39 @@
 </head>
 <body ng-controller="textPluginCtrl">
 
-    <div ng-form="frmMain">
-        <h4>Background Image URL</h4>
-        <input type="url" ng-model="data.content.bgURL"/>
-        <h4>Text</h4>
-        <textarea id="text" rows="5" width="100%" ng-model="data.content.text" ></textarea>
-	</div>		
-	
-<script>
-    var textPluginApp = angular.module('textPlugin',[]);
+<div ng-form="frmMain">
+    <h4>Background Image URL</h4>
+    <input type="url" ng-model="data.content.bgURL"/>
+    <h4>Text</h4>
+    <textarea id="text" rows="5" width="100%" ng-model="data.content.text"></textarea>
+    <button id="openImageLib" onclick="buildfire.imageLib.showDialog({allowMultiSelect:true},function(result){
+    debugger;
+    });">Open Image Lib
+    </button>
+</div>
 
-    textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
+<script>
+    var textPluginApp = angular.module('textPlugin', []);
+
+    textPluginApp.controller('textPluginCtrl', ['$scope', function ($scope) {
         /*
-        * Go pull any previously saved data
-        * */
+         * Go pull any previously saved data
+         * */
         buildfire.datastore.get(function (err, result) {
-            if(result) {
-                $scope.data= result.data;
+            if (result) {
+                $scope.data = result.data;
                 $scope.$digest();
                 if (tmrDelay)clearTimeout(tmrDelay);
             }
         });
 
         /*
-        * Call the datastore to save the data object
-        */
-        var saveData = function(newObj){
+         * Call the datastore to save the data object
+         */
+        var saveData = function (newObj) {
 
-            if(newObj == undefined)return;
-            if($scope.frmMain.$invalid ){
+            if (newObj == undefined)return;
+            if ($scope.frmMain.$invalid) {
                 console.warn('invalid data, no save');
                 return;
             }
@@ -49,18 +53,20 @@
         };
 
         /*
-        * create an artificial delay so api isnt called on every character entered
-        * */
+         * create an artificial delay so api isnt called on every character entered
+         * */
         var tmrDelay = null;
-        var saveDataWithDelay = function(newObj){
-            if(tmrDelay)clearTimeout(tmrDelay);
-            tmrDelay = setTimeout(function(){saveData(newObj);},500);
+        var saveDataWithDelay = function (newObj) {
+            if (tmrDelay)clearTimeout(tmrDelay);
+            tmrDelay = setTimeout(function () {
+                saveData(newObj);
+            }, 500);
         };
 
         /*
-        * watch for changes in data and trigger the saveDataWithDelay function on change
-        * */
-        $scope.$watch('data',saveDataWithDelay ,true);
+         * watch for changes in data and trigger the saveDataWithDelay function on change
+         * */
+        $scope.$watch('data', saveDataWithDelay, true);
     }]);
 </script>
 </body>
