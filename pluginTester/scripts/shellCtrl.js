@@ -27,11 +27,17 @@ $app.controller('shellCtrl', ['$scope', '$sce', function ($scope, $sce) {
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
 
+            $scope.$apply();
+        };
 
+        $scope.loadIFrame = function (section) {
+            var pluginFolder = window.appContext.currentPlugin.pluginPath;
+            $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html';
+            $scope.$apply();
         };
 
         $scope.init = function () {
-            var pluginFolder = window.location.hash.replace('#', '');
+            var pluginFolder = window.appContext.currentPlugin.pluginPath; //window.location.hash.replace('#', '');
             if (!pluginFolder) pluginFolder = 'examplePlugin';
 
             var xmlhttp = new XMLHttpRequest();
