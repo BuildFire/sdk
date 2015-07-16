@@ -1,0 +1,136 @@
+@media(max-width: 1400px){
+	header a.logo{
+		padding:16px 12px;
+		width:160px;
+	}
+	header a.logo img{
+		max-width:136px;
+		margin-top:4px;
+	}
+	header .contain{
+		max-width:1200px;
+	}
+	nav{
+		width:160px;
+	}
+	nav ul.menu li .parent{
+		padding-left:10px;
+		font-size:14px;
+	}
+	nav ul.menu li .parent ul.child-menu li a{
+		font-size:13px;
+	}
+	nav ul.menu li .parent span.icon{
+		display:none;
+	}
+	nav ul.menu li span.badge,
+	nav ul.menu li .parent.has-children::after{
+		right:10px;
+	}
+	nav ul.menu li .parent.active,
+	nav ul.menu li .parent:hover{
+		padding-left:18px;
+	}
+	#main-content{
+		margin-left:175px;
+		margin-right:15px;
+	}
+	#main-content .wrapper{
+		margin-top:79px;
+		width:614px;
+	}
+	#main-content .wrapper.largeWidth{
+		width:1006px;
+	}
+	#emulator{
+		left:804px;
+		top:79px;
+	}
+	#main-content .holder .labels span{
+		font-size:13px;
+	}
+	#main-content .holder .main .screens .screen label{
+		font-size:11px;
+	}
+	#main-content .holder .colorgrid .coloritem label{
+		font-size:12px;
+		top:-8px;
+	}
+	#main-content .holder .main .screens .layoutgrid{
+		width:75.6%;
+	}
+	#main-content .holder .main .screens .layoutgrid .layouticon:nth-child(4n){
+		margin-right:9px;
+	}
+	#main-content .holder .main .screens .layoutgrid .layouticon:nth-child(3n){
+		margin-right:0;
+	}
+	#main-content .holder .main .screens .screen, 
+	#main-content .holder .main .screens .layoutgrid .layouticon{
+		width:90px;
+	}
+	.draggable-list-view .d-item .copy{
+		width:71%;
+	}
+	.draggable-list-view .d-item span.title{
+		width:67%;
+	}
+	.site-alert.alert{
+		left:176px;
+	}
+	
+	/* Plugin Page */
+	#main-content .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
+		width:84%;
+		max-width:84%;
+	}
+	#main-content .holder.plugin-page .draggable-list-view.tab-order .d-item span.title{
+		width:87%;
+		max-width:87%;
+	}
+	#main-content .side-menu.holder .draggable-list-view.tab-order .d-item span.title{
+		max-width:81%;
+		width:81%;
+	}
+}
+
+@media(max-width: 1190px){
+	#emulator{
+		position:relative;
+		left:3px !important;
+	}	
+}
+
+@media(max-width: 1024px){
+
+}
+
+@media(max-width: 720px){
+
+}
+
+@media(max-width: 520px){
+
+}
+
+@media(max-width: 320px){
+
+}
+
+
+/* Responsive Height */
+@media(max-height: 820px) and (min-width:1401px){
+	#emulator{
+		position:relative;
+		left:0px !important;
+	}
+}
+@media(max-height: 820px) and (max-width:1400px){
+	#main-content{
+		width:960px;
+	}
+	#emulator{
+		position:relative;
+		left:3px;
+	}
+}
