@@ -34,13 +34,13 @@
 
 						<ul class="nav nav-tabs nav-justified">
 							<li>
-								<a id="btnLoadContent" ng-show="contentSrc" ng-click="loadIFrame('content')" >Content</a>
+								<a id="btnLoadContent" class="active" ng-show="contentSrc" ng-click="loadIFrame('content',$event)" >Content</a>
 							</li>
 							<li>
-								<a id="btnLoadDesign" ng-show="designSrc" ng-click="loadIFrame('design')">Design</a>
+								<a id="btnLoadDesign" ng-show="designSrc" ng-click="loadIFrame('design',$event)">Design</a>
 							</li>
 							<li>
-								<a id="btnLoadSettings" ng-show="settingsSrc"  ng-click="loadIFrame('settings')">Settings</a>
+								<a id="btnLoadSettings" ng-show="settingsSrc"  ng-click="loadIFrame('settings',$event)">Settings</a>
 							</li>
 						</ul>
 				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>

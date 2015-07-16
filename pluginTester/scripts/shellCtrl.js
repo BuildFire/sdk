@@ -33,6 +33,10 @@ $app.controller('shellCtrl', ['$scope', '$sce', function ($scope, $sce) {
         $scope.loadIFrame = function (section,e) {
             var pluginFolder = window.appContext.currentPlugin.pluginPath;
             $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html';
+            var element =document.querySelector('.active');
+            if(element)element.className='';
+            e.target.className ='active'
+
         };
 
         $scope.init = function () {
