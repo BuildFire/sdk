@@ -12,6 +12,7 @@ var buildfire = {
         // Listen to message from child window
         window.removeEventListener('message', buildfire.postMessageHandler, false);
         window.addEventListener('message', buildfire.postMessageHandler, false);
+        document.getElementsByTagName('html')[0].className='plugin-iframe';
         buildfire.appearance.attachCSSFiles();
         buildfire.getContext(function (err, context) {
             if (err)
