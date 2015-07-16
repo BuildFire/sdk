@@ -31,7 +31,9 @@ $app.controller('shellCtrl', ['$scope', '$sce', function ($scope, $sce) {
         };
 
         $scope.loadIFrame = function (section,e) {
-            var pluginFolder = window.appContext.currentPlugin.pluginPath;
+            var pluginFolder = window.location.hash.replace('#', '');
+            if (!pluginFolder) pluginFolder=window.appContext.currentPlugin.pluginPath;
+
             $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html';
             var element =document.querySelector('.active');
             if(element)element.className='';
@@ -40,8 +42,8 @@ $app.controller('shellCtrl', ['$scope', '$sce', function ($scope, $sce) {
         };
 
         $scope.init = function () {
-            var pluginFolder = window.appContext.currentPlugin.pluginPath; //window.location.hash.replace('#', '');
-            if (!pluginFolder) pluginFolder = 'examplePlugin';
+            var pluginFolder = window.location.hash.replace('#', '');
+            if (!pluginFolder) pluginFolder=window.appContext.currentPlugin.pluginPath;
 
             var xmlhttp = new XMLHttpRequest();
             var url = '../plugins/' + pluginFolder + "/plugin.json";

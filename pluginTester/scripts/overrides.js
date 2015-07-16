@@ -7,6 +7,7 @@ var pluginAPI = new PluginAPI(document.getElementById('widget').contentWindow ,w
 pluginAPI.tag='shell';
 var controlPluginAPI = new PluginAPI(document.getElementById('iframeControl').contentWindow ,window.appContext.currentApp.appId
     , 0, 1,0);
+controlPluginAPI.tag='controlPluginAPI';
 
 var onUpdate =function(updateObj){
 
@@ -14,7 +15,7 @@ var onUpdate =function(updateObj){
     if(typeof(widgetIFrame) != 'object' || widgetIFrame.tagName !='IFRAME')
         console.error('cant find widget iframe');
     else{
-        var packet = new Packet(null,'datastore.triggerOnUpdated',updateObj.detail);
+        var packet = new Packet(null,'datastore.triggerOnUpdate',updateObj.detail);
 
         pluginAPI.sendMessage( widgetIFrame.contentWindow ,packet);
     }
