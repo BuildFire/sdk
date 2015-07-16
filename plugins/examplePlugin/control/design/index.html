@@ -22,19 +22,19 @@
     var textPluginApp = angular.module('textPluginDesign',[]);
 
     textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
-        /*
-         * Go pull any previously saved data
-         * */
-        buildfire.datastore.get(function(err,data){
-            if(data) {
-                $scope.data = data;
+
+        //Go pull any previously saved data
+        buildfire.datastore.get(function(err,result){
+            if(result) {
+                $scope.data = result.data;
                 $scope.$digest();
             }
+            $scope.$watch('data',saveData ,true);
         });
 
-        /*
-         * Call the datastore to save the data object
-         */
+
+         // Call the datastore to save the data object
+
         var saveData = function(newObj){
             if(newObj == undefined)return;
 
@@ -45,11 +45,10 @@
                     console.log('data saved');
             });
         };
-
         /*
          * watch for changes in data and trigger the saveDataWithDelay function on change
          * */
-        $scope.$watch('data',saveData ,true);
+
     }]);
 </script>
 </body>

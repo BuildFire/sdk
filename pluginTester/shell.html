@@ -31,49 +31,16 @@
 						<h4 class="margin-zero">SDK</h4>
 					</div>
 					<div class="layout padded clearfix">
-						<div class="hidden">
-							<div class="item clearfix row">
-								<div class="labels col-md-3 padding-right-zero pull-left">
-									<span>Icon</span>
-								</div>
-								<div class="main col-md-9 pull-right">
-									<div class="screens clearfix">
-										<div class="screen pull-left">
-											<a class="border-grey border-radius-three default-background-hover"></a>
-											<span class="icon btn-icon btn-delete-icon btn-danger transition-third"></span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<hr class="none">
-							<div class="item clearfix row">
-								<div class="labels col-md-3 padding-right-zero pull-left">
-									<span>Title</span>
-								</div>
-								<div class="main col-md-9 pull-right">
-									<input type="text" class="form-control" placeholder="Plugin Title">
-								</div>
-							</div>
-							<hr class="none">
-							<div class="item clearfix row">
-								<div class="labels col-md-3 padding-right-zero pull-left">
-									<span>Deep Link URL</span>
-								</div>
-								<div class="main col-md-9 pull-right">
-									<span>http://wwww.buildfire.com/102AFH</span>
-								</div>
-							</div>
-							<hr class="none">
-						</div>
+
 						<ul class="nav nav-tabs nav-justified">
 							<li>
-								<a id="btnLoadContent" class="active" onclick="alert('')" ng-show="$scope.contentSrc">Content</a>
+								<a id="btnLoadContent" class="active" ng-show="contentSrc" ng-click="loadIFrame('content',$event)" >Content</a>
 							</li>
 							<li>
-								<a id="btnLoadDesign" ng-show="$scope.designSrc">Design</a>
+								<a id="btnLoadDesign" ng-show="designSrc" ng-click="loadIFrame('design',$event)">Design</a>
 							</li>
 							<li>
-								<a id="btnLoadSettings" ng-show="$scope.settingsSrc">Settings</a>
+								<a id="btnLoadSettings" ng-show="settingsSrc"  ng-click="loadIFrame('settings',$event)">Settings</a>
 							</li>
 						</ul>
 				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>
