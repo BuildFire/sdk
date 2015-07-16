@@ -12,8 +12,6 @@
 
 	<!-- JS -->
 	<script type="text/javascript" src="../scripts/angular/angular.min.js"></script>
-
-
 </head>
 <body onhashchange="init()" ng-controller="shellCtrl" >
 	<div id="container">
@@ -31,16 +29,15 @@
 						<h4 class="margin-zero">SDK</h4>
 					</div>
 					<div class="layout padded clearfix">
-
 						<ul class="nav nav-tabs nav-justified">
-							<li>
-								<a id="btnLoadContent" class="active" ng-show="contentSrc" ng-click="loadIFrame('content',$event)" >Content</a>
+							<li ng-show="contentSrc">
+								<a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)" >Content</a>
 							</li>
-							<li>
-								<a id="btnLoadDesign" ng-show="designSrc" ng-click="loadIFrame('design',$event)">Design</a>
+							<li ng-show="designSrc">
+								<a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
 							</li>
-							<li>
-								<a id="btnLoadSettings" ng-show="settingsSrc"  ng-click="loadIFrame('settings',$event)">Settings</a>
+							<li ng-show="settingsSrc">
+								<a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
 							</li>
 						</ul>
 				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>
@@ -56,6 +53,7 @@
         </section>
 	</div>
 
+	<!-- JS -->
 	<script type="text/javascript" src="scripts/siteConfig.js"></script>
 	<script type="text/javascript" src="scripts/appContext.js"></script>
 	<script type="text/javascript" src="scripts/loadScripts.js"></script>
