@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="plugin-iframe" ng-app="textPlugin">
+<html ng-app="textPlugin">
 <head lang="en">
     <meta charset="UTF-8">
     <script src="../../../../scripts/buildfire.js"></script>
@@ -7,11 +7,9 @@
 </head>
 <body ng-controller="textPluginCtrl">
 
-
 	<div ng-form="frmMain">
-		<h4>Text</h4>
-		<textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
-        <button id="btnUpload" onclick="buildfire.imageStore.show(true,function(images){});">upload</button>
+		<textarea class="form-control" id="text" rows="5" width="500px" ng-model="data.text" ></textarea><br>
+        <button class="btn btn-success" id="btnUpload" onclick="buildfire.imageStore.show(true,function(images){});">Upload</button>
 	</div>		
 	
 <script>
