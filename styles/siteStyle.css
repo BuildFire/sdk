@@ -322,7 +322,8 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 #main-content #dynamicContentContainer{
 	padding:0;
 }
-#main-content .holder .btn.dropdown-toggle{
+#main-content .holder .btn.dropdown-toggle,
+.btn.dropdown-toggle{
 	width:100%;
 }
 #main-content .holder .main .inner-main .info{

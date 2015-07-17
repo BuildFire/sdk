@@ -1,0 +1,45 @@
+@media(max-width: 600px){
+	html[buildfire] .item .labels span{
+		font-size:13px;
+	}
+	html[buildfire] .screens .screen label{
+		font-size:11px;
+	}
+	html[buildfire] .colorgrid .coloritem label{
+		font-size:12px;
+		top:-8px;
+	}
+	html[buildfire] .screens .layoutgrid{
+		width:75.6%;
+	}
+	html[buildfire] .screens .layoutgrid .layouticon:nth-child(4n){
+		margin-right:9px;
+	}
+	html[buildfire] .screens .layoutgrid .layouticon:nth-child(3n){
+		margin-right:0;
+	}
+	html[buildfire] .screens .screen, 
+	html[buildfire] .screens .layoutgrid .layouticon{
+		width:90px;
+	}
+	html[buildfire] .draggable-list-view .d-item .copy{
+		width:71%;
+	}
+	html[buildfire] .draggable-list-view .d-item span.title{
+		width:67%;
+	}
+	
+	/* Plugin Page */
+	html[buildfire] #main-content .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
+		width:84%;
+		max-width:84%;
+	}
+	html[buildfire] #main-content .holder.plugin-page .draggable-list-view.tab-order .d-item span.title{
+		width:87%;
+		max-width:87%;
+	}
+	html[buildfire] #main-content .side-menu.holder .draggable-list-view.tab-order .d-item span.title{
+		max-width:81%;
+		width:81%;
+	}
+}

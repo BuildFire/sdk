@@ -71,7 +71,7 @@ var buildfire = {
             var files = ['styles/bootstrap.css'];
             if (window.location.pathname.indexOf('/control/') > 0)
                 files.push('styles/siteStyle.css') &&
-                files.push('styles/siteScreen.css');
+                files.push('styles/pluginScreen.css');
             else
                 files.push('styles/appTheme.css');
 
