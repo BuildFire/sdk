@@ -17,13 +17,14 @@
 				<span>Border</span>
 			</div>
 			<div class="main col-md-9 pull-right">
-			    <input type="radio" id="style1" name="style" value="style1"
-			    	ng-checked="data.design.style=='style1'" ng-model="data.design.style" ng-change="saveData()" ng-required="data.design.style">
-			    <label for="style1">Red</label>
-
-			    <input type="radio" id="style2" class="margin-left-thirty" name="style" value="style2"
-			           ng-checked="data.design.style=='style2'"  ng-model="data.design.style" ng-change="saveData()" ng-required="data.design.style">
-			    <label for="style2">Blue</label>
+				<div class="radio radio-inline radio-primary">
+			    	<input type="radio" id="style1" name="style" value="style1" ng-checked="data.design.style=='style1'" ng-model="data.design.style" ng-change="saveData()" ng-required="data.design.style">
+			    	<label for="style1">Red</label>
+				</div>
+				<div class="radio radio-inline radio-primary">
+			    	<input type="radio" id="style2" class="margin-left-thirty" name="style" value="style2" ng-checked="data.design.style=='style2'"  ng-model="data.design.style" ng-change="saveData()" ng-required="data.design.style">
+			    	<label for="style2">Blue</label>
+				</div>
 		    </div>
 		</div>
 	</div>
