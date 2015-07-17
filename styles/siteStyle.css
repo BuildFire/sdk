@@ -40,11 +40,13 @@ iframe{
 	outline:none;
 	width:100%;
 }
-ul{
+ul,
+ol{
 	padding:0;
 	margin:0;
 }
-ul li{
+ul li,
+ol li{
 	list-style:none;
 }
 textarea{
@@ -333,7 +335,8 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	margin-top:6px;
 	font-size:14px;
 }
-#main-content .holder span.tip{
+#main-content .holder span.tip,
+.item span.tip{
 	display:inline-block;
 	margin-left:8px;
 	position:relative;
@@ -847,9 +850,10 @@ body.rtl .pagination > li + li{
 	min-width:100%;
 	max-width:100%;
 	min-height:600px;
+	margin-top:30px;
 }
-html.plugin-iframe,
-.plugin-iframe body{
+html[buildfire],
+html[buildfire] body{
 	width:100%;
 	min-width:100%;
 	max-width:100%;
