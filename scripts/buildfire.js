@@ -73,7 +73,7 @@ var buildfire = {
                 files.push('styles/siteStyle.css') &&
                 files.push('styles/pluginScreen.css');
             else
-                files.push('styles/appTheme.css');
+                files.push('styles/appStyle.css');
 
             var base;
             var scripts = document.getElementsByTagName("script");

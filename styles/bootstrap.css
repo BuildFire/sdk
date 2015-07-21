@@ -1169,8 +1169,11 @@ hr {
   border: 0;
   border-top: 1px solid #ddd;
 }
+hr.small,
 hr.none{
   margin:10px 0;
+}
+hr.none{
   border-top:1px solid transparent;
 }
 .sr-only {
