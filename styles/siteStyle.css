@@ -227,6 +227,7 @@ nav ul.menu li .parent.has-children p.text{
 nav ul.menu li .parent ul.child-menu{
 	height:0;
 	opacity:0;
+	overflow:hidden;
 }
 nav ul.menu li .parent.active > ul.child-menu{
 	height:auto;

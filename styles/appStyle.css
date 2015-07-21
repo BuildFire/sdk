@@ -1,0 +1,244 @@
+*{
+	outline:none;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	font-family:Helvetica, Sans-Serif;
+}
+html,
+body{
+	font-family:Helvetica, Sans-Serif;
+	font-weight:100;
+	color:#5f5f5f;
+	height:100%;
+    margin:0px;
+	overflow:hidden;
+	-ms-overflow-style:none;
+}
+::-webkit-scrollbar{
+    display:none;
+}
+img,
+iframe, 
+object{
+	max-width:100%;
+	vertical-align:top;
+}
+iframe{
+	border:none;
+	outline:none;
+	width:100%;
+}
+ul,
+ol{
+	padding:0;
+	margin:0;
+}
+ul li,
+ol li{
+	list-style:none;
+}
+textarea{
+	overflow:auto;
+}
+
+.holder{
+	margin-top:50px;
+	padding:15px;
+}
+.padded{
+	padding:15px;
+}
+
+/* Launcher Plugin */
+#launcherPlugin{
+	border:none;
+	height:100%;
+	width:100%;
+}
+
+/* Plugin Nav */
+#pluginNav{
+    height:auto !important;
+	background:#09a3ee;
+	padding:14px 10px;
+	border-bottom:none;
+	margin-bottom:0;
+}
+#pluginNav a.back-btn-icon,
+#pluginNav a.menu-btn-icon{
+	position:absolute;
+	top:17px;
+	left:10px;
+	font-size:15px;
+	color:#fff;
+	font-weight:600;
+	text-decoration:none;
+	cursor:default;
+}
+#pluginNav a.menu-btn-icon{
+	left:auto;
+	right:10px;
+	font-size:21px;
+	top:14px;
+}
+#pluginNav h4,
+#pluginNav h5{
+	text-align:center;
+	color:#fff;
+	margin:0 auto;
+	max-width:65%;
+	font-size:16px;
+	line-height:19px;
+	position:relative;
+	top:3px;
+	font-weight:100;
+}
+
+/* Menu */
+nav.menu{
+	position:absolute;
+	right:0;
+	top:0;
+	width:50%;
+	min-width:250px;
+	background:#32373a;
+	border-left:1px solid #26282b;
+	height:100%;
+	z-index:1199;
+	overflow-x:hidden;
+	overflow-y:auto;
+	transition:all 0.35s ease;
+	-webkit-transform:translateX(100%);
+	transform:translateX(100%);
+}
+nav.menu.active{
+	-webkit-transform:translateX(0%);
+	transform:translateX(0%);
+}
+nav.menu a{
+	display:block;
+	width:100%;
+	padding:12px;
+	color:#a6abba;
+	text-decoration:none;
+}
+nav.menu a + a{
+	border-top:1px solid #26282b;
+}
+nav.menu a.username{
+	padding-top:15px;
+	padding-bottom:14px;
+}
+nav.menu a.divider{
+	background:#26282b;
+	padding-top:6px;
+	padding-bottom:6px;
+}
+nav.menu a .media{
+	display:inline-block;
+	width:22px;
+	height:22px;
+	line-height:22px;
+	margin-right:12px;
+	text-align:center;
+}
+nav.menu a .media img{
+	vertical-align:middle;
+	max-width:22px;
+	max-height:22px;
+	height:auto;
+	width:auto;
+}
+nav.menu a p{
+	margin:3px 0 0;
+	max-width:100%;
+	font-size:13px;
+	line-height:18px;
+}
+
+/* People Plugin */
+.people-banner{
+	background:url(http://getparade.com/media/imagic/square3.jpg) no-repeat;
+	background-position:center center;
+	background-size:cover;
+}
+.people-banner .people-bg{
+	background:rgba(255, 255, 255, 0.9);
+}
+.people-banner .people-media img{
+	max-width:140px;
+	max-height:140px;
+}
+.people-banner .people-info .icon{
+	color:#09a3ee;
+	font-size:28px;
+	vertical-align:top;
+}
+.people-banner.layout2 .people-bg{
+	background:rgba(0, 0, 0, 0.8);
+	padding:35px 0 !important;
+}
+.people-banner.layout2 .people-holder{
+	max-width:400px;
+	margin:0 auto;
+	padding:0 15px;
+}
+.people-banner.layout2 .people-media{
+	float:left;
+	max-width:100px;
+}
+.people-banner.layout2 .people-media img{
+	max-width:100%;
+	height:auto;
+}
+.people-banner.layout2 .people-info{
+	float:left;
+	width:62%;
+	margin-top:10px !important;
+	padding-right:0;
+	padding-top:10px;
+	text-align:left !important;
+	color:#fff;
+}
+.people-banner.layout3{
+	background:#fff;
+}
+.people-banner.layout3 .people-bg{
+	padding:0 !important;
+	position:relative;
+}
+.people-banner.layout3 .people-media{
+	width:140px;
+	position:absolute;
+	left:0;
+	top:0;
+}
+.people-banner.layout3 .people-media img{
+	width:100%;
+	border-radius:0;
+	border:none;
+	max-width:inherit;
+	max-height:inherit;
+}
+.people-banner.layout3 .people-info{
+	width:100%;
+	padding-left:155px;
+	float:left;
+	height:140px;
+	margin-top:0 !important;
+	padding-top:42px;
+	text-align:left !important;
+}
+
+/* Contact Us Plugin */
+.contact-slider,
+.contact-slider .contact-slide{
+	max-height:380px;
+	background:#32373a;
+}
+.contact-slider .contact-slide img{
+	max-height:100%;
+	width:auto;
+	max-width:40%;
+}

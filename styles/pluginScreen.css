@@ -39,6 +39,9 @@
 		max-width:84%;
 		width:84%;
 	}
+	html[buildfire] .item span.tip{
+		margin-left:2px;
+	}
 	
 	/* Plugin Page */
 	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
