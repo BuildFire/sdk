@@ -3,8 +3,8 @@
  */
 
 
-$app.controller('shellCtrl', ['$scope', '$sce', function ($scope, $sce) {
-
+$app.controller('shellCtrl', ['$scope', '$sce','$http', function ($scope, $sce,$http) {
+        window.$http=$http;
         var config = null;
 
 
