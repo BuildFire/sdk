@@ -389,6 +389,9 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	top:5px;
 	margin-left:17px;
 }
+.draggable-list-view.has-btn-link .d-item .copy span.btn-icon{
+	margin-left:12px;
+}
 .draggable-list-view .d-item.double-line .copy{
 	top:-2px;
 	width:87%;
@@ -458,11 +461,11 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 
 /* Side Menu/Associate Plugin Page */
-#main-content .side-menu.holder .draggable-list-view.tab-order{
+#main-content .holder .draggable-list-view.tab-order.wide-list{
 	height:457px;
 	max-height:457px;
 }
-#main-content .side-menu.holder .draggable-list-view.tab-order .d-item span.title{
+#main-content .holder .draggable-list-view.tab-order.wide-list .d-item span.title{
 	max-width:85%;
 	width:85%;
 }
@@ -569,6 +572,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	font-size:15px;
 	line-height:20px;
 	font-weight:300;
+	background:#eef0f0;
 }
 .modal-dialog .header h4{
 	font-size:15px;
@@ -588,7 +592,10 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	cursor:pointer;
 	text-decoration:none;
 }
-
+.modal .modal-content span.btn-info-icon{
+	position:relative;
+	top:4px;
+}
 
 /* Device Screens/Icons */
 #main-content .holder .main .screens{
