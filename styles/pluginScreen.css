@@ -28,21 +28,25 @@
 	html[buildfire] .draggable-list-view .d-item span.title{
 		width:67%;
 	}
-	
-	/* Plugin Page */
-	html[buildfire] .plugin-page .draggable-list-view .d-item.double-line .copy{
-		width:84%;
-		max-width:84%;
-	}
-	html[buildfire] .plugin-page .draggable-list-view.tab-order .d-item span.title{
-		width:87%;
-		max-width:87%;
-	}
-	html[buildfire] .side-menu .draggable-list-view.tab-order .d-item span.title{
+	html[buildfire] .draggable-list-view.tab-order.wide-list .d-item span.title{
 		max-width:81%;
 		width:81%;
 	}
 	html[buildfire] .draggable-list-view.has-btn-link .d-item .copy span.btn-icon{
 		margin-left:10px;
+	}
+	html[buildfire] .draggable-list-view.wide-list .d-item .copy{
+		max-width:84%;
+		width:84%;
+	}
+	
+	/* Plugin Page */
+	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
+		width:84%;
+		max-width:84%;
+	}
+	html[buildfire] .holder.plugin-page .draggable-list-view.tab-order .d-item span.title{
+		width:87%;
+		max-width:87%;
 	}
 }
