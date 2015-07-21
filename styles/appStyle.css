@@ -158,11 +158,6 @@ nav.menu a p{
 }
 
 /* People Plugin */
-.people-banner{
-	background:url(http://getparade.com/media/imagic/square3.jpg) no-repeat;
-	background-position:center center;
-	background-size:cover;
-}
 .people-banner .people-bg{
 	background:rgba(255, 255, 255, 0.9);
 }
