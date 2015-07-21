@@ -175,24 +175,24 @@ nav.menu a p{
 	font-size:28px;
 	vertical-align:top;
 }
-.people-banner.layout2 .people-bg{
+.layout2 .people-banner .people-bg{
 	background:rgba(0, 0, 0, 0.8);
 	padding:35px 0 !important;
 }
-.people-banner.layout2 .people-holder{
+.layout2 .people-banner .people-holder{
 	max-width:400px;
 	margin:0 auto;
 	padding:0 15px;
 }
-.people-banner.layout2 .people-media{
+.layout2 .people-banner .people-media{
 	float:left;
 	max-width:100px;
 }
-.people-banner.layout2 .people-media img{
+.layout2 .people-banner .people-media img{
 	max-width:100%;
 	height:auto;
 }
-.people-banner.layout2 .people-info{
+.layout2 .people-banner .people-info{
 	float:left;
 	width:62%;
 	margin-top:10px !important;
@@ -201,27 +201,27 @@ nav.menu a p{
 	text-align:left !important;
 	color:#fff;
 }
-.people-banner.layout3{
+.layout3 .people-banner{
 	background:#fff;
 }
-.people-banner.layout3 .people-bg{
+.layout3 .people-banner .people-bg{
 	padding:0 !important;
 	position:relative;
 }
-.people-banner.layout3 .people-media{
+.layout3 .people-banner .people-media{
 	width:140px;
 	position:absolute;
 	left:0;
 	top:0;
 }
-.people-banner.layout3 .people-media img{
+.layout3 .people-banner .people-media img{
 	width:100%;
 	border-radius:0;
 	border:none;
 	max-width:inherit;
 	max-height:inherit;
 }
-.people-banner.layout3 .people-info{
+.layout3 .people-banner .people-info{
 	width:100%;
 	padding-left:155px;
 	float:left;
@@ -231,14 +231,51 @@ nav.menu a p{
 	text-align:left !important;
 }
 
-/* Contact Us Plugin */
-.contact-slider,
-.contact-slider .contact-slide{
+.plugin-slider,
+.plugin-slide,
+.contact-maps{
 	max-height:380px;
+	background:#eef0f0;
 	background:#32373a;
 }
-.contact-slider .contact-slide img{
-	max-height:100%;
+.contact-maps{
+	background:#32373a;
+}
+.plugin-slide img,
+.contact-maps img{
+	max-height:380px;
 	width:auto;
-	max-width:40%;
+}
+.layout2 .contact-maps{
+	position:relative;
+}
+.layout2 .contact-maps .contact-address{
+	position:absolute;
+	bottom:0;
+	left:0;
+	width:100%;
+	padding:10px 0;
+	opacity:0.85;
+}
+.layout2 .plugin-slider, 
+.layout2 .plugin-slider .contact-slide{
+	max-height:100px;
+	background:none;
+}
+
+/* List Items */
+.list-items .list-item{
+	position:relative;
+}
+.list-items .list-item + .list-item{
+	border-top:1px solid #ddd;
+	padding-top:10px;
+	margin-top:10px;
+}
+.list-items .list-item .media{
+	width:100px;
+}
+.list-items .list-item .content{
+	padding-left:110px;
+	width:100%;
 }
