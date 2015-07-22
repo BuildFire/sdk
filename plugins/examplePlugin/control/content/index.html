@@ -86,7 +86,7 @@
 
         /*Open Image Lib*/
         $scope.openImageLib = function () {
-            buildfire.imageLib.showDialog({showIcons: false}, function (error, result) {
+            buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, function (error, result) {
                 if (result && result.selectedFiles && result.selectedFiles.length > 0) {
                     $scope.data.content.bgURL = result.selectedFiles[0];
                     $scope.$apply();
