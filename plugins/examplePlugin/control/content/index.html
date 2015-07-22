@@ -21,6 +21,7 @@
 			</div>
 			<div class="main col-md-9 pull-right">
 				<input type="url" class="form-control" ng-model="data.content.bgURL"/>
+                <button ng-click="openImageLib();">Open ImageLib</button>
 		    </div>
 		</div>
 		<hr>
@@ -80,6 +81,16 @@
         * watch for changes in data and trigger the saveDataWithDelay function on change
         * */
         $scope.$watch('data',saveDataWithDelay ,true);
+
+        /*Open Image Lib*/
+        $scope.openImageLib = function () {
+            buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, function (error, result) {
+                if (result && result.selectedFiles && result.selectedFiles.length > 0) {
+                    $scope.data.content.bgURL = result.selectedFiles[0];
+                    $scope.$apply();
+                }
+            });
+        }
     }]);
 </script>
 </body>
