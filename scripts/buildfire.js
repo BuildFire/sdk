@@ -232,8 +232,8 @@ var buildfire = {
         }
     }
     , imageLib: {
-        showDialog: function (allowMultiSelect, callback) {
-            var p = new Packet(null, 'imageLib.showDialog', {allowMultiSelect: allowMultiSelect});
+        showDialog: function (options, callback) {
+            var p = new Packet(null, 'imageLib.showDialog', options);
             buildfire.sendPacket(p, callback);
         }
     }
