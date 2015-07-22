@@ -372,7 +372,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	line-height:18px;
 	top:4px;
 }
-.draggable-list-view .d-item a{
+.draggable-list-view .d-item a.text{
 	font-size:13px;
 	line-height:18px;	
 }
@@ -396,7 +396,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	width:87%;
 	max-width:87%;
 }
-.draggable-list-view .d-item.double-line .copy a{
+.draggable-list-view .d-item.double-line .copy a.text{
 	position:relative;
 	top:7px;
 }
