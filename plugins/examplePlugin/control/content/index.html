@@ -2,19 +2,39 @@
 <html ng-app="textPlugin">
 <head lang="en">
     <meta charset="UTF-8">
+
+	<!-- CSS -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+
+	<!-- JS -->
     <script src="../../../../scripts/buildfire.js"></script>
     <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
 </head>
 <body ng-controller="textPluginCtrl">
-
-    <div ng-form="frmMain">
-		<h4>Text</h4>
-		<textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
-        <button id="btnUpload" onclick="buildfire.imageStore.show(true,function(images){});">upload</button>
-	</div>		
-	
+	<div ng-form="frmMain">
+		<div class="item row clearfix">
+			<div class="labels col-md-3 pull-left">
+				<span>Background Image URL</span>
+			</div>
+			<div class="main col-md-9 pull-right">
+				<input type="url" class="form-control" ng-model="data.content.bgURL"/>
+		    </div>
+		</div>
+		<hr>
+		<div class="item row clearfix">
+			<div class="labels col-md-3 pull-left">
+				<span>Text</span>
+			</div>
+			<div class="main col-md-9 pull-right">
+				<textarea id="text" class="form-control" rows="5" width="100%" ng-model="data.content.text" ></textarea>
+		    </div>
+		</div>
+	</div>	
 <script>
-    var textPluginApp = angular.module('textPlugin',[]);
+    var textPluginApp = angular.module('textPlugin', ['ui.bootstrap']);
 
     textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
         /*
@@ -22,7 +42,7 @@
         * */
         buildfire.datastore.get(function (err, result) {
             if(result) {
-                $scope.data = result.data;
+                $scope.data= result.data;
                 $scope.$digest();
                 if (tmrDelay)clearTimeout(tmrDelay);
             }
@@ -35,7 +55,7 @@
 
             if(newObj == undefined)return;
             if($scope.frmMain.$invalid ){
-                console.log('invalid data NO SAVE');
+                console.warn('invalid data, no save');
                 return;
             }
 

@@ -3,8 +3,8 @@
  */
 
 
-$app.controller('shellCtrl', ['$scope', '$sce', function ($scope, $sce) {
-
+$app.controller('shellCtrl', ['$scope', '$sce','$http', function ($scope, $sce,$http) {
+        window.$http=$http;
         var config = null;
 
 
@@ -27,12 +27,23 @@ $app.controller('shellCtrl', ['$scope', '$sce', function ($scope, $sce) {
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
 
+            $scope.$apply();
+        };
+
+        $scope.loadIFrame = function (section,e) {
+            var pluginFolder = window.location.hash.replace('#', '');
+            if (!pluginFolder) pluginFolder=window.appContext.currentPlugin.pluginPath;
+
+            $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html';
+            var element =document.querySelector('.active');
+            if(element)element.className='';
+            e.target.className ='active'
 
         };
 
         $scope.init = function () {
             var pluginFolder = window.location.hash.replace('#', '');
-            if (!pluginFolder) pluginFolder = 'examplePlugin';
+            if (!pluginFolder) pluginFolder=window.appContext.currentPlugin.pluginPath;
 
             var xmlhttp = new XMLHttpRequest();
             var url = '../plugins/' + pluginFolder + "/plugin.json";
