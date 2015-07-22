@@ -91,7 +91,7 @@ var buildfire = {
 
 
         }
-        , _resized: false
+        , _resizedTo: 0
         , autosizeContainer: function () {
             var height = Math.max(
                 document.documentElement.clientHeight,
@@ -100,10 +100,10 @@ var buildfire = {
                 document.body.offsetHeight,
                 document.documentElement.offsetHeight
             );
-            if (buildfire.appearance._resized || height < 100) return;
+            if (buildfire.appearance._resizedTo != height || height < 100) return;
             var p = new Packet(null, 'appearance.autosizeContainer', {height: height});
             buildfire.sendPacket(p);
-            buildfire.appearance._resized = true;
+            buildfire.appearance._resizedTo = height;
         }
     }
     , sendPacket: function (packet, callback) {
