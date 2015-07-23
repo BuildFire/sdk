@@ -372,7 +372,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	line-height:18px;
 	top:4px;
 }
-.draggable-list-view .d-item a{
+.draggable-list-view .d-item a.text{
 	font-size:13px;
 	line-height:18px;	
 }
@@ -396,7 +396,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	width:87%;
 	max-width:87%;
 }
-.draggable-list-view .d-item.double-line .copy a{
+.draggable-list-view .d-item.double-line .copy a.text{
 	position:relative;
 	top:7px;
 }
@@ -524,7 +524,8 @@ table.table span.sort-icon{
 	height:100%;
 	box-shadow:0 0 0 1px #ddd;
 }
-.media-container .files-set .file-holder a.selected{
+.media-container .files-set .file-holder a.selected,
+.media-container .icons-set a.icon-holder.selected{
 	box-shadow:0 0 0 1px #09a3ee;
 	background:#eef0f0;
 }
@@ -726,29 +727,29 @@ p.info{
 }
 
 /* Color Grid */
-#main-content .holder .colorgrid{
+.colorgrid{
 	margin-bottom:-10px;
 }
-#main-content .holder .colorgrid .coloritem{
+.colorgrid .coloritem{
 	margin-bottom:15px;
 	position:relative;
 }
-#main-content .holder .colorgrid .coloritem a{
+.colorgrid .coloritem a{
 	display:inline-block;
 	width:50px;
 	height:35px;
 }
-#main-content .holder .colorgrid .coloritem a:hover{
+.colorgrid .coloritem a:hover{
 	background:#eef0f0;
 	cursor:pointer;
 }
-#main-content .holder .colorgrid .coloritem a span{
+.colorgrid .coloritem a span{
 	display:inline-block;
 	width:100%;
 	height:100%;
 	transition: all 0.25s;	
 }
-#main-content .holder .colorgrid .coloritem label{
+.colorgrid .coloritem label{
 	position:relative;
 	top:-7px;
 	font-size:13px;

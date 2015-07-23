@@ -42,6 +42,9 @@
 	html[buildfire] .item span.tip{
 		margin-left:2px;
 	}
+	html[buildfire] .colorgrid .coloritem a{
+		width:35px;
+	}
 	
 	/* Plugin Page */
 	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
