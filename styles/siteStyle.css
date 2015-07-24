@@ -409,6 +409,13 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	width:100%;
 	top:6px;
 }
+.draggable-list-view.non-draggable .d-item .copy{
+	width:92%;
+	max-width:92%;
+}
+.draggable-list-view.non-draggable .d-item .copy span.title{
+	top:6px;
+}
 table.table span.sort-icon{
 	position:relative;
 	top:1px;
