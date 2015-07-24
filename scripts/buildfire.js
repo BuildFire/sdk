@@ -216,7 +216,7 @@ var buildfire = {
 		}
 		, onUpdate: function (callback) {
 			document.addEventListener('datastoreOnUpdate', function (e) {
-				if (callback)callback(null, e);
+				if (callback)callback(e);
 			}, false);
 		}
 		, triggerOnUpdate: function (data) {
