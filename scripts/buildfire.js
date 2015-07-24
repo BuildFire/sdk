@@ -30,7 +30,8 @@ var buildfire = {
 			buildfire._callbacks[packet.id](packet.error, packet.data);
 			delete buildfire._callbacks[packet.id];
 		}
-		else if (packet.cmd == "datastore.triggerOnUpdate") {
+		else if (packet.cmd == "datastore.triggerOnUpdate" /// cmds that are allowed to be pushed in
+		|| packet.cmd == "datastore.triggerOnRefresh") {
 			var sequence = packet.cmd.split('.');
 
 			var obj = buildfire;
@@ -149,9 +150,7 @@ var buildfire = {
 			buildfire.sendPacket(p, callback);
 
 		}
-
-		,
-		save: function (obj, tag, callback) {
+		, save: function (obj, tag, callback) {
 
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -167,8 +166,7 @@ var buildfire = {
 				if (callback)callback(err, result);
 			});
 		}
-		,
-		insert: function (obj, tag, callback) {
+		, insert: function (obj, tag, callback) {
 
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -184,8 +182,7 @@ var buildfire = {
 				callback(err, result);
 			});
 		}
-		,
-		update: function (obj, tag, callback) {
+		, update: function (obj, tag, callback) {
 
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -201,8 +198,7 @@ var buildfire = {
 				callback(err, result);
 			});
 		}
-		,
-		search: function (obj, tag, callback) {
+		, search: function (obj, tag, callback) {
 
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -218,17 +214,29 @@ var buildfire = {
 				callback(err, result);
 			});
 		}
-		,
-		onUpdate: function (callback) {
+		, onUpdate: function (callback) {
 			document.addEventListener('datastoreOnUpdate', function (e) {
-				if (callback)callback(e.detail, e);
+				if (callback)callback(null, e);
 			}, false);
 		}
-		,
-		triggerOnUpdate: function (data) {
+		, triggerOnUpdate: function (data) {
 			var onUpdateEvent = new CustomEvent('datastoreOnUpdate', {'detail': data});
 			console.log("Announce the data has changed!!!", window.location.href);
 			document.dispatchEvent(onUpdateEvent);
+		}
+		, onRefresh: function (callback) {
+			document.addEventListener('datastoreOnRefresh', function (e) {
+				if (callback)callback(e.detail, e);
+			}, false);
+		}
+		, triggerOnRefresh: function (data) {
+			var onRefreshEvent = new CustomEvent('datastoreOnRefresh', {'detail': data});
+			console.log("Announce the data needs refresh!!!", window.location.href);
+			document.dispatchEvent(onRefreshEvent);
+		}
+		, disableRefresh: function(){
+			var p = new Packet(null, "datastore.disableRefresh");
+			buildfire.sendPacket(p);
 		}
 	}
 	, imageLib: {

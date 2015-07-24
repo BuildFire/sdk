@@ -26,25 +26,41 @@
     var textPluginApp = angular.module('textPlugin', []);
 
     textPluginApp.controller('textPluginCtrl', ['$scope', function ($scope) {
+
+        /*
+        * bind data to scope
+        * */
+        function bind(data){
+            $scope.data = data;
+            $scope.$digest();
+        }
+
         /*
          * Go pull saved data
          * */
-        buildfire.datastore.get(function (err, result) {
-            if(result) {
-                $scope.data = result.data;
-                $scope.$digest();
-            }
+        function loadData() {
+            buildfire.datastore.get(function (err, result) {
+                if (result) bind(result.data);
+            });
+        }
+        loadData();
 
-        });
+        /**
+         * when a refresh is triggered get reload data
+         */
+        buildfire.datastore.onRefresh(loadData);
+        buildfire.datastore.disableRefresh(); // to turn off refresh feature
 
         /*
          Listen in if an update occurred on the control panel
          */
         buildfire.datastore.onUpdate(function (newObj) {
-            $scope.data = newObj.obj;
-            $scope.$digest();
+            loadData(newObj.obj);
         });
 
+        /*
+        * track every time this widget is opened
+        * */
         buildfire.analytics.trackAction('widget loaded',{userid:2});
     }]);
 </script>
