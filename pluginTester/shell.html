@@ -40,7 +40,7 @@
 								<a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
 							</li>
 						</ul>
-				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>
+				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms allow-same-origin" ng-src="{{currentControl}}"></iframe>
 					</div>
 			    </section>
 	            <section id="emulator" class="pull-right">
