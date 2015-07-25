@@ -182,8 +182,7 @@ var buildfire = {
 				callback(err, result);
 			});
 		}
-		, update: function (obj, tag, callback) {
-
+		, update: function (id, obj, tag, callback) {
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
 				tag = '';
@@ -192,10 +191,10 @@ var buildfire = {
 				tag = '';
 			}
 
-			var p = new Packet(null, 'datastore.update', {tag: tag, obj: obj});
+			var p = new Packet(null, 'datastore.update', {tag: tag,id:id, obj: obj});
 			buildfire.sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
-				callback(err, result);
+				if(callback)callback(err, result);
 			});
 		}
 		, search: function (obj, tag, callback) {
@@ -216,7 +215,7 @@ var buildfire = {
 		}
 		, onUpdate: function (callback) {
 			document.addEventListener('datastoreOnUpdate', function (e) {
-				if (callback)callback(e);
+				if (callback)callback(e.detail);
 			}, false);
 		}
 		, triggerOnUpdate: function (data) {

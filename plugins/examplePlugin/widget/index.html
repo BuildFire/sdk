@@ -20,7 +20,10 @@
 <body>
 <div ng-controller="textPluginCtrl" ng-cloak style="background:url( {{data.content.bgURL}} )" class="{{data.design.style}}" >
     {{data.content.text}}
+    <hr/>
+    <i ng-show="data.content.approvedOn">Approved on:{{data.content.approvedOn}}</i>
 </div>
+
 <script>
 
     var textPluginApp = angular.module('textPlugin', []);
@@ -54,8 +57,8 @@
         /*
          Listen in if an update occurred on the control panel
          */
-        buildfire.datastore.onUpdate(function (newObj) {
-            loadData(newObj.obj);
+        buildfire.datastore.onUpdate(function (e) {
+            loadData(e.obj);
         });
 
         /*
