@@ -182,6 +182,22 @@ var buildfire = {
 				callback(err, result);
 			});
 		}
+        , bulkInsert: function (obj, tag,checkDuplicate, callback) {
+
+            var tagType = typeof(tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof(callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+           
+            var p = new Packet(null, 'datastore.bulkInsert', {tag: tag, obj: obj,checkDuplicate:checkDuplicate});
+            buildfire.sendPacket(p, function (err, result) {
+                if (result)buildfire.datastore.triggerOnUpdate(result);
+                callback(err, result);
+            });
+        }
 		, update: function (id, obj, tag, callback) {
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
