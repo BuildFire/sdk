@@ -5,6 +5,6 @@ The Resources is the default images which will be used for your widget .
 
 * icon.png : this image file will be used as a default icon for your widget which will appear as an icon for the widget on the emulator and the actual device .
 
- * Note :This folder only for default widget icon and default widget image , You can replace those two files if you need to override the default widget Image and default icon Image , **Don't add any other files in this folder any dependencies in this folder it wont be carried over to the app.**
+ * **Note** :This folder is only meant for plugin configuration resource like default widget icon and widget hero image.** You can replace those two files if you need by overriding the default hero image and default icon image. **Don't add any other files in this folder, any dependencies in this folder WILL NOT be carried over to the app.**
 
 
