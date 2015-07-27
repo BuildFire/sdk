@@ -8,7 +8,7 @@ Plugins are written in HTML and JavaScript with a few restrictions:
 * Plugin HTML files must import __buildfire.js in the header__ of the document in order to access the platform, context and device
 
 ### Plugin Structure
-![file system](https://s3-us-west-2.amazonaws.com/pluginserver/docResources/structure.png)
+![file system](https://s3-us-west-2.amazonaws.com/pluginserver/docResources/structure.png?q=7)
 
 Plugins consists of three major components:
 * the Config (plugin.json)
@@ -17,7 +17,8 @@ Plugins consists of three major components:
   * Design
   * Settings
 * the Widget
-* Resources
+* **The Resources** 
+  * **Note** :This folder is only meant for plugin configuration resource like default widget icon and widget hero image.** You can replace those two files if you need by overriding the default hero image and default icon image. **Don't add any other files in this folder, any dependencies in this folder WILL NOT be carried over to the app.**
 
 
 #### the Config (plugin.json)
@@ -37,7 +38,12 @@ The Widget is the part that is rendered on the device. It consumes the configura
 ![Control Panel](https://s3-us-west-2.amazonaws.com/pluginserver/docResources/Control+Panel.png?v=1)
 
 
-#### Resources (folder)
-This is a folder that has images pertaining to the plugin
+#### the Resources (folder)
+The Resources is the default images which will be used for your widget .
+* image.png : this image file will be used as a default image for your widget which will appear when App Owners installed your plugin in their plugin Manager .
+
+* icon.png : this image file will be used as a default icon for your widget which will appear as an icon for the widget on the emulator and the actual device .
+
+* **Note** :This folder is only meant for plugin configuration resource like default widget icon and widget hero image.** You can replace those two files if you need by overriding the default hero image and default icon image. **Don't add any other files in this folder, any dependencies in this folder WILL NOT be carried over to the app.**
 
 ### for full documentation on how to develop a plugin click here to see the wiki https://github.com/BuildFire/pluginTemplate/wiki

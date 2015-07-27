@@ -40,11 +40,13 @@ iframe{
 	outline:none;
 	width:100%;
 }
-ul{
+ul,
+ol{
 	padding:0;
 	margin:0;
 }
-ul li{
+ul li,
+ol li{
 	list-style:none;
 }
 textarea{
@@ -225,6 +227,7 @@ nav ul.menu li .parent.has-children p.text{
 nav ul.menu li .parent ul.child-menu{
 	height:0;
 	opacity:0;
+	overflow:hidden;
 }
 nav ul.menu li .parent.active > ul.child-menu{
 	height:auto;
@@ -305,10 +308,10 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 #main-content .header .pull-right .btn{
 	padding:3px 25px;
 }
-#main-content .dropdown-toggle{
+.dropdown-toggle{
 	background:#fff;
 }
-#main-content .dropdown-toggle span.chevron{
+.dropdown-toggle span.chevron{
 	margin-top:0;
 }
 #main-content .padded{
@@ -320,20 +323,20 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 #main-content #dynamicContentContainer{
 	padding:0;
 }
-#main-content .holder .btn.dropdown-toggle{
+.btn.dropdown-toggle{
 	width:100%;
 }
-#main-content .holder .main .inner-main .info{
+.main .inner-main .info{
 	font-size:13px;
 }
-#main-content .holder .main .inner-main .accordion-holder{
+.inner-main .accordion-holder{
 	width:100%;
 }
-#main-content .holder .main .inner-main .accordion-holder .item .inner-main p{
+.inner-main .accordion-holder .item .inner-main p{
 	margin-top:6px;
 	font-size:14px;
 }
-#main-content .holder span.tip{
+.item span.tip{
 	display:inline-block;
 	margin-left:8px;
 	position:relative;
@@ -369,7 +372,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	line-height:18px;
 	top:4px;
 }
-.draggable-list-view .d-item a{
+.draggable-list-view .d-item a.text{
 	font-size:13px;
 	line-height:18px;	
 }
@@ -385,12 +388,15 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	top:5px;
 	margin-left:17px;
 }
+.draggable-list-view.has-btn-link .d-item .copy span.btn-icon{
+	margin-left:12px;
+}
 .draggable-list-view .d-item.double-line .copy{
 	top:-2px;
 	width:87%;
 	max-width:87%;
 }
-.draggable-list-view .d-item.double-line .copy a{
+.draggable-list-view .d-item.double-line .copy a.text{
 	position:relative;
 	top:7px;
 }
@@ -403,40 +409,40 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	width:100%;
 	top:6px;
 }
-#main-content .holder table.table span.sort-icon{
+table.table span.sort-icon{
 	position:relative;
 	top:1px;
 	font-size:13px;
 }
-#main-content .holder .search-marketplace span.text{
+.search-marketplace span.text{
 	display:inline-block;
 	margin-top:6px;
 }
-#main-content .holder .well.no-plugins{
+.well.no-plugins{
 	padding-top:60px;
 	padding-bottom:60px;
 }
 
 
 /* Launcher Plugin */
-#main-content .holder .draggable-list-view.tab-order{
+.holder .draggable-list-view.tab-order{
 	height:400px;
 	max-height:400px;
 	overflow:auto;
 	border-radius:0 0 4px 4px;
 }
-#main-content .holder .draggable-list-view.tab-order .d-item + .d-item{
+.holder .draggable-list-view.tab-order .d-item + .d-item{
 	margin-top:0;
 	border-top:1px solid #ddd;
 }
-#main-content .holder .draggable-list-view.tab-order .d-item span.title{
+.holder .draggable-list-view.tab-order .d-item span.title{
 	max-width:90%;
 	width:90%;
 }
-#main-content .plugin-manager.holder .accordion-holder .labels{
+.plugin-manager.holder .accordion-holder .labels{
 	margin-top:6px;
 }
-#main-content .plugin-manager.holder .accordion-holder .main{
+.plugin-manager.holder .accordion-holder .main{
 	font-size:13px;
 }
 .plugin-manager.holder .labels .dropdown,
@@ -446,7 +452,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .plugin-manager.holder .plugin-settings .labels{
 	margin-top:6px;
 }
-#main-content .plugin-manager.holder .accordion-holder img.icon{
+.plugin-manager.holder .accordion-holder img.icon{
 	max-width:38px;
 	max-height:38px;
 	height:auto;
@@ -454,11 +460,11 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 
 /* Side Menu/Associate Plugin Page */
-#main-content .side-menu.holder .draggable-list-view.tab-order{
+.draggable-list-view.tab-order.wide-list{
 	height:457px;
 	max-height:457px;
 }
-#main-content .side-menu.holder .draggable-list-view.tab-order .d-item span.title{
+.draggable-list-view.tab-order.wide-list .d-item span.title{
 	max-width:85%;
 	width:85%;
 }
@@ -518,7 +524,8 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	height:100%;
 	box-shadow:0 0 0 1px #ddd;
 }
-.media-container .files-set .file-holder a.selected{
+.media-container .files-set .file-holder a.selected,
+.media-container .icons-set a.icon-holder.selected{
 	box-shadow:0 0 0 1px #09a3ee;
 	background:#eef0f0;
 }
@@ -565,6 +572,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	font-size:15px;
 	line-height:20px;
 	font-weight:300;
+	background:#eef0f0;
 }
 .modal-dialog .header h4{
 	font-size:15px;
@@ -584,34 +592,37 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	cursor:pointer;
 	text-decoration:none;
 }
-
+.modal .modal-content span.btn-info-icon{
+	position:relative;
+	top:4px;
+}
 
 /* Device Screens/Icons */
-#main-content .holder .main .screens{
+.screens{
 	display:block;
 	width:100%;
 }
-#main-content .holder .main .screens.flexalign{
+.screens.flexalign{
 	display: -webkit-flex;
 	-webkit-align-items: center;
 	display:flex;
 	align-items:flex-end;
 }
-#main-content .holder .screens .main .screens{
+.screens .main .screens{
 	position:relative;
 	left:-1px;
 }
-#main-content .holder .main .screens .screen,
-#main-content .holder .main .screens .layoutgrid .layouticon{
+.screens .screen,
+.screens .layoutgrid .layouticon{
 	width:92px;
 	float:left;
 	position:relative;
 }
-#main-content .holder .main .screens .screen + .screen{
+.screens .screen + .screen{
 	margin-left:35px;
 }
-#main-content .holder .main .screens .screen a,
-#main-content .holder .main .screens .layoutgrid a{
+.screens .screen a,
+.screens .layoutgrid a{
 	position:relative;
 	width:20%;
 	padding:20px;
@@ -619,46 +630,46 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	width:100%;
 	height:85px;
 }
-#main-content .holder .main .screens .screen.mostdevices a{
+.screens .screen.mostdevices a{
 	height:110px;
 	width:90%;
 }
-#main-content .holder .main .screens .screen.iphone a{
+.screens .screen.iphone a{
 	width:85%;
 	height:122px;
 }
-#main-content .holder .main .screens .screen.ipads a{
+.screens .screen.ipads a{
 	height:105px;
 	width:90%;
 }
-#main-content .holder .main .screens .screen.tablets a{
+.screens .screen.tablets a{
 	height:122px;
 	width:90%;
 }
-#main-content .holder .main .screens .screen.layouticon a,
-#main-content .holder .main .screens .layoutgrid .layouticon{
+.screens .screen.layouticon a,
+.screens .layoutgrid .layouticon{
 	height:124px;
 }
-#main-content .holder .main .screens .layoutgrid{
+.screens .layoutgrid{
 	padding:12px 12px 0px;
 	max-height:284px;
 	overflow:auto;
 }
-#main-content .holder .main .screens .layoutgrid .layouticon{
+.screens .layoutgrid .layouticon{
 	margin:0 11px 11px 0;
 	position:relative;
 }
-#main-content .holder .main .screens .layoutgrid .layouticon:nth-child(4n){
+.screens .layoutgrid .layouticon:nth-child(4n){
 	margin-right:0;
 }
-#main-content .holder .main .screens .screen.carouselicon a{
+.screens .screen.carouselicon a{
 	width:120px;
 }
-#main-content .holder .main .screens .screen.logoicon,
-#main-content .holder .main .screens .screen.logoicon a{
+.screens .screen.logoicon,
+.screens .screen.logoicon a{
 	width:180px;
 }
-#main-content .holder .main .screens .screen a:after{
+.screens .screen a:after{
 	content:'+';
 	color:#14cb5d;
 	display:inline-block;
@@ -672,73 +683,73 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	left:50%;
 	margin-left:-10px;
 }
-#main-content .holder .main .screens .screen label{
+.screens .screen label{
 	font-size:12px;
 	line-height:18px;
 	font-weight: 300;
 	margin-bottom:0;
 	display:block;
 }
-#main-content .holder .main .screens .screen label + label{
+.screens .screen label + label{
 	margin-top:2px;
 }
-#main-content .holder .main .screens .screen label.secondary,
-#main-content .holder .main .screen label.secondary{
+.screens .screen label.secondary,
+.screen label.secondary{
 	font-size:11px;
 	line-height:16px;
 	color:#777;
 }
-#main-content .holder .main .screens .screen span.icon{
+.screens .screen span.icon{
 	position:absolute;
 	top:5px;
 	right:5px;
 	opacity:0;
 }
-#main-content .holder .main .screens .screen.mostdevices span.icon,
-#main-content .holder .main .screens .screen.ipads span.icon,
-#main-content .holder .main .screens .screen.tablets span.icon{
+.screens .screen.mostdevices span.icon,
+.screens .screen.ipads span.icon,
+.screens .screen.tablets span.icon{
 	right:10px;
 }
-#main-content .holder .main .screens .screen.iphone span.icon{
+.screens .screen.iphone span.icon{
 	right:12px;
 }
-#main-content .holder .main .screens .screen:hover > span.icon{
+.screens .screen:hover > span.icon{
 	opacity:1;
 }
-#main-content .holder .main p.info{
+p.info{
 	font-size:12px;
 	line-height:18px;
 	padding:0 2px;
 	color:#777;
 }
-#main-content .holder .main .screens .layoutgrid{
+.screens .layoutgrid{
 	width:80%;
 }
 
 /* Color Grid */
-#main-content .holder .colorgrid{
+.colorgrid{
 	margin-bottom:-10px;
 }
-#main-content .holder .colorgrid .coloritem{
+.colorgrid .coloritem{
 	margin-bottom:15px;
 	position:relative;
 }
-#main-content .holder .colorgrid .coloritem a{
+.colorgrid .coloritem a{
 	display:inline-block;
 	width:50px;
 	height:35px;
 }
-#main-content .holder .colorgrid .coloritem a:hover{
+.colorgrid .coloritem a:hover{
 	background:#eef0f0;
 	cursor:pointer;
 }
-#main-content .holder .colorgrid .coloritem a span{
+.colorgrid .coloritem a span{
 	display:inline-block;
 	width:100%;
 	height:100%;
 	transition: all 0.25s;	
 }
-#main-content .holder .colorgrid .coloritem label{
+.colorgrid .coloritem label{
 	position:relative;
 	top:-7px;
 	font-size:13px;
@@ -848,8 +859,11 @@ body.rtl .pagination > li + li{
 	max-width:100%;
 	min-height:600px;
 }
-html.plugin-iframe,
-.plugin-iframe body{
+html[buildfire]{
+	margin-top:30px;
+}
+html[buildfire],
+html[buildfire] body{
 	width:100%;
 	min-width:100%;
 	max-width:100%;

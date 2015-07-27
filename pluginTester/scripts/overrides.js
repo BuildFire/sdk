@@ -3,10 +3,11 @@
  */
 logger = console;
 
-var pluginAPI = new PluginAPI(document.getElementById('widget').contentWindow ,window.appContext.currentApp.appId, 0, 1, 0);
+var pluginAPI = new PluginAPI(document.getElementById('widget').contentWindow ,window.appContext.currentApp.appId
+    , window.appContext.currentPlugin.pluginPath, 1, 0);
 pluginAPI.tag='shell';
 var controlPluginAPI = new PluginAPI(document.getElementById('iframeControl').contentWindow ,window.appContext.currentApp.appId
-    , 0, 1,0);
+    , window.appContext.currentPlugin.pluginPath, 1,0);
 controlPluginAPI.tag='controlPluginAPI';
 
 var onUpdate =function(updateObj){
