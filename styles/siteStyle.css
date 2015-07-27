@@ -274,7 +274,6 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
     background-color:#fff;
 	width:765px;
 	min-height:723px;
-	overflow:hidden;
 	margin-bottom:138px;
 }
 #main-content .wrapper.largeWidth{
@@ -288,6 +287,9 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	line-height:20px;
 	font-weight:300;
 	position:relative;
+}
+#main-content .header:first-child{
+	border-radius:4px 4px 0 0;
 }
 #main-content .header.no-btn{
 	padding-right:20px;
@@ -407,6 +409,13 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .modal-dialog .draggable-list-view .d-item span.title{
 	max-width:100%;
 	width:100%;
+	top:6px;
+}
+.draggable-list-view.non-draggable .d-item .copy{
+	width:92%;
+	max-width:92%;
+}
+.draggable-list-view.non-draggable .d-item .copy span.title{
 	top:6px;
 }
 table.table span.sort-icon{
