@@ -11,6 +11,8 @@
     <script src="../../../../scripts/buildfire.js"></script>
     <script src="../../../../scripts/angular/angular.min.js"></script>
     <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+    <script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+    <script src="ui-tinymce.js"></script>
 
 </head>
 <body ng-controller="textPluginCtrl">
@@ -30,7 +32,7 @@
 				<span>Text</span>
 			</div>
 			<div class="main col-md-9 pull-right">
-				<textarea id="text" class="form-control" rows="5" width="100%" ng-model="data.content.text" ></textarea>
+                <textarea id="text" ui-tinymce class="form-control" rows="5" width="100%" ng-model="data.content.text" ></textarea>
 		    </div>
 		</div>
         <hr/>
@@ -45,7 +47,7 @@
 	</div>
 
 <script>
-    var textPluginApp = angular.module('textPlugin', ['ui.bootstrap']);
+    var textPluginApp = angular.module('textPlugin', ['ui.bootstrap', 'ui.tinymce']);
 
     textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
 

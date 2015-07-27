@@ -15,10 +15,15 @@ var buildfire = {
 		document.getElementsByTagName('html')[0].setAttribute('buildfire', 'enabled');
 		buildfire.appearance.attachCSSFiles();
 		buildfire.getContext(function (err, context) {
-			if (err)
+			if (err) {
 				console.error(err);
-			else
+			}
+			else {
 				buildfire.context = context;
+				if (window.location.pathname.indexOf('/widget/') > 0) {
+					buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+				}
+			}
 		});
 	}
 	, postMessageHandler: function (e) {
@@ -91,6 +96,13 @@ var buildfire = {
 				document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
 
+		}
+		, attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
+			var linkElement = document.createElement("link");
+			linkElement.setAttribute("rel", "stylesheet");
+			linkElement.setAttribute("type", "text/css");
+			linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId +'&liveMode=' + liveMode);
+			document.getElementsByTagName('head')[0].appendChild(linkElement);
 		}
 		, _resizedTo: 0
 		, autosizeContainer: function () {
