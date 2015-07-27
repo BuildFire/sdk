@@ -44,4 +44,5 @@ controlPluginAPI.analytics.trackView  = pluginAPI.analytics.trackView = function
     console.log('analytics mock track view [' + viewName + ']', metadata);
 };
 
-
+//override the imageLibTemplate url
+imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
