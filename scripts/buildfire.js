@@ -149,7 +149,14 @@ var buildfire = {
 		}
 	}
 	, datastore: {
-		get: function (tag, callback) {
+		get: function (tag, id, callback) {
+               
+            var idType = typeof(id);
+			if (idType == "function" && typeof(callback) == "undefined") {
+				callback = id;
+				id = '';
+			}
+
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
 				tag = '';
@@ -157,8 +164,8 @@ var buildfire = {
 				callback = tag;
 				tag = '';
 			}
-
-			var p = new Packet(null, 'datastore.get', tag);
+            var obj ={tag:tag , id:id};
+			var p = new Packet(null, 'datastore.get', obj);
 			buildfire.sendPacket(p, callback);
 
 		}
@@ -178,8 +185,15 @@ var buildfire = {
 				if (callback)callback(err, result);
 			});
 		}
-		, insert: function (obj, tag, callback) {
+		, insert: function (obj, tag,checkDuplicate, callback) {
 
+            var checkDuplicateType = typeof(checkDuplicate);
+			if (checkDuplicateType == "undefined")
+				checkDuplicate = false;
+            else if (checkDuplicateType == "function" && typeof(callback) == "undefined") {
+				callback = checkDuplicate;
+				checkDuplicate = false;
+			}
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
 				tag = '';
@@ -188,12 +202,34 @@ var buildfire = {
 				tag = '';
 			}
 
-			var p = new Packet(null, 'datastore.insert', {tag: tag, obj: obj});
+			var p = new Packet(null, 'datastore.insert', {tag: tag, obj: obj , checkDuplicate:checkDuplicate});
 			buildfire.sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				callback(err, result);
 			});
 		}
+        , bulkInsert: function (arrayObj, tag, callback) {
+
+            if(arrayObj.constructor !== Array){
+                
+                 callback({"code":"error","message":"the data should be an array"},null);
+                 return;
+            }
+           
+            var tagType = typeof(tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof(callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+           
+            var p = new Packet(null, 'datastore.bulkInsert', {tag: tag, obj: arrayObj});
+            buildfire.sendPacket(p, function (err, result) {
+                if (result)buildfire.datastore.triggerOnUpdate(result);
+                callback(err, result);
+            });
+        }
 		, update: function (id, obj, tag, callback) {
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
