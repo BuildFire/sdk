@@ -11,6 +11,8 @@
     <script src="../../../../scripts/buildfire.js"></script>
     <script src="../../../../scripts/angular/angular.min.js"></script>
     <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+    <script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+    <script src="ui-tinymce.js"></script>
 
 </head>
 <body ng-controller="textPluginCtrl">
@@ -24,26 +26,38 @@
                 <button ng-click="openImageLib();">Open ImageLib</button>
 		    </div>
 		</div>
-		<hr>
+		<hr/>
 		<div class="item row clearfix">
 			<div class="labels col-md-3 pull-left">
 				<span>Text</span>
 			</div>
 			<div class="main col-md-9 pull-right">
-				<textarea id="text" class="form-control" rows="5" width="100%" ng-model="data.content.text" ></textarea>
+                <textarea id="text" ui-tinymce class="form-control" rows="5" width="100%" ng-model="data.content.text" ></textarea>
 		    </div>
 		</div>
-	</div>	
+        <hr/>
+        <div class="item row clearfix">
+            <div class="labels col-md-3 pull-left">
+            </div>
+            <div class="main col-md-9 pull-right">
+                <button ng-click="appove()" >Approve</button> <i>this shows how you can update a single property</i>
+            </div>
+        </div>
+
+	</div>
+
 <script>
-    var textPluginApp = angular.module('textPlugin', ['ui.bootstrap']);
+    var textPluginApp = angular.module('textPlugin', ['ui.bootstrap', 'ui.tinymce']);
 
     textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
+
         /*
         * Go pull any previously saved data
         * */
         buildfire.datastore.get(function (err, result) {
             if(result) {
                 $scope.data= result.data;
+                $scope.id= result.id;
                 $scope.$digest();
                 if (tmrDelay)clearTimeout(tmrDelay);
             }
@@ -82,8 +96,20 @@
         * */
         $scope.$watch('data',saveDataWithDelay ,true);
 
-        /*Open Image Lib*/
+        /*
+        * this is a way you can update only one property without sending the entire object
+        * */
+        $scope.appove = function(){
+            if($scope.id)
+                buildfire.datastore.update($scope.id,{$set: {"content.approvedOn":new Date()} });
+        };
+
+
+        /*
+        * Open Image Lib
+        */
         $scope.openImageLib = function () {
+            debugger;
             buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, function (error, result) {
                 if (result && result.selectedFiles && result.selectedFiles.length > 0) {
                     $scope.data.content.bgURL = result.selectedFiles[0];
@@ -91,6 +117,9 @@
                 }
             });
         }
+
+
+
     }]);
 </script>
 </body>
