@@ -4,61 +4,66 @@
     <meta charset="UTF-8"/>
     <base href="./"/>
 
-	<!-- CSS -->
+    <!-- CSS -->
     <link href="../styles/bootstrap.css" rel="stylesheet">
     <link href="../styles/siteStyle.css" rel="stylesheet">
     <link href="../styles/helper.css" rel="stylesheet">
     <link href="http://int2.myapp.buildfire.com/styles/siteScreen.css" rel="stylesheet">
 
-	<!-- JS -->
-	<script type="text/javascript" src="../scripts/angular/angular.min.js"></script>
+    <!-- JS -->
+    <script type="text/javascript" src="../scripts/angular/angular.min.js"></script>
+    <script type="text/javascript" src="../scripts/angular/ng-file-upload.min.js"></script>
+    <script type="text/javascript" src="../scripts/angular/ng-file-upload-shim.min.js"></script>
+    <script type="text/javascript" src="../scripts/angular/ui-bootstrap.min.js"></script>
 </head>
-<body onhashchange="init()" ng-controller="shellCtrl" >
-	<div id="container">
-		<header class="navbar-fixed-top border-bottom-grey">
-			<div class="contain">
-				<div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
-			</div>
-		</header>
-		<nav></nav>
-		<section id="main-content">
-			<div class="shell-sdk holder">		
-            	<div role="alert"></div>
-	            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
-					<div class="header clearfix">
-						<h4 class="margin-zero">SDK</h4>
-					</div>
-					<div class="layout padded clearfix">
-						<ul class="nav nav-tabs nav-justified">
-							<li ng-show="contentSrc">
-								<a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)" >Content</a>
-							</li>
-							<li ng-show="designSrc">
-								<a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
-							</li>
-							<li ng-show="settingsSrc">
-								<a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
-							</li>
-						</ul>
-				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms allow-same-origin" ng-src="{{currentControl}}"></iframe>
-					</div>
-			    </section>
-	            <section id="emulator" class="pull-right">
-	           		<div id="emulatorContainer" class="border-grey" >
-	          			<span class="emulatorlabel">iOS / Android</span>
-					    <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey" seamless sandbox="allow-scripts allow-forms"></iframe>
-	                </div>
-	            </section>	
-			</div>
-        </section>
-	</div>
+<body onhashchange="init()" ng-controller="shellCtrl">
+<div id="container">
+    <header class="navbar-fixed-top border-bottom-grey">
+        <div class="contain">
+            <div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
+        </div>
+    </header>
+    <nav></nav>
+    <section id="main-content">
+        <div class="shell-sdk holder">
+            <div role="alert"></div>
+            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
+                <div class="header clearfix">
+                    <h4 class="margin-zero">SDK</h4>
+                </div>
+                <div class="layout padded clearfix">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li ng-show="contentSrc">
+                            <a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)">Content</a>
+                        </li>
+                        <li ng-show="designSrc">
+                            <a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
+                        </li>
+                        <li ng-show="settingsSrc">
+                            <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
+                        </li>
+                    </ul>
+                    <iframe id="iframeControl" sandbox="allow-scripts allow-forms allow-same-origin"
+                            ng-src="{{currentControl}}"></iframe>
+                </div>
+            </section>
+            <section id="emulator" class="pull-right">
+                <div id="emulatorContainer" class="border-grey">
+                    <span class="emulatorlabel">iOS / Android</span>
+                    <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey"
+                            seamless sandbox="allow-scripts allow-forms"></iframe>
+                </div>
+            </section>
+        </div>
+    </section>
+</div>
 
-	<!-- JS -->
-	<script type="text/javascript" src="scripts/siteConfig.js"></script>
-	<script type="text/javascript" src="scripts/appContext.js"></script>
-	<script type="text/javascript" src="scripts/loadScripts.js"></script>
-	<script type="text/javascript" src="scripts/overrides.js"></script>
-	<script type="text/javascript" src="scripts/app.js"></script>
-	<script type="text/javascript" src="scripts/shellCtrl.js"></script>
+<!-- JS -->
+<script type="text/javascript" src="scripts/app.js"></script>
+<script type="text/javascript" src="scripts/siteConfig.js"></script>
+<script type="text/javascript" src="scripts/appContext.js"></script>
+<script type="text/javascript" src="scripts/loadScripts.js"></script>
+<script type="text/javascript" src="scripts/overrides.js"></script>
+<script type="text/javascript" src="scripts/shellCtrl.js"></script>
 </body>
 </html>
