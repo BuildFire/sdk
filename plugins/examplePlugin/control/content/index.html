@@ -61,6 +61,10 @@
                 $scope.$digest();
                 if (tmrDelay)clearTimeout(tmrDelay);
             }
+            /*
+             * watch for changes in data and trigger the saveDataWithDelay function on change
+             * */
+            $scope.$watch('data',saveDataWithDelay ,true);
         });
 
         /*
@@ -90,11 +94,6 @@
             if(tmrDelay)clearTimeout(tmrDelay);
             tmrDelay = setTimeout(function(){saveData(newObj);},500);
         };
-
-        /*
-        * watch for changes in data and trigger the saveDataWithDelay function on change
-        * */
-        $scope.$watch('data',saveDataWithDelay ,true);
 
         /*
         * this is a way you can update only one property without sending the entire object
