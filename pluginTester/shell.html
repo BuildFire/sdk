@@ -12,6 +12,9 @@
 
 	<!-- JS -->
 	<script type="text/javascript" src="../scripts/angular/angular.min.js"></script>
+    <script type="text/javascript" src="../scripts/angular/ng-file-upload.min.js"></script>
+    <script type="text/javascript" src="../scripts/angular/ng-file-upload-shim.min.js"></script>
+	<script type="text/javascript" src="../scripts/angular/ui-bootstrap.min.js"></script>
 </head>
 <body onhashchange="init()" ng-controller="shellCtrl" >
 	<div id="container">
@@ -22,7 +25,7 @@
 		</header>
 		<nav></nav>
 		<section id="main-content">
-			<div class="shell-sdk holder">		
+			<div class="shell-sdk holder">
             	<div role="alert"></div>
 	            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
 					<div class="header clearfix">
@@ -40,7 +43,7 @@
 								<a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
 							</li>
 						</ul>
-				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms" ng-src="{{currentControl}}"></iframe>
+				    	<iframe id="iframeControl" sandbox="allow-scripts allow-forms allow-same-origin" ng-src="{{currentControl}}"></iframe>
 					</div>
 			    </section>
 	            <section id="emulator" class="pull-right">
@@ -48,17 +51,17 @@
 	          			<span class="emulatorlabel">iOS / Android</span>
 					    <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey" seamless sandbox="allow-scripts allow-forms"></iframe>
 	                </div>
-	            </section>	
+	            </section>
 			</div>
         </section>
 	</div>
 
 	<!-- JS -->
+	<script type="text/javascript" src="scripts/app.js"></script>
 	<script type="text/javascript" src="scripts/siteConfig.js"></script>
 	<script type="text/javascript" src="scripts/appContext.js"></script>
 	<script type="text/javascript" src="scripts/loadScripts.js"></script>
 	<script type="text/javascript" src="scripts/overrides.js"></script>
-	<script type="text/javascript" src="scripts/app.js"></script>
 	<script type="text/javascript" src="scripts/shellCtrl.js"></script>
 </body>
 </html>
