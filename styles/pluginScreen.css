@@ -55,4 +55,10 @@
 		width:87%;
 		max-width:87%;
 	}
+	
+	/* WYSIWYG Editor */
+	html[buildfire] .mce-tinymce #tinymce-25{
+		padding-top:4px;
+		margin-left:0;
+	}
 }
