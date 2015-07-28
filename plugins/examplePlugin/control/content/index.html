@@ -40,7 +40,7 @@
             <div class="labels col-md-3 pull-left">
             </div>
             <div class="main col-md-9 pull-right">
-                <button ng-click="appove()" >Approve</button> <i>this shows how you can update a single property</i>
+                <button ng-click="approve()" >Approve</button> <i>this shows how you can update a single property</i>
             </div>
         </div>
 
@@ -99,7 +99,7 @@
         /*
         * this is a way you can update only one property without sending the entire object
         * */
-        $scope.appove = function(){
+        $scope.approve = function(){
             if($scope.id)
                 buildfire.datastore.update($scope.id,{$set: {"content.approvedOn":new Date()} });
         };
