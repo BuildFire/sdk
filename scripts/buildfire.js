@@ -148,7 +148,9 @@ var buildfire = {
 			buildfire.sendPacket(p);
 		}
 	}
+	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
 	, datastore: {
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
 		get: function (tag, id, callback) {
                
             var idType = typeof(id);
@@ -169,6 +171,7 @@ var buildfire = {
 			buildfire.sendPacket(p, callback);
 
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresave-obj-tag-optional-callback
 		, save: function (obj, tag, callback) {
 
 			var tagType = typeof(tag);
@@ -185,6 +188,7 @@ var buildfire = {
 				if (callback)callback(err, result);
 			});
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreinsert-obj-tag-optionalcheckduplicate--callback
 		, insert: function (obj, tag,checkDuplicate, callback) {
 
             var checkDuplicateType = typeof(checkDuplicate);
@@ -208,7 +212,8 @@ var buildfire = {
 				callback(err, result);
 			});
 		}
-        , bulkInsert: function (arrayObj, tag, callback) {
+        /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastorebulkinsert-obj-tag-optional---callback
+		, bulkInsert: function (arrayObj, tag, callback) {
 
             if(arrayObj.constructor !== Array){
                 
@@ -230,6 +235,7 @@ var buildfire = {
                 callback(err, result);
             });
         }
+		/// ref https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreupdateidobj-tag-optional-callback
 		, update: function (id, obj, tag, callback) {
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -245,7 +251,8 @@ var buildfire = {
 				if(callback)callback(err, result);
 			});
 		}
-		, search: function (obj, tag, callback) {
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresearchoptions-tag-optional-callback
+		, search: function (options, tag, callback) {
 
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -255,12 +262,13 @@ var buildfire = {
 				tag = '';
 			}
 
-			var p = new Packet(null, 'datastore.search', {tag: tag, obj: obj});
+			var p = new Packet(null, 'datastore.search', {tag: tag, obj: options});
 			buildfire.sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				callback(err, result);
 			});
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonupdatecallback
 		, onUpdate: function (callback) {
 			document.addEventListener('datastoreOnUpdate', function (e) {
 				if (callback)callback(e.detail);
@@ -271,6 +279,7 @@ var buildfire = {
 			console.log("Announce the data has changed!!!", window.location.href);
 			document.dispatchEvent(onUpdateEvent);
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonrefreshcallback
 		, onRefresh: function (callback) {
 			document.addEventListener('datastoreOnRefresh', function (e) {
 				if (callback)callback(e.detail, e);
@@ -281,6 +290,7 @@ var buildfire = {
 			console.log("Announce the data needs refresh!!!", window.location.href);
 			document.dispatchEvent(onRefreshEvent);
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredisablerefresh
 		, disableRefresh: function(){
 			var p = new Packet(null, "datastore.disableRefresh");
 			buildfire.sendPacket(p);
