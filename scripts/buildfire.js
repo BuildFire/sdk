@@ -300,10 +300,33 @@ var buildfire = {
 		showDialog: function (options, callback) {
 			var p = new Packet(null, 'imageLib.showDialog', options);
 			buildfire.sendPacket(p, callback);
-		},
-		resizeImage: function (url, options) {
-			return url;
 		}
+		,resizeImage: function (url, options) {
+			var root="s7obnu.cloudimage.io/s/";
+			if(typeOf(options) != "object")
+				throw ("options not an object");
+
+			if(options.width && !option.height)
+				return root + "width/" + options.width + "/" + url;
+			else if(!options.width && option.height)
+				return root + "height/" + options.height + "/" + url;
+			else if(options.width && option.height)
+				return root + "resizenp/" + options.width+ "x" + options.height + "/" + url;
+			else
+				return url;
+		}
+		,cropImage: function (url, options) {
+			var root="s7obnu.cloudimage.io/s/crop/";
+			if(typeOf(options) != "object")
+				throw ("options not an object");
+
+			if(!options.width && !option.height)
+				throw ("options must have both height and width");
+
+			return root + options.width + "x" + options.height + "/" + url;
+
+		}
+
 	}
 	, notifications: {
 		alert: function (message, callback) {
