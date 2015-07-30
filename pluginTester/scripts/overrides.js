@@ -45,4 +45,5 @@ controlPluginAPI.analytics.trackView = pluginAPI.analytics.trackView = function 
 };
 
 //override the imageLibTemplate url
-imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
+controlPluginAPI.imageLib.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
+controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';

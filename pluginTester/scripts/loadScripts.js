@@ -1,7 +1,8 @@
 function _ScriptLoader(){
     this.pluginAPIPath ="http://int2.myapp.buildfire.com/app/scripts/framework/pluginAPI/";
     this.imageLibPath ="http://int2.myapp.buildfire.com/scripts/framework/pluginAPI/imageLibAPI.js";
-    this.scripts = ["datastoreAPI.js","analyticsAPI.js","appearanceAPI.js","pluginAPI.js" ];
+    this.actionItemsAPIPath ="http://int2.myapp.buildfire.com/scripts/framework/pluginAPI/actionItemsAPI.js";
+    this.scripts = ["datastoreAPI.js","analyticsAPI.js","appearanceAPI.js","actionItemsAPI.js","pluginAPI.js" ];
 }
 
 _ScriptLoader.prototype ={
@@ -19,6 +20,7 @@ _ScriptLoader.prototype ={
             this.attachFile(this.pluginAPIPath  + this.scripts[i]);
 
         this.attachFile(this.imageLibPath);
+        this.attachFile(this.actionItemsAPIPath);
 
     }
 };

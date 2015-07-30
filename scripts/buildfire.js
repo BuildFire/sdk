@@ -118,6 +118,10 @@ var buildfire = {
 			buildfire.sendPacket(p);
 			buildfire.appearance._resizedTo = height;
 		}
+		, setHeaderVisibility: function(value){
+			var p = new Packet(null, "appearanceAPI.setHeaderVisibility", value);
+			buildfire.sendPacket(p);
+		}
 	}
 	, sendPacket: function (packet, callback) {
 		if (typeof (callback) != "function")// handels better on response
@@ -148,7 +152,9 @@ var buildfire = {
 			buildfire.sendPacket(p);
 		}
 	}
+	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
 	, datastore: {
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
 		get: function (tag, id, callback) {
 
             var idType = typeof(id);
@@ -169,6 +175,7 @@ var buildfire = {
 			buildfire.sendPacket(p, callback);
 
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresave-obj-tag-optional-callback
 		, save: function (obj, tag, callback) {
 
 			var tagType = typeof(tag);
@@ -185,6 +192,7 @@ var buildfire = {
 				if (callback)callback(err, result);
 			});
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreinsert-obj-tag-optionalcheckduplicate--callback
 		, insert: function (obj, tag,checkDuplicate, callback) {
 
             var checkDuplicateType = typeof(checkDuplicate);
@@ -208,7 +216,8 @@ var buildfire = {
 				callback(err, result);
 			});
 		}
-        , bulkInsert: function (arrayObj, tag, callback) {
+        /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastorebulkinsert-obj-tag-optional---callback
+		, bulkInsert: function (arrayObj, tag, callback) {
 
             if(arrayObj.constructor !== Array){
 
@@ -230,6 +239,7 @@ var buildfire = {
                 callback(err, result);
             });
         }
+		/// ref https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreupdateidobj-tag-optional-callback
 		, update: function (id, obj, tag, callback) {
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -245,7 +255,8 @@ var buildfire = {
 				if(callback)callback(err, result);
 			});
 		}
-		, search: function (obj, tag, callback) {
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresearchoptions-tag-optional-callback
+		, search: function (options, tag, callback) {
 
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
@@ -255,12 +266,16 @@ var buildfire = {
 				tag = '';
 			}
 
-			var p = new Packet(null, 'datastore.search', {tag: tag, obj: obj});
+			//auto correct empty string filter
+			if(options && options.filter == '') options.filter ={};
+
+			var p = new Packet(null, 'datastore.search', {tag: tag, obj: options});
 			buildfire.sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				callback(err, result);
 			});
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonupdatecallback
 		, onUpdate: function (callback) {
 			document.addEventListener('datastoreOnUpdate', function (e) {
 				if (callback)callback(e.detail);
@@ -271,6 +286,7 @@ var buildfire = {
 			console.log("Announce the data has changed!!!", window.location.href);
 			document.dispatchEvent(onUpdateEvent);
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonrefreshcallback
 		, onRefresh: function (callback) {
 			document.addEventListener('datastoreOnRefresh', function (e) {
 				if (callback)callback(e.detail, e);
@@ -281,6 +297,7 @@ var buildfire = {
 			console.log("Announce the data needs refresh!!!", window.location.href);
 			document.dispatchEvent(onRefreshEvent);
 		}
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredisablerefresh
 		, disableRefresh: function(){
 			var p = new Packet(null, "datastore.disableRefresh");
 			buildfire.sendPacket(p);
@@ -290,10 +307,33 @@ var buildfire = {
 		showDialog: function (options, callback) {
 			var p = new Packet(null, 'imageLib.showDialog', options);
 			buildfire.sendPacket(p, callback);
-		},
-		resizeImage: function (url, options) {
-			return url;
 		}
+		,resizeImage: function (url, options) {
+			var root="s7obnu.cloudimage.io/s/";
+			if(typeOf(options) != "object")
+				throw ("options not an object");
+
+			if(options.width && !option.height)
+				return root + "width/" + options.width + "/" + url;
+			else if(!options.width && option.height)
+				return root + "height/" + options.height + "/" + url;
+			else if(options.width && option.height)
+				return root + "resizenp/" + options.width+ "x" + options.height + "/" + url;
+			else
+				return url;
+		}
+		,cropImage: function (url, options) {
+			var root="s7obnu.cloudimage.io/s/crop/";
+			if(typeOf(options) != "object")
+				throw ("options not an object");
+
+			if(!options.width && !option.height)
+				throw ("options must have both height and width");
+
+			return root + options.width + "x" + options.height + "/" + url;
+
+		}
+
 	}
 	, notifications: {
 		alert: function (message, callback) {
@@ -304,8 +344,12 @@ var buildfire = {
         showDialog: function (actionItem, options, callback) {
             var p = new Packet(null, 'actionItems.showDialog', {actionItem: actionItem, options: options});
             buildfire.sendPacket(p, callback);
+        },
+        execute: function (actionItem, options, callback) {
+            var p = new Packet(null, 'actionItems.execute',  actionItem);
+            buildfire.sendPacket(p, callback);
+        }
     }
-}
 };
 buildfire.init();
 
