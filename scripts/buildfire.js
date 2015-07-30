@@ -36,7 +36,7 @@ var buildfire = {
 			delete buildfire._callbacks[packet.id];
 		}
 		else if (packet.cmd == "datastore.triggerOnUpdate" /// cmds that are allowed to be pushed in
-		|| packet.cmd == "datastore.triggerOnRefresh") {
+		|| packet.cmd == "datastore.triggerOnRefresh" || packet.cmd == "appearance.triggerOnUpdate") {
 			var sequence = packet.cmd.split('.');
 
 			var obj = buildfire;
@@ -98,11 +98,12 @@ var buildfire = {
 
 		}
 		, attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
-			var linkElement = document.createElement("link");
-			linkElement.setAttribute("rel", "stylesheet");
-			linkElement.setAttribute("type", "text/css");
-			linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId +'&liveMode=' + liveMode);
-			document.getElementsByTagName('head')[0].appendChild(linkElement);
+			this._appThemeCSSElement = document.createElement("link");
+			this._appThemeCSSElement.setAttribute("rel", "stylesheet");
+			this._appThemeCSSElement.setAttribute("type", "text/css");
+			this._appThemeCSSElement.setAttribute("id", "appThemeCSS");
+			this._appThemeCSSElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId +'&liveMode=' + liveMode);
+			document.getElementsByTagName('head')[0].appendChild(this._appThemeCSSElement);
 		}
 		, _resizedTo: 0
 		, autosizeContainer: function () {
@@ -121,6 +122,22 @@ var buildfire = {
 		, setHeaderVisibility: function(value){
 			var p = new Packet(null, "appearanceAPI.setHeaderVisibility", value);
 			buildfire.sendPacket(p);
+		}
+		, _updateHandler: {
+			busterCounter: 0,
+			refresh: function() {
+				if(buildfire.appearance._appThemeCSSElement) {
+					if(buildfire.appearance._appThemeCSSElement.href.indexOf("&v=") == -1) {
+						buildfire.appearance._appThemeCSSElement.href +=  "&v=" + buildfire.appearance._updateHandler.busterCounter;
+					}
+					else {
+						buildfire.appearance._appThemeCSSElement.href = buildfire.appearance._appThemeCSSElement.href.replace("&v=" + buildfire.appearance._updateHandler.busterCounter, "&v=" + ++buildfire.appearance._updateHandler.busterCounter);
+					}
+				}
+			}
+		}
+		, triggerOnUpdate: function() {
+			buildfire.appearance._updateHandler.refresh();
 		}
 	}
 	, sendPacket: function (packet, callback) {
