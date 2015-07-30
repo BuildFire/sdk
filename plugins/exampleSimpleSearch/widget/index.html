@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html ng-app="plugin">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- JS -->
+	<script src="../../../scripts/buildfire.js"></script>
+	<script src="../../../scripts/angular/angular.min.js"></script>
+
+
+</head>
+<body ng-controller="pluginCtrl">
+<h1>Names</h1>
+<input type="text" placeholder="search name" ng-model="criteria" />
+{{status}}
+<ul>
+	<li ng-repeat="n in names">{{n.data.firstName}} {{n.data.lastName}}</li>
+</ul>
+<button ng-click="loadNextPage()"  ng-show="hasMore">more...</button>
+<script>
+
+	var textPluginApp = angular.module('plugin', []);
+
+	textPluginApp.controller('pluginCtrl',['$scope',function($scope){
+		var pageSize = 10;
+		var page=0;
+		$scope.names=[];
+		function search(filter) {
+			$scope.status = 'searching names...';
+
+			buildfire.datastore.search({
+				filter:{"$json.firstName":{"$regex":filter}}
+				, page:page
+				,pageSize:pageSize + 1 // the plus one is to check if there are any more
+			},'names',function(err,results)
+			{
+				if(err)
+					$scope.status = 'error!';
+				else {
+					$scope.status = 'loading...';
+
+					if(results.length > pageSize) {// to indicate there are more
+						$scope.hasMore=true;
+						results = results.splice(0,pageSize);
+					}
+					$scope.names= $scope.names.concat( results);
+
+					$scope.status = '';
+					$scope.$apply();
+				}
+			});
+		}
+		search('/*');
+
+		$scope.loadNextPage= function(){
+			page++;
+			search('/*');
+		};
+
+		$scope.$watch('criteria', function(newCriteria){
+
+			$scope.names=[];
+			search( newCriteria );
+		});
+
+	}]);
+
+
+</script>
+</body>
+</html>

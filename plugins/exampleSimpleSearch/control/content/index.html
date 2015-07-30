@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="plugin">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+	<!-- Load helper.css to use our helper classes.
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	-->
+	
+	<!-- JS -->
+	<script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+
+</head>
+<body ng-controller="pluginCtrl">
+    <h1>Content - Names</h1>
+    <button ng-Click="bulkInsert()">Bulk Insert Random Names</button>
+    {{status}}
+    <h2 ng-show="newNames" >New Names</h2>
+    <ul>
+        <li ng-repeat="name in newNames"><b>NEW - {{name.firstName}} {{name.lastName}}</b></li>
+    </ul>
+    <ul>
+        <li ng-repeat="n in names">{{n.data.firstName}} {{n.data.lastName}}</li>
+    </ul>
+
+    <script>
+
+        var textPluginApp = angular.module('plugin', []);
+
+        textPluginApp.controller('pluginCtrl',['$scope','$http',function($scope,$http){
+                var pageSize = 10;
+            function search(filter) {
+                $scope.status = 'searching names...';
+                buildfire.datastore.search({
+                    filter:{"$json.firstName":{"$regex":filter}}
+                    , page:0
+                    ,pageSize:pageSize + 1 // the plus one is to check if there are any more
+                },'names',function(err,results)
+                {
+                    if(err)
+                        $scope.status = 'error!';
+                    else {
+                        $scope.status = 'loading...';
+                        $scope.names = results;
+                        if(results.length > pageSize) {// to indicate there are more
+                            $scope.names[pageSize].data.firstName = '...';
+                            $scope.names[pageSize].data.lastName = 'more';
+                        }
+
+
+                        $scope.status = '';
+                        $scope.$apply();
+                    }
+                });
+            }
+            search('/*');
+
+            $scope.bulkInsert = function(){
+                $scope.status='fetch random names...';
+                $http.get('http://www.filltext.com/?rows=10&firstName={firstName}&lastName={lastName}').success(function(data){
+                    $scope.status='importing...';
+                    $scope.newNames = data;
+                    buildfire.datastore.bulkInsert(data,'names', function(){
+                        $scope.status='imported ' + data.length + ' names.';
+                        $scope.$apply();
+                    });
+
+                });
+            }
+
+        }]);
+
+
+    </script>
+</body>
+</html>
