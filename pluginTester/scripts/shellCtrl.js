@@ -7,17 +7,22 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', '$modal', function ($sc
 		window.$http = $http;
 		var config = null;
 
-		window.openDialog = function (templateUrl, controller, size, callback) {
+		/**
+		 * Show Dialog
+		 * @options {templateUrl : templateUrl , controller: controller , size: size  } a
+		 * @callback {function}
+		 */
+		window.openDialog = function(options, callback){
+			if(!options.controller)
+				console.warn("window.openDialog :: You have to pass the controller value to the openDialog function");
 			var modalInstance = $modal.open({
 				animation: true,
-				templateUrl: templateUrl,
-				controller: controller,
-				size: size
-				//resolve: {
-				//  	items: function () {
-				//    	return $scope.items;
-				//    }
-				//}
+				templateUrl: options.templateUrl,
+				controller: options.controller,
+				size: options.size,
+				resolve: {$data : function(){
+					return options.data;
+				}}
 			});
 
 			modalInstance.result.then(function (r) {
