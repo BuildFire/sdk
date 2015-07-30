@@ -2,6 +2,7 @@
 <html lang="en" ng-app="home">
 <head>
     <script src="../../../scripts/buildfire.js"></script>
+	<link href="http://int2.myapp.buildfire.com/app/styles/appIcons.css" rel="stylesheet" type="text/css">
 
     <style>
         html, body {
@@ -29,7 +30,7 @@
             .cus-logo-contain img#logo {
                 width: 90%;
                 height: auto;
-                max-width: 500px;
+                max-width: 180px;
             }
 
         #carousel {
@@ -37,7 +38,7 @@
             top: 26%;
             overflow: hidden;
             width: 100%;
-            height: 35%;
+            height: 46%;
         }
 
         #widget-container {
@@ -69,7 +70,13 @@
             background-size: cover;
             margin: 0 auto;
             background-position: center center;
+			font-size:24px;
+			line-height:26px;
         }
+
+		.caption{
+			text-transform:capitalize;
+		}
 
         /* ----  CSS we want to add to structure ------*/
 
@@ -183,7 +190,7 @@
 
     <div ng-controller="homeCtrl" class="fill container-fluid">
         <div class="cus-logo-contain row">
-            <img id="logo" class="h-v-center" ng-src="{{logoUrl}}"  />
+            <img id="logo" class="h-v-center" ng-src="{{logoUrl}}" />
         </div>
         <div id="carousel" class="row">
             <img ng-repeat="imgUrl in images" ng-src="{{imgUrl}}" />
@@ -191,8 +198,9 @@
         <div id="widget-container" class="row flex-row">
             <div ng-repeat="w in widgets" class="flex-item text-center widget-launcher-icon-and-text">
                 <div class="widget-icon-container" ng-click="click(w);">
-                    <div class="widget-icon" ng-style="{'background-image':'url({{w.icon}})'}">
-                    </div>
+                    <div class="widget-icon">
+                    	<span class="icon {{w.icon}}"></span>
+					</div>
                 </div>
                 <div class="caption clipText2">
                     {{w.title}}

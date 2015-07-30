@@ -288,7 +288,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	font-weight:300;
 	position:relative;
 }
-#main-content .header:first-child{
+#main-content .section:first-child > .header{
 	border-radius:4px 4px 0 0;
 }
 #main-content .header.no-btn{
