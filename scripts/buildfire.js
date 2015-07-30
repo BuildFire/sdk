@@ -118,6 +118,10 @@ var buildfire = {
 			buildfire.sendPacket(p);
 			buildfire.appearance._resizedTo = height;
 		}
+		, setHeaderVisibility: function(value){
+			var p = new Packet(null, "appearanceAPI.setHeaderVisibility", value);
+			buildfire.sendPacket(p);
+		}
 	}
 	, sendPacket: function (packet, callback) {
 		if (typeof (callback) != "function")// handels better on response
