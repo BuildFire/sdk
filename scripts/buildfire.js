@@ -28,7 +28,7 @@ var buildfire = {
 	}
 	, postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
-		console.log('buildfire.js received << ' + e.data, window.location.href);
+		console.debug('buildfire.js received << ' + e.data, window.location.href);
 		var packet = JSON.parse(e.data);
 
 		if (packet.id && buildfire._callbacks[packet.id]) {
@@ -126,13 +126,13 @@ var buildfire = {
 	, sendPacket: function (packet, callback) {
 		if (typeof (callback) != "function")// handels better on response
 			callback = function (err, result) {
-				console.log('buildfire.js ignored callback ' + JSON.stringify(arguments)), window.location.href
+				console.debug('buildfire.js ignored callback ' + JSON.stringify(arguments)), window.location.href
 			};
 
 		buildfire._callbacks[packet.id] = callback;
 
 		var p = JSON.stringify(packet);
-		console.log("BuildFire.js Send >> " + p, window.location.href);
+		console.debug("BuildFire.js Send >> " + p, window.location.href);
 		if (parent)parent.postMessage(p, "*");
 	}
 	, analytics: {
@@ -283,7 +283,7 @@ var buildfire = {
 		}
 		, triggerOnUpdate: function (data) {
 			var onUpdateEvent = new CustomEvent('datastoreOnUpdate', {'detail': data});
-			console.log("Announce the data has changed!!!", window.location.href);
+			console.debug("Announce the data has changed!!!", window.location.href);
 			document.dispatchEvent(onUpdateEvent);
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonrefreshcallback
@@ -294,7 +294,7 @@ var buildfire = {
 		}
 		, triggerOnRefresh: function (data) {
 			var onRefreshEvent = new CustomEvent('datastoreOnRefresh', {'detail': data});
-			console.log("Announce the data needs refresh!!!", window.location.href);
+			console.debug("Announce the data needs refresh!!!", window.location.href);
 			document.dispatchEvent(onRefreshEvent);
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredisablerefresh

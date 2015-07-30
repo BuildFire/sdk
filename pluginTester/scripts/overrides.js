@@ -37,11 +37,11 @@ controlPluginAPI.appearance._autosizeContainerHandler = function (height) {
 };
 
 controlPluginAPI.analytics.trackAction = pluginAPI.analytics.trackAction = function (actionName, metadata) {
-	console.log('analytics mock track action [' + actionName + ']', metadata);
+	console.debug('analytics mock track action [' + actionName + ']', metadata);
 };
 
 controlPluginAPI.analytics.trackView = pluginAPI.analytics.trackView = function (viewName, metadata) {
-	console.log('analytics mock track view [' + viewName + ']', metadata);
+	console.debug('analytics mock track view [' + viewName + ']', metadata);
 };
 
 //override the imageLibTemplate url
