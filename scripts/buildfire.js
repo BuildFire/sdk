@@ -262,6 +262,9 @@ var buildfire = {
 				tag = '';
 			}
 
+			//auto correct empty string filter
+			if(options && options.filter == '') options.filter ={};
+
 			var p = new Packet(null, 'datastore.search', {tag: tag, obj: options});
 			buildfire.sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
