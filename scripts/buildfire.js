@@ -181,7 +181,7 @@ var buildfire = {
 	, datastore: {
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
 		get: function (tag, id, callback) {
-               
+
             var idType = typeof(id);
 			if (idType == "function" && typeof(callback) == "undefined") {
 				callback = id;
@@ -245,11 +245,11 @@ var buildfire = {
 		, bulkInsert: function (arrayObj, tag, callback) {
 
             if(arrayObj.constructor !== Array){
-                
+
                  callback({"code":"error","message":"the data should be an array"},null);
                  return;
             }
-           
+
             var tagType = typeof(tag);
             if (tagType == "undefined")
                 tag = '';
@@ -257,7 +257,7 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-           
+
             var p = new Packet(null, 'datastore.bulkInsert', {tag: tag, obj: arrayObj});
             buildfire.sendPacket(p, function (err, result) {
                 if (result)buildfire.datastore.triggerOnUpdate(result);
@@ -365,6 +365,12 @@ var buildfire = {
 			alert(message);
 		}
 	}
+    , actionItems: {
+        showDialog: function (actionItem, options, callback) {
+            var p = new Packet(null, 'actionItems.showDialog', {actionItem: actionItem, options: options});
+            buildfire.sendPacket(p, callback);
+    }
+}
 };
 buildfire.init();
 
