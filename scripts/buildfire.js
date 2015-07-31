@@ -297,7 +297,6 @@ var buildfire = {
 
 			var p = new Packet(null, 'datastore.search', {tag: tag, obj: options});
 			buildfire.sendPacket(p, function (err, result) {
-				if (result)buildfire.datastore.triggerOnUpdate(result);
 				callback(err, result);
 			});
 		}
