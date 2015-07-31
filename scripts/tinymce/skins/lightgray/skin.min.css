@@ -188,6 +188,11 @@
 	background:#eef0f0;
 	border:1px solid #ddd;
 }
+.mce-ico::before{
+	position:relative;
+	top:1px;
+	left:2px;
+}
 
 
 

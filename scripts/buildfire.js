@@ -7,7 +7,32 @@ function Packet(id, cmd, data) {
 }
 
 var buildfire = {
-	_callbacks: {}
+	logger: {
+		_suppress:true
+		,show:function(){
+			this._suppress=false;
+		}
+		,hide:function(){
+			this._suppress=true;
+		}
+		,error:function(){
+			if(!this._suppress)
+				console.error.apply(console, arguments);
+		}
+		,log:function(){
+			if(!this._suppress)
+				console.log.apply(console, arguments);
+		}
+		,warn:function(){
+			if(!this._suppress)
+				console.warn.apply(console, arguments);
+		}
+		,debug:function(){
+			if(!this._suppress)
+				console.debug.apply(console, arguments);
+		}
+	}
+	,_callbacks: {}
 	, init: function () {
 		// Listen to message from child window
 		window.removeEventListener('message', buildfire.postMessageHandler, false);
@@ -16,7 +41,7 @@ var buildfire = {
 		buildfire.appearance.attachCSSFiles();
 		buildfire.getContext(function (err, context) {
 			if (err) {
-				console.error(err);
+				buildfire.logger.error(err);
 			}
 			else {
 				buildfire.context = context;
@@ -28,7 +53,7 @@ var buildfire = {
 	}
 	, postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
-		console.debug('buildfire.js received << ' + e.data, window.location.href);
+		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
 		var packet = JSON.parse(e.data);
 
 		if (packet.id && buildfire._callbacks[packet.id]) {
@@ -52,7 +77,7 @@ var buildfire = {
 
 		}
 		else {
-			console.warn(window.location.href + ' unhandled packet', packet);
+			buildfire.logger.warn(window.location.href + ' unhandled packet', packet);
 			//alert('parent sent: ' + packet.data);
 		}
 	}
@@ -126,13 +151,13 @@ var buildfire = {
 	, sendPacket: function (packet, callback) {
 		if (typeof (callback) != "function")// handels better on response
 			callback = function (err, result) {
-				console.debug('buildfire.js ignored callback ' + JSON.stringify(arguments)), window.location.href
+				buildfire.logger.log('buildfire.js ignored callback ' + JSON.stringify(arguments)), window.location.href
 			};
 
 		buildfire._callbacks[packet.id] = callback;
 
 		var p = JSON.stringify(packet);
-		console.debug("BuildFire.js Send >> " + p, window.location.href);
+		buildfire.logger.log("BuildFire.js Send >> " + p, window.location.href);
 		if (parent)parent.postMessage(p, "*");
 	}
 	, analytics: {
@@ -156,7 +181,7 @@ var buildfire = {
 	, datastore: {
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
 		get: function (tag, id, callback) {
-               
+
             var idType = typeof(id);
 			if (idType == "function" && typeof(callback) == "undefined") {
 				callback = id;
@@ -220,11 +245,11 @@ var buildfire = {
 		, bulkInsert: function (arrayObj, tag, callback) {
 
             if(arrayObj.constructor !== Array){
-                
+
                  callback({"code":"error","message":"the data should be an array"},null);
                  return;
             }
-           
+
             var tagType = typeof(tag);
             if (tagType == "undefined")
                 tag = '';
@@ -232,7 +257,7 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-           
+
             var p = new Packet(null, 'datastore.bulkInsert', {tag: tag, obj: arrayObj});
             buildfire.sendPacket(p, function (err, result) {
                 if (result)buildfire.datastore.triggerOnUpdate(result);
@@ -267,7 +292,8 @@ var buildfire = {
 			}
 
 			//auto correct empty string filter
-			if(options && options.filter == '') options.filter ={};
+			if(typeof(options) == "undefined") options ={filter:{}};
+			if(!options.filter) options.filter ={};
 
 			var p = new Packet(null, 'datastore.search', {tag: tag, obj: options});
 			buildfire.sendPacket(p, function (err, result) {
@@ -283,7 +309,7 @@ var buildfire = {
 		}
 		, triggerOnUpdate: function (data) {
 			var onUpdateEvent = new CustomEvent('datastoreOnUpdate', {'detail': data});
-			console.debug("Announce the data has changed!!!", window.location.href);
+			buildfire.logger.log("Announce the data has changed!!!", window.location.href);
 			document.dispatchEvent(onUpdateEvent);
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonrefreshcallback
@@ -294,7 +320,7 @@ var buildfire = {
 		}
 		, triggerOnRefresh: function (data) {
 			var onRefreshEvent = new CustomEvent('datastoreOnRefresh', {'detail': data});
-			console.debug("Announce the data needs refresh!!!", window.location.href);
+			buildfire.logger.log("Announce the data needs refresh!!!", window.location.href);
 			document.dispatchEvent(onRefreshEvent);
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredisablerefresh
@@ -340,6 +366,12 @@ var buildfire = {
 			alert(message);
 		}
 	}
+    , actionItems: {
+        showDialog: function (actionItem, options, callback) {
+            var p = new Packet(null, 'actionItems.showDialog', {actionItem: actionItem, options: options});
+            buildfire.sendPacket(p, callback);
+    }
+}
 };
 buildfire.init();
 
