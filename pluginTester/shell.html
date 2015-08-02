@@ -43,7 +43,7 @@
                             <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
                         </li>
                     </ul>
-                    <iframe id="iframeControl" sandbox="allow-scripts allow-forms allow-same-origin"
+                    <iframe id="iframeControl" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
                             ng-src="{{currentControl}}"></iframe>
                 </div>
             </section>
@@ -51,7 +51,7 @@
                 <div id="emulatorContainer" class="border-grey">
                     <span class="emulatorlabel">iOS / Android</span>
                     <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey"
-                            seamless sandbox="allow-scripts allow-forms  allow-same-origin"></iframe>
+                            seamless sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
                 </div>
             </section>
         </div>
