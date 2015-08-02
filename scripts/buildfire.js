@@ -182,20 +182,21 @@ var buildfire = {
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
 		get: function (tag, id, callback) {
 
-            var idType = typeof(id);
-			if (idType == "function" && typeof(callback) == "undefined") {
-				callback = id;
-				id = '';
-			}
-
-			var tagType = typeof(tag);
-			if (tagType == "undefined")
-				tag = '';
-			else if (tagType == "function" && typeof(callback) == "undefined") {
+			if (typeof(callback) == "undefined") {
 				callback = tag;
-				tag = '';
+				tag = id;
+				id = ""
 			}
-            var obj ={tag:tag , id:id};
+			if (typeof(callback) == "undefined") {
+				callback = tag;
+				tag = "";
+			}
+			if (typeof(callback) !== "function") {
+				callback = function nope() {
+					console.info("function nope! executed")
+				};
+			}
+			var obj = {tag: tag, id: id};
 			var p = new Packet(null, 'datastore.get', obj);
 			buildfire.sendPacket(p, callback);
 
