@@ -19,7 +19,7 @@
 </head>
 <body>
 <div ng-controller="textPluginCtrl" ng-cloak style="background:url( {{data.content.bgURL}} )" class="{{data.design.style}}" >
-    {{data.content.text}}
+    <div ng-bind-html="data.content.text"></div>
     <hr/>
     <i ng-show="data.content.approvedOn">Approved on:{{data.content.approvedOn}}</i>
 </div>
@@ -28,13 +28,16 @@
 
     var textPluginApp = angular.module('textPlugin', []);
 
-    textPluginApp.controller('textPluginCtrl', ['$scope', function ($scope) {
+    textPluginApp.controller('textPluginCtrl', ['$scope', '$sce', function ($scope, $sce) {
 
         /*
         * bind data to scope
         * */
         function bind(data){
             $scope.data = data;
+            if(data && data.content && data.content.text) {
+                $scope.data.content.text = $sce.trustAsHtml(data.content.text);
+            }
             $scope.$digest();
         }
 

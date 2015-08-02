@@ -1,16 +1,16 @@
 /**
  * Created by Daniel on 5/23/2015.
  */
-var $app = angular.module('buildfire',[]);
+var $app = angular.module('buildfire', ['ui.bootstrap', 'ngFileUpload']);
 
-$app.config(['$sceDelegateProvider',function ($sceDelegateProvider) {
+$app.config(['$sceDelegateProvider', function ($sceDelegateProvider) {
 
-    $sceDelegateProvider.resourceUrlWhitelist([
-        // Allow same origin resource loads.
-        'self',
-        // Allow loading from our assets domain.  Notice the difference between * and **.
-        window.siteConfig.endPoints.pluginHost + '/**'
-    ]);
+	$sceDelegateProvider.resourceUrlWhitelist([
+		// Allow same origin resource loads.
+		'self',
+		// Allow loading from our assets domain.  Notice the difference between * and **.
+		window.siteConfig.endPoints.pluginHost + '/**'
+	]);
 
 }]);
 

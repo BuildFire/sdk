@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html ng-app="plugin">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load helper.css to use our helper classes.
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    -->
+
+    <!-- JS -->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+
+</head>
+<body ng-controller="pluginCtrl">
+<h1>Content - Names</h1>
+<button ng-Click="bulkInsert()">Bulk Insert Random Names</button>
+{{status}}
+<h2 ng-show="newNames">New Names</h2>
+<ul>
+    <li ng-repeat="name in newNames"><b>NEW - {{name.firstName}} {{name.lastName}}</b></li>
+</ul>
+
+<h2 ng-show="names">Existing Names</h2>
+
+<div ng-repeat="n in names">
+    <input type="text" ng-model="n.data.firstName" ng-change="updateName(n)"/>
+    <input type="text" ng-model="n.data.lastName" ng-change="updateName(n)"/>
+    <button ng-click="addCredits(n)">add Credit</button>
+</div>
+<div ng-show="hasMore">(more are in the database)</div>
+
+<script>
+
+    var textPluginApp = angular.module('plugin', []);
+
+    textPluginApp.controller('pluginCtrl', ['$scope', '$http', function ($scope, $http) {
+        var pageSize = 10;
+
+        function search(filter) {
+            $scope.status = 'searching names...';
+            buildfire.datastore.search({
+                filter: {"$json.firstName": {"$regex": filter}}
+                , page: 0
+                , pageSize: pageSize + 1 // the plus one is to check if there are any more
+                ,sort:{lastName:1,firstName:-1}
+            }, 'names', function (err, results) {
+                if (err)
+                    $scope.status = 'error!';
+                else {
+                    $scope.status = 'loading...';
+                    $scope.hasMore = results.length > pageSize;
+                    if($scope.hasMore )results.splice(results.length-1);
+                    $scope.names = results;
+
+                    $scope.status = '';
+                    $scope.$apply();
+                }
+            });
+        }
+
+        search('/*');
+
+        $scope.bulkInsert = function () {
+            $scope.status = 'fetch random names...';
+            $http.get('http://www.filltext.com/?rows=10&firstName={firstName}&lastName={lastName}').success(function (data) {
+                $scope.status = 'importing...';
+                $scope.newNames = data;
+                buildfire.datastore.bulkInsert(data, 'names', function () {
+                    $scope.status = 'imported ' + data.length + ' names.';
+                    $scope.$apply();
+                });
+
+            });
+        };
+
+        var tmrDelaySave;
+        $scope.updateName = function (n) {
+            /// wait until there is half a second of no more changes then update the server
+            if (tmrDelaySave) clearTimeout(tmrDelaySave);
+            tmrDelaySave = setTimeout(function () {
+
+                buildfire.datastore.update(n.id,n.data, 'names', function (e) {
+                    if (e) alert(JSON.stringify(e));
+                });
+            }, 500);
+        };
+        $scope.addCredits = function (n) {
+            buildfire.datastore.update(n.id,{$inc:{"credits":1}} , 'names', function (e) {
+                if (e) alert(JSON.stringify(e));
+            });
+        };
+    }]);
+
+
+</script>
+</body>
+</html>

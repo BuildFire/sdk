@@ -11,8 +11,8 @@
     <script src="../../../../scripts/buildfire.js"></script>
     <script src="../../../../scripts/angular/angular.min.js"></script>
     <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
-    <script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
-    <script src="ui-tinymce.js"></script>
+    <script src="../../../../scripts/tinymce/tinymce.min.js"></script>
+    <script src="../../../../scripts/tinymce/ui-tinymce.js"></script>
 
 </head>
 <body ng-controller="textPluginCtrl">
@@ -40,7 +40,7 @@
             <div class="labels col-md-3 pull-left">
             </div>
             <div class="main col-md-9 pull-right">
-                <button ng-click="appove()" >Approve</button> <i>this shows how you can update a single property</i>
+                <button ng-click="approve()" >Approve</button> <i>this shows how you can update a single property</i>
             </div>
         </div>
 
@@ -61,6 +61,10 @@
                 $scope.$digest();
                 if (tmrDelay)clearTimeout(tmrDelay);
             }
+            /*
+             * watch for changes in data and trigger the saveDataWithDelay function on change
+             * */
+            $scope.$watch('data',saveDataWithDelay ,true);
         });
 
         /*
@@ -92,14 +96,9 @@
         };
 
         /*
-        * watch for changes in data and trigger the saveDataWithDelay function on change
-        * */
-        $scope.$watch('data',saveDataWithDelay ,true);
-
-        /*
         * this is a way you can update only one property without sending the entire object
         * */
-        $scope.appove = function(){
+        $scope.approve = function(){
             if($scope.id)
                 buildfire.datastore.update($scope.id,{$set: {"content.approvedOn":new Date()} });
         };
@@ -109,7 +108,6 @@
         * Open Image Lib
         */
         $scope.openImageLib = function () {
-            debugger;
             buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, function (error, result) {
                 if (result && result.selectedFiles && result.selectedFiles.length > 0) {
                     $scope.data.content.bgURL = result.selectedFiles[0];
