@@ -302,9 +302,11 @@ var buildfire = {
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonupdatecallback
 		, onUpdate: function (callback) {
-			document.addEventListener('datastoreOnUpdate', function (e) {
-				if (callback)callback(e.detail);
-			}, false);
+			var handler = function (e) { if (callback)callback(e.detail); };
+			document.addEventListener('datastoreOnUpdate', handler, false);
+			return {
+				clear:function () {document.removeEventListener('datastoreOnUpdate', handler, false); }
+			};
 		}
 		, triggerOnUpdate: function (data) {
 			var onUpdateEvent = new CustomEvent('datastoreOnUpdate', {'detail': data});
