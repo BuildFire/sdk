@@ -22,6 +22,8 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', '$modal', function ($sc
 				size: options.size,
 				resolve: {$data : function(){
 					return options.data;
+				},$dialog : function(){
+					return $modal;
 				}}
 			});
 
