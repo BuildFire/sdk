@@ -280,6 +280,22 @@ var buildfire = {
 				if (callback)callback(err, result);
 			});
 		}
+        /// ref https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredeleteidobj-tag-optional-callback
+       , delete: function (id, tag, callback) {
+			var tagType = typeof(tag);
+			if (tagType == "undefined")
+				tag = '';
+			else if (tagType == "function" && typeof(callback) == "undefined") {
+				callback = tag;
+				tag = '';
+			}
+
+			var p = new Packet(null, 'datastore.delete', {tag: tag,id:id });
+			buildfire.sendPacket(p, function (err, result) {
+				if (result)buildfire.datastore.triggerOnUpdate(result);
+				if(callback)callback(err, result);
+			});
+		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresearchoptions-tag-optional-callback
 		, search: function (options, tag, callback) {
 
