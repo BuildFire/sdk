@@ -365,7 +365,12 @@ var buildfire = {
         execute: function (actionItem, options, callback) {
             var p = new Packet(null, 'actionItems.execute',  actionItem);
             buildfire.sendPacket(p, callback);
-        }
+        },
+		list : function(actionItems,options,callback) {
+			var p = new Packet(null, 'actionItems.list',  {actionItems : actionItems ,options : options } );
+			buildfire.sendPacket(p, callback);
+		}
+
     }
 };
 buildfire.init();
