@@ -180,7 +180,7 @@ var buildfire = {
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
 	, datastore: {
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
-		get: function (tag, id, callback) {
+		get: function (id, tag, callback) {
 
             var idType = typeof(id);
 			if (idType == "function" && typeof(callback) == "undefined") {
