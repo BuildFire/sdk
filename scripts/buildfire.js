@@ -180,7 +180,22 @@ var buildfire = {
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
 	, datastore: {
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
-		get: function (tag, id, callback) {
+		get: function ( tag, callback) {
+              
+			var tagType = typeof(tag);
+			if (tagType == "undefined")
+				tag = '';
+			else if (tagType == "function" && typeof(callback) == "undefined") {
+				callback = tag;
+				tag = '';
+			}
+            var obj ={tag:tag };
+			var p = new Packet(null, 'datastore.get', obj);
+			buildfire.sendPacket(p, callback);
+
+		},
+        /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoregetbyid--id--tag-optional-callback
+		getById: function (id, tag, callback) {
 
 			var idType = typeof(id);
 			if (idType == "function" && typeof(callback) == "undefined") {
