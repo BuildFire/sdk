@@ -334,25 +334,25 @@ var buildfire = {
 			buildfire.sendPacket(p, callback);
 		}
 		, resizeImage: function (url, options) {
-			var root = "s7obnu.cloudimage.io/s/";
-			if (typeOf(options) != "object")
+			var root = "http://s7obnu.cloudimage.io/s/";
+			if (typeof(options) != "object")
 				throw ("options not an object");
 
-			if (options.width && !option.height)
+			if (options.width && !options.height)
 				return root + "width/" + options.width + "/" + url;
-			else if (!options.width && option.height)
+			else if (!options.width && options.height)
 				return root + "height/" + options.height + "/" + url;
-			else if (options.width && option.height)
+			else if (options.width && options.height)
 				return root + "resizenp/" + options.width + "x" + options.height + "/" + url;
 			else
 				return url;
 		}
 		, cropImage: function (url, options) {
-			var root = "s7obnu.cloudimage.io/s/crop/";
-			if (typeOf(options) != "object")
+			var root = "http://s7obnu.cloudimage.io/s/crop/";
+			if (typeof(options) != "object")
 				throw ("options not an object");
 
-			if (!options.width && !option.height)
+			if (!options.width || !options.height)
 				throw ("options must have both height and width");
 
 			return root + options.width + "x" + options.height + "/" + url;
