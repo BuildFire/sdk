@@ -15,27 +15,8 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', '$modal', function ($sc
 		window.openDialog = function(options, callback){
 			if(!options.controller)
 				console.warn("window.openDialog :: You have to pass the controller value to the openDialog function");
-			var modalInstance = $modal.open({
-				animation: true,
-				templateUrl: options.templateUrl,
-				controller: options.controller,
-				size: options.size,
-				resolve: {$data : function(){
-					return options.data;
-				},$dialog : function(){
-					return $modal;
-				}}
-			});
-
-			modalInstance.result.then(function (r) {
-				if (callback) {
-					callback(r);
-				}
-			});
-
-			window.closeDialog = function (result) {
-				modalInstance.close(result);
-			}
+			var d = new Dialog($modal,options,callback);
+			d.open();
 		};
 
 		$scope.loadFrames = function (pluginFolder, config) {
@@ -96,3 +77,40 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', '$modal', function ($sc
 	}]
 );
 
+function Dialog($model,options,callback){
+	this.$model = $model;
+	this.modalInstance = null;
+	this.options = options;
+	this.callback = callback;
+};
+
+Dialog.prototype.open = function(){
+	
+	var t = this;
+	if(!this.options.data)
+		this.options.data = {};
+
+	this.options.data.dialog = this;
+	this.modalInstance = this.$model.open({
+		animation: true,
+		templateUrl: this.options.templateUrl,
+		controller: this.options.controller,
+		size: this.options.size,
+		resolve: {$data : function(){
+			return t.options.data;
+		},
+			$dialog : function(){
+				return t;
+			}}
+	});
+
+	this.modalInstance.result.then(function(r){
+		if(t.callback){
+			t.callback(r);
+		}
+	});
+};
+
+Dialog.prototype.close = function(result){
+	this.modalInstance.close(result);
+};
