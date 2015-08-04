@@ -1,0 +1,28 @@
+#pluginRefreshPanel {
+    position: absolute;
+    width: 100%;
+    color: #000;
+    text-align: center;
+    padding:5px 0;
+}
+
+#pluginRefreshPanel p{
+    margin:4px 0 0;
+    font-size:12px;
+}
+
+
+.ptr-loading #pluginContentPanel, .ptr-reset #pluginContentPanel,
+.ptr-loading #pluginRefreshPanel, .ptr-reset #pluginRefreshPanel {
+    transition: all .25s ease;
+}
+
+.ptr-reset #pluginContentPanel {
+    -webkit-transform: translate3d( 0, 0, 0 );
+    transform: translate3d( 0, 0, 0 );
+}
+
+.ptr-loading #pluginContentPanel {
+    -webkit-transform: translate3d( 0, 50px, 0 );
+    transform: translate3d( 0, 50px, 0 );
+}

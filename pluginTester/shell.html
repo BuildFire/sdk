@@ -10,6 +10,8 @@
     <link href="../styles/helper.css" rel="stylesheet">
     <link href="http://int2.myapp.buildfire.com/styles/siteScreen.css" rel="stylesheet">
 
+    <link href="styles/pulldown.css" rel="stylesheet">
+
     <!-- JS -->
     <script type="text/javascript" src="../scripts/angular/angular.min.js"></script>
     <script type="text/javascript" src="../scripts/angular/ng-file-upload.min.js"></script>
@@ -50,8 +52,18 @@
             <section id="emulator" class="pull-right">
                 <div id="emulatorContainer" class="border-grey">
                     <span class="emulatorlabel">iOS / Android</span>
-                    <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey"
-                            seamless sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+                    <div id="app" style="overflow: hidden;">
+                        <div id="pluginRefreshPanel">
+                            <p class="text-center">Pull to Refresh</p>
+                        </div>
+                        <div id="pluginContentPanel">
+                            <div id="widgetTitle" class="header ">
+                                Title Bar
+                            </div>
+                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey"
+                                seamless sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
@@ -65,5 +77,6 @@
 <script type="text/javascript" src="scripts/loadScripts.js"></script>
 <script type="text/javascript" src="scripts/overrides.js"></script>
 <script type="text/javascript" src="scripts/shellCtrl.js"></script>
+<script type="text/javascript" src="scripts/pullDownToRefresh.js"></script>
 </body>
 </html>
