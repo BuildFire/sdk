@@ -93,6 +93,18 @@ var buildfire = {
 		var p = new Packet(null, 'navigateHome');
 		this.sendPacket(p);
 	}
+	, openWindow: function(url,target,callback){
+		if(!target) target='_blank';
+		if(!callback) callback = function(){ logger.log('openWindow:: completed'); };
+		var actionItem = {
+			action:'linkToWeb'
+			,url:url
+			,openIn:target
+		};
+
+		var p = new Packet(null, 'actionItems.execute',actionItem, callback);
+		this.sendPacket(p);
+	}
 	, appearance: {
 		getCSSFiles: function (callback) {
 			var p = new Packet(null, 'appearance.getCSSFiles');
