@@ -42,6 +42,12 @@
             <div class="main col-md-9 pull-right">
                 <button ng-click="approve()" >Approve</button> <i>this shows how you can update a single property</i>
             </div>
+
+            <div class="main col-md-9 pull-right">
+                <button ng-click="openActionDialog()" >open action dialog</button> <i>this open action dialog</i>
+            </div>
+
+
         </div>
 
 	</div>
@@ -116,7 +122,23 @@
             });
         }
 
-
+         /*
+         * Open action dialog
+         */
+        $scope.openActionDialog = function() {
+            var actionItem = {
+                title: "build fire",
+                "url": "https://www.facebook.com/buildfireapps",
+                action: "linkToWeb",
+                openIn: "browser",
+                actionName: "Link to Web Content"
+            };
+            var options = {showIcon: true};
+            buildfire.actionItems.showDialog(null, options, function (err, actionItem) {
+                if(err)
+                console.log(err);
+            });
+        }
 
     }]);
 </script>
