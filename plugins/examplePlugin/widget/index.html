@@ -23,10 +23,17 @@
     <div ng-bind-html="data.content.text"></div>
     <hr/>
     <i ng-show="data.content.approvedOn">Approved on:{{data.content.approvedOn}}</i>
+    <h2>Executable Action Items</h2>
+    <ul>
+        <li ng-repeat="actionItem in data.actionItems" ng-click="executeAction(actionItem)">
+            <img ng-src="{{resizeImage(actionItem.iconUrl)}}"/>
+            {{actionItem.title}}
+        </li>
+    </ul>
+    <hr/>
     <p>This shows how you can list action Items</p>
     <a class="btn btn-success" ng-click="listActionItems()">Show action Items</a>
-    <p>This shows how you can execute action Item</p>
-    <a class="btn btn-success" ng-click="executeActionItem()">Execute action Item</a>
+
 
 </div>
 
@@ -81,47 +88,29 @@
              * List action Items
              * This action Items array could be already saved in ur Data store or where ever you need
              * */
-            var actionItems = [
-                {
-                    title: "build fire",
-                    "url": "https://www.facebook.com/buildfireapps",
-                    action: "linkToWeb",
-                    openIn: "browser",
-                    actionName: "Link to Web Content"
-                },
-                {
-                    title: "build fire",
-                    "url": "https://www.facebook.com/buildfireapps",
-                    action: "linkToWeb",
-                    openIn: "browser",
-                    actionName: "Link to Web Content"
-                }
-            ];
-
-            buildfire.actionItems.list(actionItems, null, function (err, actionItem) {
+            buildfire.actionItems.list($scope.data.actionItems, null, function (err, actionItem) {
                 if (err)
                     console.log(err);
 
             });
         };
 
-        $scope.executeActionItem = function () {
+        $scope.executeAction = function (actionItem) {
             /*
              * Execute action Item
              * This action Item object could be already saved in ur Data store or where ever you need
              * */
-            var actionItem = {
-                title: "build fire",
-                "url": "https://www.facebook.com/buildfireapps",
-                action: "linkToWeb",
-                openIn: "browser",
-                actionName: "Link to Web Content"
-            };
-
             buildfire.actionItems.execute(actionItem, function (err, result) {
                 if (err)
                     console.log(err);
             });
+        };
+
+        $scope.resizeImage = function(url){
+            if(!url)
+                return "";
+            else
+                return buildfire.imageLib.resizeImage(url,{width:32});
         };
 
      }]);
