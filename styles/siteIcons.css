@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?-b9fo2i');
-	src:url('../fonticons/icomoon.eot?#iefix-b9fo2i') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?-b9fo2i') format('woff2'),
-		url('../fonticons/icomoon.ttf?-b9fo2i') format('truetype'),
-		url('../fonticons/icomoon.woff?-b9fo2i') format('woff'),
-		url('../fonticons/icomoon.svg?-b9fo2i#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?-rzcpd3');
+	src:url('../fonticons/icomoon.eot?#iefix-rzcpd3') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?-rzcpd3') format('woff2'),
+		url('../fonticons/icomoon.ttf?-rzcpd3') format('truetype'),
+		url('../fonticons/icomoon.woff?-rzcpd3') format('woff'),
+		url('../fonticons/icomoon.svg?-rzcpd3#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -59,6 +59,9 @@
 }
 .icon-check:before {
 	content: "\e606";
+}
+.icon-cross2:before {
+	content: "\e60d";
 }
 .icon-chevron-down:before {
 	content: "\e605";

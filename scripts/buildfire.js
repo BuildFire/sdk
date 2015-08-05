@@ -150,7 +150,7 @@ var buildfire = {
 				document.body.offsetHeight,
 				document.documentElement.offsetHeight
 			);
-			if (buildfire.appearance._resizedTo != height || height < 100) return;
+			if (buildfire.appearance._resizedTo == height || height < 100) return;
 			var p = new Packet(null, 'appearance.autosizeContainer', {height: height});
 			buildfire.sendPacket(p);
 			buildfire.appearance._resizedTo = height;
@@ -167,8 +167,11 @@ var buildfire = {
 			};
 
 		buildfire._callbacks[packet.id] = callback;
-
-		var p = JSON.stringify(packet);
+		var p ;
+		if(typeof(angular) != "undefined")
+		  p = angular.toJson(packet);
+		else
+			p = JSON.stringify(packet);
 		buildfire.logger.log("BuildFire.js Send >> " + p, window.location.href);
 		if (parent)parent.postMessage(p, "*");
 	}
@@ -430,6 +433,14 @@ var buildfire = {
 	, actionItems: {
 		showDialog: function (actionItem, options, callback) {
 			var p = new Packet(null, 'actionItems.showDialog', {actionItem: actionItem, options: options});
+			buildfire.sendPacket(p, callback);
+		},
+		execute: function (actionItem, options, callback) {
+			var p = new Packet(null, 'actionItems.execute',  actionItem);
+			buildfire.sendPacket(p, callback);
+		},
+		list : function(actionItems,options,callback) {
+			var p = new Packet(null, 'actionItems.list',  {actionItems : actionItems ,options : options } );
 			buildfire.sendPacket(p, callback);
 		}
 	}

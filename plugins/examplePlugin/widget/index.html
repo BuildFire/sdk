@@ -8,20 +8,33 @@
     <script type="text/javascript" src="../../../scripts/buildfire.js"></script>
 
     <style>
-        .style1{
+        .style1 {
             border: 5px solid red;
         }
 
-        .style2{
+        .style2 {
             border: 5px solid blue;
         }
     </style>
 </head>
 <body>
-<div ng-controller="textPluginCtrl" ng-cloak style="background:url( {{data.content.bgURL}} )" class="{{data.design.style}}" >
+<div ng-controller="textPluginCtrl" ng-cloak style="background:url( {{data.content.bgURL}});height:100%"
+     class="{{data.design.style}}">
     <div ng-bind-html="data.content.text"></div>
     <hr/>
     <i ng-show="data.content.approvedOn">Approved on:{{data.content.approvedOn}}</i>
+    <h2>Executable Action Items</h2>
+    <ul>
+        <li ng-repeat="actionItem in data.actionItems" ng-click="executeAction(actionItem)">
+            <img ng-src="{{resizeImage(actionItem.iconUrl)}}"/>
+            {{actionItem.title}}
+        </li>
+    </ul>
+    <hr/>
+    <p>This shows how you can list action Items</p>
+    <a class="btn btn-success" ng-click="listActionItems()">Show action Items</a>
+
+
 </div>
 
 <script>
@@ -31,11 +44,11 @@
     textPluginApp.controller('textPluginCtrl', ['$scope', '$sce', function ($scope, $sce) {
 
         /*
-        * bind data to scope
-        * */
-        function bind(data){
+         * bind data to scope
+         * */
+        function bind(data) {
             $scope.data = data;
-            if(data && data.content && data.content.text) {
+            if (data && data.content && data.content.text) {
                 $scope.data.content.text = $sce.trustAsHtml(data.content.text);
             }
             $scope.$digest();
@@ -49,6 +62,7 @@
                 if (result) bind(result.data);
             });
         }
+
         loadData();
 
         /**
@@ -65,10 +79,41 @@
         });
 
         /*
-        * track every time this widget is opened
-        * */
-        buildfire.analytics.trackAction('widget loaded',{userid:2});
-    }]);
+         * track every time this widget is opened
+         * */
+        buildfire.analytics.trackAction('widget loaded', {userid: 2});
+
+        $scope.listActionItems = function () {
+            /*
+             * List action Items
+             * This action Items array could be already saved in ur Data store or where ever you need
+             * */
+            buildfire.actionItems.list($scope.data.actionItems, null, function (err, actionItem) {
+                if (err)
+                    console.log(err);
+
+            });
+        };
+
+        $scope.executeAction = function (actionItem) {
+            /*
+             * Execute action Item
+             * This action Item object could be already saved in ur Data store or where ever you need
+             * */
+            buildfire.actionItems.execute(actionItem, function (err, result) {
+                if (err)
+                    console.log(err);
+            });
+        };
+
+        $scope.resizeImage = function(url){
+            if(!url)
+                return "";
+            else
+                return buildfire.imageLib.resizeImage(url,{width:32});
+        };
+
+     }]);
 </script>
 
 </body>

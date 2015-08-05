@@ -31,7 +31,7 @@ controlPluginAPI.datastore.onUpdate(onUpdate);
  };
  */
 
-controlPluginAPI.appearance._autosizeContainerHandler = function (height) {
+controlPluginAPI.appearance.autosizeContainerHandler = function (height) {
 	var iframeControl = document.getElementById('iframeControl');
 	iframeControl.style.height = height + 'px';
 };
@@ -46,3 +46,6 @@ controlPluginAPI.analytics.trackView = pluginAPI.analytics.trackView = function 
 
 //override the imageLibTemplate url
 imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
+controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';
+pluginAPI.actionItems.listTemplateUrl = 'http://int2.myapp.buildfire.com/app/pages/templates/actionItemsListDialog.html';
+window.appContext.currentPlugin.pluginAPI = controlPluginAPI;
