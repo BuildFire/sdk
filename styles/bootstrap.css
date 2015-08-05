@@ -5167,23 +5167,20 @@ a.thumbnail.active {
 	position:absolute;
 	top:-50px;
 	left:221px;
-	width:350px;
-	padding:12px;
+	min-width:200px;
+	max-width:350px;
+	padding:5px 10px;
 	opacity:0;
+	top:15px;
 }
 .site-alert.alert.active{
-	top:8px;
 	opacity:1;
 }
-.site-alert.alert.centered{
-	left:50%;
-	margin-left:-185px;
-	top:-50px;
+.site-alert.alert-message{
+	background:#eef0f0;
+	color:#5f5f5f;
+	border:1px solid #ddd;
 }
-.site-alert.alert.centered.active{
-	top:8px;
-}
-
 
 @-webkit-keyframes progress-bar-stripes {
   from {
@@ -8338,4 +8335,17 @@ Variations
 .col-md-12, 
 .col-lg-12 {
   width: 100%;
+}
+
+/* Modal for Plugins */
+html[buildfire] .modal .modal-dialog{
+  border-radius:4px;
+  border:1px solid #ddd;
+}
+html[buildfire] .modal-backdrop {
+  background:#fff;
+}
+
+html[buildfire] .modal-backdrop.in{
+  opacity:0.9;
 }
