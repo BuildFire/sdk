@@ -150,7 +150,7 @@ var buildfire = {
 				document.body.offsetHeight,
 				document.documentElement.offsetHeight
 			);
-			if (buildfire.appearance._resizedTo != height || height < 100) return;
+			if (buildfire.appearance._resizedTo == height || height < 100) return;
 			var p = new Packet(null, 'appearance.autosizeContainer', {height: height});
 			buildfire.sendPacket(p);
 			buildfire.appearance._resizedTo = height;

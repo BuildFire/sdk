@@ -31,7 +31,7 @@ controlPluginAPI.datastore.onUpdate(onUpdate);
  };
  */
 
-controlPluginAPI.appearance._autosizeContainerHandler = function (height) {
+controlPluginAPI.appearance.autosizeContainerHandler = function (height) {
 	var iframeControl = document.getElementById('iframeControl');
 	iframeControl.style.height = height + 'px';
 };
