@@ -29,7 +29,7 @@
     <button ng-click="addCredits(n)">add Credit</button>
 </div>
 <div ng-show="hasMore">(more are in the database)</div>
-
+     <button ng-click="addCreditsToAll()">add Credit to all</button>
 <script>
 
     var textPluginApp = angular.module('plugin', []);
@@ -89,6 +89,11 @@
             buildfire.datastore.update(n.id,{$inc:{"credits":1}} , 'names', function (e) {
                 if (e) alert(JSON.stringify(e));
             });
+        };
+        $scope.addCreditsToAll = function () {
+                buildfire.datastore.save( { $inc: { "credits": 1 } }, 'names', function (e) {
+                    if (e) alert(JSON.stringify(e));
+                });
         };
     }]);
 
