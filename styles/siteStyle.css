@@ -675,28 +675,28 @@ table.table span.sort-icon{
 	width:100%;
 	height:85px;
 	padding:0;
-	line-height:83px;
+	line-height:80px;
 	vertical-align:top;
 	margin-bottom:5px;	
 }
 .screens .screen.mostdevices a{
 	height:110px;
 	width:90%;
-	line-height:110px;
+	line-height:105px;
 }
 .screens .screen.iphone a{
 	width:85%;
 	height:122px;
-	line-height:120px;
+	line-height:117px;
 }
 .screens .screen.ipads a{
 	height:105px;
-	line-height:105px;
+	line-height:100px;
 	width:90%;
 }
 .screens .screen.tablets a{
 	height:122px;
-	line-height:120px;
+	line-height:117px;
 	width:90%;
 }
 .screens .screen.layouticon a,
