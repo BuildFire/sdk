@@ -167,8 +167,11 @@ var buildfire = {
 			};
 
 		buildfire._callbacks[packet.id] = callback;
-
-		var p = JSON.stringify(packet);
+		var p ;
+		if(typeof(angular) != "undefined")
+		  p = angular.toJson(packet);
+		else
+			p = JSON.stringify(packet);
 		buildfire.logger.log("BuildFire.js Send >> " + p, window.location.href);
 		if (parent)parent.postMessage(p, "*");
 	}
