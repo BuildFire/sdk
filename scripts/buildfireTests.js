@@ -115,7 +115,7 @@ describe('buildfire.datastore', function () {
     it("buildfire.datastore.get should exist and be a function", function () {
         expect(buildfire.datastore.get).to.a("function");
 
-        buildfire.datastore.get(function(err,result){
+        buildfire.datastore.get(function (err, result) {
             expect(err).to.be.null();
             expect(result).to.be.a('object');
         });
@@ -192,6 +192,14 @@ describe('buildfire.notifications', function () {
 describe('buildfire.actionItems', function () {
     it("buildfire.actionItems.showDialog should exist and be a function", function () {
         expect(buildfire.actionItems.showDialog).to.a("function");
+    });
+
+    it("buildfire.actionItems.execute should exist and be a function", function () {
+        expect(buildfire.actionItems.execute).to.a("function");
+    });
+
+    it("buildfire.actionItems.list should exist and be a function", function () {
+        expect(buildfire.actionItems.list).to.a("function");
     });
 });
 
