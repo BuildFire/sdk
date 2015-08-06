@@ -279,7 +279,8 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 #main-content .wrapper.largeWidth{
 	width:1160px;
 }
-#main-content .header{
+#main-content .header,
+html[buildfire] .item .header{
 	background:#32373a;
 	padding:15px 250px 15px 20px;
 	color:#a6abba;
@@ -288,13 +289,16 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	font-weight:300;
 	position:relative;
 }
-#main-content .section:first-child > .header{
+#main-content .section:first-child > .header,
+html[buildfire] .item:first-child > .header{
 	border-radius:4px 4px 0 0;
 }
-#main-content .header.no-btn{
+#main-content .header.no-btn,
+html[buildfire] .item .header.no-btn{
 	padding-right:20px;
 }
-#main-content .header h4{
+#main-content .header h4,
+html[buildfire] .item .header h4{
 	color:#a6abba;
 	font-size:15px;
 	line-height:20px;
@@ -302,12 +306,14 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	margin:0;
 	float:left;
 }
-#main-content .header .pull-right{
+#main-content .header .pull-right,
+html[buildfire] .item .header .pull-right{
 	position:absolute;
 	right:20px;
 	top:11px;
 }
-#main-content .header .pull-right .btn{
+#main-content .header .pull-right .btn,
+html[buildfire] .item .header .pull-right .btn{
 	padding:3px 25px;
 }
 .dropdown-toggle{
