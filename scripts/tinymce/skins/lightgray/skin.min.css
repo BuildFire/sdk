@@ -64,11 +64,25 @@
 	-webkit-transition: all 0.35s;
 	transition: all 0.35s;
 }
-.mce-btn .mce-caret:before{
+.mce-menu-item .mce-caret{
+	border:none;
+}
+.mce-btn .mce-caret:before,
+.mce-menu-item .mce-caret:before{
 	font-family: 'icomoon';
-	content: "\e605";
+	content: "\e60f";
 	font-style:normal;
 	font-size:10px;
+}
+.mce-menu-item .mce-caret:before{
+	font-size:8px;
+	margin-left:-7px;
+	position:relative;
+	top:-5px;
+	display:inline-block;
+	transform:rotate(-90deg);
+	-ms-transform:rotate(-90deg); 
+	-webkit-transform:rotate(-90deg);
 }
 .mce-btn.mce-active, 
 .mce-btn.mce-active:hover{
