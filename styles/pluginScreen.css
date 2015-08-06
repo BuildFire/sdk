@@ -9,9 +9,6 @@
 		font-size:12px;
 		top:-8px;
 	}
-	html[buildfire] .screens .layoutgrid{
-		width:75.6%;
-	}
 	html[buildfire] .screens .layoutgrid .layouticon:nth-child(4n){
 		margin-right:9px;
 	}
@@ -21,6 +18,9 @@
 	html[buildfire] .screens .screen, 
 	html[buildfire] .screens .layoutgrid .layouticon{
 		width:90px;
+	}
+	html[buildfire] .screens .layoutgrid{
+		width:75.6%;
 	}
 	html[buildfire] .draggable-list-view .d-item .copy{
 		width:71%;
@@ -39,6 +39,10 @@
 		max-width:84%;
 		width:84%;
 	}
+	html[buildfire] .draggable-list-view.non-draggable .d-item .copy{
+		width:90%;
+		max-width:90%;
+	}
 	html[buildfire] .item span.tip{
 		margin-left:2px;
 	}
@@ -54,11 +58,5 @@
 	html[buildfire] .holder.plugin-page .draggable-list-view.tab-order .d-item span.title{
 		width:87%;
 		max-width:87%;
-	}
-	
-	/* WYSIWYG Editor */
-	html[buildfire] .mce-tinymce #tinymce-25{
-		padding-top:4px;
-		margin-left:0;
 	}
 }

@@ -620,9 +620,6 @@ table.table span.sort-icon{
 	transition: all 0.35s;
 }
 .modal-dialog .header span.close-modal:hover{
-	transform:rotate(90deg);
-	-ms-transform:rotate(90deg); 
-	-webkit-transform:rotate(90deg);	
 	cursor:pointer;	
 }
 .modal .modal-content .padded{
@@ -675,34 +672,34 @@ table.table span.sort-icon{
 	width:100%;
 	height:85px;
 	padding:0;
-	line-height:83px;
+	line-height:80px;
 	vertical-align:top;
 	margin-bottom:5px;	
 }
 .screens .screen.mostdevices a{
 	height:110px;
 	width:90%;
-	line-height:110px;
+	line-height:105px;
 }
 .screens .screen.iphone a{
 	width:85%;
 	height:122px;
-	line-height:120px;
+	line-height:117px;
 }
 .screens .screen.ipads a{
 	height:105px;
-	line-height:105px;
+	line-height:100px;
 	width:90%;
 }
 .screens .screen.tablets a{
 	height:122px;
-	line-height:120px;
+	line-height:117px;
 	width:90%;
 }
 .screens .screen.layouticon a,
 .screens .layoutgrid .layouticon{
 	height:124px;
-	line-height:122px;
+	line-height:119px;
 }
 .screens .layoutgrid{
 	padding:12px 12px 0px;
@@ -716,6 +713,7 @@ table.table span.sort-icon{
 .screens .layoutgrid .layouticon:nth-child(4n){
 	margin-right:0;
 }
+.screens .screen.carouselicon,
 .screens .screen.carouselicon a{
 	width:120px;
 }
@@ -851,17 +849,6 @@ p.info{
     padding:0 15px;
 }
 
-/* Dynamic Links */
-.dynamic-links{
-	border-top:1px solid #ddd;
-}
-.dynamic-links a{
-	display:block;
-	width:100%;
-	border-bottom:1px solid #ddd;
-	padding:10px 0;
-}
-
 /* RTL */
 body.rtl #main-content,
 body.rtl #main-content input,
@@ -929,7 +916,7 @@ body.rtl .pagination > li + li{
 	min-height:600px;
 }
 html[buildfire]{
-	margin-top:30px;
+	padding-top:30px;
 }
 html[buildfire],
 html[buildfire] body{
