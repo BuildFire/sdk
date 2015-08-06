@@ -480,3 +480,18 @@ and targeted by Bootstrap like classes */
 	-ms-transform:rotate(360deg); 
 	-webkit-transform:rotate(360deg);
 }
+
+/* html[buildfire] Override */
+html[buildfire] .btn-plus-icon::after, 
+html[buildfire] .btn-minus-icon::after, 
+html[buildfire] .btn-check-icon::after, 
+html[buildfire] .btn-delete-icon::after, 
+html[buildfire] .btn-exclamation-icon::after, 
+html[buildfire] .btn-question-icon::after, 
+html[buildfire] .btn-info-icon::after, 
+html[buildfire] .btn-link-icon::after{
+	top:-2px;
+}
+html[buildfire] .btn-delete-icon::after{
+	top:-2.5px;
+}

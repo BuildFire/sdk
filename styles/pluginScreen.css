@@ -49,6 +49,17 @@
 	html[buildfire] .colorgrid .coloritem a{
 		width:35px;
 	}
+	html[buildfire] .main.holder .tab-order{
+		border-radius:4px;
+	}
+	html[buildfire] .main.holder .tab-order .copy{
+		width:83%;
+		max-width:83%;
+	}
+	html[buildfire] .main.holder .tab-order .copy span.title{
+		width:87%;
+		max-width:87%;
+	}
 	
 	/* Plugin Page */
 	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
