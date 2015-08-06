@@ -13,13 +13,15 @@ $home.controller('homeCtrl', ['$scope'
         $scope.appContentId = 123;
 
         var fn = function(w){
-            buildfire.navigateTo(w.widgetId,w.instanceId, w.title);
+            buildfire.navigation.navigateTo(w.widgetId,w.instanceId, w.title);
         };
         $scope.click=fn;
 
         var widgets = [
-            {click:fn, title:"widget1", widgetId:'examplePlugin',instanceId:123, icon:"http://www.graphicsfuel.com/wp-content/uploads/2012/07/steel-app-icon-512.png", requiresConnection:false }
-            ,{click:fn,title:"widget2", widgetId:'examplePlugin',instanceId:321, icon:"http://www.canadatechblog.com/wp-content/uploads/2013/08/mzl.iqdiiykr.png", requiresConnection:true}
+            {click:fn, title:"Example", widgetId:'examplePlugin',instanceId:123, icon:"https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQOKEK6H0b9ORLmevNkHpU44XYFP-yvK3OhJLRY5rP0RRykmAOL", requiresConnection:false }
+            ,{click:fn,title:"Simple Search", widgetId:'exampleSimpleSearch',instanceId:321, icon:"https://www.bellbanks.com/wp-content/uploads/2013/02/mobile-app-icon.jpg", requiresConnection:true}
+            ,{click:fn,title:"People", widgetId:'peoplePlugin',instanceId:321, icon:"http://www.allthingsscene.co/wp-content/uploads/2014/07/App-icon.png", requiresConnection:true}
+            ,{click:fn,title:"Contact Us", widgetId:'contactUsPlugin',instanceId:321, icon:"http://www.codeandlogic.com/media/home/appIcon.png", requiresConnection:true}
         ];
 
         for(var i=0;i< widgets.length ;i++)

@@ -18,26 +18,20 @@ describe('buildfire', function () {
     it("buildfire.init should exist and be a function", function () {
         expect(buildfire.init).to.a("function");
     });
-    it("buildfire.postMessageHandler should exist and be a function", function () {
-        expect(buildfire.postMessageHandler).to.a("function");
+    it("buildfire._postMessageHandler should exist and be a function", function () {
+        expect(buildfire._postMessageHandler).to.a("function");
     });
     it("buildfire.getContext should exist and be a function", function () {
         expect(buildfire.getContext).to.a("function");
     });
-    it("buildfire.navigateTo should exist and be a function", function () {
-        expect(buildfire.navigateTo).to.a("function");
-    });
-    it("buildfire.navigateHome should exist and be a function", function () {
-        expect(buildfire.navigateHome).to.a("function");
-    });
-    it("buildfire.openWindow should exist and be a function", function () {
-        expect(buildfire.openWindow).to.a("function");
+    it("buildfire.navigation should exist and be a object", function () {
+        expect(buildfire.navigation).to.a("object");
     });
     it("buildfire.appearance should exist and be a object", function () {
         expect(buildfire.appearance).to.a("object");
     });
-    it("buildfire.sendPacket should exist and be a function", function () {
-        expect(buildfire.sendPacket).to.a("function");
+    it("buildfire._sendPacket should exist and be a function", function () {
+        expect(buildfire._sendPacket).to.a("function");
     });
     it("buildfire.analytics should exist and be a object", function () {
         expect(buildfire.analytics).to.a("object");
@@ -53,6 +47,20 @@ describe('buildfire', function () {
     });
     it("buildfire.actionItems should exist and be a object", function () {
         expect(buildfire.actionItems).to.a("object");
+    });
+});
+
+/*******************************************************/
+describe('buildfire.navigation', function () {
+
+    it("buildfire.navigateTo should exist and be a function", function () {
+        expect(buildfire.navigation.navigateTo).to.a("function");
+    });
+    it("buildfire.navigateHome should exist and be a function", function () {
+        expect(buildfire.navigation.navigateHome).to.a("function");
+    });
+    it("buildfire.openWindow should exist and be a function", function () {
+        expect(buildfire.navigation.openWindow).to.a("function");
     });
 });
 /*******************************************************/
