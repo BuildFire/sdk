@@ -88,11 +88,11 @@ var buildfire = {
 	, navigation: {
          navigateTo: function (pluginId, instanceId, title) {
             var p = new Packet(null, 'navigateTo', {pluginId: pluginId, instanceId: instanceId, title: title});
-            this._sendPacket(p);
+            buildfire._sendPacket(p);
         }
         , navigateHome: function () {
             var p = new Packet(null, 'navigateHome');
-            this._sendPacket(p);
+			buildfire._sendPacket(p);
         }
         , openWindow: function (url, target, callback) {
             if (!target) target = '_blank';
@@ -446,6 +446,14 @@ var buildfire = {
 		list : function(actionItems,options,callback) {
 			var p = new Packet(null, 'actionItems.list',  {actionItems : actionItems ,options : options } );
 			buildfire._sendPacket(p, callback);
+		}
+	}
+	, control:{
+		sendMessage:function(data, callback){
+
+		}
+		,onReceivedMessage:function(){
+
 		}
 	}
 };
