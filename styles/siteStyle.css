@@ -354,6 +354,9 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .draggable-list-view .d-item{
 	padding:8px 17px;
 }
+.carousel-items .d-item{
+	min-height:56px;
+}
 .draggable-list-view .d-item + .d-item{
 	border-top:1px solid #ddd;
 }

@@ -12,7 +12,7 @@ body{
 	color:#5f5f5f;
 	height:100%;
     margin:0px;
-	/*overflow:hidden;*/
+	overflow:hidden;
 	-ms-overflow-style:none;
 }
 ::-webkit-scrollbar{
