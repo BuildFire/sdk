@@ -9,9 +9,6 @@
 		font-size:12px;
 		top:-8px;
 	}
-	html[buildfire] .screens .layoutgrid{
-		width:75.6%;
-	}
 	html[buildfire] .screens .layoutgrid .layouticon:nth-child(4n){
 		margin-right:9px;
 	}
@@ -21,6 +18,9 @@
 	html[buildfire] .screens .screen, 
 	html[buildfire] .screens .layoutgrid .layouticon{
 		width:90px;
+	}
+	html[buildfire] .screens .layoutgrid{
+		width:75.6%;
 	}
 	html[buildfire] .draggable-list-view .d-item .copy{
 		width:71%;
