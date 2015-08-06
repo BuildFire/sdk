@@ -620,9 +620,6 @@ table.table span.sort-icon{
 	transition: all 0.35s;
 }
 .modal-dialog .header span.close-modal:hover{
-	transform:rotate(90deg);
-	-ms-transform:rotate(90deg); 
-	-webkit-transform:rotate(90deg);	
 	cursor:pointer;	
 }
 .modal .modal-content .padded{
@@ -702,7 +699,7 @@ table.table span.sort-icon{
 .screens .screen.layouticon a,
 .screens .layoutgrid .layouticon{
 	height:124px;
-	line-height:122px;
+	line-height:119px;
 }
 .screens .layoutgrid{
 	padding:12px 12px 0px;
@@ -716,6 +713,7 @@ table.table span.sort-icon{
 .screens .layoutgrid .layouticon:nth-child(4n){
 	margin-right:0;
 }
+.screens .screen.carouselicon,
 .screens .screen.carouselicon a{
 	width:120px;
 }
@@ -918,7 +916,7 @@ body.rtl .pagination > li + li{
 	min-height:600px;
 }
 html[buildfire]{
-	margin-top:30px;
+	padding-top:30px;
 }
 html[buildfire],
 html[buildfire] body{

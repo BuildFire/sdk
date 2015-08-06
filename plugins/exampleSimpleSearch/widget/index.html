@@ -14,7 +14,7 @@
 <input type="text" placeholder="search name" ng-model="criteria" />
 {{status}}
 <ul>
-	<li ng-repeat="n in names">{{n.data.firstName}} {{n.data.lastName}}</li>
+	<li ng-repeat="n in names">{{n.data.firstName}} {{n.data.lastName}} - {{n.data.credits}}</li>
 </ul>
 <button ng-click="loadNextPage()"  ng-show="hasMore">more...</button>
 <script>
@@ -26,12 +26,15 @@
 		var page=0;
 		$scope.names=[];
 		function search(filter) {
-			$scope.status = 'searching names...';
+			if(!filter)filter= '/*';
 
+			$scope.status = 'searching names...';
+			if(page==0)$scope.names=[];
 			buildfire.datastore.search({
 				filter:{"$json.firstName":{"$regex":filter}}
 				, page:page
-				,pageSize:pageSize + 1 // the plus one is to check if there are any more
+				, pageSize:pageSize + 1 // the plus one is to check if there are any more
+				,sort:{lastName:1,firstName:-1}
 			},'names',function(err,results)
 			{
 				if(err)
@@ -43,6 +46,8 @@
 						$scope.hasMore=true;
 						results = results.splice(0,pageSize);
 					}
+					else
+						$scope.hasMore=false;
 					$scope.names= $scope.names.concat( results);
 
 					$scope.status = '';
@@ -50,18 +55,31 @@
 				}
 			});
 		}
-		search('/*');
+		//search(); /// watch triggers first time, no need
 
 		$scope.loadNextPage= function(){
 			page++;
-			search('/*');
+			search($scope.criteria);
 		};
 
+		var tmrDelaySearch;
 		$scope.$watch('criteria', function(newCriteria){
+			if(tmrDelaySearch) clearTimeout( tmrDelaySearch);
+			tmrDelaySearch=setTimeout(function(){
+				page=0;
+				search( newCriteria );
+			},500); //wait half a second of the user stop typing before you search
 
-			$scope.names=[];
-			search( newCriteria );
 		});
+
+		buildfire.datastore.onUpdate(function(e){
+			var currentPage=page;
+			page=-1;
+			while(page <currentPage )
+				$scope.loadNextPage();
+		});
+
+
 
 	}]);
 

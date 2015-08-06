@@ -3514,7 +3514,7 @@ tbody.collapse.in {
 	transition: all 0.35s;
 }
 .caret:after{
-	content:'\e605';
+	content:'\e60f';
 	font-family: 'icomoon';	
 }
 .chevron {
@@ -6838,7 +6838,7 @@ button.close {
 .checkbox input[type="checkbox"]:checked + label::after,
 .checkbox input[type="radio"]:checked + label::after {
   font-family: "icomoon";
-  content: "\e606";
+  content: "\e60d";
 }
 .checkbox input[type="checkbox"]:disabled + label,
 .checkbox input[type="radio"]:disabled + label {
@@ -7015,7 +7015,7 @@ button.close {
 input[type="checkbox"].styled:checked + label:after,
 input[type="radio"].styled:checked + label:after {
   font-family: "icomoon";
-  content: "\e606";
+  content: "\e60d";
 }
 input[type="checkbox"] .styled:checked + label::before,
 input[type="radio"] .styled:checked + label::before {

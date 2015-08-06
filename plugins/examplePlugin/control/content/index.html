@@ -3,11 +3,11 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-	<!-- CSS -->
+    <!-- CSS -->
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
 
-	<!-- JS -->
+    <!-- JS -->
     <script src="../../../../scripts/buildfire.js"></script>
     <script src="../../../../scripts/angular/angular.min.js"></script>
     <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
@@ -16,103 +16,123 @@
 
 </head>
 <body ng-controller="textPluginCtrl">
-	<div ng-form="frmMain">
-		<div class="item row clearfix">
-			<div class="labels col-md-3 pull-left">
-				<span>Background Image URL</span>
-			</div>
-			<div class="main col-md-9 pull-right">
-				<input type="url" class="form-control" ng-model="data.content.bgURL"/>
-                <button ng-click="openImageLib();">Open ImageLib</button>
-		    </div>
-		</div>
-		<hr/>
-		<div class="item row clearfix">
-			<div class="labels col-md-3 pull-left">
-				<span>Text</span>
-			</div>
-			<div class="main col-md-9 pull-right">
-                <textarea id="text" ui-tinymce class="form-control" rows="5" width="100%" ng-model="data.content.text" ></textarea>
-		    </div>
-		</div>
-        <hr/>
-        <div class="item row clearfix">
-            <div class="labels col-md-3 pull-left">
-            </div>
-            <div class="main col-md-9 pull-right">
-                <button ng-click="approve()" >Approve</button> <i>this shows how you can update a single property</i>
-            </div>
-
-            <div class="main col-md-9 pull-right">
-                <button ng-click="openActionDialog()" >open action dialog</button> <i>this open action dialog</i>
-            </div>
-
-
+<div ng-form="frmMain">
+    <div class="item row clearfix">
+        <div class="labels col-md-3 pull-left">
+            <span>Background Image URL</span>
         </div>
+        <div class="main col-md-9 pull-right padding-left-zero row">
+			<div class="pull-left col-md-8 padding-zero">
+				<input type="url" class="form-control" ng-model="data.content.bgURL"/>
+			</div>
+			<div class="col-md-4 pull-right">
+				<a ng-click="openImageLib();" class="btn btn-success pull-right stretch">Add Image</a>
+			</div>
+        </div>
+    </div>
+    <hr/>
+    <div class="item row clearfix">
+        <div class="labels col-md-12 pull-left">
+            <span>Text</span>
+        </div>
+        <div class="main col-md-12 margin-top-fifteen pull-left">
+            <textarea id="text" ui-tinymce class="form-control" rows="5" width="100%" ng-model="data.content.text"></textarea>
+        </div>
+    </div>
+    <hr/>
+    <div class="item row clearfix">
+        <div class="labels col-md-3 pull-left">
+			Approve
+        </div>
+        <div class="main col-md-9 pull-right">
+            <a class="btn btn-primary" ng-click="approve()">Approve</a>
+            <p class="margin-top-ten">* This shows how you can update a single property.</p>
+        </div>
+    </div>
+    <hr/>
+    <div class="item row clearfix">
+		<div class="labels col-md-3 pull-left">
+            <span>Action</span>
+        </div>
+        <div class="main col-md-9 pull-right">
+            <ul>
+                <li ng-repeat="actionItem in data.actionItems">
+                    <img ng-src="{{resizeImage(actionItem.iconUrl)}}"/>
+                    {{actionItem.title}}
+                </li>
+            </ul>
+            <button ng-click="openActionDialog()" class="btn btn-success">Add Action</button>
+            <p class="margin-top-ten">* This opens the action dialog.</p>
+        </div>
+    </div>
 
-	</div>
+</div>
 
 <script>
     var textPluginApp = angular.module('textPlugin', ['ui.bootstrap', 'ui.tinymce']);
 
-    textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
+    textPluginApp.controller('textPluginCtrl', ['$scope', function ($scope) {
 
         /*
-        * Go pull any previously saved data
-        * */
+         * Go pull any previously saved data
+         * */
         buildfire.datastore.get(function (err, result) {
-            if(result) {
-                $scope.data= result.data;
-                $scope.id= result.id;
+            if (result) {
+                $scope.data = result.data;
+                $scope.id = result.id;
                 $scope.$digest();
                 if (tmrDelay)clearTimeout(tmrDelay);
             }
             /*
              * watch for changes in data and trigger the saveDataWithDelay function on change
              * */
-            $scope.$watch('data',saveDataWithDelay ,true);
+            $scope.$watch('data', saveDataWithDelay, true);
         });
 
         /*
-        * Call the datastore to save the data object
-        */
-        var saveData = function(newObj){
+         * Call the datastore to save the data object
+         */
+        var saveData = function (newObj) {
 
-            if(newObj == undefined)return;
-            if($scope.frmMain.$invalid ){
+            if (newObj == undefined)return;
+            if ($scope.frmMain.$invalid) {
                 console.warn('invalid data, no save');
                 return;
             }
 
             buildfire.datastore.save(newObj, function (err, result) {
                 if (err || !result)
-                    alert(err);
+                    alert(JSON.stringify(err));
                 else
                     console.log('data saved');
             });
         };
 
         /*
-        * create an artificial delay so api isnt called on every character entered
-        * */
+         * create an artificial delay so api isnt called on every character entered
+         * */
         var tmrDelay = null;
-        var saveDataWithDelay = function(newObj){
-            if(tmrDelay)clearTimeout(tmrDelay);
-            tmrDelay = setTimeout(function(){saveData(newObj);},500);
+        var saveDataWithDelay = function (newObj,oldObj) {
+            if(newObj == oldObj)
+                return;
+            if (tmrDelay)clearTimeout(tmrDelay);
+            tmrDelay = setTimeout(function () {
+                saveData(newObj);
+            }, 500);
         };
 
         /*
-        * this is a way you can update only one property without sending the entire object
-        * */
-        $scope.approve = function(){
-            if($scope.id)
-                buildfire.datastore.update($scope.id,{$set: {"content.approvedOn":new Date()} });
+         * this is a way you can update only one property without sending the entire object
+         * */
+        $scope.approve = function () {
+            if ($scope.id)
+                buildfire.datastore.update($scope.id, {$set: {"content.approvedOn": new Date()}});
         };
 
 
         /*
-        * Open Image Lib
-        */
+         * Open Image Lib
+         */
         $scope.openImageLib = function () {
             buildfire.imageLib.showDialog({showIcons: false, multiSelection: false}, function (error, result) {
                 if (result && result.selectedFiles && result.selectedFiles.length > 0) {
@@ -122,10 +142,10 @@
             });
         }
 
-         /*
+        /*
          * Open action dialog
          */
-        $scope.openActionDialog = function() {
+        $scope.openActionDialog = function () {
             var actionItem = {
                 title: "build fire",
                 "url": "https://www.facebook.com/buildfireapps",
@@ -135,10 +155,27 @@
             };
             var options = {showIcon: true};
             buildfire.actionItems.showDialog(null, options, function (err, actionItem) {
-                if(err)
-                console.log(err);
+                if (err)
+                    console.log(err);
+                else {
+                    debugger;
+                    if (!$scope.data.actionItems)
+                        $scope.data.actionItems = [];
+                    $scope.data.actionItems.push(actionItem);
+                    $scope.$apply();
+                }
+
             });
-        }
+        };
+
+        $scope.resizeImage = function(url){
+            if(!url)
+                return "";
+            else
+                return buildfire.imageLib.resizeImage(url,{width:32});
+        };
+
+
 
     }]);
 </script>

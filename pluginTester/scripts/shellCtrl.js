@@ -85,7 +85,12 @@ function Dialog($model,options,callback){
 };
 
 Dialog.prototype.open = function(){
+	
 	var t = this;
+	if(!this.options.data)
+		this.options.data = {};
+
+	this.options.data.dialog = this;
 	this.modalInstance = this.$model.open({
 		animation: true,
 		templateUrl: this.options.templateUrl,

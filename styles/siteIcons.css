@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?-rzcpd3');
-	src:url('../fonticons/icomoon.eot?#iefix-rzcpd3') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?-rzcpd3') format('woff2'),
-		url('../fonticons/icomoon.ttf?-rzcpd3') format('truetype'),
-		url('../fonticons/icomoon.woff?-rzcpd3') format('woff'),
-		url('../fonticons/icomoon.svg?-rzcpd3#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?ofc2e9');
+	src:url('../fonticons/icomoon.eot?#iefixofc2e9') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?ofc2e9') format('woff2'),
+		url('../fonticons/icomoon.ttf?ofc2e9') format('truetype'),
+		url('../fonticons/icomoon.woff?ofc2e9') format('woff'),
+		url('../fonticons/icomoon.svg?ofc2e9#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -24,45 +24,66 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.icon-brush2:before {
+.icon-home:before {
 	content: "\e600";
 }
-.icon-cog:before {
+.icon-brush2:before {
 	content: "\e601";
 }
+.icon-cog:before {
+	content: "\e602";
+}
 .icon-hammer-wrench:before {
-	content: "\e609";
+	content: "\e603";
 }
 .icon-files:before {
-	content: "\e60a";
+	content: "\e604";
+}
+.icon-profile:before {
+	content: "\e605";
 }
 .icon-window:before {
-	content: "\e60c";
+	content: "\e606";
 }
 .icon-bubble-question:before {
-	content: "\e602";
+	content: "\e607";
 }
 .icon-pie-chart:before {
 	content: "\e608";
 }
 .icon-puzzle:before {
-	content: "\e603";
+	content: "\e609";
 }
 .icon-bullhorn:before {
-	content: "\e604";
+	content: "\e60a";
 }
 .icon-link2:before {
 	content: "\e60b";
 }
 .icon-menu:before {
-	content: "\e607";
+	content: "\e60c";
 }
 .icon-check:before {
-	content: "\e606";
-}
-.icon-cross2:before {
 	content: "\e60d";
 }
+.icon-cross2:before {
+	content: "\e60e";
+}
 .icon-chevron-down:before {
-	content: "\e605";
+	content: "\e60f";
+}
+.icon-chevron-left:before {
+	content: "\e610";
+}
+.icon-backward-circle:before {
+	content: "\e611";
+}
+.icon-play-circle:before {
+	content: "\e612";
+}
+.icon-pause-circle:before {
+	content: "\e613";
+}
+.icon-forward-circle:before {
+	content: "\e614";
 }

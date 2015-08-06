@@ -1,9 +1,18 @@
 function _ScriptLoader(){
-    this.pluginAPIPath ="http://int2.myapp.buildfire.com/app/scripts/framework/pluginAPI/";
-    this.imageLibPath ="http://int2.myapp.buildfire.com/scripts/framework/pluginAPI/imageLibAPI.js";
-    this.actionItemsAPIPath ="http://int2.myapp.buildfire.com/scripts/framework/pluginAPI/actionItemsAPI.js";
-
-    this.scripts = ["datastoreAPI.js","analyticsAPI.js","appearanceAPI.js","appAPI.js","actionItemsAPI.js","pluginAPI.js" ];
+    this.domain="http://int2.myapp.buildfire.com/";
+    this.scripts = [
+        this.domain + "scripts/framework/pluginAPI/imageLibAPI.js"
+        , this.domain + "scripts/framework/pluginAPI/actionItemsAPI.js"
+        , this.domain + "app/scripts/lib/hammer.2.0.4.js"// pull down to refresh
+        , this.domain + "app/scripts/lib/wptr.1.1.js"// pull down to refresh
+        , this.domain + "app/scripts/framework/pluginAPI/datastoreAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/analyticsAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/appearanceAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/notificationsAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/appAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/actionItemsAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/pluginAPI.js"
+    ];
 }
 
 _ScriptLoader.prototype ={
@@ -14,15 +23,12 @@ _ScriptLoader.prototype ={
         return http.status!=404;
     }
     ,attachFile: function(url){
+        if(!url)return;
         document.write('<script type="text/javascript" src="' + url  + '" ></script>');
     }
     ,init:function(){
         for(var i=0; i< this.scripts.length ; i++)
-            this.attachFile(this.pluginAPIPath  + this.scripts[i]);
-
-        this.attachFile(this.imageLibPath);
-        this.attachFile(this.actionItemsAPIPath);
-
+            this.attachFile(this.scripts[i]);
     }
 };
 
