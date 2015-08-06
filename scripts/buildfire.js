@@ -35,8 +35,8 @@ var buildfire = {
 	, _callbacks: {}
 	, init: function () {
 		// Listen to message from child window
-		window.removeEventListener('message', buildfire.postMessageHandler, false);
-		window.addEventListener('message', buildfire.postMessageHandler, false);
+		window.removeEventListener('message', buildfire._postMessageHandler, false);
+		window.addEventListener('message', buildfire._postMessageHandler, false);
 		document.getElementsByTagName('html')[0].setAttribute('buildfire', 'enabled');
 		buildfire.appearance.attachCSSFiles();
 		buildfire.getContext(function (err, context) {
@@ -51,7 +51,7 @@ var buildfire = {
 			}
 		});
 	}
-	, postMessageHandler: function (e) {
+	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
 		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
 		var packet = JSON.parse(e.data);
@@ -83,32 +83,36 @@ var buildfire = {
 	}
 	, getContext: function (callback) {
 		var p = new Packet(null, 'getContext');
-		buildfire.sendPacket(p, callback);
+		buildfire._sendPacket(p, callback);
 	}
-	, navigateTo: function (pluginId, instanceId, title) {
-		var p = new Packet(null, 'navigateTo', {pluginId: pluginId, instanceId: instanceId, title: title});
-		this.sendPacket(p);
-	}
-	, navigateHome: function () {
-		var p = new Packet(null, 'navigateHome');
-		this.sendPacket(p);
-	}
-	, openWindow: function(url,target,callback){
-		if(!target) target='_blank';
-		if(!callback) callback = function(){ logger.log('openWindow:: completed'); };
-		var actionItem = {
-			action:'linkToWeb'
-			,url:url
-			,openIn:target
-		};
+	, navigation: {
+         navigateTo: function (pluginId, instanceId, title) {
+            var p = new Packet(null, 'navigateTo', {pluginId: pluginId, instanceId: instanceId, title: title});
+            this._sendPacket(p);
+        }
+        , navigateHome: function () {
+            var p = new Packet(null, 'navigateHome');
+            this._sendPacket(p);
+        }
+        , openWindow: function (url, target, callback) {
+            if (!target) target = '_blank';
+            if (!callback) callback = function () {
+                logger.log('openWindow:: completed');
+            };
+            var actionItem = {
+                action: 'linkToWeb'
+                , url: url
+                , openIn: target
+            };
 
-		var p = new Packet(null, 'actionItems.execute',actionItem, callback);
-		this.sendPacket(p);
-	}
+            var p = new Packet(null, 'actionItems.execute', actionItem, callback);
+            this._sendPacket(p);
+        }
+    }
 	, appearance: {
 		getCSSFiles: function (callback) {
 			var p = new Packet(null, 'appearance.getCSSFiles');
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 		}
 		, attachCSSFiles: function () {
 			var files = ['styles/bootstrap.css'];
@@ -152,15 +156,15 @@ var buildfire = {
 			);
 			if (buildfire.appearance._resizedTo == height || height < 100) return;
 			var p = new Packet(null, 'appearance.autosizeContainer', {height: height});
-			buildfire.sendPacket(p);
+			buildfire._sendPacket(p);
 			buildfire.appearance._resizedTo = height;
 		}
 		, setHeaderVisibility: function (value) {
 			var p = new Packet(null, "appearanceAPI.setHeaderVisibility", value);
-			buildfire.sendPacket(p);
+			buildfire._sendPacket(p);
 		}
 	}
-	, sendPacket: function (packet, callback) {
+	, _sendPacket: function (packet, callback) {
 		if (typeof (callback) != "function")// handels better on response
 			callback = function (err, result) {
 				buildfire.logger.log('buildfire.js ignored callback ' + JSON.stringify(arguments)), window.location.href
@@ -181,7 +185,7 @@ var buildfire = {
 				value: actionName,
 				metadata: metadata
 			}); // wrap object to follow the command(obj, callback)
-			buildfire.sendPacket(p);
+			buildfire._sendPacket(p);
 		}
 		,
 		trackView: function (actionName, metadata) {
@@ -189,14 +193,14 @@ var buildfire = {
 				value: actionName,
 				metadata: metadata
 			}); // wrap object to follow the command(obj, callback)
-			buildfire.sendPacket(p);
+			buildfire._sendPacket(p);
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
 	, datastore: {
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreget-tag-optional-id-optional-callback
 		get: function ( tag, callback) {
-              
+
 			var tagType = typeof(tag);
 			if (tagType == "undefined")
 				tag = '';
@@ -206,7 +210,7 @@ var buildfire = {
 			}
             var obj ={tag:tag };
 			var p = new Packet(null, 'datastore.get', obj);
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 
 		},
         /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoregetbyid--id--tag-optional-callback
@@ -227,7 +231,7 @@ var buildfire = {
 			}
 			var obj = {tag: tag, id: id};
 			var p = new Packet(null, 'datastore.get', obj);
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresave-obj-tag-optional-callback
@@ -242,7 +246,7 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'datastore.save', {tag: tag, obj: obj});
-			buildfire.sendPacket(p, function (err, result) {
+			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				if (callback)callback(err, result);
 			});
@@ -266,7 +270,7 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'datastore.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
-			buildfire.sendPacket(p, function (err, result) {
+			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				callback(err, result);
 			});
@@ -289,7 +293,7 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'datastore.bulkInsert', {tag: tag, obj: arrayObj});
-			buildfire.sendPacket(p, function (err, result) {
+			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				callback(err, result);
 			});
@@ -305,7 +309,7 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'datastore.update', {tag: tag, id: id, obj: obj});
-			buildfire.sendPacket(p, function (err, result) {
+			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				if (callback)callback(err, result);
 			});
@@ -321,7 +325,7 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'datastore.delete', {tag: tag,id:id });
-			buildfire.sendPacket(p, function (err, result) {
+			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				if(callback)callback(err, result);
 			});
@@ -342,7 +346,7 @@ var buildfire = {
 			if (!options.filter) options.filter = {};
 
 			var p = new Packet(null, 'datastore.search', {tag: tag, obj: options});
-			buildfire.sendPacket(p, function (err, result) {
+			buildfire._sendPacket(p, function (err, result) {
 				callback(err, result);
 			});
 		}
@@ -373,13 +377,13 @@ var buildfire = {
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredisablerefresh
 		, disableRefresh: function () {
 			var p = new Packet(null, "datastore.disableRefresh");
-			buildfire.sendPacket(p);
+			buildfire._sendPacket(p);
 		}
 	}
 	, imageLib: {
 		showDialog: function (options, callback) {
 			var p = new Packet(null, 'imageLib.showDialog', options);
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 		}
 		, resizeImage: function (url, options) {
 			var root = "http://s7obnu.cloudimage.io/s/";
@@ -411,37 +415,37 @@ var buildfire = {
 	, notifications: {
 		alert: function (options, callback) {
 			var p = new Packet(null, 'notificationsAPI.alert', options);
-			buildfire.sendPacket(p, callback);
-		},
-		confirm: function (options, callback) {
+			buildfire._sendPacket(p, callback);
+		}
+		,confirm: function (options, callback) {
 			var p = new Packet(null, 'notificationsAPI.confirm', options);
-			buildfire.sendPacket(p, callback);
-		},
-		prompt: function (options, callback) {
+			buildfire._sendPacket(p, callback);
+		}
+        ,prompt: function (options, callback) {
 			var p = new Packet(null, 'notificationsAPI.prompt', options);
-			buildfire.sendPacket(p, callback);
-		},
-		beep: function (options) {
+			buildfire._sendPacket(p, callback);
+		}
+		,beep: function (options) {
 			var p = new Packet(null, 'notificationsAPI.beep', options);
-			buildfire.sendPacket(p, callback);
-		},
-		vibrate: function (options) {
+			buildfire._sendPacket(p, callback);
+		}
+		,vibrate: function (options) {
 			var p = new Packet(null, 'notificationsAPI.vibrate', options);
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 		}
 	}
 	, actionItems: {
 		showDialog: function (actionItem, options, callback) {
 			var p = new Packet(null, 'actionItems.showDialog', {actionItem: actionItem, options: options});
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 		},
 		execute: function (actionItem, options, callback) {
 			var p = new Packet(null, 'actionItems.execute',  actionItem);
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 		},
 		list : function(actionItems,options,callback) {
 			var p = new Packet(null, 'actionItems.list',  {actionItems : actionItems ,options : options } );
-			buildfire.sendPacket(p, callback);
+			buildfire._sendPacket(p, callback);
 		}
 	}
 };
