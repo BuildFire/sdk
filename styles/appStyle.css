@@ -11,15 +11,15 @@ body{
 	font-weight:100;
 	color:#5f5f5f;
 	height:100%;
-	margin:0px;
-	/*overflow:hidden;*/
+    margin:0px;
+	overflow-x:hidden;
 	-ms-overflow-style:none;
 }
 ::-webkit-scrollbar{
-	display:none;
+    display:none;
 }
 img,
-iframe,
+iframe, 
 object{
 	max-width:100%;
 	vertical-align:top;
@@ -59,7 +59,7 @@ textarea{
 
 /* Plugin Nav */
 #pluginNav{
-	height:auto !important;
+    height:auto !important;
 	background:#09a3ee;
 	padding:14px 10px;
 	border-bottom:none;
@@ -100,21 +100,20 @@ nav.menu{
 	position:absolute;
 	right:0;
 	top:0;
-	width:50%;
-	min-width:250px;
+	width:100%;
+	min-width:100%;
 	background:#32373a;
-	border-left:1px solid #26282b;
 	height:100%;
 	z-index:1199;
 	overflow-x:hidden;
 	overflow-y:auto;
 	transition:all 0.35s ease;
-	-webkit-transform:translateX(100%);
-	transform:translateX(100%);
+	-webkit-transform:translateY(-100%);
+	transform:translateY(-100%);
 }
 nav.menu.active{
-	-webkit-transform:translateX(0%);
-	transform:translateX(0%);
+	-webkit-transform:translateY(0%);
+	transform:translateY(0%);
 }
 nav.menu a{
 	display:block;
@@ -266,7 +265,7 @@ nav.menu a p{
 .contact-plugin.layout2 .plugin-slider .plugin-slide{
 	background:none;
 }
-.contact-plugin.layout2 .plugin-slider,
+.contact-plugin.layout2 .plugin-slider, 
 .contact-plugin.layout2 .plugin-slider .contact-slide{
 	max-height:100px;
 	background:none;
@@ -362,7 +361,7 @@ nav.menu a p{
 	position:absolute;
 	width:30px;
 	height:26px;
-	color:#fff;
+	color:#fff;	
 	font-size:30px;
 	top:50%;
 	left:50%;
