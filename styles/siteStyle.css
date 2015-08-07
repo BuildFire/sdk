@@ -382,11 +382,17 @@ html[buildfire] .item .header .pull-right .btn{
 	height:40px;
 	line-height:35px;
 }
-.draggable-list-view .d-item img{
+.draggable-list-view .d-item.square-icon .media-holder{
+	width:40px;
+	height:40px;
+	line-height:35px;
+}
+.draggable-list-view .d-item .media-holder img{
 	max-width:90%;
 	max-height:90%;
 	vertical-align:middle;
 }
+
 .draggable-list-view .d-item span.title{
 	display:inline-block;
 	width:76%;

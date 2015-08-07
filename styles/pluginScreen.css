@@ -73,8 +73,8 @@
 	
 	/* Plugin Page */
 	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
-		width:84%;
-		max-width:84%;
+		width:83%;
+		max-width:83%;
 	}
 	html[buildfire] .holder.plugin-page .draggable-list-view.tab-order .d-item span.title{
 		width:87%;
