@@ -370,13 +370,22 @@ html[buildfire] .item .header .pull-right .btn{
 	font-size:24px;
 	position:relative;
 	top:8px;
-	margin-right:7px;
+	margin-right:12px;
 	cursor:pointer;
 	color:#999;
 }
+.draggable-list-view .d-item .media-holder{
+	border-radius:4px;
+	border:1px solid #ddd;
+	text-align:center;
+	width:65px;
+	height:40px;
+	line-height:35px;
+}
 .draggable-list-view .d-item img{
-	max-width:80px;
-	max-height:40px;
+	max-width:90%;
+	max-height:90%;
+	vertical-align:middle;
 }
 .draggable-list-view .d-item span.title{
 	display:inline-block;
