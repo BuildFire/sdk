@@ -19,6 +19,9 @@
 	html[buildfire] .screens .layoutgrid .layouticon{
 		width:90px;
 	}
+	html[buildfire] .screens .screen + .screen{
+		margin-left:14px;
+	}
 	html[buildfire] .screens .layoutgrid{
 		width:75.6%;
 	}
@@ -27,6 +30,9 @@
 	}
 	html[buildfire] .draggable-list-view .d-item span.title{
 		width:67%;
+	}
+	html[buildfire] .carousel-items.draggable-list-view .d-item span.title{
+		width:66%;
 	}
 	html[buildfire] .draggable-list-view.tab-order.wide-list .d-item span.title{
 		max-width:81%;
@@ -49,16 +55,20 @@
 	html[buildfire] .colorgrid .coloritem a{
 		width:35px;
 	}
-	html[buildfire] .main.holder .tab-order{
+	html[buildfire] .holder .tab-order{
 		border-radius:4px;
 	}
-	html[buildfire] .main.holder .tab-order .copy{
+	html[buildfire] .holder .tab-order .copy{
 		width:83%;
 		max-width:83%;
 	}
-	html[buildfire] .main.holder .tab-order .copy span.title{
+	html[buildfire] .holder .tab-order .copy span.title{
 		width:87%;
 		max-width:87%;
+	}
+	html[buildfire] .draggable-list-view.carousel-items .d-item span.title{
+		max-width:51%;
+		width:51%;
 	}
 	
 	/* Plugin Page */
