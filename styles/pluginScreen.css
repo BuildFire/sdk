@@ -66,6 +66,10 @@
 		width:87%;
 		max-width:87%;
 	}
+	html[buildfire] .draggable-list-view.carousel-items .d-item span.title{
+		max-width:51%;
+		width:51%;
+	}
 	
 	/* Plugin Page */
 	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{

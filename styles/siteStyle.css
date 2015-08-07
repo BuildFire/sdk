@@ -387,6 +387,10 @@ html[buildfire] .item .header .pull-right .btn{
 	line-height:18px;
 	top:4px;
 }
+.draggable-list-view.carousel-items .d-item span.title{
+	width:65%;
+	max-width:65%;
+}
 .draggable-list-view .d-item .copy span.content{
 	display:inline-block;
 	margin-top:11px;
@@ -850,7 +854,20 @@ p.info{
 	height:596px;
 }
 
-
+/* Dynamic Links */
+.dynamic-links{
+	border-top:1px solid #ddd;
+}
+.dynamic-links a{
+	display:block;
+	width:100%;
+	border-bottom:1px solid #ddd;
+	padding:10px 0;
+}
+.modal-dialog .dynamic-links{
+	border-radius:4px;
+	overflow:hidden;
+}
 
 /* Footer */
 .footer{

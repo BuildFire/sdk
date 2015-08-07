@@ -449,6 +449,10 @@ nav.menu a p{
 	border-bottom:1px solid #ddd;
 	padding:10px 0;
 }
+.modal-dialog .dynamic-links{
+	border-radius:4px;
+	overflow:hidden;
+}
 
 /* iFrame */
 /* Plugin iFrame */
