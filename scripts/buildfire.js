@@ -449,13 +449,13 @@ var buildfire = {
 		}
 	}
 	, messaging:{
-		sendMessageToControl:function(data, callback){
+		sendMessageToControl:function(data){
 			var p = new Packet(null,'messaging.triggerOnNewControlMessage',data);
-			buildfire._sendPacket(p,callback);
+			buildfire._sendPacket(p);
 		}
-		,sendMessageToWidget:function(data, callback){
+		,sendMessageToWidget:function(data){
 			var p = new Packet(null,'messaging.triggerOnNewWidgetMessage',data);
-			buildfire._sendPacket(p,callback);
+			buildfire._sendPacket(p);
 		}
 		,onReceivedMessage:function(message){
 			alert(message + " " + window.location.href);
