@@ -51,6 +51,7 @@ var buildfire = {
 			}
 		});
 	}
+	, _whitelistedCommands:["datastore.triggerOnUpdate" ,"datastore.triggerOnRefresh","messaging.onReceivedMessage"]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
 		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
@@ -60,8 +61,7 @@ var buildfire = {
 			buildfire._callbacks[packet.id](packet.error, packet.data);
 			delete buildfire._callbacks[packet.id];
 		}
-		else if (packet.cmd == "datastore.triggerOnUpdate" /// cmds that are allowed to be pushed in
-			|| packet.cmd == "datastore.triggerOnRefresh") {
+		else if (buildfire._whitelistedCommands.indexOf(packet.cmd) + 1) {
 			var sequence = packet.cmd.split('.');
 
 			var obj = buildfire;
@@ -106,7 +106,7 @@ var buildfire = {
             };
 
             var p = new Packet(null, 'actionItems.execute', actionItem, callback);
-            this._sendPacket(p);
+            buildfire._sendPacket(p);
         }
     }
 	, appearance: {
@@ -448,14 +448,20 @@ var buildfire = {
 			buildfire._sendPacket(p, callback);
 		}
 	}
-	, control:{
-		sendMessage:function(data, callback){
-
+	, messaging:{
+		sendMessageToControl:function(data){
+			var p = new Packet(null,'messaging.triggerOnNewControlMessage',data);
+			buildfire._sendPacket(p);
 		}
-		,onReceivedMessage:function(){
-
+		,sendMessageToWidget:function(data){
+			var p = new Packet(null,'messaging.triggerOnNewWidgetMessage',data);
+			buildfire._sendPacket(p);
+		}
+		,onReceivedMessage:function(message){
+			buildfire.logger.log('onReceivedMessage ignored', window.location);
 		}
 	}
+
 };
 buildfire.init();
 

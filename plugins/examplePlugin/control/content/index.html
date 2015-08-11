@@ -59,7 +59,7 @@
         </div>
         <div class="main col-md-9 pull-right">
             <ul>
-                <li ng-repeat="actionItem in data.actionItems">
+                <li ng-repeat="actionItem in data.actionItems |filter: 2 track by $index">
                     <img ng-src="{{resizeImage(actionItem.iconUrl)}}"/>
                     {{actionItem.title}}
                 </li>
@@ -82,7 +82,7 @@
             if (result) {
                 $scope.data = result.data;
                 $scope.id = result.id;
-                $scope.$digest();
+                if(!$scope.$$phase)$scope.$digest();
                 if (tmrDelay)clearTimeout(tmrDelay);
             }
             /*

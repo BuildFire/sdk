@@ -1,51 +1,66 @@
+'use strict';
 /**
  * Created by Daniel on 5/23/2015.
  */
-logger = console;
+//logger = console;
 
-var pluginAPI = new PluginAPI(document.getElementById('widget').contentWindow, window.appContext.currentApp.appId
+var controlIFrame=document.getElementById('iframeControl');
+var widgetIFrame = document.getElementById('widget');
+
+var pluginAPI = new PluginAPI(widgetIFrame.contentWindow, window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, 1, 0);
 pluginAPI.tag = 'shell';
-var controlPluginAPI = new PluginAPI(document.getElementById('iframeControl').contentWindow, window.appContext.currentApp.appId
+var controlPluginAPI = new PluginAPI(controlIFrame.contentWindow, window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, 1, 0);
 controlPluginAPI.tag = 'controlPluginAPI';
 
-var onUpdate = function (updateObj) {
+(function() {
 
-	var widgetIFrame = document.getElementById('widget');
-	if (typeof(widgetIFrame) != 'object' || widgetIFrame.tagName != 'IFRAME')
-		console.error('cant find widget iframe');
-	else {
+
+	/**************************************************
+	sync
+	*/
+	var onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj.detail);
-
 		pluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
-	}
+	};
+	controlPluginAPI.datastore.onUpdate(onUpdate);
 
-};
-pluginAPI.datastore.onUpdate(onUpdate);
-controlPluginAPI.datastore.onUpdate(onUpdate);
 
-/*
- pluginAPI.appearance.getCSSFiles =function(data, callback){
- callback(null,['/styles/bootstrap.css']);
- };
- */
+	pluginAPI.messaging.onNewWidgetMessage(function (message) {
+		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
+		pluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
+	});
 
-controlPluginAPI.appearance.autosizeContainerHandler = function (height) {
-	var iframeControl = document.getElementById('iframeControl');
-	iframeControl.style.height = height + 'px';
-};
+	controlPluginAPI.messaging.onNewControlMessage(function (message) {
+		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
+		controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
+	});
 
-controlPluginAPI.analytics.trackAction = pluginAPI.analytics.trackAction = function (actionName, metadata) {
-	console.log('analytics mock track action [' + actionName + ']', metadata);
-};
+	/**************************************************/
 
-controlPluginAPI.analytics.trackView = pluginAPI.analytics.trackView = function (viewName, metadata) {
-	console.log('analytics mock track view [' + viewName + ']', metadata);
-};
+	/*
+	 pluginAPI.appearance.getCSSFiles =function(data, callback){
+	 callback(null,['/styles/bootstrap.css']);
+	 };
+	 */
+
+	controlPluginAPI.appearance.autosizeContainerHandler = function (height) {
+		var iframeControl = document.getElementById('iframeControl');
+		iframeControl.style.height = height + 'px';
+	};
+
+	controlPluginAPI.analytics.trackAction = pluginAPI.analytics.trackAction = function (actionName, metadata) {
+		console.log('analytics mock track action [' + actionName + ']', metadata);
+	};
+
+	controlPluginAPI.analytics.trackView = pluginAPI.analytics.trackView = function (viewName, metadata) {
+		console.log('analytics mock track view [' + viewName + ']', metadata);
+	};
 
 //override the imageLibTemplate url
-imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
-controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';
-pluginAPI.actionItems.listTemplateUrl = 'http://int2.myapp.buildfire.com/app/pages/templates/actionItemsListDialog.html';
-window.appContext.currentPlugin.pluginAPI = controlPluginAPI;
+	imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
+	controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';
+	pluginAPI.actionItems.listTemplateUrl = 'http://int2.myapp.buildfire.com/app/pages/templates/actionItemsListDialog.html';
+	window.appContext.currentPlugin.pluginAPI = controlPluginAPI;
+})();
