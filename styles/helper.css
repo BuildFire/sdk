@@ -318,6 +318,9 @@ and targeted by Bootstrap like classes */
 
 
 /***** Borders *****/
+.border-none{
+	border:none !important;
+}
 .border-grey{
 	border:1px solid #ddd;
 }
