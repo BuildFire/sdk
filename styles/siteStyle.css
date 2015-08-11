@@ -403,8 +403,9 @@ html[buildfire] .item .header .pull-right .btn{
 	top:4px;
 }
 .draggable-list-view.carousel-items .d-item span.title{
-	width:65%;
-	max-width:65%;
+	width:62%;
+	max-width:62%;
+	margin-right:0;
 }
 .draggable-list-view .d-item .copy span.content{
 	display:inline-block;
@@ -419,10 +420,9 @@ html[buildfire] .item .header .pull-right .btn{
 .draggable-list-view .d-item .copy{
 	position:relative;
 	top:5px;
-	margin-left:8px;
 	display:inline-block;
-	width:78%;
-	max-width:78%;
+	width:76.5%;
+	max-width:76.5%;
 }
 .draggable-list-view .d-item .copy span.btn-icon{
 	top:5px;
@@ -433,15 +433,24 @@ html[buildfire] .item .header .pull-right .btn{
 }
 .draggable-list-view .d-item.double-line .copy{
 	top:-2px;
-	width:87%;
-	max-width:87%;
+	width:86.5%;
+	max-width:86.5%;
+}
+.draggable-list-view .d-item.double-line .copy .pull-right{
+	margin-top:-4px;
+}
+.draggable-list-view.has-btn.links-list .d-item.double-line .copy .pull-right{
+	margin-top:0;
 }
 .draggable-list-view .d-item.double-line .copy a.text{
 	position:relative;
 	top:7px;
 }
-.draggable-list-view .d-item.double-line .copy span.btn-icon{
+.draggable-list-view .d-item.double-line .copy .pull-right span.btn-icon{
 	position:relative;
+	top:-1px;
+}
+.draggable-list-view.has-btn.links-list .d-item.double-line .copy .pull-right span.btn-icon{
 	top:12px;
 }
 .modal-dialog .draggable-list-view .d-item span.title{
@@ -488,8 +497,8 @@ table.table span.sort-icon{
 	border-top:1px solid #ddd;
 }
 .holder .draggable-list-view.tab-order .d-item span.title{
-	max-width:90%;
-	width:90%;
+	max-width:89%;
+	width:89%;
 }
 .plugin-manager.holder .accordion-holder .labels{
 	margin-top:6px;
@@ -519,8 +528,8 @@ table.table span.sort-icon{
 	overflow:auto;
 }
 .draggable-list-view.tab-order.wide-list .d-item span.title{
-	max-width:85%;
-	width:85%;
+	max-width:82%;
+	width:82%;
 }
 
 /* Media Gallery */
@@ -685,9 +694,19 @@ table.table span.sort-icon{
 }
 .screens .screen,
 .screens .layoutgrid .layouticon{
-	width:92px;
+	width:20%;
 	float:left;
 	position:relative;
+	max-width:92px;
+}
+.screens .screen.layoutgrid{
+	max-width:inherit;
+}
+.screens.flexalign .screen{
+	width:18%;
+}
+.screens .layoutgrid .layouticon{
+	width:23.5%;
 }
 .screens .screen + .screen{
 	margin-left:35px;
@@ -729,13 +748,16 @@ table.table span.sort-icon{
 	height:124px;
 	line-height:119px;
 }
+.screens .screen.layouticon a{
+	max-width:92px;
+}
 .screens .layoutgrid{
 	padding:12px 12px 0px;
-	max-height:284px;
+	max-height:278px;
 	overflow:auto;
 }
 .screens .layoutgrid .layouticon{
-	margin:0 11px 11px 0;
+	margin:0 2% 2% 0;
 	position:relative;
 }
 .screens .layoutgrid .layouticon:nth-child(4n){
@@ -744,10 +766,12 @@ table.table span.sort-icon{
 .screens .screen.carouselicon,
 .screens .screen.carouselicon a{
 	width:120px;
+	max-width:inherit;
 }
 .screens .screen.logoicon,
 .screens .screen.logoicon a{
 	width:180px;
+	max-width:inherit;
 }
 .screens .screen a span.add-icon{
 	content:'+';
