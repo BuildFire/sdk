@@ -707,6 +707,7 @@ table.table span.sort-icon{
 }
 .screens .layoutgrid .layouticon{
 	width:23.5%;
+	max-width:95px;
 }
 .screens .screen + .screen{
 	margin-left:35px;
