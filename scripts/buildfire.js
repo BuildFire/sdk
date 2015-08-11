@@ -458,7 +458,6 @@ var buildfire = {
 			buildfire._sendPacket(p);
 		}
 		,onReceivedMessage:function(message){
-			alert(message + " " + window.location.href);
 			buildfire.logger.log('onReceivedMessage ignored', window.location);
 		}
 	}
