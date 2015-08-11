@@ -20,20 +20,25 @@
 <body>
 <div ng-controller="textPluginCtrl" ng-cloak style="background:url( {{data.content.bgURL}});height:100%"
      class="{{data.design.style}}">
-    <div ng-bind-html="data.content.text"></div>
-    <hr/>
-    <i ng-show="data.content.approvedOn">Approved on:{{data.content.approvedOn}}</i>
-    <h2>Executable Action Items</h2>
-    <ul>
-        <li ng-repeat="actionItem in data.actionItems" ng-click="executeAction(actionItem)">
-            <img ng-src="{{resizeImage(actionItem.iconUrl)}}"/>
-            {{actionItem.title}}
-        </li>
-    </ul>
-    <hr/>
-    <p>This shows how you can list action Items</p>
-    <a class="btn btn-success" ng-click="listActionItems()">Show action Items</a>
 
+    <div ng-hide="showExecutableItems">
+        <div ng-bind-html="data.content.text"></div>
+        <hr/>
+        <i ng-show="data.content.approvedOn">Approved on:{{data.content.approvedOn}}</i>
+        <button class="btn btn-primary">Executable Items</button>
+    </div>
+    <div ng-show="showExecutableItems">
+        <h2>Executable Action Items</h2>
+        <ul>
+            <li ng-repeat="actionItem in data.actionItems |filter: 2 track by $index" ng-click="executeAction(actionItem)">
+                <img ng-src="{{resizeImage(actionItem.iconUrl)}}"/>
+                {{actionItem.title}}
+            </li>
+        </ul>
+        <hr/>
+        <p>This shows how you can list action Items</p>
+        <a class="btn btn-success" ng-click="listActionItems()">Show action Items</a>
+    </div>
 
 </div>
 
@@ -51,7 +56,7 @@
             if (data && data.content && data.content.text) {
                 $scope.data.content.text = $sce.trustAsHtml(data.content.text);
             }
-            $scope.$digest();
+            if(!$scope.$$phase)$scope.$digest();
         }
 
         /*
