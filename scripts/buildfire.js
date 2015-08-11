@@ -106,7 +106,7 @@ var buildfire = {
             };
 
             var p = new Packet(null, 'actionItems.execute', actionItem, callback);
-            this._sendPacket(p);
+            buildfire._sendPacket(p);
         }
     }
 	, appearance: {
