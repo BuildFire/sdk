@@ -359,6 +359,7 @@ html[buildfire] .item .header .pull-right .btn{
 }
 .draggable-list-view .d-item{
 	padding:8px 17px;
+	background:#fff;
 }
 .carousel-items .d-item{
 	min-height:56px;
