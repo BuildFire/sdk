@@ -279,7 +279,8 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 #main-content .wrapper.largeWidth{
 	width:1160px;
 }
-#main-content .header{
+#main-content .header,
+html[buildfire] .item .header{
 	background:#32373a;
 	padding:15px 250px 15px 20px;
 	color:#a6abba;
@@ -288,13 +289,16 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	font-weight:300;
 	position:relative;
 }
-#main-content .section:first-child > .header{
+#main-content .section:first-child > .header,
+html[buildfire] .item:first-child > .header{
 	border-radius:4px 4px 0 0;
 }
-#main-content .header.no-btn{
+#main-content .header.no-btn,
+html[buildfire] .item .header.no-btn{
 	padding-right:20px;
 }
-#main-content .header h4{
+#main-content .header h4,
+html[buildfire] .item .header h4{
 	color:#a6abba;
 	font-size:15px;
 	line-height:20px;
@@ -302,12 +306,14 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	margin:0;
 	float:left;
 }
-#main-content .header .pull-right{
+#main-content .header .pull-right,
+html[buildfire] .item .header .pull-right{
 	position:absolute;
 	right:20px;
 	top:11px;
 }
-#main-content .header .pull-right .btn{
+#main-content .header .pull-right .btn,
+html[buildfire] .item .header .pull-right .btn{
 	padding:3px 25px;
 }
 .dropdown-toggle{
@@ -354,6 +360,9 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .draggable-list-view .d-item{
 	padding:8px 17px;
 }
+.carousel-items .d-item{
+	min-height:56px;
+}
 .draggable-list-view .d-item + .d-item{
 	border-top:1px solid #ddd;
 }
@@ -361,14 +370,29 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	font-size:24px;
 	position:relative;
 	top:8px;
-	margin-right:7px;
+	margin-right:12px;
 	cursor:pointer;
 	color:#999;
 }
-.draggable-list-view .d-item img{
-	max-width:80px;
-	max-height:40px;
+.draggable-list-view .d-item .media-holder{
+	border-radius:4px;
+	border:1px solid #ddd;
+	text-align:center;
+	width:65px;
+	height:40px;
+	line-height:35px;
 }
+.draggable-list-view .d-item.square-icon .media-holder{
+	width:40px;
+	height:40px;
+	line-height:35px;
+}
+.draggable-list-view .d-item .media-holder img{
+	max-width:90%;
+	max-height:90%;
+	vertical-align:middle;
+}
+
 .draggable-list-view .d-item span.title{
 	display:inline-block;
 	width:76%;
@@ -377,6 +401,11 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	font-size:13px;
 	line-height:18px;
 	top:4px;
+}
+.draggable-list-view.carousel-items .d-item span.title{
+	width:62%;
+	max-width:62%;
+	margin-right:0;
 }
 .draggable-list-view .d-item .copy span.content{
 	display:inline-block;
@@ -391,10 +420,9 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .draggable-list-view .d-item .copy{
 	position:relative;
 	top:5px;
-	margin-left:8px;
 	display:inline-block;
-	width:78%;
-	max-width:78%;
+	width:76.5%;
+	max-width:76.5%;
 }
 .draggable-list-view .d-item .copy span.btn-icon{
 	top:5px;
@@ -405,15 +433,24 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 .draggable-list-view .d-item.double-line .copy{
 	top:-2px;
-	width:87%;
-	max-width:87%;
+	width:86.5%;
+	max-width:86.5%;
+}
+.draggable-list-view .d-item.double-line .copy .pull-right{
+	margin-top:-4px;
+}
+.draggable-list-view.has-btn.links-list .d-item.double-line .copy .pull-right{
+	margin-top:0;
 }
 .draggable-list-view .d-item.double-line .copy a.text{
 	position:relative;
 	top:7px;
 }
-.draggable-list-view .d-item.double-line .copy span.btn-icon{
+.draggable-list-view .d-item.double-line .copy .pull-right span.btn-icon{
 	position:relative;
+	top:-1px;
+}
+.draggable-list-view.has-btn.links-list .d-item.double-line .copy .pull-right span.btn-icon{
 	top:12px;
 }
 .modal-dialog .draggable-list-view .d-item span.title{
@@ -460,8 +497,8 @@ table.table span.sort-icon{
 	border-top:1px solid #ddd;
 }
 .holder .draggable-list-view.tab-order .d-item span.title{
-	max-width:90%;
-	width:90%;
+	max-width:89%;
+	width:89%;
 }
 .plugin-manager.holder .accordion-holder .labels{
 	margin-top:6px;
@@ -491,8 +528,8 @@ table.table span.sort-icon{
 	overflow:auto;
 }
 .draggable-list-view.tab-order.wide-list .d-item span.title{
-	max-width:85%;
-	width:85%;
+	max-width:82%;
+	width:82%;
 }
 
 /* Media Gallery */
@@ -657,9 +694,20 @@ table.table span.sort-icon{
 }
 .screens .screen,
 .screens .layoutgrid .layouticon{
-	width:92px;
+	width:20%;
 	float:left;
 	position:relative;
+	max-width:92px;
+}
+.screens .screen.layoutgrid{
+	max-width:inherit;
+}
+.screens.flexalign .screen{
+	width:18%;
+}
+.screens .layoutgrid .layouticon{
+	width:23.5%;
+	max-width:95px;
 }
 .screens .screen + .screen{
 	margin-left:35px;
@@ -701,13 +749,16 @@ table.table span.sort-icon{
 	height:124px;
 	line-height:119px;
 }
+.screens .screen.layouticon a{
+	max-width:92px;
+}
 .screens .layoutgrid{
 	padding:12px 12px 0px;
-	max-height:284px;
+	max-height:278px;
 	overflow:auto;
 }
 .screens .layoutgrid .layouticon{
-	margin:0 11px 11px 0;
+	margin:0 2% 2% 0;
 	position:relative;
 }
 .screens .layoutgrid .layouticon:nth-child(4n){
@@ -716,10 +767,12 @@ table.table span.sort-icon{
 .screens .screen.carouselicon,
 .screens .screen.carouselicon a{
 	width:120px;
+	max-width:inherit;
 }
 .screens .screen.logoicon,
 .screens .screen.logoicon a{
 	width:180px;
+	max-width:inherit;
 }
 .screens .screen a span.add-icon{
 	content:'+';
@@ -841,7 +894,20 @@ p.info{
 	height:596px;
 }
 
-
+/* Dynamic Links */
+.dynamic-links{
+	border-top:1px solid #ddd;
+}
+.dynamic-links a{
+	display:block;
+	width:100%;
+	border-bottom:1px solid #ddd;
+	padding:10px 0;
+}
+.modal-dialog .dynamic-links{
+	border-radius:4px;
+	overflow:hidden;
+}
 
 /* Footer */
 .footer{

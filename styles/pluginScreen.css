@@ -9,15 +9,25 @@
 		font-size:12px;
 		top:-8px;
 	}
+	html[buildfire] .screens .screen a{
+		max-width:90px;
+	}
+	html[buildfire] .screens .layoutgrid .layouticon{
+		width:31%;
+		max-width:31%;
+		margin:0 3.5% 3.5% 0;
+	}
 	html[buildfire] .screens .layoutgrid .layouticon:nth-child(4n){
-		margin-right:9px;
+		margin-right:3.5%;
 	}
 	html[buildfire] .screens .layoutgrid .layouticon:nth-child(3n){
 		margin-right:0;
 	}
-	html[buildfire] .screens .screen, 
-	html[buildfire] .screens .layoutgrid .layouticon{
-		width:90px;
+	html[buildfire] .screens .layoutgrid{
+		max-height:282px;
+	}
+	html[buildfire] .screens .screen + .screen{
+		margin-left:14px;
 	}
 	html[buildfire] .screens .layoutgrid{
 		width:75.6%;
@@ -25,19 +35,25 @@
 	html[buildfire] .draggable-list-view .d-item .copy{
 		width:71%;
 	}
+	html[buildfire] .draggable-list-view.carousel-items .d-item .copy{
+		width:70%;
+	}
 	html[buildfire] .draggable-list-view .d-item span.title{
 		width:67%;
 	}
+	html[buildfire] .carousel-items.draggable-list-view .d-item span.title{
+		width:66%;
+	}
 	html[buildfire] .draggable-list-view.tab-order.wide-list .d-item span.title{
-		max-width:81%;
-		width:81%;
+		max-width:78%;
+		width:78%;
 	}
 	html[buildfire] .draggable-list-view.has-btn-link .d-item .copy span.btn-icon{
 		margin-left:10px;
 	}
 	html[buildfire] .draggable-list-view.wide-list .d-item .copy{
-		max-width:84%;
-		width:84%;
+		max-width:83%;
+		width:83%;
 	}
 	html[buildfire] .draggable-list-view.non-draggable .d-item .copy{
 		width:90%;
@@ -49,14 +65,48 @@
 	html[buildfire] .colorgrid .coloritem a{
 		width:35px;
 	}
+	html[buildfire] .holder .tab-order{
+		border-radius:4px;
+	}
+	html[buildfire] .holder .tab-order .copy{
+		width:83%;
+		max-width:83%;
+	}
+	html[buildfire] .holder .tab-order .copy span.title{
+		width:87%;
+		max-width:87%;
+	}
+	html[buildfire] .draggable-list-view.carousel-items .d-item span.title{
+		max-width:51%;
+		width:51%;
+	}
+	html[buildfire] .screens.flexalign .screen{
+		width:22%;
+	}
+	.screens .screen.carouselicon,
+	.screens .screen.carouselicon a{
+		width:120px;
+		max-width:inherit;
+	}
+	.screens .screen.logoicon,
+	.screens .screen.logoicon a{
+		width:180px;
+		max-width:inherit;
+	}
 	
 	/* Plugin Page */
 	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{
-		width:84%;
-		max-width:84%;
+		width:83%;
+		max-width:83%;
 	}
 	html[buildfire] .holder.plugin-page .draggable-list-view.tab-order .d-item span.title{
 		width:87%;
 		max-width:87%;
+	}
+	html[buildfire] .holder .draggable-list-view.tab-order{
+		max-height:402px;
+	}
+	html[buildfire] .draggable-list-view.has-btn.links-list .d-item .copy .col-md-7{
+		width:50%;
 	}
 }

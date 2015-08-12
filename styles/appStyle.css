@@ -99,8 +99,7 @@ nav.menu{
 	position:absolute;
 	right:0;
 	top:0;
-	width:50%;
-	min-width:250px;
+	width:100%;
 	background:#32373a;
 	border-left:1px solid #26282b;
 	height:100%;
@@ -108,12 +107,12 @@ nav.menu{
 	overflow-x:hidden;
 	overflow-y:auto;
 	transition:all 0.35s ease;
-	-webkit-transform:translateX(100%);
-	transform:translateX(100%);
+	-webkit-transform:translateY(-100%);
+	transform:translateY(-100%);
 }
 nav.menu.active{
-	-webkit-transform:translateX(0%);
-	transform:translateX(0%);
+	-webkit-transform:translateY(0%);
+	transform:translateY(0%);
 }
 nav.menu a{
 	display:block;
@@ -413,7 +412,7 @@ nav.menu a p{
 .holder.now-playing .media-player-btns .icon.icon-main{
 	font-size:68px;
 	position:relative;
-	top:7px;
+	top:11px;
 }
 
 /* Play Btn */
@@ -450,6 +449,10 @@ nav.menu a p{
 	border-bottom:1px solid #ddd;
 	padding:10px 0;
 }
+.modal-dialog .dynamic-links{
+	border-radius:4px;
+	overflow:hidden;
+}
 
 /* iFrame */
 /* Plugin iFrame */
@@ -468,4 +471,34 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+}
+
+/* Smaller Mobile Screens */
+@media(max-height: 500px){
+	.holder.now-playing .media-center-plugin{
+		height:408px;
+		margin-top:-204px;
+	}
+	.holder.now-playing .media-holder,
+	.holder.now-playing .media-holder .media-inner img{
+		max-height:200px;
+		max-width:200px;
+	}
+	.holder.now-playing .media-player-btns .icon{
+		font-size:32px;
+	}
+	.holder.now-playing .media-player-btns .icon.icon-main{
+		font-size:52px;
+	}
+}
+
+/* Mobile Landscape Mode */
+@media(max-height: 400px){
+	.holder.now-playing .media-center-plugin{
+		height:208px;
+		margin-top:-104px;
+	}
+	.holder.now-playing .media-holder{
+		display:none;
+	}
 }
