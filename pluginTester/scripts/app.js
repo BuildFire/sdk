@@ -1,7 +1,7 @@
 /**
  * Created by Daniel on 5/23/2015.
  */
-var $app = angular.module('buildfire', ['ui.bootstrap', 'ngFileUpload']);
+var $app = angular.module('buildfire', ['ui.bootstrap', 'ngFileUpload','ngMap','ngAutocomplete']);
 
 $app.config(['$sceDelegateProvider', function ($sceDelegateProvider) {
 

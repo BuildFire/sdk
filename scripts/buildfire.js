@@ -106,7 +106,7 @@ var buildfire = {
             };
 
             var p = new Packet(null, 'actionItems.execute', actionItem, callback);
-            this._sendPacket(p);
+            buildfire._sendPacket(p);
         }
     }
 	, appearance: {
@@ -446,6 +446,15 @@ var buildfire = {
 		list : function(actionItems,options,callback) {
 			var p = new Packet(null, 'actionItems.list',  {actionItems : actionItems ,options : options } );
 			buildfire._sendPacket(p, callback);
+		},
+		create : function(action,iconUrl,title){
+			var actionItem = {
+				action: action,
+				iconUrl : iconUrl,
+				title : title
+			};
+
+			return actionItem;
 		}
 	}
 	, messaging:{
