@@ -391,6 +391,7 @@ html[buildfire] .item .header .pull-right .btn{
 	max-width:90%;
 	max-height:90%;
 	vertical-align:middle;
+	border-radius:2px;
 }
 
 .draggable-list-view .d-item span.title{
@@ -774,6 +775,13 @@ table.table span.sort-icon{
 	width:180px;
 	max-width:inherit;
 }
+.screens .screen.wideicon,
+.screens .screen.wideicon a{
+	width:120px;
+	max-width:inherit;
+	height:80px;
+	line-height:75px;
+}
 .screens .screen a span.add-icon{
 	content:'+';
 	color:#14cb5d;
@@ -790,6 +798,7 @@ table.table span.sort-icon{
 	max-width:90%;
 	max-height:90%;
 	vertical-align:middle;
+	border-radius:2px;
 }
 .screens .screen label{
 	font-size:12px;
