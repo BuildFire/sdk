@@ -1,0 +1,17 @@
+{
+  "name": "buildfire-sdk",
+  "version": "0.0.4",
+  "description": "Software Development Kit for developing plugins for the BuildFire mobile app building platform",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BuildFire/sdk.git"
+  },
+  "keywords": [
+    "buildfire",
+    "sdk",
+    "mobile",
+    "plugin"
+  ],
+  "author": "Daniel Hindi",
+  "license": "MIT"
+}
