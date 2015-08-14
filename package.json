@@ -1,6 +1,6 @@
 {
   "name": "buildfire-sdk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Software Development Kit for developing plugins for the BuildFire mobile app building platform",
   "repository": {
     "type": "git",
@@ -9,9 +9,11 @@
   "bugs": {
     "url": "https://github.com/buildfire/sdk/issues"
   },
-  "homepage": "https://github.com/buildfire/sdk",  
-  "main":  "./bin.js",
-  "bin":  { "buildfire":"./bin.js"},
+  "homepage": "https://github.com/buildfire/sdk",
+  "main": "./bin.js",
+  "bin": {
+    "buildfire": "./bin.js"
+  },
   "keywords": [
     "buildfire",
     "sdk",
