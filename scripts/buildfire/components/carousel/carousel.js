@@ -1,14 +1,4 @@
 ﻿'use strict';
-// Add to dummy items for testing purposes
-var helpItem = [{
-    "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "ONE",
-    "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439498230636-034027228760533035/d4210610-4202-11e5-b604-e5d8df00b595.jpg",
-    "url": "http://www.developercode.net"
-}, {
-    "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "ONE",
-    "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439498230636-034027228760533035/d4210610-4202-11e5-b604-e5d8df00b595.jpg",
-    "url": "http://www.developercode.net"
-}];
 
 if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use carousel components");
 
@@ -30,7 +20,6 @@ buildfire.components.carousel.editor = function (selector, items) {
 
     if (items && items instanceof Array && items.length) {
         this.items = items;
-        this.loadItems(this.items);
     }
     else {
         this.items = [];
@@ -43,27 +32,32 @@ buildfire.components.carousel.editor.prototype = {
     onItemChange: function (item) {
         throw ("please handle onAddItem");
     },
-    onOrderChange: function (item) {
-        console.log("please handle onAddItem");
+    onOrderChange: function (item, oldIndex, newIndex) {
+        console.warn("please handle onOrderChange", item, oldIndex, newIndex);
+    },
+    onAddItem: function (item) {
+        console.warn("please handle onAddItem", item);
+    },
+    onDeleteItem: function (item, index) {
+        console.warn("please handle onAddItem", item);
     },
     loadItems: function (items) {
-
+        var self = this;
+        for (var i = 0; i < items.length; i++) {
+            self._appendItem(items[i]);
+        }
     },
     init: function (selector) {
         var self = this;
-        this.selector = this._getDomSelector(selector);
-        console.info(this.selector)
-        this._loadTemplate(function (html) {
+        self.selector = self._getDomSelector(selector);
+        self._loadTemplate(function (html) {
             self.selector.innerHTML = html;
             self.itemsContainer = self.selector.querySelector(".carousel-items");
-            // add to items to the component for testing purposes
-            self._appendItem(helpItem[0]);
-            self._appendItem(helpItem[1]);
             self._initEvents();
+            self.loadItems(self.items);
         });
     },
     _appendItem: function (item) {
-        
         var self = this,
             // Create the required DOM elements
             wrapper = document.createElement("div"),
@@ -85,7 +79,7 @@ buildfire.components.carousel.editor.prototype = {
         editButton.className = "text-primary text";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
-        image.src = item.iconUrl;
+        image.src = buildfire.imageLib.resizeImage(item.iconUrl, { width: 80, height: 40 });
         title.innerText = item.title;
         editButton.innerText = "Edit";
 
@@ -99,20 +93,32 @@ buildfire.components.carousel.editor.prototype = {
         wrapper.appendChild(details);
         self.itemsContainer.appendChild(wrapper);
 
-        // initialize the click events on the current item
-        editButton.addEventListener("click", (function (item) {
-            return function (e) {
-                e.preventDefault();
-                console.warn("Editing item: ", item);
-            };
-        })(item));
+        (function () {
+            // initialize the click events on the current item
+            editButton.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var itemIndex = self._getItemIndex(item);
+                    var parentElement = e.target.parentNode.parentNode;
 
-        deleteButton.addEventListener("click", (function (item) {
-            return function (e) {
-                e.preventDefault();
-                console.warn("Editing item: ", item);
-            };
-        })(item));
+                    self._openActionItem(item, function (actionItem) {
+                        self.items[itemIndex] = actionItem;
+                        item = actionItem;
+                        self.onItemChange(actionItem);
+                        parentElement.querySelector("img").src = actionItem.iconUrl;
+                        parentElement.querySelector(".title").innerText = actionItem.title;
+                    });
+                });
+
+            deleteButton.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var itemIndex = self._getItemIndex(item);
+                    if (itemIndex != -1) {
+                        self.items.splice(itemIndex, 1);
+                        this.parentNode.parentNode.remove()
+                        self.onDeleteItem(item, itemIndex);
+                    }
+                });
+        })(item);
     },
     _getDomSelector: function (selector) {
         if (selector && selector.nodeType && selector.nodeType === 1) {
@@ -148,27 +154,61 @@ buildfire.components.carousel.editor.prototype = {
     },
     _initEvents: function () {
         var self = this;
-
+        var oldIndex = 0;
         // initialize add new item button
         self.selector.querySelector(".add-new-carousel").addEventListener("click", function () {
-            buildfire.actionItems.showDialog(null, { showIcon: true }, function (err, actionItem) {
-                if (err)
-                    console.error("Error adding a new carousel: ", err);
-                else {
-                    self._appendItem(actionItem);
-                }
+            self._openActionItem(null, function (actionItem) {
+                self.items.push(actionItem);
+                self._appendItem(actionItem);
+                self.onAddItem(actionItem);
             });
         });
 
         // initialize the sort on the container of the items
         self.sortableList = Sortable.create(self.itemsContainer, {
             animation: 150,
-            onAdd: function (evt) { console.log('onAdd.foo:', [evt.item, evt.from]); },
-            onUpdate: function (evt) { console.log('onUpdate.foo:', [evt.item, evt.from]); },
-            onRemove: function (evt) { console.log('onRemove.foo:', [evt.item, evt.from]); },
-            onStart: function (evt) { console.log('onStart.foo:', [evt.item, evt.from]); },
-            onSort: function (evt) { console.log('onStart.foo:', [evt.item, evt.from]); },
-            onEnd: function (evt) { console.log('onEnd.foo:', [evt.item, evt.from]); }
+            onUpdate: function (evt) {
+                var newIndex = self._getSortableItemIndex(evt.item);
+                var tmp = self.items[oldIndex];
+
+                if (oldIndex < newIndex) {
+                    for (var i = oldIndex + 1; i <= newIndex; i++) {
+                        self.items[i - 1] = self.items[i];
+                    }
+                } else {
+                    for (var i = oldIndex - 1; i >= newIndex; i--) {
+                        self.items[i + 1] = self.items[i];
+                    }
+                }
+                
+                self.items[newIndex] = tmp;
+                self.onOrderChange(tmp, oldIndex, newIndex);
+            },
+            onStart: function (evt) {
+                oldIndex = self._getSortableItemIndex(evt.item);
+            }
         });
+    },
+    _openActionItem: function (item, callback) {
+        buildfire.actionItems.showDialog(item, { showIcon: true }, function (err, actionItem) {
+            if (err)
+                console.error("Error getting item details: ", err);
+            else {
+                if (actionItem) {
+                    callback(actionItem);
+                }
+            }
+        });
+    },
+    _getItemIndex: function (item) {
+        var self = this;
+        return self.items.indexOf(item);
+    },
+    _getSortableItemIndex: function (item) {
+        var index = 0;
+        while ((item = item.previousSibling) != null) {
+            index++;
+        }
+        return index;
     }
 };
