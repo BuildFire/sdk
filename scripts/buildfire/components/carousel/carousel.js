@@ -17,20 +17,15 @@ if (typeof (buildfire.components.carousel) == "undefined")
 // This is the class that will be used in the plugin content, design, or settings sections
 buildfire.components.carousel.editor = function (selector, items) {
     this.selector = selector;
-
-    if (items && items instanceof Array && items.length) {
-        this.items = items;
-    }
-    else {
-        this.items = [];
-    }
+    this.items = [];
+    this.loadItems(items);
     this.init(selector);
 }
 
 // Carousel Editor methods
 buildfire.components.carousel.editor.prototype = {
     onItemChange: function (item) {
-        throw ("please handle onAddItem");
+        throw ("please handle onItemChange");
     },
     onOrderChange: function (item, oldIndex, newIndex) {
         console.warn("please handle onOrderChange", item, oldIndex, newIndex);
@@ -39,12 +34,28 @@ buildfire.components.carousel.editor.prototype = {
         console.warn("please handle onAddItem", item);
     },
     onDeleteItem: function (item, index) {
-        console.warn("please handle onAddItem", item);
+        console.warn("please handle onDeleteItem", item);
     },
-    loadItems: function (items) {
+    loadItems: function (items, appendItems) {
         var self = this;
-        for (var i = 0; i < items.length; i++) {
-            self._appendItem(items[i]);
+        if (!self.itemsContainer) {
+            setTimeout(function () {
+                self.loadItems(items, appendItems);
+            }, 500);
+            return;
+        }
+
+        if (items && items instanceof Array && items.length) {
+            if (!appendItems && self.items.length) {
+                debugger;
+                // here we want to remove any existing items since the user of the component don't want to append items
+                self._removeAll();
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                self.items.push(items[i]);
+                self._appendItem(items[i]);
+            }
         }
     },
     init: function (selector) {
@@ -54,8 +65,17 @@ buildfire.components.carousel.editor.prototype = {
             self.selector.innerHTML = html;
             self.itemsContainer = self.selector.querySelector(".carousel-items");
             self._initEvents();
-            self.loadItems(self.items);
         });
+    },
+    _removeAll: function () {
+        var self = this;
+        self.items = [];
+        var fc = self.itemsContainer.firstChild;
+
+        while (fc) {
+            self.itemsContainer.removeChild(fc);
+            fc = self.itemsContainer.firstChild;
+        }
     },
     _appendItem: function (item) {
         var self = this,
@@ -96,28 +116,28 @@ buildfire.components.carousel.editor.prototype = {
         (function () {
             // initialize the click events on the current item
             editButton.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    var itemIndex = self._getItemIndex(item);
-                    var parentElement = e.target.parentNode.parentNode;
+                e.preventDefault();
+                var itemIndex = self._getItemIndex(item);
+                var parentElement = e.target.parentNode.parentNode;
 
-                    self._openActionItem(item, function (actionItem) {
-                        self.items[itemIndex] = actionItem;
-                        item = actionItem;
-                        self.onItemChange(actionItem);
-                        parentElement.querySelector("img").src = actionItem.iconUrl;
-                        parentElement.querySelector(".title").innerText = actionItem.title;
-                    });
+                self._openActionItem(item, function (actionItem) {
+                    self.items[itemIndex] = actionItem;
+                    item = actionItem;
+                    self.onItemChange(actionItem);
+                    parentElement.querySelector("img").src = actionItem.iconUrl;
+                    parentElement.querySelector(".title").innerText = actionItem.title;
                 });
+            });
 
             deleteButton.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    var itemIndex = self._getItemIndex(item);
-                    if (itemIndex != -1) {
-                        self.items.splice(itemIndex, 1);
-                        this.parentNode.parentNode.remove()
-                        self.onDeleteItem(item, itemIndex);
-                    }
-                });
+                e.preventDefault();
+                var itemIndex = self._getItemIndex(item);
+                if (itemIndex != -1) {
+                    self.items.splice(itemIndex, 1);
+                    this.parentNode.parentNode.remove()
+                    self.onDeleteItem(item, itemIndex);
+                }
+            });
         })(item);
     },
     _getDomSelector: function (selector) {
@@ -180,7 +200,7 @@ buildfire.components.carousel.editor.prototype = {
                         self.items[i + 1] = self.items[i];
                     }
                 }
-                
+
                 self.items[newIndex] = tmp;
                 self.onOrderChange(tmp, oldIndex, newIndex);
             },
