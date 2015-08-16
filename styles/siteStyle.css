@@ -359,6 +359,8 @@ html[buildfire] .item .header .pull-right .btn{
 }
 .draggable-list-view .d-item{
 	padding:8px 17px;
+}
+.draggable-list-view .ui-sortable-helper{
 	background:#fff;
 }
 .carousel-items .d-item{
