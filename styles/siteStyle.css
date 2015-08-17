@@ -927,6 +927,20 @@ p.info{
 	overflow:hidden;
 }
 
+/* Plugin Instances List View */
+.draggable-list-view.plugin-instances .d-item{
+	min-height:50px;
+}
+.draggable-list-view.plugin-instances .d-item .checkbox{
+	margin-top:5px;
+}
+.draggable-list-view.plugin-instances .d-item .copy{
+	top:7px;
+}
+.draggable-list-view.plugin-instances .d-item .copy span.title{
+	top:0;
+}
+
 /* Footer */
 .footer{
     min-height:60px;
