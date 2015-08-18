@@ -379,7 +379,7 @@ html[buildfire] .item .header .pull-right .btn{
 }
 .draggable-list-view .d-item .media-holder{
 	border-radius:4px;
-	border:1px solid #ddd;
+	background:#eef0f0;
 	text-align:center;
 	width:65px;
 	height:40px;
@@ -397,8 +397,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	line-height:35px;
 }
 .draggable-list-view .d-item .media-holder img{
-	max-width:90%;
-	max-height:90%;
+	max-width:100%;
+	max-height:100%;
 	vertical-align:middle;
 	border-radius:2px;
 }
@@ -606,8 +606,8 @@ table.table span.sort-icon{
 	margin-right:0;
 }
 .media-container .files-set .file-holder img{
-	max-width:90%;
-	max-height:90%;
+	max-width:100%;
+	max-height:100%;
 	vertical-align:middle;
 }
 .media-container .files-set .file-holder span.icon{
@@ -733,6 +733,7 @@ table.table span.sort-icon{
 	line-height:80px;
 	vertical-align:top;
 	margin-bottom:5px;	
+	background:#eef0f0;
 }
 .screens .screen.mostdevices a{
 	height:110px;
@@ -804,8 +805,8 @@ table.table span.sort-icon{
 	margin-left:-10px;
 }
 .screens .screen a img{
-	max-width:90%;
-	max-height:90%;
+	max-width:100%;
+	max-height:100%;
 	vertical-align:middle;
 	border-radius:2px;
 }
