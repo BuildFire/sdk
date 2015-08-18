@@ -434,6 +434,40 @@ and targeted by Bootstrap like classes */
 }
 
 
+/***** Hide if Empty *****/
+.hide-empty:empty{
+	display:none;
+}
+
+/***** Opacity *****/
+.opacity-ten{
+	opacity:0.20;
+}
+.opacity-twenty{
+	opacity:0.20;
+}
+.opacity-thirty{
+	opacity:0.3;
+}
+.opacity-forty{
+	opacity:0.40;
+}
+.opacity-fifty{
+	opacity:0.5;
+}
+.opacity-sixty{
+	opacity:0.6;
+}
+.opacity-seventy{
+	opacity:0.5;
+}
+.opacity-eighty{
+	opacity:0.5;
+}
+.opacity-ninety{
+	opacity:0.5;
+}
+
 /***** Rotate *****/
 .rotate-90{
 	display:inline-block;

@@ -360,6 +360,9 @@ html[buildfire] .item .header .pull-right .btn{
 .draggable-list-view .d-item{
 	padding:8px 17px;
 }
+.draggable-list-view .ui-sortable-helper{
+	background:#fff;
+}
 .carousel-items .d-item{
 	min-height:56px;
 }
@@ -380,17 +383,24 @@ html[buildfire] .item .header .pull-right .btn{
 	text-align:center;
 	width:65px;
 	height:40px;
+	line-height:36px;
+}
+html[browser="Firefox"] .draggable-list-view .d-item .media-holder{
 	line-height:35px;
 }
 .draggable-list-view .d-item.square-icon .media-holder{
 	width:40px;
 	height:40px;
+	line-height:36px;
+}
+html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	line-height:35px;
 }
 .draggable-list-view .d-item .media-holder img{
 	max-width:90%;
 	max-height:90%;
 	vertical-align:middle;
+	border-radius:2px;
 }
 
 .draggable-list-view .d-item span.title{
@@ -774,6 +784,13 @@ table.table span.sort-icon{
 	width:180px;
 	max-width:inherit;
 }
+.screens .screen.wideicon,
+.screens .screen.wideicon a{
+	width:120px;
+	max-width:inherit;
+	height:80px;
+	line-height:75px;
+}
 .screens .screen a span.add-icon{
 	content:'+';
 	color:#14cb5d;
@@ -790,6 +807,7 @@ table.table span.sort-icon{
 	max-width:90%;
 	max-height:90%;
 	vertical-align:middle;
+	border-radius:2px;
 }
 .screens .screen label{
 	font-size:12px;

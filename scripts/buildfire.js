@@ -51,7 +51,7 @@ var buildfire = {
 			}
 		});
 	}
-	, _whitelistedCommands:["datastore.triggerOnUpdate" ,"datastore.triggerOnRefresh","messaging.onReceivedMessage"]
+	, _whitelistedCommands:["datastore.triggerOnUpdate" ,"datastore.triggerOnRefresh","messaging.onReceivedMessage", "history.triggerOnPop"]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
 		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
@@ -455,6 +455,25 @@ var buildfire = {
 			};
 
 			return actionItem;
+		}
+	}
+	, history: {
+		push: function( label, options, callback) {
+			var p = new Packet(null, 'history.push',  {label : label ,options : options, source: "plugin" } );
+			buildfire._sendPacket(p, callback);
+		},
+		onPop: function (callback) {
+			document.addEventListener('historyOnPop', function (e) {
+				if (callback)callback(e.detail, e);
+			}, false);
+		},
+		triggerOnPop: function (data) {
+			var onUpdateEvent = new CustomEvent('historyOnPop', {'detail': data});
+			buildfire.logger.log("Announce the data has changed!!!", window.location.href);
+			document.dispatchEvent(onUpdateEvent);
+		},
+		pop: function() {
+			// add to allow user to popup history items
 		}
 	}
 	, messaging:{

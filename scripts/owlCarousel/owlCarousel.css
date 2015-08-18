@@ -90,21 +90,27 @@
 }
 .owl-carousel .owl-controls .owl-dots{
 	position:absolute;
-	bottom:10px;
+	bottom:6px;
 	left:0;
 	width:100%;
 	margin:0 auto;
 }
+.owl-carousel.has-info-bar .owl-controls .owl-dots{
+	bottom:45px;
+}
+.owl-carousel.has-info-bar-double .owl-controls .owl-dots{
+	bottom:60px;
+}
 .owl-carousel .owl-controls .owl-dot{
 	display:inline-block;
-	width:10px;
-	height:10px;
+	width:9px;
+	height:9px;
 	border-radius:100%;
 	background:#fff;
 	opacity:0.5;
 }
 .owl-carousel .owl-controls .owl-dot + .owl-dot{
-	margin-left:8px;
+	margin-left:10px;
 }
 .owl-carousel .owl-controls .owl-dot.active{
 	opacity:1;
