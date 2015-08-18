@@ -83,13 +83,17 @@
 	html[buildfire] .screens.flexalign .screen{
 		width:22%;
 	}
-	.screens .screen.carouselicon,
-	.screens .screen.carouselicon a{
+	html[buildfire] .screens .screen.wideicon a{
 		width:120px;
 		max-width:inherit;
 	}
-	.screens .screen.logoicon,
-	.screens .screen.logoicon a{
+	html[buildfire] .screens .screen.carouselicon,
+	html[buildfire] .screens .screen.carouselicon a{
+		width:120px;
+		max-width:inherit;
+	}
+	html[buildfire] .screens .screen.logoicon,
+	html[buildfire] .screens .screen.logoicon a{
 		width:180px;
 		max-width:inherit;
 	}
