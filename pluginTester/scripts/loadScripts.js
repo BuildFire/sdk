@@ -11,6 +11,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/notificationsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/appAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/actionItemsAPI.js"
+        , this.domain + "scripts/framework/pluginAPI/pluginInstanceLibAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/pluginAPI.js"
     ];
 }

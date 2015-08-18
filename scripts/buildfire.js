@@ -457,6 +457,17 @@ var buildfire = {
 			return actionItem;
 		}
 	}
+	, pluginInstance:{
+		showDialog: function (options, callback) {
+			var p = new Packet(null, 'pluginInstanceLib.showDialog', {options: options});
+			buildfire._sendPacket(p, callback);
+		},
+		get : function (ids , callback){
+			debugger;
+			var p = new Packet(null, 'pluginInstanceLib.get', ids);
+			buildfire._sendPacket(p, callback);
+		}
+	}
 	, messaging:{
 		sendMessageToControl:function(data){
 			var p = new Packet(null,'messaging.triggerOnNewControlMessage',data);
