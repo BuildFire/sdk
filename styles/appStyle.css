@@ -124,8 +124,7 @@ nav.menu{
 	position:absolute;
 	right:0;
 	top:0;
-	width:50%;
-	min-width:250px;
+	width:100%;
 	background:#32373a;
 	border-left:1px solid #26282b;
 	height:100%;
@@ -133,12 +132,12 @@ nav.menu{
 	overflow-x:hidden;
 	overflow-y:auto;
 	transition:all 0.35s ease;
-	-webkit-transform:translateX(100%);
-	transform:translateX(100%);
+	-webkit-transform:translateY(-100%);
+	transform:translateY(-100%);
 }
 nav.menu.active{
-	-webkit-transform:translateX(0%);
-	transform:translateX(0%);
+	-webkit-transform:translateY(0%);
+	transform:translateY(0%);
 }
 nav.menu a{
 	display:block;
@@ -397,17 +396,20 @@ nav.menu a p{
 	line-height:58px;
 	margin:inherit;
 	margin-right:10px;
-	border:1px solid #ddd;
+	background:#efefef;
 	border-radius:4px;
 	margin:5px 10px 5px 5px;
 	text-align:center;
+}
+html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holder{
+	line-height:60px;
 }
 .layout3 .list-layout .list-item-media .list-media-holder.square-icon{
 	width:60px;
 }
 .layout3 .list-layout .list-item-media .list-media-holder img{
-	max-width:90%;
-	max-height:90%;
+	max-width:100%;
+	max-height:100%;
 	vertical-align:middle;
 	border-radius:2px;
 }
