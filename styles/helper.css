@@ -342,6 +342,7 @@ and targeted by Bootstrap like classes */
 .btn-plus-icon,
 .btn-minus-icon,
 .btn-check-icon,
+.btn-edit-icon,
 .btn-delete-icon,
 .btn-exclamation-icon,
 .btn-question-icon,
@@ -361,6 +362,7 @@ and targeted by Bootstrap like classes */
 .btn-plus-icon:after,
 .btn-minus-icon:after,
 .btn-check-icon:after,
+.btn-edit-icon:after,
 .btn-delete-icon:after,
 .btn-exclamation-icon:after,
 .btn-question-icon:after,
@@ -431,6 +433,12 @@ and targeted by Bootstrap like classes */
 	content:'\e60b';
 	font-family:"icomoon";
 	font-size:12px;
+}
+.btn-edit-icon:after{
+	content:'\e618';
+	font-family:"icomoon";
+	font-size:10px;
+	font-weight:100;
 }
 
 

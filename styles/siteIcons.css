@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?1y0owu');
-	src:url('../fonticons/icomoon.eot?#iefix1y0owu') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?1y0owu') format('woff2'),
-		url('../fonticons/icomoon.ttf?1y0owu') format('truetype'),
-		url('../fonticons/icomoon.woff?1y0owu') format('woff'),
-		url('../fonticons/icomoon.svg?1y0owu#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?uxrmfy');
+	src:url('../fonticons/icomoon.eot?#iefixuxrmfy') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?uxrmfy') format('woff2'),
+		url('../fonticons/icomoon.ttf?uxrmfy') format('truetype'),
+		url('../fonticons/icomoon.woff?uxrmfy') format('woff'),
+		url('../fonticons/icomoon.svg?uxrmfy#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -26,6 +26,9 @@
 
 .icon-home:before {
 	content: "\e600";
+}
+.icon-pencil3:before {
+	content: "\e618";
 }
 .icon-brush2:before {
 	content: "\e601";
