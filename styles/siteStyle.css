@@ -23,7 +23,7 @@ body{
     font-size:14px;
 	line-height:22px;
     text-rendering:optimizeLegibility;
-    height:100%;
+    /*height:100%;*/
     width:100%;
     overflow:auto;
 	min-width:1024px;
