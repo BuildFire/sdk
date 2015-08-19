@@ -1,32 +1,39 @@
-(function() {
-    var json = window.localStorage.getItem('appContext');
 
-    if (json) {
+(function() {
+
+    var key = window.localStorage.getItem('autoGenKey');
+
+    //legacy
+    var oldContext =  window.localStorage.getItem('appContext');
+    if (oldContext && !key) {
         try {
-            window.appContext = JSON.parse(json)
+            var appContext = JSON.parse(json);
+            key = appContext.currentApp.keys.datastoreKey;
         }
         catch (e) {
         }
+        window.localStorage.removeItem('appContext');
     }
 
-    function rnd() {
-        return ((new Date()).getTime() + "-" + Math.random()).replace(".","");
+    if(!key) {
+        key = ((new Date()).getTime() + "-" + Math.random()).replace(".", "");
+        window.localStorage.setItem('autoGenKey', key);
     }
 
-    if (!window.appContext) {
+
         window.appContext = {
             currentApp: {
-                appId: rnd()
-                , keys: {datastoreKey:rnd()}
+                appId: key
+                , keys: {datastoreKey:key}
             }
             , currentPlugin: {
-                pluginId: rnd()
+                pluginId: key
                 , pluginPath: "myPlugin" // [Enter your Plugin Folder Name here]
-                , instanceId: rnd()
+                , instanceId: key
                 , mode: 0
             }
         };
 
-        window.localStorage.setItem('appContext', JSON.stringify(window.appContext));
-    }
+
+
 })();
