@@ -497,6 +497,7 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 .plugin-manager .item .media.media-holder img{
 	max-width:100%;
 	max-height:100%;
+	border-radius:4px;
 	vertical-align:middle;
 }
 table.table span.sort-icon{
@@ -535,8 +536,7 @@ table.table span.sort-icon{
 .plugin-manager.holder .accordion-holder .main{
 	font-size:13px;
 }
-.plugin-manager.holder .labels .dropdown,
-.plugin-manager.holder .labels .media{
+.plugin-manager.holder .labels .dropdown{
 	width:80%;
 }
 .plugin-manager.holder .plugin-settings .labels{

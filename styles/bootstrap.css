@@ -4068,10 +4068,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .nav-tabs > li:first-child > a{
 	border-left:1px solid #ddd;
-	border-radius:2px 0 0 2px;
+	border-radius:4px 0 0 4px;
 }
 .nav-tabs > li:last-child > a{
-	border-radius:0 2px 2px 0;
+	border-radius:0 4px 4px 0;
 }
 .nav-tabs > li > a {
   color:#888;
@@ -5500,8 +5500,6 @@ a.list-group-item-danger.active:focus {
   background-color: #ffffff;
   border: 1px solid transparent;
   border-radius: 4px;
-  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 .panel-body {
   padding: 25px 15px;
@@ -5707,6 +5705,9 @@ a.list-group-item-danger.active:focus {
 }
 .panel-group {
   margin-bottom: 20px;
+}
+accordion.margin-bottom-zero .panel-group{
+  margin-bottom:0;
 }
 .accordion-holder .panel-group{
   margin-bottom:0;
