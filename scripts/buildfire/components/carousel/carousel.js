@@ -272,7 +272,7 @@ buildfire.components.carousel.view = function (selector, items) {
 buildfire.components.carousel.view.prototype = {
     // will be called to initialize the setting in the constructor
     init: function (selector) {
-        if (typeof($.fn) != "function" || !($.fn && $.fn.owlCarousel)) {
+        if (typeof($.fn) != "object" || !($.fn && $.fn.owlCarousel)) {
             throw ("please add owlCarousel.js first to use carousel component");
         }
         this.selector = buildfire.components.carousel._getDomSelector(selector);
