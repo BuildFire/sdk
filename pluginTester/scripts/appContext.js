@@ -1,10 +1,9 @@
-
-(function() {
+(function () {
 
     var key = window.localStorage.getItem('autoGenKey');
 
     //legacy
-    var oldContext =  window.localStorage.getItem('appContext');
+    var oldContext = window.localStorage.getItem('appContext');
     if (oldContext && !key) {
         try {
             var appContext = JSON.parse(json);
@@ -15,25 +14,24 @@
         window.localStorage.removeItem('appContext');
     }
 
-    if(!key) {
+    if (!key) {
         key = ((new Date()).getTime() + "-" + Math.random()).replace(".", "");
         window.localStorage.setItem('autoGenKey', key);
     }
 
 
-        window.appContext = {
-            currentApp: {
-                appId: key
-                , keys: {datastoreKey:key}
-            }
-            , currentPlugin: {
-                pluginId: key
-                , pluginPath: "myPlugin" // [Enter your Plugin Folder Name here]
-                , instanceId: key
-                , mode: 0
-            }
-        };
-
+    window.appContext = {
+        currentApp: {
+            appId: key
+            , keys: {datastoreKey: key}
+        }
+        , currentPlugin: {
+            pluginId: key
+            , pluginPath: "myPlugin" // [Enter your Plugin Folder Name here]
+            , instanceId: key
+            , mode: 0
+        }
+    };
 
 
 })();
