@@ -495,7 +495,6 @@ var buildfire = {
 			buildfire._sendPacket(p, callback);
 		},
 		get : function (ids , callback){
-			debugger;
 			var p = new Packet(null, 'pluginInstanceLib.get', ids);
 			buildfire._sendPacket(p, callback);
 		}
