@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load helper.css to use our helper classes -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/sortable.min.js"></script>
+    <script src="../../../../scripts/buildfire/components/carousel/carousel.js"></script>
+    <!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+    -->
+
+    <style>
+        .carousel-items:empty {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="carousel"></div>
+    <div id="carouselTwo"></div>
+    <script>
+        var items = [{
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "item 1",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/9fbaac38-4202-11e5-9d04-02f7ca55c361/07e3b1d0-4214-11e5-b604-e5d8df00b595.jpg",
+            "url": "http://www.bing.com"
+        }, {
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "item 2",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/3c29ccc0-4446-11e5-9518-e13d634f419e.jpg",
+            "url": "http://www.developercode.net"
+        }];
+
+        var appended = [{
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 1",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/4edf4960-4529-11e5-ae6d-9d84000c857a.png",
+            "url": "http://www.google.com"
+        }, {
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/10376750-46a6-11e5-b206-fba450a8dcee.jpg",
+            "url": "http://www.developercode.net"
+        }];
+
+        var editor = new buildfire.components.carousel.editor("#carousel", items);
+        // this method will be called when a new item added to the list
+        editor.onAddItem = function (item) {
+            console.info("onAddItem handled", item)
+        };
+        // this method will be called when an item deleted from the list
+        editor.onDeleteItem = function (item, index) {
+            console.info("onDeleteItem handled", item, index);
+        };
+        // this method will be called when you edit item details
+        editor.onItemChange = function (item) {
+            console.info("onItemChange handled", item);
+        };
+        // this method will be called when you chnage the order of items
+        editor.onOrderChange = function (item, oldIndex, newIndex) {
+            console.info("onOrderChange handled", item, oldIndex, newIndex);
+        };
+
+        // here we add 2 items to the list without overriding the exising items
+        editor.loadItems(appended, true);
+
+        // call this method to remove all items
+        //editor.loadItems([]);
+    </script>
+</body>
+</html>
