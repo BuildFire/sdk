@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?uxrmfy');
-	src:url('../fonticons/icomoon.eot?#iefixuxrmfy') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?uxrmfy') format('woff2'),
-		url('../fonticons/icomoon.ttf?uxrmfy') format('truetype'),
-		url('../fonticons/icomoon.woff?uxrmfy') format('woff'),
-		url('../fonticons/icomoon.svg?uxrmfy#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?pqztxz');
+	src:url('../fonticons/icomoon.eot?#iefixpqztxz') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?pqztxz') format('woff2'),
+		url('../fonticons/icomoon.ttf?pqztxz') format('truetype'),
+		url('../fonticons/icomoon.woff?pqztxz') format('woff'),
+		url('../fonticons/icomoon.svg?pqztxz#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -65,6 +65,9 @@
 }
 .icon-bullhorn:before {
 	content: "\e60a";
+}
+.icon-code:before {
+	content: "\e619";
 }
 .icon-link2:before {
 	content: "\e60b";
