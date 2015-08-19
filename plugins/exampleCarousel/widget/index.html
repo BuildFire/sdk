@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet" />
+	
+	<!-- JS -->
+	<script src="../../../scripts/buildfire.js"></script>
+    <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../../scripts/owlCarousel/owlCarousel.js"></script>
+    <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
+</head>
+<body>
+    <div id="carousel"></div>
+    <span>Widget - Hello, world!</span>
+    <script>
+        var items = [{
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/9fbaac38-4202-11e5-9d04-02f7ca55c361/07e3b1d0-4214-11e5-b604-e5d8df00b595.jpg",
+            "url": "http://www.bing.com"
+        }, {
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/3c29ccc0-4446-11e5-9518-e13d634f419e.jpg",
+            "url": "http://www.developercode.net"
+        }];
+
+        var appended = [{
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/4edf4960-4529-11e5-ae6d-9d84000c857a.png",
+            "url": "http://www.google.com"
+        }, {
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/10376750-46a6-11e5-b206-fba450a8dcee.jpg",
+            "url": "http://www.developercode.net"
+        }];
+
+        var appended2 = [{
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/93675160-46a8-11e5-b206-fba450a8dcee.png",
+            "url": "http://www.google.com"
+        }];
+
+        var appended3 = [{
+            "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
+            "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/9796f7b0-46b0-11e5-9370-d50f529099a6.png",
+            "url": "http://www.google.com"
+        }];
+        
+        // create an instance and pass it the items if you don't have items yet just pass []
+        var view = new buildfire.components.carousel.view("#carousel", items);
+        // apped items to the lsider
+        view.loadItems(appended, true);
+        view.loadItems(appended2, true);
+        view.loadItems(appended3, true);
+        // remove all items
+        view.loadItems([]);
+        // reset the slider image to be just appended3 content
+        view.loadItems(appended3);
+        // appending to the existing slider
+        view.loadItems(appended, true);
+        view.loadItems(appended2, true);
+    </script>
+</body>
+</html>
