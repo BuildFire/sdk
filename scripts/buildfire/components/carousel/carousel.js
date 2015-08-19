@@ -79,8 +79,8 @@ buildfire.components.carousel.editor.prototype = {
     },
     // this method allows you to replace the slider image or append to then if appendItems = true
     loadItems: function (items, appendItems) {
-        if (items && items instanceof Array && items.length) {
-            if (!appendItems && this.items.length) {
+        if (items && items instanceof Array) {
+            if (!appendItems && this.items.length !== 0) {
                 // here we want to remove any existing items since the user of the component don't want to append items
                 this._removeAll();
             }
@@ -286,8 +286,10 @@ buildfire.components.carousel.view.prototype = {
     },
     // this method allows you to append or replace slider images
     loadItems: function (items, appendItems) {
-        this._destroySlider();
-        this._removeAll();
+        if (this.$slider) {
+            this._destroySlider();
+            this._removeAll();
+        }
 
         this._loadItems(items, appendItems);
         this._loadImages();
@@ -359,7 +361,7 @@ buildfire.components.carousel.view.prototype = {
     // destroy the slider if it's already in the DOM
     _destroySlider: function () {
         var sliderData = this.$slider.data('owlCarousel');
-        if (this.$slider.length && sliderData) {
+        if (sliderData) {
             this.$slider.trigger('autoplay.stop.owl');
             this.$slider.trigger('autoplay.loop.owl', false);
             sliderData.destroy();

@@ -48,31 +48,28 @@
         }];
 
         var editor = new buildfire.components.carousel.editor("#carousel", items);
+        // this method will be called when a new item added to the list
         editor.onAddItem = function (item) {
             console.info("onAddItem handled", item)
         };
+        // this method will be called when an item deleted from the list
         editor.onDeleteItem = function (item, index) {
             console.info("onDeleteItem handled", item, index);
         };
+        // this method will be called when you edit item details
         editor.onItemChange = function (item) {
             console.info("onItemChange handled", item);
         };
-
+        // this method will be called when you chnage the order of items
         editor.onOrderChange = function (item, oldIndex, newIndex) {
             console.info("onOrderChange handled", item, oldIndex, newIndex);
         };
 
+        // here we add 2 items to the list without overriding the exising items
         editor.loadItems(appended, true);
 
-        //var editor2 = new buildfire.components.carousel.editor("#carouselTwo");
-        //editor2.onItemChange = function (item) {
-        //    console.info("onAddItem handled", item)
-        //};
-        // first load of items
-        //editor2.loadItems(appended);
-        // we wanna ignore existing item and load fresh data
-        // second parameter if passed and true it will append items to the list
-        //editor2.loadItems(appended, false);
+        // call this method to remove all items
+        //editor.loadItems([]);
     </script>
 </body>
 </html>

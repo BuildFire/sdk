@@ -2,24 +2,14 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <!-- CSS -->
     <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet" />
-	<!-- Load helper.css to use our helper classes.
-	<link href="../../../../styles/helper.css" rel="stylesheet">
-	-->
 	
 	<!-- JS -->
 	<script src="../../../scripts/buildfire.js"></script>
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="../../../scripts/owlCarousel/owlCarousel.js"></script>
     <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
-  
- 	<!--
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
-
-    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-    -->
 </head>
 <body>
     <div id="carousel"></div>
@@ -35,7 +25,7 @@
             "url": "http://www.developercode.net"
         }];
 
-        var append = [{
+        var appended = [{
             "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
             "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/4edf4960-4529-11e5-ae6d-9d84000c857a.png",
             "url": "http://www.google.com"
@@ -45,31 +35,31 @@
             "url": "http://www.developercode.net"
         }];
 
-        var append2 = [{
+        var appended2 = [{
             "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
             "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/93675160-46a8-11e5-b206-fba450a8dcee.png",
             "url": "http://www.google.com"
         }];
 
-        var append3 = [{
+        var appended3 = [{
             "actionName": "Link to Web Content", "action": "linkToWeb", "openIn": "_blank", "title": "appended 2",
             "iconUrl": "https://imagelibserver.s3.amazonaws.com/1439405746265-012444785865955055/9796f7b0-46b0-11e5-9370-d50f529099a6.png",
             "url": "http://www.google.com"
         }];
         
+        // create an instance and pass it the items if you don't have items yet just pass []
         var view = new buildfire.components.carousel.view("#carousel", items);
-        view.loadItems(append, true);
-        view.loadItems(append2, true);
-        view.loadItems(append3, true);
+        // apped items to the lsider
+        view.loadItems(appended, true);
+        view.loadItems(appended2, true);
+        view.loadItems(appended3, true);
+        // remove all items
         view.loadItems([]);
-        view.loadItems(append3);
-        view.loadItems(append, true);
-        view.loadItems(append2, true);
-        view.loadItems([]);
-        view.loadItems(items);
-        view.loadItems(append, true);
-        view.loadItems(append2, true);
-        view.loadItems(append3, true);
+        // reset the slider image to be just appended3 content
+        view.loadItems(appended3);
+        // appending to the existing slider
+        view.loadItems(appended, true);
+        view.loadItems(appended2, true);
     </script>
 </body>
 </html>
