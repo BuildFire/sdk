@@ -51,7 +51,7 @@ var buildfire = {
 			}
 		});
 	}
-	, _whitelistedCommands:["datastore.triggerOnUpdate" ,"datastore.triggerOnRefresh","messaging.onReceivedMessage", "history.triggerOnPop"]
+	, _whitelistedCommands:["datastore.triggerOnUpdate" ,"datastore.triggerOnRefresh","messaging.onReceivedMessage", "history.triggerOnPop","navigation.onBackButtonClick"]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
 		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
@@ -87,11 +87,11 @@ var buildfire = {
 	}
 	, navigation: {
          navigateTo: function (pluginId, instanceId, title) {
-            var p = new Packet(null, 'navigateTo', {pluginId: pluginId, instanceId: instanceId, title: title});
+            var p = new Packet(null, 'navigation.navigateTo', {pluginId: pluginId, instanceId: instanceId, title: title});
             buildfire._sendPacket(p);
         }
         , navigateHome: function () {
-            var p = new Packet(null, 'navigateHome');
+            var p = new Packet(null, 'navigation.navigateHome');
 			buildfire._sendPacket(p);
         }
         , openWindow: function (url, target, callback) {
@@ -108,6 +108,13 @@ var buildfire = {
             var p = new Packet(null, 'actionItems.execute', actionItem, callback);
             buildfire._sendPacket(p);
         }
+		, _goBackOne:function(){
+			buildfire._sendPacket(new Packet(null,'navigation.navigateBack'));
+		}
+		, onBackButtonClick: function(){this._goBackOne();}
+		, restoreBackButtonClick:function(){
+			buildfire.navigation.onBackButtonClick= function(){buildfire.navigation._goBackOne()};
+		}
     }
 	, appearance: {
 		getCSSFiles: function (callback) {
