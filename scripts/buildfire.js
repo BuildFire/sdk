@@ -489,6 +489,16 @@ var buildfire = {
 			buildfire.logger.log('onReceivedMessage ignored', window.location);
 		}
 	}
+	,  pluginInstance:{
+		showDialog: function (options, callback) {
+			var p = new Packet(null, 'pluginInstanceLib.showDialog', {options: options});
+			buildfire._sendPacket(p, callback);
+		},
+		get : function (ids , callback){
+			var p = new Packet(null, 'pluginInstanceLib.get', ids);
+			buildfire._sendPacket(p, callback);
+		}
+	}
 	, _insertHTMLAttributes:function(){
 		var html = document.getElementsByTagName('html')[0];
 		html.setAttribute('buildfire', 'enabled');
