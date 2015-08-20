@@ -70,8 +70,8 @@ buildfire.components.carousel.editor.prototype = {
         console.warn("please handle onOrderChange", item, oldIndex, newIndex);
     },
     // This will be triggered when you add a new item, item index will be items.length
-    onAddItem: function (item) {
-        console.warn("please handle onAddItem", item);
+    onAddItems: function (items) {
+        console.warn("please handle onAddItems", item);
     },
     // This will be triggered when you delete an item
     onDeleteItem: function (item, index) {
@@ -90,6 +90,20 @@ buildfire.components.carousel.editor.prototype = {
                 this._appendItem(items[i]);
             }
         }
+    },
+    // allows you to append a single item or an array of items
+    append: function(items){
+        if(!items)
+            return;
+        else if(typeof(items) != 'array')
+            items=[items];
+
+        this.loadItems(items,true);
+    },
+    /// remove all items in list
+    clear: function(){
+        this._removeAll();
+        this.onDeleteItem();
     },
     // remove all the DOM element and empty the items array
     _removeAll: function () {
@@ -267,7 +281,6 @@ buildfire.components.carousel.editor.prototype = {
         }
         return index;
     }
-    ,onAddItems:function(){}
 };
 
 // This is the class that will be used in the mobile
