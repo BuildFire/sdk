@@ -197,11 +197,15 @@ buildfire.components.carousel.editor.prototype = {
         var oldIndex = 0;
         // initialize add new item button
         me.selector.querySelector(".add-new-carousel").addEventListener("click", function () {
-            me._openActionItem(null, function (actionItem) {
-                me.items.push(actionItem);
-                me._appendItem(actionItem);
-                me.onAddItem(actionItem);
-                console.log(this);
+            me._openImageLib( function (imageUrls) {
+                var newItems=[];
+                for (var i=0;i<imageUrls.length ; i++)
+                    newItems.push(buildfire.actionItems.create(null,imageUrls[i],'image'));
+
+                if(newItems.length) {
+                    me.loadItems(newItems, true);
+                    me.onAddItems(newItems);
+                }
             });
         });
 
@@ -242,6 +246,15 @@ buildfire.components.carousel.editor.prototype = {
             }
         });
     },
+    // a wrapper method over buildfire imageLib showDialog
+    _openImageLib: function (callback) {
+        buildfire.imageLib.showDialog({ multiSelect : true ,showIcons :false }, function (err, result) {
+            if (err)
+                console.error("Error getting images: ", err);
+            else
+                callback(result.selectedFiles);
+        });
+    },
     // get item index in the items array
     _getItemIndex: function (item) {
         return this.items.indexOf(item);
@@ -254,6 +267,7 @@ buildfire.components.carousel.editor.prototype = {
         }
         return index;
     }
+    ,onAddItems:function(){}
 };
 
 // This is the class that will be used in the mobile
@@ -266,7 +280,7 @@ buildfire.components.carousel.view = function (selector, items) {
     this.cssHeight = this.height + "px";
     this._loadItems(items, false);
     this.init(selector);
-}
+};
 
 // Carousel view methods
 buildfire.components.carousel.view.prototype = {

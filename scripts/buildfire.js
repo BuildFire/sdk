@@ -387,7 +387,9 @@ var buildfire = {
 			buildfire._sendPacket(p);
 		}
 	}
+	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
 	, imageLib: {
+		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib#buildfireimagelibshowdialogoptions-callback
 		showDialog: function (options, callback) {
 			var p = new Packet(null, 'imageLib.showDialog', options);
 			buildfire._sendPacket(p, callback);
