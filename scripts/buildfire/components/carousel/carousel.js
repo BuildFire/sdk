@@ -333,6 +333,15 @@ buildfire.components.carousel.view.prototype = {
         }
         this._applySlider();        
     },
+    // allows you to append a single item or an array of items
+    append: function(items){
+        if(!items)
+            return;
+        else if(typeof(items) != 'array')
+            items=[items];
+
+        this.loadItems(items,true);
+    },
     // remove all nodes from the slider
     _removeAll: function () {
         var slider = this.$slider.get(0);
