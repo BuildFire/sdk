@@ -8,10 +8,10 @@ var controlIFrame=document.getElementById('iframeControl');
 var widgetIFrame = document.getElementById('widget');
 
 var pluginAPI = new PluginAPI(widgetIFrame.contentWindow, window.appContext.currentApp.appId
-	, window.appContext.currentPlugin.pluginPath, 1, 0);
+	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
 pluginAPI.tag = 'shell';
 var controlPluginAPI = new PluginAPI(controlIFrame.contentWindow, window.appContext.currentApp.appId
-	, window.appContext.currentPlugin.pluginPath, 1, 0);
+	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
 controlPluginAPI.tag = 'controlPluginAPI';
 
 (function() {

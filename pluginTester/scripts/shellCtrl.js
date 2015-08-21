@@ -7,6 +7,13 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', '$modal', function ($sc
 		window.$http = $http;
 		var config = null;
 
+
+		$scope.dataTracer = "http://int2.myapp.buildfire.com:89/#/dataTracer/" + window.appContext.currentApp.appId
+		+ "/" + window.appContext.currentPlugin.pluginPath
+		+ "/" +window.appContext.currentPlugin.instanceId
+		+ "/" + window.appContext.currentApp.keys.datastoreKey;
+
+
 		/**
 		 * Show Dialog
 		 * @options {templateUrl : templateUrl , controller: controller , size: size  } a

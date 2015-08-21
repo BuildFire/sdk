@@ -70,8 +70,8 @@ buildfire.components.carousel.editor.prototype = {
         console.warn("please handle onOrderChange", item, oldIndex, newIndex);
     },
     // This will be triggered when you add a new item, item index will be items.length
-    onAddItem: function (item) {
-        console.warn("please handle onAddItem", item);
+    onAddItems: function (items) {
+        console.warn("please handle onAddItems", item);
     },
     // This will be triggered when you delete an item
     onDeleteItem: function (item, index) {
@@ -90,6 +90,20 @@ buildfire.components.carousel.editor.prototype = {
                 this._appendItem(items[i]);
             }
         }
+    },
+    // allows you to append a single item or an array of items
+    append: function(items){
+        if(!items)
+            return;
+        else if(typeof(items) != 'array')
+            items=[items];
+
+        this.loadItems(items,true);
+    },
+    /// remove all items in list
+    clear: function(){
+        this._removeAll();
+        this.onDeleteItem();
     },
     // remove all the DOM element and empty the items array
     _removeAll: function () {
@@ -197,11 +211,15 @@ buildfire.components.carousel.editor.prototype = {
         var oldIndex = 0;
         // initialize add new item button
         me.selector.querySelector(".add-new-carousel").addEventListener("click", function () {
-            me._openActionItem(null, function (actionItem) {
-                me.items.push(actionItem);
-                me._appendItem(actionItem);
-                me.onAddItem(actionItem);
-                console.log(this);
+            me._openImageLib( function (imageUrls) {
+                var newItems=[];
+                for (var i=0;i<imageUrls.length ; i++)
+                    newItems.push(buildfire.actionItems.create(null,imageUrls[i],'image'));
+
+                if(newItems.length) {
+                    me.loadItems(newItems, true);
+                    me.onAddItems(newItems);
+                }
             });
         });
 
@@ -242,6 +260,15 @@ buildfire.components.carousel.editor.prototype = {
             }
         });
     },
+    // a wrapper method over buildfire imageLib showDialog
+    _openImageLib: function (callback) {
+        buildfire.imageLib.showDialog({ multiSelect : true ,showIcons :false }, function (err, result) {
+            if (err)
+                console.error("Error getting images: ", err);
+            else
+                callback(result.selectedFiles);
+        });
+    },
     // get item index in the items array
     _getItemIndex: function (item) {
         return this.items.indexOf(item);
@@ -266,7 +293,7 @@ buildfire.components.carousel.view = function (selector, items) {
     this.cssHeight = this.height + "px";
     this._loadItems(items, false);
     this.init(selector);
-}
+};
 
 // Carousel view methods
 buildfire.components.carousel.view.prototype = {
@@ -305,6 +332,15 @@ buildfire.components.carousel.view.prototype = {
             return;
         }
         this._applySlider();        
+    },
+    // allows you to append a single item or an array of items
+    append: function(items){
+        if(!items)
+            return;
+        else if(typeof(items) != 'array')
+            items=[items];
+
+        this.loadItems(items,true);
     },
     // remove all nodes from the slider
     _removeAll: function () {
