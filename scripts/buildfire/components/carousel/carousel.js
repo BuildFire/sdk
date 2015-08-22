@@ -138,8 +138,8 @@ buildfire.components.carousel.editor.prototype = {
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
         image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
-        title.innerText = item.title;
-        editButton.innerText = "Edit";
+        title.innerHTML = item.title;
+        editButton.innerHTML = "Edit";
 
         // Append elements to the DOM
         wrapper.appendChild(moveHandle);
@@ -163,7 +163,7 @@ buildfire.components.carousel.editor.prototype = {
                     item = actionItem;
                     me.onItemChange(actionItem);
                     parentElement.querySelector("img").src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
-                    parentElement.querySelector(".title").innerText = actionItem.title;
+                    parentElement.querySelector(".title").innerHTML = actionItem.title;
                 });
             });
 
@@ -189,13 +189,13 @@ buildfire.components.carousel.editor.prototype = {
 
         componentContainer.className = "item clearfix row margin-bottom-fifteen";
         componentName.className = "labels col-md-3 padding-right-zero pull-left";
-        componentName.innerText = "Image Carousel";
+        componentName.innerHTML = "Image Carousel";
         contentContainer.className = "main col-md-9 pull-right";
         buttonContainer.className = "clearfix";
         button.className = "btn btn-success pull-left add-new-carousel";
-        sliderContainer.className = "carousel-items draggable-list-view margin-top-twenty border-radius-four border-grey";
+        sliderContainer.className = "carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey";
 
-        button.innerText = "Add Image";
+        button.innerHTML = "Add Image";
 
         componentContainer.appendChild(componentName);
         buttonContainer.appendChild(button);
@@ -285,6 +285,9 @@ buildfire.components.carousel.editor.prototype = {
 
 // This is the class that will be used in the mobile
 buildfire.components.carousel.view = function (selector, items) {
+	if (typeof($.fn) != "object" || !($.fn && $.fn.owlCarousel)) {
+        throw ("please add owlCarousel.js first to use carousel component");
+    }
     this.selector = selector;
     this.items = [];
     this.width = window.innerWidth;
@@ -299,9 +302,6 @@ buildfire.components.carousel.view = function (selector, items) {
 buildfire.components.carousel.view.prototype = {
     // will be called to initialize the setting in the constructor
     init: function (selector) {
-        if (typeof($.fn) != "object" || !($.fn && $.fn.owlCarousel)) {
-            throw ("please add owlCarousel.js first to use carousel component");
-        }
         this.selector = buildfire.components.carousel._getDomSelector(selector);
         this._renderSlider();
         this._loadImages();
