@@ -881,6 +881,22 @@ p.info{
 	width:80%;
 }
 
+/* Card Icons */
+.settings-plugin .card-icons .card-item{
+	width:52px;
+	height:34px;
+	border-radius:4px;
+	overflow:hidden;
+	float:left;
+	opacity:0.4;
+}
+.settings-plugin .card-icons .card-item + .card-item{
+	margin-left:10px;
+}
+.settings-plugin .card-icons .card-item.active{
+	opacity:0.99;
+}
+
 /* Color Grid */
 .colorgrid{
 	margin-bottom:-10px;
