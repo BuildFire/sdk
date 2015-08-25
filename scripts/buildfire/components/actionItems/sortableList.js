@@ -5,34 +5,12 @@ if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to 
 if (typeof (buildfire.components) == "undefined")
     buildfire.components = {};
 
-if (typeof (buildfire.components.sortableList) == "undefined")
-    buildfire.components.sortableList = {};
-
-buildfire.components.sortableList._resizeImage = function (url, options) {
-    if (!url) {
-        return "";
-    }
-    else {
-        return buildfire.imageLib.resizeImage(url, options);
-    }
-};
-
-buildfire.components.sortableList._getDomSelector = function (selector) {
-    if (selector && selector.nodeType && selector.nodeType === 1) {
-        return selector;
-    } else if (typeof (selector) === "string") {
-        selector = document.querySelector(selector);
-        if (selector) {
-            return selector;
-        }
-        throw "selector is not a valid DOM selector";
-    }
-    throw "selector is not a valid DOM element nor string selector";
-}
+if (typeof (buildfire.components.actionItems) == "undefined")
+    buildfire.components.actionItems = {};
 
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.sortableList.editor = function (selector, items, dialogOptions) {
-    // sortableList editor requires Sortable.js
+buildfire.components.actionItems.sortableList = function (selector, items, dialogOptions) {
+    // sortableList requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use sortableList components");
     this.selector = selector;
     this.items = [];
@@ -42,10 +20,10 @@ buildfire.components.sortableList.editor = function (selector, items, dialogOpti
 };
 
 // sortableList editor methods
-buildfire.components.sortableList.editor.prototype = {
+buildfire.components.actionItems.sortableList.prototype = {
     // will be called to initialize the setting in the constructor
     init: function (selector) {
-        this.selector = buildfire.components.sortableList._getDomSelector(selector);
+        this.selector = this._getDomSelector(selector);
         this._renderTemplate();
         this.itemsContainer = this.selector.querySelector(".draggable-list-view");
         this._initEvents();
@@ -82,10 +60,10 @@ buildfire.components.sortableList.editor.prototype = {
         }
     },
     // allows you to append a single item or an array of items
-    append: function(items){
+    append: function (items) {
         if(!items)
             return;
-        else if(typeof(items) != 'array')
+        else if (!(items instanceof Array) && typeof(items) == "object")
             items=[items];
 
         this.loadItems(items,true);
@@ -116,7 +94,7 @@ buildfire.components.sortableList.editor.prototype = {
             details = document.createElement("div"),
             detailsText = document.createElement("div"),
             title = document.createElement("span"),
-            link = document.createElement("a"),
+            actionName = document.createElement("span"),
             buttonsWrapper = document.createElement("div"),
             editButton = document.createElement("a"),
             deleteButton = document.createElement("span");
@@ -128,17 +106,14 @@ buildfire.components.sortableList.editor.prototype = {
         details.className = "copy pull-right";
         detailsText.className = "col-md-7 padding-zero pull-left";
         title.className = "title ellipsis item-title";
-        link.className = "title ellipsis item-link";
+        actionName.className = "title ellipsis item-link";
         buttonsWrapper.className = "col-md-5 text-right pull-right";
         editButton.className = "text-primary text";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
         title.innerHTML = item.title;
-        link.innerHTML = item.url;
+        actionName.innerHTML = item.action;
         editButton.innerHTML = "Edit";
-
-        link.href = item.url;
-        link.setAttribute("target", "_blank");
         
         // Append elements to the DOM
         wrapper.appendChild(moveHandle);
@@ -147,13 +122,13 @@ buildfire.components.sortableList.editor.prototype = {
             mediaHolder = document.createElement("div");
             mediaHolder.className = "media-holder pull-left";
             image = document.createElement("img");
-            image.src = buildfire.components.sortableList._resizeImage(item.iconUrl, { width: 80, height: 40 });
+            image.src = this._resizeImage(item.iconUrl, { width: 80, height: 40 });
             mediaHolder.appendChild(image);
             wrapper.appendChild(mediaHolder);
         }
 
         detailsText.appendChild(title);
-        detailsText.appendChild(link);
+        detailsText.appendChild(actionName);
         details.appendChild(detailsText);
         buttonsWrapper.appendChild(editButton);
         buttonsWrapper.appendChild(deleteButton);
@@ -171,14 +146,13 @@ buildfire.components.sortableList.editor.prototype = {
                 var itemLink = parentElement.querySelector(".item-link");
                 var image = null;
                 me._openActionItem(item, function (actionItem) {
-                    var itemUrl = actionItem.url != "http://" ? actionItem.url : "";
                     me.items[itemIndex] = actionItem;
                     item = actionItem;
                     me.onItemChange(actionItem);
                     if (me.dialogOptions.showIcon == true) {
                         image = parentElement.querySelector("img");
                         if (actionItem.iconUrl) {
-                            image.src = buildfire.components.sortableList._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
+                            image.src = me._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
                             image.parentNode.style.display = "block";
                         } else {
                             image.removeAttribute("src");
@@ -187,14 +161,7 @@ buildfire.components.sortableList.editor.prototype = {
                         
                     }
                     parentElement.querySelector(".item-title").innerHTML = actionItem.title;
-                    if (itemUrl) {
-                        itemLink.innerHTML = itemUrl;
-                        itemLink.href = itemUrl;
-                    } else {
-                        itemLink.innerHTML = "No link attached";
-                        itemLink.removeAttribute("href");
-                    }
-                    
+                    itemLink.innerHTML = actionItem.action;                    
                 });
             });
 
@@ -298,5 +265,25 @@ buildfire.components.sortableList.editor.prototype = {
             index++;
         }
         return index;
+    },
+    _getDomSelector: function (selector) {
+        if (selector && selector.nodeType && selector.nodeType === 1) {
+            return selector;
+        } else if (typeof (selector) === "string") {
+            selector = document.querySelector(selector);
+            if (selector) {
+                return selector;
+            }
+            throw "selector is not a valid DOM selector";
+        }
+        throw "selector is not a valid DOM element nor string selector";
+    },
+    _resizeImage: function (url, options) {
+        if (!url) {
+            return "";
+        }
+        else {
+            return buildfire.imageLib.resizeImage(url, options);
+        }
     }
 };
