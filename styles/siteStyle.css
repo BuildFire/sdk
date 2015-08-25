@@ -160,6 +160,10 @@ nav ul.menu li .parent span.icon{
 	top:20px;
 	font-size:17px;	
 }
+nav ul.menu li.usermanagement .parent span.icon,
+nav ul.menu li.appmanagement .parent span.icon{
+	font-size:18px;
+}
 nav ul.menu li.datatracer .parent span.icon{
 	font-size:18px;
 	top:21px;
