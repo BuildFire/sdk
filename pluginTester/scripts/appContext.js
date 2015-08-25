@@ -20,6 +20,12 @@
     }
 
 
+    var hash = window.location.hash;
+    if(hash && hash.length > 1)
+        hash= hash.substring(1);
+    else
+        hash="myPlugin";
+
     window.appContext = {
         currentApp: {
             appId: key
@@ -27,7 +33,7 @@
         }
         , currentPlugin: {
             pluginId: key
-            , pluginPath: "myPlugin" // [Enter your Plugin Folder Name here]
+            , pluginPath: hash // [Enter your Plugin Folder Name here]
             , instanceId: key
             , mode: 0
         }
