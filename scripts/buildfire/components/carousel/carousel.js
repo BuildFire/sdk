@@ -61,7 +61,7 @@ buildfire.components.carousel.editor.prototype = {
         this._initEvents();
     },
     // This will be triggered when you edit existing item details
-    onItemChange: function (item) {
+    onItemChange: function (item, index) {
         throw ("please handle onItemChange");
     },
     /* This will be triggered when the order of items changes
@@ -95,12 +95,12 @@ buildfire.components.carousel.editor.prototype = {
     append: function(items){
         if(!items)
             return;
-        else if(typeof(items) != 'array')
+        else if(!(items instanceof Array) && typeof(items) == "object")
             items=[items];
 
         this.loadItems(items,true);
     },
-    /// remove all items in list
+    // remove all items in list
     clear: function(){
         this._removeAll();
         this.onDeleteItem();
@@ -161,7 +161,7 @@ buildfire.components.carousel.editor.prototype = {
                 me._openActionItem(item, function (actionItem) {
                     me.items[itemIndex] = actionItem;
                     item = actionItem;
-                    me.onItemChange(actionItem);
+                    me.onItemChange(actionItem, itemIndex);
                     parentElement.querySelector("img").src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
                     parentElement.querySelector(".title").innerHTML = actionItem.title;
                 });
@@ -328,7 +328,7 @@ buildfire.components.carousel.view.prototype = {
         }
 
         // if items.length == 0 and appendItems == undefined no need to init the slider it will break if we do so
-        if (!items.length && !appendItems) {
+        if (items instanceof Array && !items.length && !appendItems) {
             return;
         }
         this._applySlider();        
@@ -337,7 +337,7 @@ buildfire.components.carousel.view.prototype = {
     append: function(items){
         if(!items)
             return;
-        else if(typeof(items) != 'array')
+        else if (!(items instanceof Array) && typeof(items) == "object")
             items=[items];
 
         this.loadItems(items,true);
