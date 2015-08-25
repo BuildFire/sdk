@@ -125,6 +125,7 @@ buildfire.components.carousel.editor.prototype = {
             image = document.createElement("img"),
             details = document.createElement("div"),
             title = document.createElement("span"),
+            actionsWrapper = document.createElement("div"),
             editButton = document.createElement("a"),
             deleteButton = document.createElement("span");
 
@@ -134,20 +135,25 @@ buildfire.components.carousel.editor.prototype = {
         mediaHolder.className = "media-holder pull-left";
         details.className = "copy pull-right";
         title.className = "title ellipsis";
+        actionsWrapper.className = "pull-right";
         editButton.className = "text-primary text";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
         image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
         title.innerHTML = item.title;
-        editButton.innerHTML = "Edit";
+        editButton.innerHTML = item.action ? "Edit Action" : "Add Action";
 
         // Append elements to the DOM
         wrapper.appendChild(moveHandle);
         wrapper.appendChild(mediaHolder);
         mediaHolder.appendChild(image);
         details.appendChild(title);
-        details.appendChild(editButton);
-        details.appendChild(deleteButton);
+        
+        actionsWrapper.appendChild(editButton);
+        actionsWrapper.appendChild(deleteButton);
+
+        details.appendChild(actionsWrapper);
+
         wrapper.appendChild(details);
         me.itemsContainer.appendChild(wrapper);
 
@@ -156,14 +162,15 @@ buildfire.components.carousel.editor.prototype = {
             editButton.addEventListener("click", function (e) {
                 e.preventDefault();
                 var itemIndex = me._getItemIndex(item);
-                var parentElement = e.target.parentNode.parentNode;
-
+                var currentTarget = e.target;
+                var parentElement = currentTarget.parentNode.parentNode.parentNode;
                 me._openActionItem(item, function (actionItem) {
                     me.items[itemIndex] = actionItem;
                     item = actionItem;
                     me.onItemChange(actionItem, itemIndex);
                     parentElement.querySelector("img").src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
                     parentElement.querySelector(".title").innerHTML = actionItem.title;
+                    currentTarget.innerHTML = actionItem.action ? "Edit Action" : "Add Action";
                 });
             });
 
@@ -172,7 +179,7 @@ buildfire.components.carousel.editor.prototype = {
                 var itemIndex = me._getItemIndex(item);
                 if (itemIndex != -1) {
                     me.items.splice(itemIndex, 1);
-                    this.parentNode.parentNode.remove()
+                    this.parentNode.parentNode.parentNode.remove()
                     me.onDeleteItem(item, itemIndex);
                 }
             });
@@ -181,13 +188,13 @@ buildfire.components.carousel.editor.prototype = {
     // render the basic template HTML
     _renderTemplate: function () {
         var componentContainer = document.createElement("div");
-        var componentName = document.createElement("div");
+        var componentName = document.createElement("span");
         var contentContainer = document.createElement("div");
         var buttonContainer = document.createElement("div");
         var button = document.createElement("a");
         var sliderContainer = document.createElement("div");
 
-        componentContainer.className = "item clearfix row margin-bottom-fifteen";
+        componentContainer.className = "item clearfix row";
         componentName.className = "labels col-md-3 padding-right-zero pull-left";
         componentName.innerHTML = "Image Carousel";
         contentContainer.className = "main col-md-9 pull-right";
