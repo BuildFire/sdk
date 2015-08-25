@@ -125,8 +125,6 @@ nav.menu{
 	right:0;
 	top:0;
 	width:100%;
-	background:#32373a;
-	border-left:1px solid #26282b;
 	height:100%;
 	z-index:1199;
 	overflow-x:hidden;
@@ -143,20 +141,25 @@ nav.menu a{
 	display:block;
 	width:100%;
 	padding:12px;
-	color:#a6abba;
 	text-decoration:none;
-}
-nav.menu a + a{
-	border-top:1px solid #26282b;
 }
 nav.menu a.username{
 	padding-top:15px;
 	padding-bottom:14px;
+	padding-right:37px;
+}
+nav.menu span.menu-close{
+	position:absolute;
+	top:19px;
+	right:12px;
+	font-size:13px;
+	font-weight:600;
+	cursor:pointer;
 }
 nav.menu a.divider{
-	background:#26282b;
 	padding-top:6px;
 	padding-bottom:6px;
+	border-top:none !important;
 }
 nav.menu a .media{
 	display:inline-block;
@@ -172,6 +175,7 @@ nav.menu a .media img{
 	max-height:22px;
 	height:auto;
 	width:auto;
+	border-radius:2px;
 }
 nav.menu a p{
 	margin:3px 0 0;
