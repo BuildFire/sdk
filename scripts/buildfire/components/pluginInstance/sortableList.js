@@ -180,10 +180,9 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         // initialize add new item button
         me.selector.querySelector(".add-new-item").addEventListener("click", function () {
             me._openPluginInstance({}, function (plugins) {
-                // this will be replaced with the real object later
                 // consider array ineasted of object
                 if (plugins instanceof Array) {
-                    me.loadItems(plugins);
+                    me.loadItems(plugins, true);
                 } else {
                     var currentPlugin = null;
                     for (var plugin in plugins) {
