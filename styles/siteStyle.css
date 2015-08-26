@@ -160,6 +160,14 @@ nav ul.menu li .parent span.icon{
 	top:20px;
 	font-size:17px;	
 }
+nav ul.menu li.usermanagement .parent span.icon,
+nav ul.menu li.appmanagement .parent span.icon{
+	font-size:18px;
+}
+nav ul.menu li.datatracer .parent span.icon{
+	font-size:18px;
+	top:21px;
+}
 nav ul.menu li.help .parent span.icon{
 	top:21px;
 }
@@ -292,9 +300,6 @@ html[buildfire] .item .header{
 	line-height:20px;
 	font-weight:300;
 	position:relative;
-}
-#main-content .section:first-child > .header,
-html[buildfire] .item:first-child > .header{
 	border-radius:4px 4px 0 0;
 }
 #main-content .header.no-btn,
@@ -404,7 +409,7 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	max-width:100%;
 	max-height:100%;
 	vertical-align:middle;
-	border-radius:2px;
+	border-radius:4px;
 }
 .draggable-list-view .d-item span.title{
 	display:inline-block;
@@ -623,12 +628,11 @@ table.table span.sort-icon{
 	display:inline-block;
 	width:100%;
 	height:100%;
-	box-shadow:0 0 0 1px #ddd;
+	background:#eef0f0;
 }
 .media-container .files-set .file-holder a.selected,
 .media-container .icons-set a.icon-holder.selected{
-	box-shadow:0 0 0 1px #09a3ee;
-	background:#eef0f0;
+	box-shadow:0 0 0 2px #09a3ee;
 }
 .media-container .files-set .file-holder:nth-child(6n){
 	margin-right:0;
@@ -881,6 +885,22 @@ p.info{
 	width:80%;
 }
 
+/* Card Icons */
+.settings-plugin .card-icons .card-item{
+	width:52px;
+	height:34px;
+	border-radius:4px;
+	overflow:hidden;
+	float:left;
+	opacity:0.4;
+}
+.settings-plugin .card-icons .card-item + .card-item{
+	margin-left:10px;
+}
+.settings-plugin .card-icons .card-item.active{
+	opacity:0.99;
+}
+
 /* Color Grid */
 .colorgrid{
 	margin-bottom:-10px;
@@ -1039,7 +1059,7 @@ body.rtl .pagination > li + li{
 	width:100%;
 	min-width:100%;
 	max-width:100%;
-	min-height:600px;
+	min-height:1000px;
 }
 html[buildfire]{
 	padding-top:30px;

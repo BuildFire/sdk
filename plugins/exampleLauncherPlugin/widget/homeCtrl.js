@@ -23,6 +23,7 @@ $home.controller('homeCtrl', ['$scope'
             ,{click:fn,title:"People", widgetId:'peoplePlugin',folderName :'peoplePlugin',instanceId:321, icon:"http://www.allthingsscene.co/wp-content/uploads/2014/07/App-icon.png", requiresConnection:true}
             ,{click:fn,title:"Contact Us", widgetId:'contactUsPlugin',folderName :'contactUsPlugin',instanceId:321, icon:"http://www.codeandlogic.com/media/home/appIcon.png", requiresConnection:true}
             ,{click:fn,title:"Text", widgetId:'textPlugin',folderName :'textPlugin',instanceId:654645, icon:"https://ipadnotebook.files.wordpress.com/2014/01/screen-shot-2014-01-01-at-8-53-44-am.png", requiresConnection:true}
+            ,{click:fn,title:"YouTube", widgetId:'youtubePlugin',instanceId:654, icon:"http://files.softicons.com/download/social-media-icons/ios-7-style-social-media-icons-by-design-bolts/png/256x256/YouTube.png", requiresConnection:true}
         ];
 
         for(var i=0;i< widgets.length ;i++)
