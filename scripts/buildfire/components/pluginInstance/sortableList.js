@@ -52,6 +52,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
 
             for (var i = 0; i < items.length; i++) {
                 this.items.push(items[i]);
+                this.loadedInstances.push(items[i].instanceId);
                 this._appendItem(items[i]);
             }
         }
@@ -65,7 +66,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
 
         this.loadItems(items, true);
     },
-    /// remove all items in list
+    // remove all items in list
     clear: function () {
         this._removeAll();
         this.onDeleteItem();
@@ -102,7 +103,6 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         title.className = "title ellipsis item-title";
         buttonsWrapper.className = "pull-right";
         navigateButton.className = "btn-icon btn-link-icon btn-primary";
-        navigateButton.style.display = "none";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
         title.innerHTML = item.title;
@@ -180,16 +180,19 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         // initialize add new item button
         me.selector.querySelector(".add-new-item").addEventListener("click", function () {
             me._openPluginInstance({}, function (plugins) {
-                // this will be replaced with the real object later
                 // consider array ineasted of object
-                var currentPlugin = null;
-                for (var plugin in plugins) {
-                    currentPlugin = plugins[plugin];
-                    if (me.loadedInstances.indexOf(currentPlugin.instanceId) == -1) {
-                        me.items.push(currentPlugin);
-                        me._appendItem(currentPlugin);
-                        me.onAddItems(currentPlugin);
-                        me.loadedInstances.push(currentPlugin.instanceId);
+                if (plugins instanceof Array) {
+                    me.loadItems(plugins, true);
+                } else {
+                    var currentPlugin = null;
+                    for (var plugin in plugins) {
+                        currentPlugin = plugins[plugin];
+                        if (me.loadedInstances.indexOf(currentPlugin.instanceId) == -1) {
+                            me.items.push(currentPlugin);
+                            me._appendItem(currentPlugin);
+                            me.onAddItems(currentPlugin);
+                            me.loadedInstances.push(currentPlugin.instanceId);
+                        }
                     }
                 }
             });
