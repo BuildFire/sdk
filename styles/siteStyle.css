@@ -707,7 +707,8 @@ table.table span.sort-icon{
 .modal .modal-content .bottom div{
 	padding:0;
 }
-.modal .modal-content .bottom div a{
+.modal .modal-content .bottom div a,
+.bottom div a.action{
 	width:100%;
 	padding:8px;
 	display:inline-block;
