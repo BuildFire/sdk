@@ -51,7 +51,12 @@ var buildfire = {
 			}
 		});
 	}
-	, _whitelistedCommands:["datastore.triggerOnUpdate" ,"datastore.triggerOnRefresh","messaging.onReceivedMessage", "history.triggerOnPop","navigation.onBackButtonClick"]
+	, _whitelistedCommands:["datastore.triggerOnUpdate"
+		,"datastore.triggerOnRefresh"
+		,"messaging.onReceivedMessage"
+		, "history.triggerOnPop"
+		,"navigation.onBackButtonClick"
+		,"services.media.audioPlayer.triggerOnEvent"]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
 		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
@@ -401,8 +406,14 @@ var buildfire = {
 		}
 		, resizeImage: function (url, options) {
 			var root = "http://s7obnu.cloudimage.io/s/";
-			if (typeof(options) != "object")
+
+			if(!options)
+				options = {width: window.innerWidth};
+			else if (typeof(options) != "object")
 				throw ("options not an object");
+
+			if(options.width == 'full') options.width= window.innerWidth;
+			if(options.height== 'full') options.height= window.innerHeight;
 
 			if (options.width && !options.height)
 				return root + "width/" + options.width + "/" + url;
@@ -503,7 +514,7 @@ var buildfire = {
 			buildfire.logger.log('onReceivedMessage ignored', window.location);
 		}
 	}
-	,  pluginInstance:{
+	, pluginInstance:{
 		showDialog: function (options, callback) {
 			var p = new Packet(null, 'pluginInstanceLib.showDialog', {options: options});
 			buildfire._sendPacket(p, callback);
