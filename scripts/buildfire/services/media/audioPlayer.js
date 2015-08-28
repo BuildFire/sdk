@@ -77,12 +77,17 @@ buildfire.services.media.audioPlayer = {
         var packet = new Packet(null,"mediaAPI.audioPlayer.setTime",sec);
         buildfire._sendPacket(packet);
     }
+    ,setVolume:function(percent){
+        if(percent > 1 && percent <= 100) percent= percent/100;
+        var packet = new Packet(null,"mediaAPI.audioPlayer.setVolume",percent);
+        buildfire._sendPacket(packet);
+    }
     , settings:{
         set: function(audioSettings){
-            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.settings.set",audioSettings));
+            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.setSettings",audioSettings));
         }
         ,get: function(callback){
-            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.settings.get",audioSettings),callback);
+            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.getSettings"),callback);
         }
     }
     , triggerOnEvent: function (e) {

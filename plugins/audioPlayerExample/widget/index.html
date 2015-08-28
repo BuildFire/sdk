@@ -35,13 +35,24 @@
         <br/>
         <input id="loop" type="checkbox" ng-model="currentTrack.loopTrack" onchange="audioPlayer.loopTrack(this.checked);"  /><label for="loop">Loop Track</label>
 
+        <br/>
+        Volume
+        <input id="volume" type="range" min="0" max="100" value="100" onchange="audioPlayer.setVolume(this.value);" />
     </div>
 </div>
 
 <div class="item clearfix row " ng-show="currentTrack">
     <div class="main col-md-12" >
         <h2>Audio Settings</h2>
-
+        <input id="autoPlayNext" type="checkbox" ng-model="settings.autoPlayNext" onchange="audioPlayer.settings.set(settings);" />
+        <label for="autoPlayNext">Auto Play Next</label>
+        <br/>
+        <input id="loopPlaylist" type="checkbox" ng-model="settings.loopPlaylist" onchange="audioPlayer.settings.set(settings);" />
+        <label for="loopPlaylist">Loop Playlist</label>
+        <br/>
+        <input id="autoJumpToLastPosition" type="checkbox" ng-model="settings.autoJumpToLastPosition" onchange="audioPlayer.settings.set(settings);" />
+        <label for="autoJumpToLastPosition">Auto Jump To Last Position</label>
+        <br/>
     </div>
 </div>
 
@@ -87,13 +98,21 @@
             if (playlist) {
                 $scope.playlistTracks = playlist.tracks;
                 $scope.currentIndex = playlist.lastIndex;
+                $scope.$apply();
             }
             else
                 console.error(err);
 
-            $scope.$apply();
         });
 
+        audioPlayer.settings.get(function (err, settings) {
+            if (settings) {
+                $scope.settings = settings;
+                $scope.$apply();
+            }
+            else
+                console.error(err);
+        });
 
 
         function bindAvaiableTracks(avaiableTracks){
@@ -101,7 +120,9 @@
             $scope.$apply();
         }
 
+        console.warn('ask');
         buildfire.datastore.get(function(err,rec){
+            console.warn('got it');
             if(rec)
                 bindAvaiableTracks(rec.data);
         });
