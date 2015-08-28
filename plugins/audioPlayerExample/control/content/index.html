@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html ng-app="audioPlayer">
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!-- JS -->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/buildfire/services/media/audioPlayer.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+
+</head>
+<body ng-controller="audioPlayerCtrl" id="textApp">
+<div ng-form="frmMain">
+
+    <div class="item clearfix row">
+        <div class="labels col-md-12 padding-right-zero pull-left">
+            <span>Album Cover</span>
+        </div>
+    </div>
+
+    <div class="item clearfix row ">
+        <div class="main col-md-12 pull-left">
+            <input type="url" class="form-control" ng-model="imageUrl"/>
+        </div>
+    </div>
+
+    <div class="item clearfix row">
+        <div class="labels col-md-12 padding-right-zero pull-left">
+            <span>Track Url</span>
+        </div>
+    </div>
+
+    <div class="item clearfix row ">
+        <div class="main col-md-12 pull-left">
+            <input type="text" class="form-control" ng-model="title"/>
+        </div>
+    </div>
+
+    <div class="item clearfix row">
+        <div class="labels col-md-12 padding-right-zero pull-left">
+            <span>Audio File Url (MP3,WAV,OGG)</span>
+        </div>
+    </div>
+    <div class="item clearfix row">
+        <div class="main col-md-12 pull-left">
+            <input type="url" class="form-control" ng-model="url"/>
+        </div>
+    </div>
+
+
+    <button class="btn btn-primary" ng-click="play({url: url })">Play</button>
+    <button class="btn btn-success" ng-click="add()">Add</button>
+
+
+</div>
+
+<ul>
+    <li ng-repeat="t in tracks">
+        <img ng-show="t.imageUrl" ng-src="{{getTrackImage(t)}}" />
+        {{t.title}} -
+        <a href="#" ng-click="play(t);">Play</a>
+        | <a href="#" ng-click="delete(t)" >delete</a></li>
+</ul>
+
+<div class="item clearfix row " ng-show="currentTrack.playing">
+    <div class="main col-md-12">
+        <h2>
+            playing {{currentTrack.title}} -
+            <a href="#" ng-show="currentTime && !currentTrack.paused" ng-click="pause()">Pause ||</a>
+            <a href="#" ng-show="currentTrack.paused" ng-click="play()">Play &gt;</a>
+        </h2>
+        <span ng-hide="duration"> (loading...)</span>
+        <span ng-show="currentTime"> {{currentTime}} sec / {{duration}}</span>
+
+    </div>
+</div>
+
+<script>
+
+    /****************************************
+     * DONT FORGET TO ADD [AUDIO] FEATURE TO YOUR
+     * plugin.json file to allow for background audio
+     *******************************************/
+
+    var audioPlayerApp = angular.module('audioPlayer',[]);
+
+    audioPlayerApp.controller('audioPlayerCtrl', ['$scope', function ($scope) {
+
+        var audioPlayer = buildfire.services.media.audioPlayer;
+
+        buildfire.datastore.get(function (err, rec) {
+            if (rec)
+                $scope.tracks = rec.data;
+            else
+                console.error(err);
+
+            $scope.title='example';
+            $scope.url='http://www.stephaniequinn.com/Music/Jazz%20Rag%20Ensemble%20-%2010.mp3';
+            $scope.imageUrl = 'http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2014/5/13/1399990966665/Picture_246.png';
+            $scope.$apply();
+        });
+
+
+        audioPlayer.onEvent (function(e){
+
+            if(e.event =="timeUpdate"){
+                $scope.currentTime = e.data.currentTime;
+                $scope.duration = e.data.duration;
+                $scope.$apply();
+            }
+            else if(e.event =="audioEnded" && $scope.currentTrack){
+                $scope.currentTrack.playing = false;
+                $scope.$apply();
+            }
+        });
+
+        $scope.add = function () {
+
+            if ($scope.frmMain.$invalid) {
+                console.warn('invalid data, details will not be saved');
+                return;
+            }
+
+            var track = new Track($scope.title,$scope.url,$scope.imageUrl);
+
+            if (!$scope.tracks)
+                $scope.tracks = [track];
+            else
+                $scope.tracks.push(track);
+
+
+           $scope.save();
+        };
+
+        $scope.save=function(){
+            buildfire.datastore.save($scope.tracks, function(err){
+                if(err)console.error(err);
+            });
+        };
+
+        $scope.play = function(track){
+            if(track) {
+                //track.startAt = 65; // skip 65 seconds ... by default will continue where last left off
+                $scope.currentTrack = track;
+                audioPlayer.play($scope.currentTrack);
+            }
+            else
+                audioPlayer.play();
+
+
+            $scope.currentTrack.playing=true;
+            $scope.currentTrack.paused=false;
+        };
+
+        $scope.pause= function(){
+            audioPlayer.pause();
+            $scope.currentTrack.paused=true;
+        };
+        $scope.delete= function(track){
+            var i =$scope.tracks.indexOf(track);
+            if(i>= 0){
+                $scope.tracks.splice(i,1);
+                $scope.save();
+            }
+        };
+
+        $scope.getTrackImage = function(t){
+            if(t.imageUrl)
+                return buildfire.imageLib.resizeImage(t.imageUrl,{width:32,height:32});
+            else
+                return null;
+        };
+
+
+    }]);
+</script>
+</body>
+</html>

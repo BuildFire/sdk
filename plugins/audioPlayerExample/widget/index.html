@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html ng-app="audioPlayer">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Audio Player</title>
+
+    <script src="../../../scripts/buildfire.js"></script>
+    <script src="../../../scripts/buildfire/services/media/audioPlayer.js"></script>
+    <script src="../../../scripts/angular/angular.min.js"></script>
+</head>
+<body ng-controller="audioPlayerCtrl" id="textApp">
+
+<div class="item clearfix row " ng-show="currentTrack">
+    <div class="main col-md-12" >
+
+        <img ng-show="currentTrack.imageUrl" ng-src="{{getTrackImage(currentTrack,'full')}}" />
+        <h2>
+            Playing {{currentTrack.title}}
+        </h2>
+        <h6>
+            <span ng-hide="duration"> (loading...)</span>
+            <span ng-show="currentTime"> {{currentTime}} sec / {{duration}}</span>
+        </h6>
+
+        <input id="slider" ng-show="duration" type="range" min="0" max="{{duration}}"  />
+
+
+        <a href="#" ng-show="currentTrack.playing"  onclick="audioPlayer.previous()">&lt&lt Previous</a>
+        <a href="#" ng-show="currentTrack.playing"  onclick="audioPlayer.skip(-10)">&lt Back</a>
+        <a href="#" ng-show="currentTime && !currentTrack.paused" onclick="audioPlayer.pause();">Pause ||</a>
+        <a href="#" ng-show="currentTrack.paused" ng-click="play()">Play </a>
+        <a href="#" ng-show="currentTrack.playing"  onclick="audioPlayer.skip(10)">Skip &gt;</a>
+        <a href="#" ng-show="currentTrack.playing" onclick="audioPlayer.next()">Next &gt;&gt;</a>
+
+        <br/>
+        <input id="loop" type="checkbox" ng-model="currentTrack.loopTrack" onchange="audioPlayer.loopTrack(this.checked);"  /><label for="loop">Loop Track</label>
+
+    </div>
+</div>
+
+<div class="item clearfix row " ng-show="currentTrack">
+    <div class="main col-md-12" >
+        <h2>Audio Settings</h2>
+
+    </div>
+</div>
+
+<h3 ng-show="playlistTracks.length" >User Playlist</h3>
+<ul>
+    <li ng-repeat="t in playlistTracks track by $index">
+        <img ng-show="t.imageUrl" ng-src="{{getTrackImage(t)}}" />
+        <a href="#" ng-click="play($index);">{{t.title}} </a>
+        | <a href="#" ng-click="remove($index);">remove</a>
+        <span ng-show="$index == currentIndex" > &lt;&lt;&lt; </span>
+    </li>
+</ul>
+
+
+
+<h3>Available tracks to listen to</h3>
+<ul>
+    <li ng-repeat="t in trackList">
+        <img ng-show="t.imageUrl" ng-src="{{getTrackImage(t)}}" />
+        <a href="#" ng-click="play(t);">{{t.title}} </a> -
+        <a href="#" ng-click="add(t);">add to playlist</a>
+    </li>
+</ul>
+
+
+<script>
+
+    /****************************************
+     * DONT FORGET TO ADD [AUDIO] FEATURE TO YOUR
+     * plugin.json file to allow for background audio
+     *******************************************/
+
+    var audioPlayerApp = angular.module('audioPlayer',[]);
+    var audioPlayer = buildfire.services.media.audioPlayer;
+    audioPlayerApp.controller('audioPlayerCtrl', ['$scope', function ($scope) {
+
+
+        /*
+         * Go pull any previously saved data
+         * audioPlayer handles saving its own data
+         * */
+        audioPlayer.getPlaylist(function (err, playlist) {
+            if (playlist) {
+                $scope.playlistTracks = playlist.tracks;
+                $scope.currentIndex = playlist.lastIndex;
+            }
+            else
+                console.error(err);
+
+            $scope.$apply();
+        });
+
+
+
+        function bindAvaiableTracks(avaiableTracks){
+            $scope.trackList = avaiableTracks;
+            $scope.$apply();
+        }
+
+        buildfire.datastore.get(function(err,rec){
+            if(rec)
+                bindAvaiableTracks(rec.data);
+        });
+        buildfire.datastore.onUpdate(function(e){
+            bindAvaiableTracks(e.obj);
+        });
+
+
+        var slider = document.getElementById('slider');
+
+        slider.onchange = function(){
+            if (Math.abs( this.value - $scope.currentTime) > 1 )
+                audioPlayer.setTime(this.value);
+        };
+        slider.onmousedown = function(){
+            this.stopUpdateing = true;
+        };
+        slider.onmouseup = function(){
+            this.stopUpdateing = false;
+        };
+
+        audioPlayer.onEvent ( function(e){
+            console.log(e);
+            if(e.event =="timeUpdate"){
+                if(!slider.stopUpdateing)slider.value= e.data.currentTime;
+                $scope.currentTime = e.data.currentTime;
+                $scope.duration = e.data.duration;
+            }
+            else if(e.event =="audioEnded"){
+                $scope.currentTrack.playing = false;
+
+            }
+            else if(e.event =="next" || e.event =="previous"){
+                $scope.currentTrack = e.data.track;
+                $scope.currentIndex = e.data.index;
+                $scope.currentTrack.playing = 0 || $scope.currentTrack ;
+                $scope.currentTrack.paused = false;
+            }
+            else if(e.event =="play" || e.event =="resume"){
+                $scope.currentTrack = e.data.track;
+                $scope.currentTrack.playing = true;
+                $scope.currentTrack.paused= false;
+            }
+            else if(e.event =="pause"){
+                $scope.currentTrack.paused= true;
+            }
+            else if (e.event == "removeFromPlaylist"){
+                $scope.playlistTracks = e.data.newPlaylist.tracks;
+                $scope.currentIndex = e.data.newPlaylist.lastIndex;
+
+            }
+            $scope.$apply();
+        });
+
+
+
+        $scope.add = function (track) {
+
+            if (!$scope.playlistTracks)
+                $scope.playlistTracks = [track];
+            else
+                $scope.playlistTracks.push(track);
+
+            /*
+             * audioPlayer auto saves the playlist when tracks
+             * are added to it
+             * */
+            audioPlayer.addToPlaylist(track);
+        };
+
+        $scope.play = function(track){
+            if(typeof(track) =="number" ){
+                if(track < $scope.playlistTracks.length) {
+                    $scope.currentIndex = track;
+                    $scope.currentTrack = $scope.playlistTracks[track];
+                    $scope.currentTrack.playing = true;
+                    $scope.currentTrack.paused=false;
+                    audioPlayer.play(track);
+
+                }
+
+                return;
+            }
+
+            if(track) {
+                //track.startAt = 65; // skip 65 seconds ... by default will continue where last left off
+                $scope.currentTrack = track;
+                audioPlayer.play($scope.currentTrack);
+
+            }
+            else
+                audioPlayer.play();
+
+
+            //$scope.currentTrack.playing=true;
+            //$scope.currentTrack.paused=false;
+        };
+
+
+        $scope.remove= function(index){
+            audioPlayer.removeFromPlaylist(index);
+        };
+
+        $scope.getTrackImage = function(t,size){
+            if(!t)return;
+            if(!size) size = 32;
+            if(t.imageUrl)
+                return buildfire.imageLib.resizeImage(t.imageUrl,{width:size,height:size});
+            else
+                return null;
+        };
+
+    }]);
+</script>
+</body>
+</html>

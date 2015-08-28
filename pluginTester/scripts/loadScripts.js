@@ -8,6 +8,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/datastoreAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/analyticsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/appearanceAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/mediaAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/notificationsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/appAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/actionItemsAPI.js"
@@ -32,6 +33,7 @@ _ScriptLoader.prototype ={
             this.attachFile(this.scripts[i]);
     }
 };
+
 
 window._scriptLoader = new  _ScriptLoader();
 window._scriptLoader.init();
