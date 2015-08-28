@@ -91,8 +91,13 @@ var buildfire = {
 		buildfire._sendPacket(p, callback);
 	}
 	, navigation: {
-         navigateTo: function (pluginId, instanceId, title) {
-            var p = new Packet(null, 'navigation.navigateTo', {pluginId: pluginId, instanceId: instanceId, title: title});
+		/**
+		 * Navigate To plugin
+		 * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title }
+		 */
+         navigateTo: function (pluginData) {
+
+            var p = new Packet(null, 'navigation.navigateTo', {pluginId: pluginData.pluginId, instanceId: pluginData.instanceId, title: pluginData.title,folderName: pluginData.folderName});
             buildfire._sendPacket(p);
         }
         , navigateHome: function () {
