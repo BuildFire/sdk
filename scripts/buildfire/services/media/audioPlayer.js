@@ -43,14 +43,14 @@ buildfire.services.media.audioPlayer = {
     ,skip:function(sec){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.skip",sec));
     }
-    ,next:function(sec){
+    ,next:function(){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.next"));
     }
-    ,previous:function(sec){
+    ,previous:function(){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.previous"));
     }
-    ,loopTrack:function(val){
-        buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.loopTrack",val));
+    ,loopTrack:function(){
+        buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.loopTrack"));
     }
     ,removeFromPlaylist:function(index){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.removeFromPlaylist",index));
