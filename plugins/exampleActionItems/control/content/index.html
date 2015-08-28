@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load helper.css to use our helper classes -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/sortable.min.js"></script>
+    <script src="../../../../scripts/buildfire/components/actionItems/sortableList.js"></script>
+    <!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+    -->
+</head>
+<body>
+    <div id="actionItems"></div>
+    <script>
+
+        /// create a new instance of the buildfire actionItems sortableList
+        var editor = new buildfire.components.actionItems.sortableList("#actionItems");
+
+        /// handle the loading
+        function loadItems(actionItems){
+            // create an instance and pass it the items if you don't have items yet just pass []
+            editor.loadItems(actionItems);
+        }
+
+        /// call buildfire datastore to see if there are any previously saved items
+        buildfire.datastore.get(function(err,obj){
+            if(err)
+                console.error("Error getting data: ", err);
+            else
+                loadItems(obj.data.actionItems);
+        });
+
+        /// save any changes in items
+        function save(items){
+            console.log('saving...');
+            buildfire.datastore.save({actionItems:items},function(err){
+                if(e)
+                    console.error("Error saving data: ", err);
+                else
+                    console.log('saved.');
+            });
+        }
+
+
+        // this method will be called when a new item added to the list
+        editor.onAddItems = function (items) {
+            save(editor.items);
+        };
+        // this method will be called when an item deleted from the list
+        editor.onDeleteItem = function (item, index) {
+            save(editor.items);
+        };
+        // this method will be called when you edit item details
+        editor.onItemChange = function (item, index) {
+            save(editor.items);
+        };
+        // this method will be called when you change the order of items
+        editor.onOrderChange = function (item, oldIndex, newIndex) {
+            save(editor.items);
+        };
+
+
+
+    </script>
+</body>
+</html>
