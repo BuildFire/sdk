@@ -37,6 +37,10 @@ controlPluginAPI.tag = 'controlPluginAPI';
 		controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
 	});
 
+	controlPluginAPI.navigation.navigateTo = pluginAPI.navigation.navigateTo = function () {
+	    console.warn("supress navigation in shell");
+	    alert("supress navigation in shell");
+	};
 	/**************************************************/
 
 	/*
