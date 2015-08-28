@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet" />
+	
+	<!-- JS -->
+	<script src="../../../scripts/buildfire.js"></script>
+    <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../../scripts/owlCarousel/owlCarousel.js"></script>
+    <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
+</head>
+<body>
+    <div id="carousel"></div>
+    <span>Widget - Hello, world!</span>
+    <script>
+
+        ///create new instance of buildfire carousel viewer
+        var view = new buildfire.components.carousel.view("#carousel", []);
+
+        /// load items
+        function loadItems(carouselItems){
+            // create an instance and pass it the items if you don't have items yet just pass []
+                view.loadItems(carouselItems);
+        }
+
+        /// load any previously saved items
+        buildfire.datastore.get(function(err,obj){
+            if(err)
+                alert('error');
+            else
+                loadItems(obj.data.carouselItems)
+        });
+
+        /// handle any updates by reloading
+        buildfire.datastore.onUpdate(function(e){
+            loadItems( e.obj.carouselItems);
+        })
+
+    </script>
+</body>
+</html>
