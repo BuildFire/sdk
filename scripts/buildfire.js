@@ -1,7 +1,7 @@
 "use strict";
 
 function Packet(id, cmd, data) {
-	this.id = id ? id : new Date().toISOString();
+	this.id = id ? id : new Date().toISOString() + Math.random();
 	this.cmd = cmd;
 	this.data = data;
 }
