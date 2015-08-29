@@ -2,9 +2,12 @@
  * Created by Daniel on 8/4/2015.
  */
 function initPullDownRefresh () {
-
+    var pluginFrame;
     var fnLoading = function () {
-        pluginAPI.datastore.triggerOnRefresh();
+        if(!pluginFrame)
+            pluginFrame = document.getElementById('widget');
+        var packet = new Packet(null, "datastore.triggerOnRefresh");
+        pluginAPI.sendMessage(pluginFrame.contentWindow, packet);
         return new Promise(function (resolve, reject) {
             resolve();
         });
