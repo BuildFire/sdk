@@ -9,18 +9,21 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 
 if (typeof (buildfire.services.media) == "undefined") buildfire.services.media = {};
 
-function Track (title,url,imageUrl){
-    this.title=title;
-    this.url=url;
-    this.imageUrl=imageUrl;
-    this.startAt=0;
-    this.lastPosition=0;
+function Track(title, url, image, album,artist) {
+    this.title = title;
+    this.url = url;
+    this.image = image;
+    this.album = album;
+    this.artist=artist;
+    this.startAt = 0;
+    this.lastPosition = 0;
 }
 
 function AudioSettings(){
-    this.autoPlayNext = true;
+    this.autoPlayNext = false;
     this.loop = false;
-    this.autoJumpToLastPosition= true;
+    this.autoJumpToLastPosition= false;
+    this.shufflePlaylist =false;
 }
 
 
@@ -40,14 +43,14 @@ buildfire.services.media.audioPlayer = {
     ,skip:function(sec){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.skip",sec));
     }
-    ,next:function(sec){
+    ,next:function(){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.next"));
     }
-    ,previous:function(sec){
+    ,previous:function(){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.previous"));
     }
-    ,loopTrack:function(val){
-        buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.loopTrack",val));
+    ,loopTrack:function(){
+        buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.loopTrack"));
     }
     ,removeFromPlaylist:function(index){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.removeFromPlaylist",index));
@@ -79,10 +82,10 @@ buildfire.services.media.audioPlayer = {
     }
     , settings:{
         set: function(audioSettings){
-            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.settings.set",audioSettings));
+            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.setSettings",audioSettings));
         }
         ,get: function(callback){
-            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.settings.get",audioSettings),callback);
+            buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.getSettings"),callback);
         }
     }
     , triggerOnEvent: function (e) {

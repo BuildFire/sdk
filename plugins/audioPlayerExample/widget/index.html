@@ -35,13 +35,27 @@
         <br/>
         <input id="loop" type="checkbox" ng-model="currentTrack.loopTrack" onchange="audioPlayer.loopTrack(this.checked);"  /><label for="loop">Loop Track</label>
 
+        <br/>
+        Volume
+        <input id="volume" type="range" min="0" max="1" value="1" step="0.1" ng-model="settings.volume" ng-change="saveSettings();" />
     </div>
 </div>
 
 <div class="item clearfix row " ng-show="currentTrack">
     <div class="main col-md-12" >
         <h2>Audio Settings</h2>
-
+        <input id="autoPlayNext" type="checkbox" ng-model="settings.autoPlayNext" ng-change="saveSettings();" />
+        <label for="autoPlayNext">Auto Play Next</label>
+        <br/>
+        <input id="loopPlaylist" type="checkbox" ng-model="settings.loopPlaylist" ng-change="saveSettings();" />
+        <label for="loopPlaylist">Loop Playlist</label>
+        <br/>
+        <input id="autoJumpToLastPosition" type="checkbox" ng-model="settings.autoJumpToLastPosition" ng-change="saveSettings();" />
+        <label for="autoJumpToLastPosition">Auto Jump To Last Position</label>
+        <br/>
+        <input id="shufflePlaylist" type="checkbox" ng-model="settings.shufflePlaylist" ng-change="saveSettings();" />
+        <label for="shufflePlaylist">Shuffle Playlist</label>
+        <br/>
     </div>
 </div>
 
@@ -87,13 +101,28 @@
             if (playlist) {
                 $scope.playlistTracks = playlist.tracks;
                 $scope.currentIndex = playlist.lastIndex;
+                $scope.$apply();
             }
             else
                 console.error(err);
 
-            $scope.$apply();
         });
 
+        audioPlayer.settings.get(function (err, settings) {
+
+            if (settings) {
+                $scope.settings = settings;
+                if(settings.volume)
+                    document.getElementById('volume').value= settings.volume;
+                $scope.$apply();
+            }
+            else
+                console.error(err);
+        });
+
+        $scope.saveSettings = function(){
+            audioPlayer.settings.set($scope.settings);
+        };
 
 
         function bindAvaiableTracks(avaiableTracks){
@@ -101,7 +130,9 @@
             $scope.$apply();
         }
 
+        console.warn('ask');
         buildfire.datastore.get(function(err,rec){
+            console.warn('got it');
             if(rec)
                 bindAvaiableTracks(rec.data);
         });
@@ -124,7 +155,8 @@
         };
 
         audioPlayer.onEvent ( function(e){
-            console.log(e);
+            if(e.event !="timeUpdate") console.log(e);
+
             if(e.event =="timeUpdate"){
                 if(!slider.stopUpdateing)slider.value= e.data.currentTime;
                 $scope.currentTime = e.data.currentTime;

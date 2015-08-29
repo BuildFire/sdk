@@ -29,7 +29,7 @@ buildfire.components.actionItems.sortableList.prototype = {
         this._initEvents();
     },
     // This will be triggered when you edit existing item details
-    onItemChange: function (item) {
+    onItemChange: function (item, index) {
         throw ("please handle onItemChange");
     },
     /* This will be triggered when the order of items changes
@@ -148,7 +148,7 @@ buildfire.components.actionItems.sortableList.prototype = {
                 me._openActionItem(item, function (actionItem) {
                     me.items[itemIndex] = actionItem;
                     item = actionItem;
-                    me.onItemChange(actionItem);
+                    me.onItemChange(actionItem, itemIndex);
                     if (me.dialogOptions.showIcon == true) {
                         image = parentElement.querySelector("img");
                         if (actionItem.iconUrl) {

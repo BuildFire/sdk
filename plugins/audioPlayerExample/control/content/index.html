@@ -17,7 +17,6 @@
             <span>Album Cover</span>
         </div>
     </div>
-
     <div class="item clearfix row ">
         <div class="main col-md-12 pull-left">
             <input type="url" class="form-control" ng-model="imageUrl"/>
@@ -26,10 +25,9 @@
 
     <div class="item clearfix row">
         <div class="labels col-md-12 padding-right-zero pull-left">
-            <span>Track Url</span>
+            <span>Track Title</span>
         </div>
     </div>
-
     <div class="item clearfix row ">
         <div class="main col-md-12 pull-left">
             <input type="text" class="form-control" ng-model="title"/>
@@ -43,10 +41,32 @@
     </div>
     <div class="item clearfix row">
         <div class="main col-md-12 pull-left">
-            <input type="url" class="form-control" ng-model="url"/>
+            <input type="url" class="form-control" ng-model="url" required/>
         </div>
     </div>
 
+
+    <div class="item clearfix row">
+        <div class="labels col-md-12 padding-right-zero pull-left">
+            <span>album</span>
+        </div>
+    </div>
+    <div class="item clearfix row ">
+        <div class="main col-md-12 pull-left">
+            <input type="text" class="form-control" ng-model="album"/>
+        </div>
+    </div>
+
+    <div class="item clearfix row">
+        <div class="labels col-md-12 padding-right-zero pull-left">
+            <span>artists</span>
+        </div>
+    </div>
+    <div class="item clearfix row ">
+        <div class="main col-md-12 pull-left">
+            <input type="text" class="form-control" ng-model="artists"/>
+        </div>
+    </div>
 
     <button class="btn btn-primary" ng-click="play({url: url })">Play</button>
     <button class="btn btn-success" ng-click="add()">Add</button>
@@ -54,6 +74,7 @@
 
 </div>
 
+<h3 ng-show="tracks">Available tracks to listen to</h3>
 <ul>
     <li ng-repeat="t in tracks">
         <img ng-show="t.imageUrl" ng-src="{{getTrackImage(t)}}" />
