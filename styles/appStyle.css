@@ -360,14 +360,15 @@ nav.menu a p{
 /* List Layout Grids */
 .list-layout .list-item{
 	padding-left:15px;
-	padding-right:1%;
+	padding-right:8px;
 }
-.layout1 .list-layout .list-item + .list-item{
-	padding-left:1%;
+.list-layout .list-item + .list-item{
+	padding-left:8px;
 	padding-right:15px;
 }
 .list-layout .list-item-media{
 	background:#eef0f0;
+	position:relative;
 }
 .list-layout .list-item-media .list-media-holder{
 	margin:0 auto;
