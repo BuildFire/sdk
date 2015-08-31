@@ -119,6 +119,20 @@ textarea{
 	font-weight:100;
 }
 
+/* Menu Toggle */
+#menuToggle{
+	border-radius:5px 0 0 5px;
+	font-size:21px;
+	padding:8px 10px 4px;
+	position:fixed;
+	top:6px;
+	right:0;
+	z-index:9999999;
+}
+#menuToggle span.icon{
+	font-size:21px;
+}
+
 /* Menu */
 nav.menu{
 	position:absolute;
