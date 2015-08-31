@@ -140,7 +140,7 @@ nav.menu{
 	top:0;
 	width:100%;
 	height:100%;
-	z-index:1199;
+	z-index:99999999;
 	overflow-x:hidden;
 	overflow-y:auto;
 	transition:all 0.35s ease;
