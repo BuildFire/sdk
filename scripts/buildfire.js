@@ -230,6 +230,20 @@ var buildfire = {
 			buildfire._sendPacket(p, callback);
 
 		},
+		getWithDynamicData: function ( tag, callback) {
+
+			var tagType = typeof(tag);
+			if (tagType == "undefined")
+				tag = '';
+			else if (tagType == "function" && typeof(callback) == "undefined") {
+				callback = tag;
+				tag = '';
+			}
+			var obj ={tag:tag, withDynamicData: true };
+			var p = new Packet(null, 'datastore.get', obj);
+			buildfire._sendPacket(p, callback);
+
+		},
         /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoregetbyid--id--tag-optional-callback
 		getById: function (id, tag, callback) {
 
