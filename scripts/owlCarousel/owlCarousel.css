@@ -94,6 +94,7 @@
 	left:0;
 	width:100%;
 	margin:0 auto;
+	text-align:center;
 }
 .owl-carousel.has-info-bar .owl-controls .owl-dots{
 	bottom:45px;
