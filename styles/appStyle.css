@@ -141,6 +141,7 @@ nav.menu{
 	width:100%;
 	height:100%;
 	z-index:99999999;
+	background:#fff;
 	overflow-x:hidden;
 	overflow-y:auto;
 	transition:all 0.35s ease;
@@ -383,6 +384,42 @@ nav.menu a p{
 .list-layout .list-item-media{
 	background:#eef0f0;
 	position:relative;
+	left:0;
+	-moz-transition: all 0.35s;
+	-o-transition: all 0.35s;
+	-webkit-transition: all 0.35s;
+	transition: all 0.35s;
+}
+.list-layout .list-item-media.now-playing:after{
+	content:'';
+	position:absolute;
+	top:0;
+	left:0;
+	width:3px;
+	height:100%;
+	background:#09a3ee;
+}
+.list-layout .list-item-media.edit{
+	left:-60px;
+}
+.list-layout .list-item-media .remove-btn{
+	position:absolute;
+	top:0;
+	right:-120px;
+	padding:25px 0;
+	width:100px;
+	height:100%;
+	color:#fff;
+	-moz-transition: all 0.35s;
+	-o-transition: all 0.35s;
+	-webkit-transition: all 0.35s;
+	transition: all 0.35s;
+}
+.list-layout .list-item-media.edit .remove-btn{
+	right:-60px;
+}
+.list-layout .list-item-media.edit .btns{
+	right:58px;
 }
 .list-layout .list-item-media .list-media-holder{
 	margin:0 auto;
@@ -393,6 +430,7 @@ nav.menu a p{
 }
 .list-layout .list-item-copy{
 	padding:10px 0;
+	min-height:70px;
 }
 .list-layout .list-item-copy p.summary{
 	font-size:13px;
@@ -419,6 +457,9 @@ nav.menu a p{
 	border-radius:4px;
 	margin:5px 10px 5px 5px;
 	text-align:center;
+}
+.media-center-plugin.layout3 .list-layout .list-item-media .list-media-holder{
+	background:none;
 }
 html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holder{
 	line-height:60px;
@@ -471,19 +512,26 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	padding:5px 8px;
 	max-width:140px;
 }
-.ecommerce-plugin .list-layout.has-cart .list-item{
+.ecommerce-plugin .list-layout.has-cart .list-item,
+.list-layout.has-btns .list-item{
 	position:relative;
 }
-.ecommerce-plugin .list-layout.has-cart .list-item-copy{
+.ecommerce-plugin .list-layout.has-cart .list-item-copy,
+.list-layout.has-btns .list-item-copy{
 	padding-right:88px !important;
 }
-.list-layout.has-cart .add-to-cart{
+.list-layout.has-cart .add-to-cart,
+.list-layout.has-btns .btns{
 	position:absolute;
 	top:50%;
 	margin-top:-16px;
 	right:18px;
 }
-.holder .list-layout .add-to-cart{
+.list-layout.has-btns .btns{
+	margin-top:-18px;
+}
+.holder .list-layout .add-to-cart,
+.list-layout.has-btns .btns{
 	padding:5px;
 	display:inline-block;
 	width:32px;
@@ -498,6 +546,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .holder .media-layout .add-to-cart .icon{
 	font-size:18px;
 	vertical-align:middle;
+}
+.list-layout.has-btns .btns .icon{
+	font-size:24px;
+	color:#fff;
 }
 
 /* Media Layout */
@@ -552,7 +604,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	color:#fff;
 }
 .holder.now-playing .blurred-image{
-	filter:blur(6px) brightness(0.2);
+	filter:blur(10px) brightness(0.2);
 	position:fixed;
 	top:-5%;
 	left:-5%;
@@ -564,14 +616,15 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .holder.now-playing .media-center-plugin{
 	position:absolute;
-	width:280px;
-	height:482px;
+	width:300px;
+	height:530px;
 	top:50%;
-	margin-top:-241px;
+	margin-top:-264px;
 	left:50%;
-	margin-left:-140px;
+	margin-left:-150px;
 }
-.holder.now-playing .media-holder{
+.holder.now-playing .media-holder,
+.more-info .media-holder{
 	display:table;
 	text-align:center;
 	width:260px;
@@ -580,11 +633,17 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	max-height:260px;
 	margin:0 auto;
 }
-.holder.now-playing .media-holder .media-inner{
+.holder.now-playing .media-holder .media-inner,
+.more-info .media-holder .media-inner{
 	max-width:260px;
 	max-height:260px;	
 	display:table-cell;
 	vertical-align:middle;
+}
+.more-info .media-holder,
+.more-info .media-holder .media-inner{
+	height:140px !important;
+	width:140px !important;
 }
 .holder.now-playing .media-holder .media-inner img{
 	max-width:100%;
@@ -594,6 +653,21 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .holder.now-playing .media-player-info p{
 	margin:0;
 }
+.holder.now-playing .media-header-link a{
+	color:#fff;
+}
+.holder.now-playing .media-player-action-btns .icon{
+	font-size:25px;
+}
+.holder.now-playing .media-player-action-btns .icon + .icon{
+	margin-left:60px;
+}
+.holder.now-playing .media-player-btns .icon.icon-sm{
+	font-size:22px;
+	position:relative;
+	top:-7px;
+	color:#999;
+}
 .holder.now-playing .media-player-btns .icon{
 	font-size:42px;
 }
@@ -601,9 +675,49 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	margin-left:20px;
 }
 .holder.now-playing .media-player-btns .icon.icon-main{
-	font-size:68px;
+	font-size:58px;
 	position:relative;
-	top:11px;
+	top:6px;
+}
+
+/* Media Player Playlist Overlay */
+.media-player-list-layout.layout3 .list-layout .list-item{
+	border-bottom:1px solid #333;
+}
+.media-player-list-layout.layout3 .list-layout .list-item-media .list-media-holder{
+	background:none;
+}
+
+/* Media Player More Info Overlay */
+.media-player-more-info .more-info-list .item{
+	border-bottom:1px solid #333;
+}
+.media-player-more-info .more-info-list .item:first-child{
+	border-top:1px solid #333;
+}
+.media-player-more-info .more-info-list .item a{
+	color:#fff;
+	padding:10px;
+	display:block;
+	font-size:15px;
+	line-height:20px;
+}
+
+/* Media Player Settings Overlay */
+.media-player-settings .settings-list .item{
+	border-bottom:1px solid #333;
+	padding:12px 0;
+}
+.media-player-settings .settings-list .item:first-child{
+	border-top:1px solid #333;
+}
+.media-player-settings .settings-list .item span{
+	color:#fff;
+	font-size:15px;
+	line-height:20px;
+}
+.media-player-settings .settings-list .checkbox label::after{
+	left:-1px;
 }
 
 /* Play Btn */
@@ -677,10 +791,10 @@ html[buildfire] body{
 }
 
 /* Smaller Mobile Screens */
-@media(max-height: 500px){
+@media(max-height: 540px){
 	.holder.now-playing .media-center-plugin{
-		height:408px;
-		margin-top:-204px;
+		height:464px;
+		margin-top:-232px;
 	}
 	.holder.now-playing .media-holder,
 	.holder.now-playing .media-holder .media-inner img{
@@ -696,10 +810,10 @@ html[buildfire] body{
 }
 
 /* Mobile Landscape Mode */
-@media(max-height: 400px){
+@media(max-height: 470px){
 	.holder.now-playing .media-center-plugin{
-		height:208px;
-		margin-top:-104px;
+		height:248px;
+		margin-top:-124px;
 	}
 	.holder.now-playing .media-holder{
 		display:none;

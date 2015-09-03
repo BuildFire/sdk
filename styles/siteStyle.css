@@ -933,6 +933,19 @@ p.info{
 	margin-left:8px;
 	font-weight:300;
 }
+.colorgrid.themegrid .coloritem a.img-thumbnail{
+	background:#000;
+	height:44px;
+	width:60px;
+}
+.colorgrid.themegrid .coloritem a.img-thumbnail span{
+	width:33%;
+	height:50%;
+	float:left;
+}
+.holder .colorgrid.themegrid .coloritem label{
+	top:-18px;
+}
 
 /* Emulator */
 #emulator{
