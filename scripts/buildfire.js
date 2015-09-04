@@ -1,7 +1,7 @@
 "use strict";
 
 function Packet(id, cmd, data) {
-	this.id = id ? id : new Date().toISOString();
+	this.id = id ? id : new Date().toISOString() + Math.random();
 	this.cmd = cmd;
 	this.data = data;
 }
@@ -226,6 +226,20 @@ var buildfire = {
 				tag = '';
 			}
             var obj ={tag:tag };
+			var p = new Packet(null, 'datastore.get', obj);
+			buildfire._sendPacket(p, callback);
+
+		},
+		getWithDynamicData: function ( tag, callback) {
+
+			var tagType = typeof(tag);
+			if (tagType == "undefined")
+				tag = '';
+			else if (tagType == "function" && typeof(callback) == "undefined") {
+				callback = tag;
+				tag = '';
+			}
+			var obj ={tag:tag, withDynamicData: true };
 			var p = new Packet(null, 'datastore.get', obj);
 			buildfire._sendPacket(p, callback);
 

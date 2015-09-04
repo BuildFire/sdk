@@ -9,18 +9,21 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 
 if (typeof (buildfire.services.media) == "undefined") buildfire.services.media = {};
 
-function Track (title,url,imageUrl){
-    this.title=title;
-    this.url=url;
-    this.imageUrl=imageUrl;
-    this.startAt=0;
-    this.lastPosition=0;
+function Track(title, url, image, album,artist) {
+    this.title = title;
+    this.url = url;
+    this.image = image;
+    this.album = album;
+    this.artist=artist;
+    this.startAt = 0;
+    this.lastPosition = 0;
 }
 
 function AudioSettings(){
-    this.autoPlayNext = true;
+    this.autoPlayNext = false;
     this.loop = false;
-    this.autoJumpToLastPosition= true;
+    this.autoJumpToLastPosition= false;
+    this.shufflePlaylist =false;
 }
 
 
@@ -40,14 +43,14 @@ buildfire.services.media.audioPlayer = {
     ,skip:function(sec){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.skip",sec));
     }
-    ,next:function(sec){
+    ,next:function(){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.next"));
     }
-    ,previous:function(sec){
+    ,previous:function(){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.previous"));
     }
-    ,loopTrack:function(val){
-        buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.loopTrack",val));
+    ,loopTrack:function(){
+        buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.loopTrack"));
     }
     ,removeFromPlaylist:function(index){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.removeFromPlaylist",index));
@@ -75,11 +78,6 @@ buildfire.services.media.audioPlayer = {
     }
     ,setTime:function(sec){
         var packet = new Packet(null,"mediaAPI.audioPlayer.setTime",sec);
-        buildfire._sendPacket(packet);
-    }
-    ,setVolume:function(percent){
-        if(percent > 1 && percent <= 100) percent= percent/100;
-        var packet = new Packet(null,"mediaAPI.audioPlayer.setVolume",percent);
         buildfire._sendPacket(packet);
     }
     , settings:{
