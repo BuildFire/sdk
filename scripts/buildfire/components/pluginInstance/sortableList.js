@@ -180,20 +180,24 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         // initialize add new item button
         me.selector.querySelector(".add-new-item").addEventListener("click", function () {
             me._openPluginInstance({}, function (plugins) {
+                var currentPlugin = null, newInstances = 0, pluginsLength;
                 // consider array ineasted of object
                 if (plugins instanceof Array) {
-                    me.loadItems(plugins, true);
-                } else {
-                    var currentPlugin = null;
-                    for (var plugin in plugins) {
-                        currentPlugin = plugins[plugin];
+                    pluginsLength = plugins.length;
+                    for (var i = 0; i < pluginsLength; i++) {
+                        currentPlugin = plugins[i];
                         if (me.loadedInstances.indexOf(currentPlugin.instanceId) == -1) {
                             me.items.push(currentPlugin);
                             me._appendItem(currentPlugin);
-                            me.onAddItems(currentPlugin);
                             me.loadedInstances.push(currentPlugin.instanceId);
+                            newInstances++;
                         }
                     }
+
+                    if (newInstances > 0) {
+                        me.onAddItems(currentPlugin);
+                    }
+
                 }
             });
         });

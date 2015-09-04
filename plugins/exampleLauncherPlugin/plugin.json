@@ -8,10 +8,10 @@
     "enabled":true
   }
 , "design":{
-    "enabled":true
+    "enabled":false
   }
 , "settings":{
-    "enabled":true
+    "enabled":false
   }
 }
 ,"widget":{

@@ -383,7 +383,7 @@ buildfire.components.carousel.view.prototype = {
     _applySlider: function () {
         var sliderOptions = {
             navigation: false,
-            dots: false,
+            dots: true,
             slideSpeed: 450,
             paginationSpeed: 400,
             singleItem: true,
