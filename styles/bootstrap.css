@@ -1563,7 +1563,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family:'Muli', sans-serif;
 }
 code {
   background:#32373a;
@@ -1601,6 +1601,13 @@ pre {
   background-color: #eef0f0;
   border: 1px solid #dddddd;
   border-radius: 4px;
+}
+.paginate pre{
+  padding:5.5px 10px;
+  font-size:12px;
+  line-height:18px;
+  margin-top:20px;
+  background:#fff;
 }
 pre code {
   padding: 0;
