@@ -1,0 +1,18 @@
+﻿<div class="holder padding-zero">
+    <div class="media-center-plugin layout3">
+        <div class="list-layout">
+            <div class="list-item" ng-repeat="plugin in data.content.plugins">
+                <div class="list-item-media text-left overflow-hidden">
+                    <div class="list-media-holder pull-left" ng-if="plugin.iconUrl">
+                        <img ng-src="{{ resizeImage(plugin.iconUrl, {width: 110, height: 60}) }}">
+                    </div>
+                    <div class="list-item-copy text-left padding-left-ten padding-right-ten">
+                        <p class="ellipsis margin-zero text-primary margin-top-fifteen">
+                            <a class="text-primary">{{ plugin.title }}</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

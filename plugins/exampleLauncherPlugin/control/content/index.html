@@ -1,38 +1,78 @@
-<!DOCTYPE html>
-<html ng-app="textPlugin">
+﻿<!DOCTYPE html>
+<html>
 <head lang="en">
     <meta charset="UTF-8">
 
-	<!-- Load helper.css to use our helper classes.
-	<link href="../../../../styles/helper.css" rel="stylesheet">
-	-->
-	
+    <!-- CSS -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+
+    <!-- JS -->
     <script src="../../../../scripts/buildfire.js"></script>
-    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <!--<script src="../../../../scripts/angular/angular.min.js"></script>-->
+    <!--<script src="../../../../scripts/angular/ui-bootstrap.min.js"></script> -->
+
+    <script src="../../../../scripts/sortable.min.js"></script>
+    <script src="../../../../scripts/buildfire/components/pluginInstance/sortableList.js"></script>
+
 </head>
-<body ng-controller="textPluginCtrl">
-    <div>background Image URL</div>
-    <input id="imageUrl" type="url" ng-model="data.imageUrl" />
-    <div>Text</div>
-    <textarea id="text" rows="5" width="500px" ng-model="data.text" ></textarea>
+<body id="textApp">
+    <div id="plugins"></div>
     <script>
-        var textPluginApp = angular.module('textPlugin',[]);
 
-        textPluginApp.controller('textPluginCtrl',['$scope',function($scope){
-            buildfire.dataStore.get(function(data){
-                $scope.data = data;
-                //$scope.$apply()
+        var plugins = new buildfire.components.pluginInstance.sortableList("#plugins", []);
+
+        var data = {};
+
+        /*
+         * Go pull any previously saved data
+         * */
+        buildfire.datastore.getWithDynamicData(function (err, result) {
+            if (result && result.data) {
+                data = result.data;
+                if (data._buildfire && data._buildfire.plugins && data._buildfire.plugins.result) {
+                    plugins.loadItems(result.data._buildfire.plugins.result);
+                }
+            } else {
+                //$scope.data = {
+                //    _buildfire: {
+                //        "plugins": {
+                //            "dataType": "pluginInstance",
+                //            "data": []
+                //        }
+                //    }
+                //};
+
+                //editor.loadItems([]);
+                //plugins.loadItems([]);
+            }
+        });
+
+        var getPluginsIds = function (plugins) {
+            var pluginsIds = [];
+            for (var i = 0; i < plugins.length; i++) {
+                pluginsIds.push(plugins[i].instanceId);
+            }
+            return pluginsIds;
+        }
+
+        plugins.onAddItems = plugins.onDeleteItem = plugins.onOrderChange = function () {
+            data._buildfire = {
+                "plugins": { // can be any valid name
+                    "dataType": "pluginInstance",
+                    "data": getPluginsIds(plugins.items) // saved criteria or parameters
+                }
+            };
+            buildfire.datastore.save(data, function (err, result) {
+                if (err || !result) {
+                    console.error('Error saving the widget details: ', err);
+                }
+                else {
+                    console.info('Widget details saved');
+                }
             });
-
-            $scope.$watch('data',function(newObj){
-                buildfire.dataStore.save(newObj,function(err,result){
-                    if(err || !result)
-                        alert(err);
-                    else
-                        console.log('data saved');
-                })
-            } ,true);
-        }]);
+        };
     </script>
 </body>
 </html>
+
