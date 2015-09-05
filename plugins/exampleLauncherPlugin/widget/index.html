@@ -1,121 +1,105 @@
 ﻿<!DOCTYPE html>
-<html ng-app="folderPlugin">
+<html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Text widget</title>
-
-    <script src="../../../scripts/angular/angular.min.js"></script>
+    <title>Launcher Example Plugin - Widget</title>
+	<style>
+        #pluginsList:empty {
+            border: 0;
+        }
+    </style>
     <script type="text/javascript" src="../../../scripts/buildfire.js"></script>
-
 </head>
-<body ng-controller="folderPluginCtrl" ng-cloak>
+<body>
     <div class="holder padding-zero">
         <div class="folder-plugin list-layout">
             <div class="media-center-plugin layout3" ng-if="data._buildfire.plugins.result.length > 0">
-                <div class="list-layout">
-                    <div class="list-item" ng-repeat="plugin in data._buildfire.plugins.result" ng-click="navigateToPlugin(plugin)">
-                        <div class="list-item-media text-left overflow-hidden">
-                            <div class="list-media-holder square-icon pull-left" ng-if="plugin.iconUrl">
-                                <img ng-src="{{ cropImage(plugin.iconUrl, {width: 80, height: 80}) }}">
-                            </div>
-                            <div class="list-item-copy text-left padding-left-ten padding-right-ten">
-                                <p class="ellipsis margin-zero text-primary margin-top-fifteen">
-                                    <a class="text-primary">{{ plugin.title }}</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="list-layout" id="pluginsList">
                 </div>
             </div>
         </div>
     </div>
+
+    <script type="text/template" id="pluginTemplate">
+        <div class="list-item" onclick="navigateToPlugin(#index)">
+            <div class="list-item-media text-left overflow-hidden">
+                <div class="list-media-holder square-icon pull-left">
+                    <img src="#thumbnail">
+                </div>
+                <div class="list-item-copy text-left padding-left-ten padding-right-ten">
+                    <p class="ellipsis margin-zero text-primary margin-top-fifteen">
+                        <a class="text-primary">#title</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </script>
     <script>
-        var folderPluginApp = angular.module('folderPlugin', []);
+        // Single plugin HTML template
+        var template = document.getElementById("pluginTemplate").innerHTML;
 
-        folderPluginApp.controller('folderPluginCtrl', ['$scope',function ($scope) {
-            // here we have a problem it always loading layout 1 because of these init values
+        // Data object to hold the data coming from the server
+        var data = {};
 
-            /*
-             * bind data to the scope
-             * */
-            function bind(data) {
-                $scope.data = null;
-                $scope.data = data;
-
-                if (!$scope.$$phase && !$scope.$root.$$phase) {
-                    $scope.$apply();
+        // a helper function to draw the plugins inside the launcher
+        var renderPlugins = function (pluginData) {
+            var plugins = [], pluginsLength = 0, currentPlugin = null, html = "";
+            if (pluginData._buildfire && pluginData._buildfire.plugins && pluginData._buildfire.plugins.result) {
+                plugins = pluginData._buildfire.plugins.result;
+                pluginsLength = plugins.length;
+                for (var i = 0; i < pluginsLength; i++) {
+                    currentPlugin = plugins[i];
+                    html += template
+                        .replace("#index", i)
+                        .replace("#title", currentPlugin.title)
+                        .replace("#thumbnail", cropImage(currentPlugin.iconUrl, { width: 80, height: 80 }));
                 }
             }
 
-            /*
-             * Go pull saved data
-             * */
-            function loadData() {
-                buildfire.datastore.getWithDynamicData(function (err, result) {
-                    if (result && result.data && !angular.equals({}, result.data)) {
-                        bind(result.data);
-                    } else {
-                        $scope.data = {
-                            _buildfire: {
-                                plugins: {
-                                    dataType: "pluginInstance",
-                                    data: [],
-                                    result: []
-                                }
-                            }
-                        };
-                    }
-                });
-            }
+            document.getElementById("pluginsList").innerHTML = html;
+        }
 
-            loadData();
-
-            /**
-             * when a refresh is triggered get reload data
-             */
-            buildfire.datastore.onRefresh(loadData);
-
-            buildfire.datastore.onUpdate(function (e) {
-                loadData();
+        // Go pull any previously saved data
+        var loadData = function() {
+            buildfire.datastore.getWithDynamicData(function (err, result) {
+                if (result && result.data && Object.keys(result.data).length > 0) {
+                    data = result.data;
+                } else {
+                    data = {};
+                }
+                renderPlugins(data);
             });
+        }
 
-            $scope.cropImage = function (url, settings) {
-                var options = {};
-                if (!url) {
-                    return "";
-                }
-                else {
-                    if (settings.height) {
-                        options.height = settings.height;
-                    }
-                    if (settings.width) {
-                        options.width = settings.width;
-                    }
-                    return buildfire.imageLib.cropImage(url, options);
-                }
-            };
+        loadData();
 
-            $scope.resizeImage = function (url, settings) {
-                var options = {};
-                if (!url) {
-                    return "";
-                }
-                else {
-                    if (settings.height) {
-                        options.height = settings.height;
-                    }
-                    if (settings.width) {
-                        options.width = settings.width;
-                    }
-                    return buildfire.imageLib.resizeImage(url, options);
-                }
-            };
+        // When refresh is triger reload the data
+        buildfire.datastore.onRefresh(loadData);
 
-            $scope.navigateToPlugin = function (plugin) {
-                buildfire.navigation.navigateTo(plugin.pluginTypeId, plugin.instanceId, plugin.title);
+        // When any update happend in the content side update the widget data
+        buildfire.datastore.onUpdate(loadData);
+
+        var cropImage = function (url, settings) {
+            var options = {};
+            if (!url) {
+                return "";
             }
-        }]);
+            else {
+                if (settings.height) {
+                    options.height = settings.height;
+                }
+                if (settings.width) {
+                    options.width = settings.width;
+                }
+                return buildfire.imageLib.cropImage(url, options);
+            }
+        };
+
+        // Go to the specified plugin
+        var navigateToPlugin = function (pluginIndex) {
+            var plugin = data._buildfire.plugins.result[pluginIndex];
+            buildfire.navigation.navigateTo(plugin.pluginTypeId, plugin.instanceId, plugin.title);
+        }
     </script>
 </body>
-
 </html>
