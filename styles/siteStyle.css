@@ -707,7 +707,8 @@ table.table span.sort-icon{
 .modal .modal-content .bottom div{
 	padding:0;
 }
-.modal .modal-content .bottom div a{
+.modal .modal-content .bottom div a,
+.bottom div a.action{
 	width:100%;
 	padding:8px;
 	display:inline-block;
@@ -885,8 +886,8 @@ p.info{
 	width:80%;
 }
 
-/* Card Icons */
-.settings-plugin .card-icons .card-item{
+/* Credit Card Icons */
+.credit-cards .card-icons .card-item{
 	width:52px;
 	height:34px;
 	border-radius:4px;
@@ -894,10 +895,10 @@ p.info{
 	float:left;
 	opacity:0.4;
 }
-.settings-plugin .card-icons .card-item + .card-item{
+.credit-cards .card-icons .card-item + .card-item{
 	margin-left:10px;
 }
-.settings-plugin .card-icons .card-item.active{
+.credit-cards .card-icons .card-item.active{
 	opacity:0.99;
 }
 
@@ -931,6 +932,19 @@ p.info{
 	line-height:18px;
 	margin-left:8px;
 	font-weight:300;
+}
+.colorgrid.themegrid .coloritem a.img-thumbnail{
+	background:#000;
+	height:44px;
+	width:60px;
+}
+.colorgrid.themegrid .coloritem a.img-thumbnail span{
+	width:33%;
+	height:50%;
+	float:left;
+}
+.holder .colorgrid.themegrid .coloritem label{
+	top:-18px;
 }
 
 /* Emulator */

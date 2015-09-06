@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?-ugh282');
-	src:url('../fonticons/icomoon.eot?#iefix-ugh282') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?-ugh282') format('woff2'),
-		url('../fonticons/icomoon.ttf?-ugh282') format('truetype'),
-		url('../fonticons/icomoon.woff?-ugh282') format('woff'),
-		url('../fonticons/icomoon.svg?-ugh282#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?-31nutw');
+	src:url('../fonticons/icomoon.eot?#iefix-31nutw') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?-31nutw') format('woff2'),
+		url('../fonticons/icomoon.ttf?-31nutw') format('truetype'),
+		url('../fonticons/icomoon.woff?-31nutw') format('woff'),
+		url('../fonticons/icomoon.svg?-31nutw#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -45,6 +45,15 @@
 .icon-files:before {
 	content: "\e604";
 }
+.icon-shuffle:before {
+	content: "\e61b";
+}
+.icon-repeat-one:before {
+	content: "\e61c";
+}
+.icon-repeat:before {
+	content: "\e61d";
+}
 .icon-profile:before {
 	content: "\e605";
 }
@@ -74,6 +83,9 @@
 }
 .icon-bullhorn:before {
 	content: "\e60a";
+}
+.icon-volume-high:before {
+	content: "\e61e";
 }
 .icon-code:before {
 	content: "\e619";
@@ -107,4 +119,7 @@
 }
 .icon-forward-circle:before {
 	content: "\e614";
+}
+.icon-ellipsis:before {
+	content: "\e620";
 }
