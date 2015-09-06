@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-
+    <title>Launcher Example Plugin - Content</title>
     <!-- CSS -->
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
@@ -16,38 +16,27 @@
     <script src="../../../../scripts/buildfire/components/pluginInstance/sortableList.js"></script>
 
 </head>
-<body id="textApp">
+<body>
     <div id="plugins"></div>
     <script>
-
+        // This helper provide you a convenient way to get plugin instances
+        // TODO: create a link for pluginInstance component
         var plugins = new buildfire.components.pluginInstance.sortableList("#plugins", []);
 
+        // Data object to hold the data coming from the server
         var data = {};
 
-        /*
-         * Go pull any previously saved data
-         * */
+        // Go pull any previously saved data
         buildfire.datastore.getWithDynamicData(function (err, result) {
             if (result && result.data) {
                 data = result.data;
                 if (data._buildfire && data._buildfire.plugins && data._buildfire.plugins.result) {
                     plugins.loadItems(result.data._buildfire.plugins.result);
                 }
-            } else {
-                //$scope.data = {
-                //    _buildfire: {
-                //        "plugins": {
-                //            "dataType": "pluginInstance",
-                //            "data": []
-                //        }
-                //    }
-                //};
-
-                //editor.loadItems([]);
-                //plugins.loadItems([]);
             }
         });
 
+        // Get plugin Ids from a list of plugins objects
         var getPluginsIds = function (plugins) {
             var pluginsIds = [];
             for (var i = 0; i < plugins.length; i++) {
@@ -56,13 +45,15 @@
             return pluginsIds;
         }
 
+        // when any action happen to the sortable list save the changes
         plugins.onAddItems = plugins.onDeleteItem = plugins.onOrderChange = function () {
             data._buildfire = {
-                "plugins": { // can be any valid name
+                "plugins": {
                     "dataType": "pluginInstance",
-                    "data": getPluginsIds(plugins.items) // saved criteria or parameters
+                    "data": getPluginsIds(plugins.items) // get plugin Ids
                 }
             };
+
             buildfire.datastore.save(data, function (err, result) {
                 if (err || !result) {
                     console.error('Error saving the widget details: ', err);
