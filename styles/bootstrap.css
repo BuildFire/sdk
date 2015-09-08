@@ -2636,6 +2636,7 @@ input[type="radio"].form-control{
 fieldset[disabled] .form-control {
   /*background-color: #eeeeee;*/
   opacity: 1;
+  border:1px solid #ddd;
 }
 .form-control[disabled],
 fieldset[disabled] .form-control {
