@@ -642,8 +642,8 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	display:table-cell;
 	vertical-align:middle;
 }
-.more-info .media-holder,
-.more-info .media-holder .media-inner{
+.media-player-more-info .media-holder,
+.media-player-more-info .media-holder .media-inner{
 	height:140px !important;
 	width:140px !important;
 }
