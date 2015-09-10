@@ -72,6 +72,18 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
 
 		$scope.sendDeeplinkData = function(){
 			widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.deeplinkData ;
+		};
+
+		if(pluginAPI && controlPluginAPI) {
+			controlPluginAPI.spinner.show = pluginAPI.spinner.show = function () {
+				$scope.showSpinner=true;
+				$scope.$apply();
+			};
+
+			controlPluginAPI.spinner.hide =  pluginAPI.spinner.hide = function () {
+				$scope.showSpinner=false;
+				$scope.$apply();
+			};
 		}
 	}]
 );

@@ -561,6 +561,14 @@ var buildfire = {
 				return root + "?dld=" + JSON.stringify(obj);
 		}
 	}
+	,spinner:{
+		show:function(){
+			buildfire._sendPacket(new Packet(null,'spinner.show'));
+		}
+		,hide:function(){
+			buildfire._sendPacket(new Packet(null,'spinner.hide'));
+		}
+	}
 	, _insertHTMLAttributes:function(){
 		var html = document.getElementsByTagName('html')[0];
 		html.setAttribute('buildfire', 'enabled');

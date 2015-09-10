@@ -49,6 +49,9 @@
     <section id="main-content">
         <div class="shell-sdk holder">
             <div role="alert"></div>
+            <div class="dots-loader" ng-show="showSpinner" style="position: absolute; left:50%; top:500px;">
+                Loading…
+            </div>
             <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
                 <div class="header clearfix">
                     <h4 class="margin-zero">SDK</h4>
@@ -106,5 +109,8 @@
 <script type="text/javascript" src="scripts/overrides.js"></script>
 <script type="text/javascript" src="scripts/shellCtrl.js"></script>
 <script type="text/javascript" src="scripts/pullDownToRefresh.js"></script>
+
+<link rel="stylesheet" href="http://css-spinners.com/css/spinner/dots.css" type="text/css">
+
 </body>
 </html>
