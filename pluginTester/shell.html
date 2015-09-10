@@ -82,9 +82,17 @@
                             </div>
                             <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey"
                                 seamless sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+
                         </div>
+
+                    </div>
+                    <h5>Tools - <a ng-show="!showTools" ng-click="showTools=true">show</a><a ng-show="showTools" ng-click="showTools=false">hide</a></h5>
+                    <div ng-show="showTools">
+                        Deeplink Data <input id="dld" type="text" ng-model="deeplinkData"/>
+                        <button class="btn btn-primary" ng-click="sendDeeplinkData()">Send</button>
                     </div>
                 </div>
+
             </section>
         </div>
     </section>

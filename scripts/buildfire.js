@@ -538,6 +538,29 @@ var buildfire = {
 			buildfire._sendPacket(p, callback);
 		}
 	}
+	, parseQueryString:function () {
+		var query = window.location.search.substring(1);
+		var vars = query.split('&');
+		var obj=new Object();
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split('=');
+			obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+		}
+		return obj;
+	}
+	, deeplink:{
+		getData: function(callback){
+			var qs = buildfire.parseQueryString();
+			callback(qs.dld); /// dld: Deep Link Data
+		}
+		,createLink: function(obj){
+			var root = "app" + buildfire.context.appId + "://plugin";
+			if(!obj)
+				return root;
+			else
+				return root + "?dld=" + JSON.stringify(obj);
+		}
+	}
 	, _insertHTMLAttributes:function(){
 		var html = document.getElementsByTagName('html')[0];
 		html.setAttribute('buildfire', 'enabled');
