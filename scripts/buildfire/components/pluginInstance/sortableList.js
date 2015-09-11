@@ -180,7 +180,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         // initialize add new item button
         me.selector.querySelector(".add-new-item").addEventListener("click", function () {
             me._openPluginInstance({}, function (plugins) {
-                var currentPlugin = null, newInstances = 0, pluginsLength;
+                var currentPlugin = null, newInstances = 0, pluginsLength, addedItems = [];
                 // consider array ineasted of object
                 if (plugins instanceof Array) {
                     pluginsLength = plugins.length;
@@ -188,6 +188,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                         currentPlugin = plugins[i];
                         if (me.loadedInstances.indexOf(currentPlugin.instanceId) == -1) {
                             me.items.push(currentPlugin);
+                            addedItems.push(currentPlugin);
                             me._appendItem(currentPlugin);
                             me.loadedInstances.push(currentPlugin.instanceId);
                             newInstances++;
@@ -195,7 +196,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                     }
 
                     if (newInstances > 0) {
-                        me.onAddItems(currentPlugin);
+                        me.onAddItems(addedItems);
                     }
 
                 }
