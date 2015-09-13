@@ -125,6 +125,9 @@ var buildfire = {
 		, restoreBackButtonClick:function(){
 			buildfire.navigation.onBackButtonClick= function(){buildfire.navigation._goBackOne()};
 		}
+		,goBack:function(){
+			buildfire.navigation.onBackButtonClick();
+		}
     }
 	, appearance: {
 		getCSSFiles: function (callback) {
