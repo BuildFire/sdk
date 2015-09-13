@@ -137,9 +137,10 @@ buildfire.components.pluginInstance.sortableList.prototype = {
             deleteButton.addEventListener("click", function (e) {
                 e.preventDefault();
                 var itemIndex = me._getItemIndex(item);
+                var itemId = me.items[itemIndex].instanceId;
                 if (itemIndex != -1) {
                     me.items.splice(itemIndex, 1);
-                    me.loadedInstances.splice(me.loadedInstances.indexOf(item), 1);
+                    me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
                     this.parentNode.parentNode.parentNode.remove()
                     me.onDeleteItem(item, itemIndex);
                 }
@@ -180,17 +181,15 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         // initialize add new item button
         me.selector.querySelector(".add-new-item").addEventListener("click", function () {
             me._openPluginInstance({}, function (plugins) {
-                var currentPlugin = null, newInstances = 0, pluginsLength, addedItems = [];
-                // consider array ineasted of object
+                var newInstances = 0, pluginsLength, addedItems = [];
                 if (plugins instanceof Array) {
                     pluginsLength = plugins.length;
                     for (var i = 0; i < pluginsLength; i++) {
-                        currentPlugin = plugins[i];
-                        if (me.loadedInstances.indexOf(currentPlugin.instanceId) == -1) {
-                            me.items.push(currentPlugin);
-                            addedItems.push(currentPlugin);
-                            me._appendItem(currentPlugin);
-                            me.loadedInstances.push(currentPlugin.instanceId);
+                        if (me.loadedInstances.indexOf(plugins[i].instanceId) == -1) {
+                            me.items.push(plugins[i]);
+                            addedItems.push(plugins[i]);
+                            me._appendItem(plugins[i]);
+                            me.loadedInstances.push(plugins[i].instanceId);
                             newInstances++;
                         }
                     }
@@ -198,7 +197,6 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                     if (newInstances > 0) {
                         me.onAddItems(addedItems);
                     }
-
                 }
             });
         });
