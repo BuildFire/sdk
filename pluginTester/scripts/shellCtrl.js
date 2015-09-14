@@ -7,6 +7,9 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
 		window.$http = $http;
 		var config = null;
 		var widgetIframe = document.getElementById('widget');
+    $scope.link = {
+      deeplinkData : ""
+    };
 
 		$scope.dataTracer = "http://int2.myapp.buildfire.com:89/#/dataTracer/" + window.appContext.currentApp.appId
 		+ "/" + window.appContext.currentPlugin.pluginPath
@@ -71,7 +74,7 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
 		$scope.init();
 
 		$scope.sendDeeplinkData = function(){
-			widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.deeplinkData ;
+			widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.link.deeplinkData ;
 		};
 
 		if(pluginAPI && controlPluginAPI) {
