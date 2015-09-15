@@ -97,6 +97,9 @@
 		width:180px;
 		max-width:inherit;
 	}
+	html[buildfire] .active-plugins .item .media-holder.blurred-media img.blurred{
+		left:-6%;
+	}
 	
 	/* Plugin Page */
 	html[buildfire] .holder.plugin-page .draggable-list-view .d-item.double-line .copy{

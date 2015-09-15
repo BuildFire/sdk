@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?-31nutw');
-	src:url('../fonticons/icomoon.eot?#iefix-31nutw') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?-31nutw') format('woff2'),
-		url('../fonticons/icomoon.ttf?-31nutw') format('truetype'),
-		url('../fonticons/icomoon.woff?-31nutw') format('woff'),
-		url('../fonticons/icomoon.svg?-31nutw#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?z8dpc7');
+	src:url('../fonticons/icomoon.eot?#iefixz8dpc7') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?z8dpc7') format('woff2'),
+		url('../fonticons/icomoon.ttf?z8dpc7') format('truetype'),
+		url('../fonticons/icomoon.woff?z8dpc7') format('woff'),
+		url('../fonticons/icomoon.svg?z8dpc7#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -32,6 +32,9 @@
 }
 .icon-brush2:before {
 	content: "\e601";
+}
+.icon-aim:before {
+	content: "\e621";
 }
 .icon-cog:before {
 	content: "\e602";
@@ -65,6 +68,12 @@
 }
 .icon-cart-plus:before {
 	content: "\e616";
+}
+.icon-map-marker:before {
+	content: "\e622";
+}
+.icon-location:before {
+	content: "\e623";
 }
 .icon-laptop-phone:before {
 	content: "\e61f";
