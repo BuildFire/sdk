@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../scripts/angular/ngAutocomplete.js"></script>
 </head>
 <body onhashchange="window.location.reload()" ng-controller="shellCtrl">
-<div id="container">
+<div id="container" ng-controller="openDialogCtrl">
     <header class="navbar-fixed-top border-bottom-grey">
         <div class="contain">
             <div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
@@ -49,6 +49,9 @@
     <section id="main-content">
         <div class="shell-sdk holder">
             <div role="alert"></div>
+            <div class="dots-loader" ng-show="showSpinner" style="position: absolute; left:50%; top:500px;">
+                Loading…
+            </div>
             <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
                 <div class="header clearfix">
                     <h4 class="margin-zero">SDK</h4>
@@ -81,10 +84,21 @@
                                 Title Bar
                             </div>
                             <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey"
-                                seamless sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+                                seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+
                         </div>
+
+                    </div>
+                    <h5>Tools - <a ng-show="!showTools" ng-click="showTools=true">show</a><a ng-show="showTools" ng-click="showTools=false">hide</a></h5>
+                    <div ng-show="showTools">
+                        Deeplink Data <input id="dld" type="text" ng-model="link.deeplinkData"/>
+                        <button class="btn btn-primary"
+                                ng-click="sendDeeplinkData()"
+                                ng-disabled="!link.deeplinkData">Send
+                        </button>
                     </div>
                 </div>
+
             </section>
         </div>
     </section>
@@ -98,5 +112,8 @@
 <script type="text/javascript" src="scripts/overrides.js"></script>
 <script type="text/javascript" src="scripts/shellCtrl.js"></script>
 <script type="text/javascript" src="scripts/pullDownToRefresh.js"></script>
+
+<link rel="stylesheet" href="http://css-spinners.com/css/spinner/dots.css" type="text/css">
+
 </body>
 </html>
