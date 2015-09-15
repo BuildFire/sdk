@@ -66,6 +66,6 @@ controlPluginAPI.tag = 'controlPluginAPI';
 	imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
 	controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';
 	pluginAPI.actionItems.listTemplateUrl = 'http://int2.myapp.buildfire.com/app/pages/templates/actionItemsListDialog.html';
-	controlPluginAPI.pluginInstanceLib.templateUrl = "http://int2.myapp.buildfire.com/pages/templates/pluginInstanceDialog.html"
+	controlPluginAPI.pluginInstances.templateUrl = "http://int2.myapp.buildfire.com/pages/templates/pluginInstanceDialog.html"
 	window.appContext.currentPlugin.pluginAPI = controlPluginAPI;
 })();
