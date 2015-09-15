@@ -491,6 +491,11 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	max-width:100%;
 	margin-right:0;
 }
+.draggable-list-view.no-sort-icon .d-item .copy{
+	width:91.5%;
+	max-width:91.5%;
+}
+
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,
 .plugin-manager .item .media.media-holder{

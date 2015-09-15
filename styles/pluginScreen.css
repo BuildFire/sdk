@@ -116,4 +116,11 @@
 	html[buildfire] .draggable-list-view.has-btn.links-list .d-item .copy .col-md-7{
 		width:50%;
 	}
+	html[buildfire] .draggable-list-view.no-sort-icon .d-item .copy{
+		width:90% !important;
+		max-width:90% !important;
+	}
+	html[buildfire] .draggable-list-view.no-sort-icon .d-item .copy span.title{
+		width:76%;
+	}
 }
