@@ -56,7 +56,9 @@ var buildfire = {
 		,"messaging.onReceivedMessage"
 		, "history.triggerOnPop"
 		,"navigation.onBackButtonClick"
-		,"services.media.audioPlayer.triggerOnEvent"]
+		,"services.media.audioPlayer.triggerOnEvent"
+		, "auth.triggerOnLogin"
+		, "auth.triggerOnLogout"]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
 		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
@@ -611,6 +613,50 @@ var buildfire = {
 		html.setAttribute('majorVersion', majorVersion);
 		html.setAttribute('fullVersion', fullVersion);
 
+	}
+	, auth: {
+		login: function () {
+			var p = new Packet(null, 'auth.login', options);
+			buildfire._sendPacket(p, callback);
+		},
+		logout: function () {
+			var p = new Packet(null, 'auth.logout', options);
+			buildfire._sendPacket(p, callback);
+		},
+		getCurrentUser: function () {
+			var p = new Packet(null, 'auth.getCurrentUser', options);
+			buildfire._sendPacket(p, callback);
+		},
+		onLogin: function (callback) {
+			var handler = function (e) {
+				if (callback)callback(e.detail);
+			};
+			document.addEventListener('authOnLogin', handler, false);
+			return {
+				clear: function () {
+					document.removeEventListener('authOnLogin', handler, false);
+				}
+			};
+		},
+		triggerOnLogin: function (user) {
+			var onLoginEvent = new CustomEvent('authOnLogin', {'detail': user});
+			document.dispatchEvent(onLoginEvent);
+		},
+		onLogout: function (callback) {
+			var handler = function (e) {
+				if (callback)callback(e.detail);
+			};
+			document.addEventListener('authOnLogout', handler, false);
+			return {
+				clear: function () {
+					document.removeEventListener('authOnLogout', handler, false);
+				}
+			};
+		}
+		, triggerOnLogout: function (data) {
+			var onLogoutEvent = new CustomEvent('authOnLogout', {'detail': data});
+			document.dispatchEvent(onLogoutEvent);
+		}
 	}
 };
 buildfire.init();
