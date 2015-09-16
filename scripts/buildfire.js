@@ -533,11 +533,22 @@ var buildfire = {
 	}
 	, pluginInstance:{
 		showDialog: function (options, callback) {
-			var p = new Packet(null, 'pluginInstanceLib.showDialog', {options: options});
+			var p = new Packet(null, 'pluginInstances.showDialog', {options: options});
 			buildfire._sendPacket(p, callback);
-		},
-		get : function (ids , callback){
-			var p = new Packet(null, 'pluginInstanceLib.get', ids);
+		}
+		,get : function (ids , callback){
+			var p = new Packet(null, 'pluginInstances.get', ids);
+			buildfire._sendPacket(p, callback);
+		}
+		/*
+		* options {
+		* title : for searching
+		* , pageIndex : 0
+		* , pageSize: max 20
+		* }
+		* */
+		,search: function (options, callback){
+			var p = new Packet(null, 'pluginInstances.search', options);
 			buildfire._sendPacket(p, callback);
 		}
 	}

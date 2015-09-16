@@ -146,12 +146,12 @@ nav.menu{
 	overflow-x:hidden;
 	overflow-y:auto;
 	transition:all 0.35s ease;
-	-webkit-transform:translateY(-100%);
-	transform:translateY(-100%);
+	-webkit-transform:translateX(100%);
+	transform:translateX(100%);
 }
 nav.menu.active{
-	-webkit-transform:translateY(0%);
-	transform:translateY(0%);
+	-webkit-transform:translateX(0%);
+	transform:translateX(0%);
 }
 nav.menu a{
 	display:block;
@@ -606,11 +606,17 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	color:#fff;
 }
 .holder.now-playing .blurred-image{
+	-o-filter:blur(10px) brightness(0.2);
+	-moz-filter:blur(10px) brightness(0.2);
+	-webkit-filter:blur(10px) brightness(0.2);
 	filter:blur(10px) brightness(0.2);
 	position:fixed;
 	top:-5%;
 	left:-5%;
 	background:url(http://4.bp.blogspot.com/-8bBgFCVGbpE/TvQU6q_f7qI/AAAAAAAAAEk/b2QtDIIbv4I/s1600/Tycho-Dive.png) no-repeat center center;
+	-o-background-size:cover;
+	-moz-background-size:cover;
+	-webkit-background-size:cover;
 	background-size:cover;
 	height:110%;
 	width:110%;
@@ -808,6 +814,9 @@ html[buildfire] body{
 	}
 	.holder.now-playing .media-player-btns .icon.icon-main{
 		font-size:52px;
+	}
+	.holder.now-playing .media-player-btns .icon.icon-sm{
+		top:-5px;
 	}
 }
 
