@@ -2,20 +2,19 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Launcher Example Plugin - Widget</title>
-	<style>
+    <title>widget</title>
+    <script type="text/javascript" src="../../../scripts/buildfire.js"></script>
+    <style>
         #pluginsList:empty {
             border: 0;
         }
     </style>
-    <script type="text/javascript" src="../../../scripts/buildfire.js"></script>
 </head>
 <body>
     <div class="holder padding-zero">
         <div class="folder-plugin list-layout">
             <div class="media-center-plugin layout3" ng-if="data._buildfire.plugins.result.length > 0">
-                <div class="list-layout" id="pluginsList">
-                </div>
+                <div class="list-layout" id="pluginsList"></div>
             </div>
         </div>
     </div>
@@ -23,7 +22,7 @@
     <script type="text/template" id="pluginTemplate">
         <div class="list-item" onclick="navigateToPlugin(#index)">
             <div class="list-item-media text-left overflow-hidden">
-                <div class="list-media-holder square-icon pull-left">
+                <div class="list-media-holder square-icon pull-left #imageClass">
                     <img src="#thumbnail">
                 </div>
                 <div class="list-item-copy text-left padding-left-ten padding-right-ten">
@@ -41,18 +40,52 @@
         // Data object to hold the data coming from the server
         var data = {};
 
+        var getPluginDetails = function (pluginsInfo, pluginIds) {
+            var returnPlugins = [];
+            var tempPlugin = null;
+            for (var id = 0; id < pluginIds.length; id++) {
+                for (var i = 0; i < pluginsInfo.length; i++) {
+                    tempPlugin = {};
+                    if (pluginIds[id] == pluginsInfo[i].id) {
+                        tempPlugin.instanceId = pluginsInfo[i].id;
+                        if (pluginsInfo[i].data) {
+                            tempPlugin.iconUrl = pluginsInfo[i].data.iconUrl;
+                            tempPlugin.title = pluginsInfo[i].data.title;
+                            tempPlugin.pluginTypeId = pluginsInfo[i].data.pluginTypeId;
+                        } else {
+                            tempPlugin.iconUrl = "";
+                            tempPlugin.title = "[No title]";
+                        }
+                        returnPlugins.push(tempPlugin);
+                    }
+                    tempPlugin = null;
+                }
+            }
+            return returnPlugins;
+        };
+
         // a helper function to draw the plugins inside the launcher
         var renderPlugins = function (pluginData) {
-            var plugins = [], pluginsLength = 0, currentPlugin = null, html = "";
+            var plugins = [], pluginsLength = 0, currentPlugin = null, rowHTML = "", html = "";
             if (pluginData._buildfire && pluginData._buildfire.plugins && pluginData._buildfire.plugins.result) {
                 plugins = pluginData._buildfire.plugins.result;
                 pluginsLength = plugins.length;
                 for (var i = 0; i < pluginsLength; i++) {
                     currentPlugin = plugins[i];
-                    html += template
+                    rowHTML = template
                         .replace("#index", i)
-                        .replace("#title", currentPlugin.title)
-                        .replace("#thumbnail", cropImage(currentPlugin.iconUrl, { width: 80, height: 80 }));
+                        .replace("#title", currentPlugin.title);
+                    currentPlugin.iconUrl = "";
+                    if(currentPlugin.iconUrl) {
+                        rowHTML = rowHTML
+                            .replace("#thumbnail", cropImage(currentPlugin.iconUrl, { width: 80, height: 80 }))
+                            .replace("#imageClass", "");
+                    }
+                    else {
+                        rowHTML = rowHTML.replace("#thumbnail", "")
+                            .replace("#imageClass", "hidden");
+                    }
+                    html += rowHTML;
                 }
             }
 
@@ -61,9 +94,14 @@
 
         // Go pull any previously saved data
         var loadData = function() {
+            var buildfirePlugins = null;
             buildfire.datastore.getWithDynamicData(function (err, result) {
                 if (result && result.data && Object.keys(result.data).length > 0) {
                     data = result.data;
+                    if(data._buildfire && data._buildfire.plugins && data._buildfire.plugins.result) {
+                        buildfirePlugins = data._buildfire.plugins;
+                        data._buildfire.plugins.result = getPluginDetails(buildfirePlugins.result, buildfirePlugins.data);
+                    }
                 } else {
                     data = {};
                 }
@@ -102,4 +140,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -1,22 +1,26 @@
 {
-  "author":"[Your Name here]"
-,"pluginName":"[Your Plugin Name here]"
-,"pluginDescription":"[A short description of what your plugin does]"
-,"supportEmail":"[Your support Email]"
-,"control":{
-  "content":{
-    "enabled":true
-  }
-, "design":{
-    "enabled":false
-  }
-, "settings":{
-    "enabled":false
-  }
-}
-,"widget":{
+   "author":"Ahmad Al-Hmoud",
+   "pluginName":"Folder",
+   "pluginDescription":"A plugin to show plugins list",
+   "supportEmail":"support@buildfire.com",
+   "control":{
+      "content":{
+         "enabled":true
+      },
+      "design":{
+         "enabled":false
+      },
+      "settings":{
+         "enabled":false
+      }
+   },
+   "widget":{
 
-},
-  "features" : [],
-  "languages" : ["en"]
+   },
+   "features":[
+
+   ],
+   "languages":[
+      "en"
+   ]
 }

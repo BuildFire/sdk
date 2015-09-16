@@ -1,60 +1,65 @@
 ﻿<!DOCTYPE html>
-<html>
+<html ng-app="folderPlugin">
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Launcher Example Plugin - Content</title>
+    <title>content</title>
     <!-- CSS -->
     <link href="../../../../styles/helper.css" rel="stylesheet">
     <link href="../../../../styles/siteIcons.css" rel="stylesheet">
 
     <!-- JS -->
     <script src="../../../../scripts/buildfire.js"></script>
-    <!--<script src="../../../../scripts/angular/angular.min.js"></script>-->
-    <!--<script src="../../../../scripts/angular/ui-bootstrap.min.js"></script> -->
-
     <script src="../../../../scripts/sortable.min.js"></script>
     <script src="../../../../scripts/buildfire/components/pluginInstance/sortableList.js"></script>
-
 </head>
 <body>
+
     <div id="plugins"></div>
     <script>
-        // This helper provide you a convenient way to get plugin instances
-        // TODO: create a link for pluginInstance component
         var plugins = new buildfire.components.pluginInstance.sortableList("#plugins", []);
-
-        // Data object to hold the data coming from the server
         var data = {};
 
-        // Go pull any previously saved data
-        buildfire.datastore.getWithDynamicData(function (err, result) {
-            if (result && result.data) {
-                data = result.data;
-                if (data._buildfire && data._buildfire.plugins && data._buildfire.plugins.result) {
-                    plugins.loadItems(result.data._buildfire.plugins.result);
-                }
-            }
-        });
-
-        // Get plugin Ids from a list of plugins objects
-        var getPluginsIds = function (plugins) {
-            var pluginsIds = [];
-            for (var i = 0; i < plugins.length; i++) {
-                pluginsIds.push(plugins[i].instanceId);
-            }
-            return pluginsIds;
+        /*
+         * A helper function to test if the result.data object returned is empty bject {}
+         * */
+        var isEmpty = function (obj) {
+            return Object.keys(obj).length === 0;
         }
 
-        // when any action happen to the sortable list save the changes
-        plugins.onAddItems = plugins.onDeleteItem = plugins.onOrderChange = function () {
-            data._buildfire = {
-                "plugins": {
-                    "dataType": "pluginInstance",
-                    "data": getPluginsIds(plugins.items) // get plugin Ids
+        /*
+         * A helper to show the plugins in the same order the user saved them
+         * */
+        var getPluginDetails = function (pluginsInfo, pluginIds) {
+            var returnPlugins = [];
+            var tempPlugin = null;
+            for (var id = 0; id < pluginIds.length; id++) {
+                for (var i = 0; i < pluginsInfo.length; i++) {
+                    tempPlugin = {};
+                    if (pluginIds[id] == pluginsInfo[i].id) {
+                        tempPlugin.instanceId = pluginsInfo[i].id;
+                        if (pluginsInfo[i].data) {
+                            tempPlugin.iconUrl = pluginsInfo[i].data.iconUrl;
+                            tempPlugin.title = pluginsInfo[i].data.title;
+                            tempPlugin.pluginTypeId = pluginsInfo[i].data.pluginTypeId;
+                        } else {
+                            tempPlugin.iconUrl = "";
+                            tempPlugin.title = "[No title]";
+                        }
+                        returnPlugins.push(tempPlugin);
+                    }
+                    tempPlugin = null;
                 }
-            };
+            }
+            return returnPlugins;
+        };
 
-            buildfire.datastore.save(data, function (err, result) {
+        /*
+         * Call the datastore to save the data object
+         * */
+        var saveData = function (newObj) {
+            if (newObj == undefined) return;
+
+            buildfire.datastore.save(newObj, function (err, result) {
                 if (err || !result) {
                     console.error('Error saving the widget details: ', err);
                 }
@@ -63,7 +68,87 @@
                 }
             });
         };
+
+        /*
+         * Get an array of the selected plugins Ids to be save in the datastore
+         * the only details the datastore need about the plugin is the instanceId
+         * */
+        var getPluginsIds = function (plugins) {
+            var pluginsIds = [];
+            for (var i = 0; i < plugins.length; i++) {
+                pluginsIds.push(plugins[i].instanceId);
+            }
+            return pluginsIds;
+        }
+
+        /*
+         * When the user add new plugin instance
+         * */
+        plugins.onAddItems = function (items) {
+            var scopeItems = data._buildfire.plugins.data;
+            var itemIds = getPluginsIds(items);
+            for (var i = 0; i < itemIds.length; i++) {
+                if (scopeItems.indexOf(itemIds[i]) == -1) {
+                    scopeItems.push(itemIds[i]);
+                }
+            }
+            saveData(data);
+        };
+
+        /*
+         * When the user delete a plugin from the list of selected plugins
+         * */
+        plugins.onDeleteItem = function (item, index) {
+            data._buildfire.plugins.data.splice(index, 1);
+            saveData(data);
+        };
+
+        /*
+         * When the user change the selected plugins order
+         * */
+        plugins.onOrderChange = function (item, oldIndex, newIndex) {
+            var items = data._buildfire.plugins.data;
+
+            var tmp = items[oldIndex];
+
+            if (oldIndex < newIndex) {
+                for (var i = oldIndex + 1; i <= newIndex; i++) {
+                    items[i - 1] = items[i];
+                }
+            } else {
+                for (var i = oldIndex - 1; i >= newIndex; i--) {
+                    items[i + 1] = items[i];
+                }
+            }
+
+            items[newIndex] = tmp;
+
+            data._buildfire.plugins.data = items;
+            saveData(data);
+        };
+
+        /*
+       * Go pull any previously saved data
+       * */
+        buildfire.datastore.getWithDynamicData(function (err, result) {
+            var pluginsData = [];
+            if (result && result.data && !isEmpty(result.data)) {
+                data = result.data;
+                if (data._buildfire && data._buildfire.plugins && data._buildfire.plugins.result) {
+                    pluginsData = getPluginDetails(data._buildfire.plugins.result, data._buildfire.plugins.data);
+                    plugins.loadItems(pluginsData);
+                }
+            } else {
+                data = {
+                    _buildfire: {
+                        plugins: {
+                            dataType: "pluginInstance",
+                            data: []
+                        }
+                    }
+                };
+            }
+        });
     </script>
 </body>
 </html>
-
