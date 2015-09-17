@@ -42,7 +42,6 @@ var buildfire = {
 		, showHistory:function(){
 			var div = buildfire.logger._getLogContainerDIV();
 			div.style.display='';
-			debugger;
 			if(!div.parentNode)
 				document.body.appendChild(div);
 		}
