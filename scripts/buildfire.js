@@ -150,7 +150,8 @@ var buildfire = {
 		,"navigation.onBackButtonClick"
 		,"services.media.audioPlayer.triggerOnEvent"
 		, "auth.triggerOnLogin"
-		, "auth.triggerOnLogout"]
+		, "auth.triggerOnLogout"
+		,"logger.showHistory"]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
 		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
