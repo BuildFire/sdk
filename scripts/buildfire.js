@@ -9,6 +9,96 @@ function Packet(id, cmd, data) {
 var buildfire = {
 	logger: {
 		_suppress: true
+		, logMaxLength:500
+		, _logContainerDIV: null
+		, _getLogContainerDIV: function(){
+			if(buildfire.logger._logContainerDIV)
+				return buildfire.logger._logContainerDIV;
+			else
+				return buildfire.logger._createLogContainerDIV();
+		}
+		, _createLogContainerDIV: function(){
+			var div = document.getElementById('__buildfireLog');
+			if(!div){
+				div = document.createElement('div');
+				div.style.position='fixed';
+				div.style.left=div.style.top=0;
+				div.style.width='100%';
+				div.style.backgroundColor='black';
+				div.style.opacity=0.8;
+				div.style.display='none';
+				buildfire.logger._logContainerDIV= div;
+
+				var btn=document.createElement('button');
+				btn.className='btn btn-warn pull-right';
+				btn.innerText='Hide';
+				btn.onclick= buildfire.logger.hideHistory;
+				buildfire.logger.pushHistory(btn);
+
+
+			}
+			return div;
+		}
+		, showHistory:function(){
+			var div = buildfire.logger._getLogContainerDIV();
+			div.style.display='';
+			debugger;
+			if(!div.parentNode)
+				document.body.appendChild(div);
+		}
+		, hideHistory:function(){
+			var div = buildfire.logger._getLogContainerDIV();
+			div.style.display='none';
+		}
+		, pushHistory: function(element){
+			if(typeof(element) == "string") {
+				var d = document.createElement('div');
+				d.innerHTML=element;
+				element = d;
+			}
+			var div = buildfire.logger._getLogContainerDIV();
+			div.appendChild(element);
+			if(div.childNodes.length > buildfire.logger.logMaxLength)
+				div.removeChild(div.childNodes[0]);
+		}
+		, init: function(){
+
+			buildfire.logger._createLogContainerDIV();
+			///hijack console
+			var l = console.log;
+			console.log = function (message) {
+				buildfire.logger.pushHistory("l: " +  message);
+				l.apply(console, arguments);
+			};
+
+			var d = console.debug;
+			console.debug = function (message) {
+				var dv = document.createElement('div');
+				dv.innerHTML = "d: " + message;
+				dv.className = 'bg-info';
+				buildfire.logger.pushHistory(dv);
+				d.apply(console, arguments);
+			};
+
+			var e = console.error;
+			console.error = function (message) {
+				var dv = document.createElement('div');
+				dv.innerHTML = "e: " + message;
+				dv.className = 'bg-error';
+				buildfire.logger.pushHistory(dv);
+				e.apply(console, arguments);
+			};
+
+			var w = console.warn;
+			console.warn = function (message) {
+				var dv = document.createElement('div');
+				dv.innerHTML = "w: " + message;
+				dv.className = 'bg-warning';
+				buildfire.logger.pushHistory(dv);
+				buildfire.logger.pushHistory("w: " +  message);
+				w.apply(console, arguments);
+			};
+		}
 		, show: function () {
 			this._suppress = false;
 		}
@@ -33,12 +123,14 @@ var buildfire = {
 		}
 	}
 	, _callbacks: {}
+	, context:null
 	, init: function () {
 		// Listen to message from child window
 		window.removeEventListener('message', buildfire._postMessageHandler, false);
 		window.addEventListener('message', buildfire._postMessageHandler, false);
 		buildfire._insertHTMLAttributes();
 		buildfire.appearance.attachCSSFiles();
+		buildfire.logger.init();
 		buildfire.getContext(function (err, context) {
 			if (err) {
 				buildfire.logger.error(err);
