@@ -10,6 +10,9 @@ var buildfire = {
 	logger: {
 		_suppress: true
 		, logMaxLength:500
+		, clearHistory: function(){
+			buildfire.logger._getLogContainerDIV().innerHTML='';
+		}
 		, _logContainerDIV: null
 		, _getLogContainerDIV: function(){
 			if(buildfire.logger._logContainerDIV)
@@ -21,9 +24,10 @@ var buildfire = {
 			var div = document.getElementById('__buildfireLog');
 			if(!div){
 				div = document.createElement('div');
-				div.style.position='fixed';
+				div.className='overlay';
+				/*div.style.position='fixed';
 				div.style.left=div.style.top=0;
-				div.style.width='100%';
+				div.style.width='100%';*/
 				div.style.backgroundColor='black';
 				div.style.opacity=0.8;
 				div.style.display='none';
