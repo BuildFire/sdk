@@ -1,6 +1,8 @@
 ﻿'use strict';
 
-if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use sortableList components");
+if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use pluginInstances sortableList components");
+
+if (typeof (buildfire.notifications) == "undefined") throw ("please add notifications.js first to use pluginInstances sortableList components");
 
 if (typeof (buildfire.components) == "undefined")
     buildfire.components = {};
@@ -8,13 +10,53 @@ if (typeof (buildfire.components) == "undefined")
 if (typeof (buildfire.components.pluginInstance) == "undefined")
     buildfire.components.pluginInstance = {};
 
+buildfire.components.pluginInstance.getAllPlugins = function (callback) {
+    var me = this;
+    if (!callback) {
+        throw "Please provide a callback forgetAllPlugins";
+    }
+    buildfire.pluginInstance.search({}, function (err, result) {
+        callback(err, buildfire.components.pluginInstance._mapFromSearch(result));
+    });
+},
+
+buildfire.components.pluginInstance._mapFromSearch = function (data) {
+    var result = [], dataResult = [], dataResultLength = 0, currentPlugin = null, tempObj = null;
+    if (data.result && data.result instanceof Array) {
+        dataResult = data.result;
+        dataResultLength = dataResult.length;
+        for (var i = 0; i < dataResultLength; i++) {
+
+            currentPlugin = dataResult[i];
+            if (currentPlugin.data && currentPlugin.data._buildfire) {
+                tempObj = {};
+
+                tempObj.folderName = currentPlugin.data._buildfire.pluginType.result[0].folderName;
+                tempObj.instanceId = currentPlugin.id;
+                tempObj.iconUrl = currentPlugin.data.iconUrl;
+                tempObj.pluginTypeId = currentPlugin.data._buildfire.pluginType.data;
+                tempObj.pluginTypeName = currentPlugin.data._buildfire.pluginType.result[0].name;
+                tempObj.title = currentPlugin.data.title;
+
+                result.push(tempObj);
+                tempObj = null;
+                currentPlugin = null;
+            }
+        }
+    }
+    return result;
+};
+
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.pluginInstance.sortableList = function (selector, items, dialogOptions) {
+buildfire.components.pluginInstance.sortableList = function (selector, items, dialogOptions, loadAllItems) {
     // sortableList requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use sortableList components");
     this.selector = selector;
     this.items = [];
     this.loadedInstances = [];
+    this.checkId = "loadAllPlugins" + Math.floor((Math.random() * 1000) + 1);
+    this.loadAllSelector = "#" + this.checkId;
+    this._loadAllItems = loadAllItems ? true : false;
     this.dialogOptions = typeof (dialogOptions) == "object" ? dialogOptions : { showIcon: true };
     this.init(selector);
     this.loadItems(items);
@@ -41,6 +83,19 @@ buildfire.components.pluginInstance.sortableList.prototype = {
     // This will be triggered when you delete an item
     onDeleteItem: function (item, index) {
         console.warn("please handle onDeleteItem", item);
+    },
+    // This will be triggered when the user checks to load all plugins option
+    onLoadAll: function (items) {
+        console.warn("please handle onLoadAll", items);
+    },
+    // This will be triggered when you delete an item
+    onUnloadAll: function () {
+        console.warn("please handle onUnloadAll");
+    },
+    loadAllItems: function () {
+        this._loadAllItems = true;
+        this.selector.querySelector(this.loadAllSelector).setAttribute("checked", true);
+        this._toggleAddButton("disable");
     },
     // this method allows you to replace the slider image or append to then if appendItems = true
     loadItems: function (items, appendItems) {
@@ -136,16 +191,35 @@ buildfire.components.pluginInstance.sortableList.prototype = {
 
             deleteButton.addEventListener("click", function (e) {
                 e.preventDefault();
-                var itemIndex = me._getItemIndex(item);
-                var itemId = me.items[itemIndex].instanceId;
-                if (itemIndex != -1) {
-                    me.items.splice(itemIndex, 1);
-                    me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
-                    this.parentNode.parentNode.parentNode.remove()
-                    me.onDeleteItem(item, itemIndex);
-                }
+
+                buildfire.notifications.confirm({
+                    title: "Remove Plugin Instance",
+                    message: '<p>Are you sure you want to do this?</p>\
+				<p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
+                    buttonLabels: ["Delete", "Cancel"]
+                }, function (e) {
+                    // TODO: show the popup just at the top of the delete button not in the top of the iframe
+                    // console.log(me._getOffset(this));
+
+                    var itemIndex = me._getItemIndex(item);
+                    var itemId = me.items[itemIndex].instanceId;
+                    if (itemIndex != -1) {
+                        me.items.splice(itemIndex, 1);
+                        me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
+                        this.parentNode.parentNode.parentNode.remove()
+                        me.onDeleteItem(item, itemIndex);
+                    }
+                }.bind(this));
             });
         })(item);
+    },
+
+    _getOffset: function (el) {
+        el = el.getBoundingClientRect();
+        return {
+            left: el.left + window.scrollX,
+            top: el.top + window.scrollY
+        }
     },
     // render the basic template HTML
     _renderTemplate: function () {
@@ -153,22 +227,39 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         var componentName = document.createElement("div");
         var contentContainer = document.createElement("div");
         var buttonContainer = document.createElement("div");
-        var button = document.createElement("a");
+        var getAllContainer = document.createElement("div");
+        var getAllCheckbox = document.createElement("input");
+        var getAlllabel = document.createElement("label");
+        var button = document.createElement("button");
         var sliderContainer = document.createElement("div");
+
+        getAllCheckbox.setAttribute("type", "checkbox");
+        if (this._loadAllItems) {
+            getAllCheckbox.setAttribute("checked", "checked");
+        } else {
+            getAllCheckbox.removeAttribute("checked");
+        }
 
         componentContainer.className = "item clearfix row margin-bottom-fifteen";
         componentName.className = "labels col-md-3 padding-right-zero pull-left";
         componentName.innerHTML = "Plugins";
         contentContainer.className = "main col-md-9 pull-right";
         buttonContainer.className = "clearfix";
+        getAllContainer.className = "checkbox checkbox-primary";
         button.className = "btn btn-success pull-left add-new-item";
         sliderContainer.className = "carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey";
 
         button.innerHTML = "Add Plugin";
+        getAlllabel.innerHTML = "Load all plugins";
+        getAlllabel.setAttribute("for", this.checkId);
+        getAllCheckbox.id = this.checkId;
 
+        getAllContainer.appendChild(getAllCheckbox);
+        getAllContainer.appendChild(getAlllabel);
         componentContainer.appendChild(componentName);
         buttonContainer.appendChild(button);
         contentContainer.appendChild(buttonContainer);
+        contentContainer.appendChild(getAllContainer);
         contentContainer.appendChild(sliderContainer);
         componentContainer.appendChild(contentContainer);
 
@@ -199,6 +290,23 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                     }
                 }
             });
+        });
+
+        me.selector.querySelector(this.loadAllSelector).addEventListener("change", function () {
+            if (this.checked) {
+                me._toggleAddButton("disable");
+
+                // remove all selected plugins from this.items and from the DOM
+                me._removeAll();
+
+                buildfire.components.pluginInstance.getAllPlugins(function (err, result) {
+                    me.onLoadAll(result);
+                });
+
+            } else {
+                me.onUnloadAll();
+                me._toggleAddButton("enable");
+            }
         });
 
         // initialize the sort on the container of the items
@@ -268,6 +376,14 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         }
         else {
             return buildfire.imageLib.resizeImage(url, options);
+        }
+    },
+    _toggleAddButton: function (status) {
+        var buttonSelector = this.selector.querySelector(".add-new-item");
+        if (status == "enable") {
+            buttonSelector.removeAttribute("disabled");
+        } else {
+            buttonSelector.setAttribute("disabled", "disabled");
         }
     }
 };
