@@ -11,7 +11,7 @@ var pluginAPI = new PluginAPI(widgetIFrame.contentWindow, window.appContext.curr
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
 pluginAPI.tag = 'shell';
 var controlPluginAPI = new PluginAPI(controlIFrame.contentWindow, window.appContext.currentApp.appId
-	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
+	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey);
 controlPluginAPI.tag = 'controlPluginAPI';
 
 (function() {
