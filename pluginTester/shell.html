@@ -50,17 +50,14 @@
                     <span class="icon icon-window transition-third"></span>
                 </a>
             </li>
-            <li>
-                <br/>
-                <h4><b>Recent Plugins</b></h4>
+            <li class="dark divider">
+				Recent Plugins
             </li>
-            <li>
-                <a ng-cloak ng-repeat="p in recentPlugins" href="shell.html#{{p}}"  class="parent primary-color-hover transition-third" >
+            <li class="dark" ng-repeat="p in recentPlugins">
+                <a ng-cloak href="shell.html#{{p}}" class="parent primary-color-hover transition-third">
                     <p class="text margin-zero ellipsis transition-third">{{p}}</p>
-                    <span class="icon icon-puzzle transition-third"></span>
                 </a>
             </li>
-
         </ul>
     </nav>
     <section id="main-content">

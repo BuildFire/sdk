@@ -142,6 +142,20 @@ nav ul.menu li{
 nav ul.menu li + li{
 	border-top:1px solid #26282b;
 }
+nav ul.menu li.dark{
+	background:#26282b;
+}
+nav ul.menu li.divider,
+nav ul.menu li.dark a{
+	padding:10px 15px;
+}
+nav ul.menu li.dark.divider{
+	border-top:1px solid #111;
+}
+nav ul.menu li.dark a{
+	padding:10px 25px;
+	font-size:14px;
+}
 nav ul.menu li .parent{
 	color:#a6abba;
 	padding:20px 10px 20px 45px;
@@ -199,6 +213,10 @@ nav ul.menu li .parent:hover,
 nav ul.menu li .parent.active{
 	padding-left:50px;
 	background:#26282b;
+}
+nav ul.menu li.dark .parent:hover, 
+nav ul.menu li.dark .parent.active{
+	padding-left:30px;
 }
 nav ul.menu li .parent:hover > p.text,
 nav ul.menu li .parent.active > p.text{
@@ -404,6 +422,7 @@ html[browser="Firefox"] .draggable-list-view .d-item .media-holder{
 }
 html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	line-height:35px;
+	line-height:37px;
 }
 .draggable-list-view .d-item .media-holder img{
 	max-width:100%;
