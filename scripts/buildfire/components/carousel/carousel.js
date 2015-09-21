@@ -291,16 +291,13 @@ buildfire.components.carousel.editor.prototype = {
 };
 
 // This is the class that will be used in the mobile
-buildfire.components.carousel.view = function (selector, items) {
+buildfire.components.carousel.view = function (selector, items, layout) {
 	if (typeof($.fn) != "object" || !($.fn && $.fn.owlCarousel)) {
         throw ("please add owlCarousel.js first to use carousel component");
     }
     this.selector = selector;
     this.items = [];
-    this.width = window.innerWidth;
-    this.height = Math.ceil(9 * this.width / 16);
-    this.cssWidth = this.width + "px";
-    this.cssHeight = this.height + "px";
+    this._initDimensions(layout);
     this._loadItems(items, false);
     this.init(selector);
 };
@@ -319,7 +316,10 @@ buildfire.components.carousel.view.prototype = {
         }
     },
     // this method allows you to append or replace slider images
-    loadItems: function (items, appendItems) {
+    loadItems: function (items, appendItems, layout) {
+        this._initDimensions(layout);
+        this._renderSlider();
+
         if (this.$slider) {
             this._destroySlider();
             this._removeAll();
@@ -348,6 +348,18 @@ buildfire.components.carousel.view.prototype = {
             items=[items];
 
         this.loadItems(items,true);
+    },
+    _initDimensions: function (layout) {
+        this.width = window.innerWidth;
+        layout = layout || 1;
+        if (layout == 1) {
+            this.height = Math.ceil(9 * this.width / 16);
+        } else {
+            this.height = Math.ceil(1 * this.width / 2.39);
+        }
+
+        this.cssWidth = this.width + "px";
+        this.cssHeight = this.height + "px";
     },
     // remove all nodes from the slider
     _removeAll: function () {
