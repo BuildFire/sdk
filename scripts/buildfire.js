@@ -125,6 +125,40 @@ var buildfire = {
 		}
 	}
 	, _callbacks: {}
+	///custom events are super thus this implementation
+	, eventManager:{
+		events:{}
+		,add:function(event,handler,allowMultipleHandlers){
+			if(typeof(handler) != 'function')throw ("Invalid event handler");
+
+			if(!allowMultipleHandlers) this.clear(event);
+
+			if (!this.events[event])
+				this.events[event] = [handler];
+			else
+				this.events[event].push(handler);
+
+			var eh= this.events[event];
+			return {
+				clear:function () {
+					for(var i = 0; i <eh.length; i++ )
+						if (eh[i] === handler)
+							eh.splice(i, 1);
+				}
+			};
+		}
+		,clear:function(event){
+			this.events[event]=[];
+		}
+		,trigger:function(event,data){
+			if(this.events[event])
+				for(var i = 0; i <this.events[event].length; i++ ) {
+					try {this.events[event][i](data);}
+					catch (e) {console.error(e);}
+				}
+		}
+	}
+
 	, context:null
 	, init: function () {
 		// Listen to message from child window
@@ -482,28 +516,18 @@ var buildfire = {
 			});
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonupdatecallback
-		, onUpdate: function (callback) {
-			var handler = function (e) { if (callback)callback(e.detail); };
-			document.addEventListener('datastoreOnUpdate', handler, false);
-			return {
-				clear:function () {document.removeEventListener('datastoreOnUpdate', handler, false); }
-			};
+		, onUpdate: function (callback,allowMultipleHandlers) {
+			return buildfire.eventManager.add('datastoreOnUpdate',callback,allowMultipleHandlers);
 		}
-		, triggerOnUpdate: function (data) {
-			var onUpdateEvent = new CustomEvent('datastoreOnUpdate', {'detail': data});
-			buildfire.logger.log("Announce the data has changed!!!", window.location.href);
-			document.dispatchEvent(onUpdateEvent);
+		, triggerOnUpdate: function (obj) {
+			buildfire.eventManager.trigger('datastoreOnUpdate',obj);
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoreonrefreshcallback
-		, onRefresh: function (callback) {
-			document.addEventListener('datastoreOnRefresh', function (e) {
-				if (callback)callback(e.detail, e);
-			}, false);
+		, onRefresh: function (callback,allowMultipleHandlers) {
+			return buildfire.eventManager.add('datastoreOnRefresh',callback,allowMultipleHandlers);
 		}
-		, triggerOnRefresh: function (data) {
-			var onRefreshEvent = new CustomEvent('datastoreOnRefresh', {'detail': data});
-			buildfire.logger.log("Announce the data needs refresh!!!", window.location.href);
-			document.dispatchEvent(onRefreshEvent);
+		, triggerOnRefresh: function (obj) {
+			buildfire.eventManager.trigger('datastoreOnRefresh',obj);
 		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredisablerefresh
 		, disableRefresh: function () {
@@ -601,15 +625,11 @@ var buildfire = {
 			var p = new Packet(null, 'history.push',  {label : label ,options : options, source: "plugin" } );
 			buildfire._sendPacket(p, callback);
 		},
-		onPop: function (callback) {
-			document.addEventListener('historyOnPop', function (e) {
-				if (callback)callback(e.detail, e);
-			}, false);
+		onPop: function (callback,allowMultipleHandlers) {
+			return buildfire.eventManager.add('historyOnPop',callback,allowMultipleHandlers);
 		},
-		triggerOnPop: function (data) {
-			var onUpdateEvent = new CustomEvent('historyOnPop', {'detail': data});
-			buildfire.logger.log("Announce the data has changed!!!", window.location.href);
-			document.dispatchEvent(onUpdateEvent);
+		triggerOnPop: function (obj) {
+			buildfire.eventManager.trigger('historyOnPop',obj);
 		},
 		pop: function() {
 			// add to allow user to popup history items
@@ -767,35 +787,17 @@ var buildfire = {
 			var p = new Packet(null, 'auth.getCurrentUser', options);
 			buildfire._sendPacket(p, callback);
 		},
-		onLogin: function (callback) {
-			var handler = function (e) {
-				if (callback)callback(e.detail);
-			};
-			document.addEventListener('authOnLogin', handler, false);
-			return {
-				clear: function () {
-					document.removeEventListener('authOnLogin', handler, false);
-				}
-			};
+		onLogin: function (callback,allowMultipleHandlers) {
+			return buildfire.eventManager.add('authOnLogin',callback,allowMultipleHandlers);
 		},
 		triggerOnLogin: function (user) {
-			var onLoginEvent = new CustomEvent('authOnLogin', {'detail': user});
-			document.dispatchEvent(onLoginEvent);
+			buildfire.eventManager.trigger('authOnLogin',user);
 		},
-		onLogout: function (callback) {
-			var handler = function (e) {
-				if (callback)callback(e.detail);
-			};
-			document.addEventListener('authOnLogout', handler, false);
-			return {
-				clear: function () {
-					document.removeEventListener('authOnLogout', handler, false);
-				}
-			};
+		onLogout: function (callback,allowMultipleHandlers) {
+			return buildfire.eventManager.add('authOnLogout',callback,allowMultipleHandlers);
 		}
 		, triggerOnLogout: function (data) {
-			var onLogoutEvent = new CustomEvent('authOnLogout', {'detail': data});
-			document.dispatchEvent(onLogoutEvent);
+			return buildfire.eventManager.add('authOnLogout',data);
 		}
 	}
 };
@@ -808,3 +810,4 @@ document.addEventListener("DOMContentLoaded", function (event) {
 document.addEventListener("resize", function (event) {
 	buildfire.appearance.autosizeContainer();
 });
+
