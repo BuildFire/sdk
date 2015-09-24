@@ -4,6 +4,7 @@ function Packet(id, cmd, data) {
 	this.id = id ? id : new Date().toISOString() + Math.random();
 	this.cmd = cmd;
 	this.data = data;
+	this.instanceId= null;
 }
 
 var buildfire = {
@@ -164,8 +165,7 @@ var buildfire = {
 		// Listen to message from child window
 		window.removeEventListener('message', buildfire._postMessageHandler, false);
 		window.addEventListener('message', buildfire._postMessageHandler, false);
-		buildfire._insertHTMLAttributes();
-		buildfire.appearance.attachCSSFiles();
+
 		buildfire.logger.init();
 		buildfire.getContext(function (err, context) {
 			if (err) {
@@ -178,6 +178,9 @@ var buildfire = {
 				}
 			}
 		});
+
+		buildfire._insertHTMLAttributes();
+		buildfire.appearance.attachCSSFiles();
 	}
 	, _whitelistedCommands:["datastore.triggerOnUpdate"
 		,"datastore.triggerOnRefresh"
@@ -318,15 +321,18 @@ var buildfire = {
 	, _sendPacket: function (packet, callback) {
 		if (typeof (callback) != "function")// handels better on response
 			callback = function (err, result) {
-				buildfire.logger.log('buildfire.js ignored callback ' + JSON.stringify(arguments)), window.location.href
+				buildfire.logger.log('buildfire.js ignored callback ' + JSON.stringify(arguments));
 			};
 
 		buildfire._callbacks[packet.id] = callback;
+
+		if(buildfire.context && buildfire.context.instanceId) packet.instanceId = buildfire.context.instanceId;
 		var p ;
 		if(typeof(angular) != "undefined")
 		  p = angular.toJson(packet);
 		else
 			p = JSON.stringify(packet);
+
 		buildfire.logger.log("BuildFire.js Send >> " + p, window.location.href);
 		if (parent)parent.postMessage(p, "*");
 	}
@@ -567,8 +573,11 @@ var buildfire = {
 			if (typeof(options) != "object")
 				throw ("options not an object");
 
-			if (!options.width || !options.height)
-				throw ("options must have both height and width");
+			if (!options.width && !options.height)
+				options={width:'full',height:'full'};
+
+			if(options.width == 'full') options.width= window.innerWidth;
+			if(options.height== 'full') options.height= window.innerHeight;
 
 			return root + options.width + "x" + options.height + "/" + url;
 
