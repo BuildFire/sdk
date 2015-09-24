@@ -1,17 +1,17 @@
 {
-  "author":"[Your Name here]"
-,"pluginName":"[Your Plugin Name here]"
-,"pluginDescription":"[A short description of what your plugin does]"
+  "author":"Daniel Hindi"
+,"pluginName":"Hello World"
+,"pluginDescription":"Light weight doent use even datastore"
 ,"supportEmail":"[Your support Email]"
 ,"control":{
   "content":{
     "enabled":true
   }
 , "design":{
-    "enabled":true
+    "enabled":false
   }
 , "settings":{
-    "enabled":true
+    "enabled":false
   }
 }
 ,"widget":{

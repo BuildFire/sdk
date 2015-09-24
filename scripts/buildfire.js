@@ -324,7 +324,16 @@ var buildfire = {
 				buildfire.logger.log('buildfire.js ignored callback ' + JSON.stringify(arguments));
 			};
 
-		buildfire._callbacks[packet.id] = callback;
+		var timeout = setTimeout(function(){
+			console.warn('plugin never received a callback ' + packet.cmd,packet,window.location.href);
+		},5000);
+		var wrapper = function(err,data){
+
+			clearTimeout( timeout);
+			callback(err,data);
+		};
+
+		buildfire._callbacks[packet.id] = wrapper;
 
 		if(buildfire.context && buildfire.context.instanceId) packet.instanceId = buildfire.context.instanceId;
 		var p ;

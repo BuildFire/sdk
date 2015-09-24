@@ -7,10 +7,10 @@
 var controlIFrame=document.getElementById('iframeControl');
 var widgetIFrame = document.getElementById('widget');
 
-var pluginAPI = new PluginAPI(widgetIFrame, window.appContext.currentApp.appId
+var pluginAPI = new PluginAPI('widget', window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
 pluginAPI.tag = 'shell';
-var controlPluginAPI = new PluginAPI(controlIFrame, window.appContext.currentApp.appId
+var controlPluginAPI = new PluginAPI('iframeControl', window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey);
 controlPluginAPI.tag = 'controlPluginAPI';
 
