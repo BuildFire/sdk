@@ -20,6 +20,7 @@
             confirmComponent._appendContainer();
         }
         confirmComponent._renderTemplate(options);
+        confirmComponent._setModalPosition(options);
         confirmComponent.initEvents(callback);
     };
 
@@ -31,6 +32,7 @@
         var container = document.createElement("div"),
             containerId = "confirm" + Math.floor((Math.random() * 10) + 1);
         container.setAttribute("id", containerId);
+        container.style.position = "fixed";;
         document.body.appendChild(container);
         confirmComponent.confirmContainer = document.querySelector("#" + containerId);
     };
@@ -63,11 +65,33 @@
             .replace("#cancel", options.buttonLabels && options.buttonLabels[1] ? options.buttonLabels[1] : "Cancel");
 
         confirmComponent.confirmContainer.innerHTML = html;
+
     };
+
+    confirmComponent._setModalPosition = function (options) {
+        var modalStyle = "", bodyHeight = 0, modalElement = confirmComponent.confirmContainer.querySelector(".modal-dialog"),
+            modalHeight = 0, targetTop = 0;
+        if (options.target) {
+            targetTop = options.target.getBoundingClientRect().top;
+            modalElement.style.position = "absolute";
+            bodyHeight = this._getElementHeight(confirmComponent.confirmContainer.querySelector(".modal-backdrop"));
+            modalHeight = this._getElementHeight(modalElement) + Number(modalElement.style.paddingTop) + Number(modalElement.style.paddingBottom);
+            targetTop = targetTop > bodyHeight ? bodyHeight : targetTop;
+            if (modalHeight + targetTop > bodyHeight) {
+                modalElement.style.top = (bodyHeight - modalHeight - 20) + "px";
+            } else {
+                modalElement.style.top = targetTop + "px";
+            }
+        }
+    }
 
     confirmComponent._removeTemplate = function () {
         confirmComponent.confirmContainer.innerHTML = "";
     };
+
+    confirmComponent._getElementHeight = function (elem) {
+        return Math.max(elem.scrollHeight, elem.offsetHeight);
+    }
 
     confirmComponent.initEvents = function (callback) {
 
