@@ -690,10 +690,10 @@ var buildfire = {
 	, parseQueryString:function () {
 		var query = window.location.search.substring(1);
 		var vars = query.split('&');
-		var obj=new Object();
+		var obj= {};
 		for (var i = 0; i < vars.length; i++) {
 			var pair = vars[i].split('=');
-			obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+			obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[2]);
 		}
 		return obj;
 	}
