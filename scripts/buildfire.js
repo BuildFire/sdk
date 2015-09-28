@@ -1,4 +1,4 @@
-"use strict";
+//"use strict";
 
 function Packet(id, cmd, data) {
 	this.id = id ? id : new Date().toISOString() + Math.random();
@@ -9,7 +9,7 @@ function Packet(id, cmd, data) {
 
 var buildfire = {
 	logger: {
-		_suppress: true
+		_suppress: false
 		, logMaxLength:500
 		, clearHistory: function(){
 			buildfire.logger._getLogContainerDIV().innerHTML='';
@@ -46,7 +46,7 @@ var buildfire = {
 		, showHistory:function(){
 			var div = buildfire.logger._getLogContainerDIV();
 			div.style.display='';
-			if(!div.parentNode)
+			if(!div.parentNode && document.body)
 				document.body.appendChild(div);
 		}
 		, hideHistory:function(){
@@ -65,7 +65,7 @@ var buildfire = {
 				div.removeChild(div.childNodes[0]);
 		}
 		, init: function(){
-
+			//buildfire.logger._suppress = window.location.href.indexOf('http') >=0;
 			buildfire.logger._createLogContainerDIV();
 			///hijack console
 			var l = console.log;
@@ -167,9 +167,10 @@ var buildfire = {
 		window.addEventListener('message', buildfire._postMessageHandler, false);
 
 		buildfire.logger.init();
+		//buildfire.logger.showHistory();
 		buildfire.getContext(function (err, context) {
 			if (err) {
-				buildfire.logger.error(err);
+				console.error(err);
 			}
 			else {
 				buildfire.context = context;
@@ -193,7 +194,7 @@ var buildfire = {
 		,"logger.showHistory"]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) return;//e.origin != "null"
-		buildfire.logger.log('buildfire.js received << ' + e.data, window.location.href);
+		console.log('buildfire.js received << ' + e.data, window.location.href);
 		var packet = JSON.parse(e.data);
 
 		if (packet.id && buildfire._callbacks[packet.id]) {
@@ -216,7 +217,7 @@ var buildfire = {
 
 		}
 		else {
-			buildfire.logger.warn(window.location.href + ' unhandled packet', packet);
+			console.warn(window.location.href + ' unhandled packet', packet);
 			//alert('parent sent: ' + packet.data);
 		}
 	}
@@ -241,7 +242,7 @@ var buildfire = {
         , openWindow: function (url, target, callback) {
             if (!target) target = '_blank';
             if (!callback) callback = function () {
-                logger.log('openWindow:: completed');
+				console.log('openWindow:: completed');
             };
             var actionItem = {
                 action: 'linkToWeb'
@@ -321,7 +322,7 @@ var buildfire = {
 	, _sendPacket: function (packet, callback) {
 		if (typeof (callback) != "function")// handels better on response
 			callback = function (err, result) {
-				buildfire.logger.log('buildfire.js ignored callback ' + JSON.stringify(arguments));
+				console.log('buildfire.js ignored callback ' + JSON.stringify(arguments));
 			};
 
 		var timeout = setTimeout(function(){
@@ -342,7 +343,7 @@ var buildfire = {
 		else
 			p = JSON.stringify(packet);
 
-		buildfire.logger.log("BuildFire.js Send >> " + p, window.location.href);
+		console.log("BuildFire.js Send >> " + p, window.location.href);
 		if (parent)parent.postMessage(p, "*");
 	}
 	, analytics: {
@@ -663,7 +664,7 @@ var buildfire = {
 			buildfire._sendPacket(p);
 		}
 		,onReceivedMessage:function(message){
-			buildfire.logger.log('onReceivedMessage ignored', window.location);
+			console.log('onReceivedMessage ignored', window.location);
 		}
 	}
 	, pluginInstance:{
@@ -828,4 +829,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
 document.addEventListener("resize", function (event) {
 	buildfire.appearance.autosizeContainer();
 });
+
+window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+	console.error('Error: ' + errorMsg , ' Script: ' + url , ' Line: ' + lineNumber
+	, ' Column: ' + column , ' StackTrace: ' +  errorObj);
+};
 
