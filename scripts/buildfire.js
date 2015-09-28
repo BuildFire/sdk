@@ -1,6 +1,5 @@
 //"use strict";
 
-alert('bf.js');
 function Packet(id, cmd, data) {
 	this.id = id ? id : new Date().toISOString() + Math.random();
 	this.cmd = cmd;
