@@ -794,29 +794,29 @@ var buildfire = {
 
 	}
 	, auth: {
-		login: function () {
+		login: function (options, callback) {
 			var p = new Packet(null, 'auth.login', options);
 			buildfire._sendPacket(p, callback);
 		},
 		logout: function () {
-			var p = new Packet(null, 'auth.logout', options);
-			buildfire._sendPacket(p, callback);
+			var p = new Packet(null, 'auth.logout');
+			buildfire._sendPacket(p);
 		},
-		getCurrentUser: function () {
+		getCurrentUser: function (callback) {
 			var p = new Packet(null, 'auth.getCurrentUser', options);
 			buildfire._sendPacket(p, callback);
 		},
-		onLogin: function (callback,allowMultipleHandlers) {
-			return buildfire.eventManager.add('authOnLogin',callback,allowMultipleHandlers);
+		onLogin: function (callback, allowMultipleHandlers) {
+			return buildfire.eventManager.add('authOnLogin', callback, allowMultipleHandlers);
 		},
 		triggerOnLogin: function (user) {
 			buildfire.eventManager.trigger('authOnLogin',user);
 		},
-		onLogout: function (callback,allowMultipleHandlers) {
-			return buildfire.eventManager.add('authOnLogout',callback,allowMultipleHandlers);
+		onLogout: function (callback, allowMultipleHandlers) {
+			return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
 		}
 		, triggerOnLogout: function (data) {
-			return buildfire.eventManager.add('authOnLogout',data);
+			return buildfire.eventManager.add('authOnLogout', data);
 		}
 	}
 };
