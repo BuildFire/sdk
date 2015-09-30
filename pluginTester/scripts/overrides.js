@@ -7,12 +7,13 @@
 var controlIFrame=document.getElementById('iframeControl');
 var widgetIFrame = document.getElementById('widget');
 
-var pluginAPI = new PluginAPI('widget', window.appContext.currentApp.appId
+postMaster.widgetPluginAPI = new PluginAPI('widget', window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
-pluginAPI.tag = 'shell';
-var controlPluginAPI = new PluginAPI('iframeControl', window.appContext.currentApp.appId
+postMaster.widgetPluginAPI.tag = 'shell';
+
+postMaster.controlPluginAPI = new PluginAPI('iframeControl', window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey);
-controlPluginAPI.tag = 'controlPluginAPI';
+postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 
 (function() {
 
@@ -22,50 +23,50 @@ controlPluginAPI.tag = 'controlPluginAPI';
 	*/
 	var onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj.detail);
-		pluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
+		postMaster.widgetPluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
 	};
-	controlPluginAPI.datastore.onUpdate(onUpdate);
+	postMaster.controlPluginAPI.datastore.onUpdate(onUpdate);
 
 
-	pluginAPI.messaging.onNewWidgetMessage(function (message) {
+	postMaster.widgetPluginAPI.messaging.onNewWidgetMessage(function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
-		pluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
+		postMaster.widgetPluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
 	});
 
-	controlPluginAPI.messaging.onNewControlMessage(function (message) {
+	postMaster.controlPluginAPI.messaging.onNewControlMessage(function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
 		controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
 	});
 
-	controlPluginAPI.navigation.navigateTo = pluginAPI.navigation.navigateTo = function () {
+	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
 	    console.warn("supress navigation in shell");
 	    alert("supress navigation in shell");
 	};
 	/**************************************************/
 
 	/*
-	 pluginAPI.appearance.getCSSFiles =function(data, callback){
+	 postMaster.widgetPluginAPI.appearance.getCSSFiles =function(data, callback){
 	 callback(null,['/styles/bootstrap.css']);
 	 };
 	 */
 
-	controlPluginAPI.appearance.autosizeContainerHandler = function (height) {
+	postMaster.controlPluginAPI.appearance.autosizeContainerHandler = function (height) {
 		var iframeControl = document.getElementById('iframeControl');
 		iframeControl.style.height = height + 'px';
 	};
 
-	controlPluginAPI.analytics.trackAction = pluginAPI.analytics.trackAction = function (actionName, metadata) {
+	postMaster.controlPluginAPI.analytics.trackAction = postMaster.widgetPluginAPI.analytics.trackAction = function (actionName, metadata) {
 		console.log('analytics mock track action [' + actionName + ']', metadata);
 	};
 
-	controlPluginAPI.analytics.trackView = pluginAPI.analytics.trackView = function (viewName, metadata) {
+	postMaster.controlPluginAPI.analytics.trackView = postMaster.widgetPluginAPI.analytics.trackView = function (viewName, metadata) {
 		console.log('analytics mock track view [' + viewName + ']', metadata);
 	};
 
 //override the imageLibTemplate url
 	imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
-	controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';
-	pluginAPI.actionItems.listTemplateUrl = 'http://int2.myapp.buildfire.com/app/pages/templates/actionItemsListDialog.html';
-	controlPluginAPI.pluginInstances.templateUrl = "http://int2.myapp.buildfire.com/pages/templates/pluginInstanceDialog.html"
-	window.appContext.currentPlugin.pluginAPI = controlPluginAPI;
+	postMaster.controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';
+	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'http://int2.myapp.buildfire.com/app/pages/templates/actionItemsListDialog.html';
+	postMaster.controlPluginAPI.pluginInstances.templateUrl = "http://int2.myapp.buildfire.com/pages/templates/pluginInstanceDialog.html";
+	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
 })();

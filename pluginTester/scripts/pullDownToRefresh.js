@@ -7,7 +7,7 @@ function initPullDownRefresh () {
         if(!pluginFrame)
             pluginFrame = document.getElementById('widget');
         var packet = new Packet(null, "datastore.triggerOnRefresh");
-        pluginAPI.sendMessage(pluginFrame.contentWindow, packet);
+        postMaster.widgetPluginAPI.sendMessage(pluginFrame.contentWindow, packet);
         return new Promise(function (resolve, reject) {
             resolve();
         });
@@ -25,7 +25,7 @@ function initPullDownRefresh () {
         resistance: 1.0
     });
 
-    pluginAPI.datastore.onDisableRefresh(function(){
+    postMaster.widgetPluginAPI.datastore.onDisableRefresh(function(){
         WebPullToRefresh.disable();
     });
 }
