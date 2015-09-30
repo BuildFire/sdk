@@ -31,6 +31,7 @@ var buildfire = {
                 div.style.backgroundColor = 'black';
                 div.style.opacity = 0.8;
                 div.style.display = 'none';
+                div.style.zIndex = 9999;
                 buildfire.logger._logContainerDIV = div;
 
                 var btn = document.createElement('button');
@@ -66,6 +67,10 @@ var buildfire = {
         }
         , init: function () {
             //buildfire.logger._suppress = window.location.href.indexOf('http') >=0;
+
+            var qs = buildfire.parseQueryString();
+            buildfire.fid = qs.fid;
+
             buildfire.logger._createLogContainerDIV();
             ///hijack console
             var l = console.log;
@@ -356,7 +361,7 @@ var buildfire = {
 
         buildfire._callbacks[packet.id] = wrapper;
 
-        if (buildfire.context && buildfire.context.instanceId) packet.instanceId = buildfire.context.instanceId;
+        packet.fid= buildfire.fid;
         var p;
         if (typeof(angular) != "undefined")
             p = angular.toJson(packet);
