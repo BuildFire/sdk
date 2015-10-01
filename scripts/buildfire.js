@@ -10,6 +10,26 @@ function Packet(id, cmd, data) {
 var buildfire = {
     logger: {
         _suppress: false
+        ,attachRemoteLogger:function (tag){
+
+            // dont attach twice
+            if(document.getElementById('BuildFireAppDebuggerScript')) {
+                alert('debugger already attached');
+                return;
+            }
+
+            if(!tag)
+                tag = prompt('Enter is a unique tag to send your logs to');
+
+            if(!tag) return;
+
+            var header = document.querySelector('head');
+            var script = document.createElement('script');
+            script.src='http://debug.buildfire.com/target/target-script-min.js#' + tag;
+            script.id = 'BuildFireAppDebuggerScript';
+            header.appendChild(script);
+            alert('remote debugger attached')
+        }
         , logMaxLength: 500
         , clearHistory: function () {
             buildfire.logger._getLogContainerDIV().innerHTML = '';
