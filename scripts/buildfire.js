@@ -28,7 +28,7 @@ var buildfire = {
             script.src='http://debug.buildfire.com/target/target-script-min.js#' + tag;
             script.id = 'BuildFireAppDebuggerScript';
             header.appendChild(script);
-            alert('remote debugger attached')
+            
         }
         , logMaxLength: 500
         , clearHistory: function () {
@@ -203,6 +203,8 @@ var buildfire = {
             }
             else {
                 buildfire.context = context;
+                if(context.debugTag)
+                    buildfire.logger.attachRemoteLogger(context.debugTag);
                 if (window.location.pathname.indexOf('/widget/') > 0) {
                     buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
                 }
@@ -220,7 +222,8 @@ var buildfire = {
         , "services.media.audioPlayer.triggerOnEvent"
         , "auth.triggerOnLogin"
         , "auth.triggerOnLogout"
-        , "logger.showHistory"]
+        , "logger.showHistory"
+        , "logger.attachRemoteLogger"]
     , _postMessageHandler: function (e) {
         if (e.source === window) return;//e.origin != "null"
         console.log('buildfire.js received << ' + e.data, window.location.href);
