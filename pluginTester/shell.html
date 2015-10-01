@@ -8,7 +8,7 @@
     <link href="../styles/bootstrap.css" rel="stylesheet">
     <link href="../styles/siteStyle.css" rel="stylesheet">
     <link href="../styles/helper.css" rel="stylesheet">
-	<link href="../styles/siteIcons.css" rel="stylesheet">
+    <link href="../styles/siteIcons.css" rel="stylesheet">
     <link href="http://int2.myapp.buildfire.com/styles/siteScreen.css" rel="stylesheet">
 
     <link href="styles/pulldown.css" rel="stylesheet">
@@ -27,31 +27,37 @@
 <div id="container" ng-controller="openDialogCtrl">
     <header class="navbar-fixed-top border-bottom-grey">
         <div class="contain">
+            <a href="http://buildfire.com" class="logo text-center ng-scope">
+                <img src="http://cdn.pluginserver.buildfire.com/docResources/logo.jpg">
+            </a>
+
             <div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
         </div>
     </header>
     <nav>
         <ul class="menu">
             <li>
-                <a ng-href="http://int2.myapp.buildfire.com:89" target="_blank" class="parent primary-color-hover transition-third" >
+                <a ng-href="http://int2.myapp.buildfire.com:89" target="_blank"
+                   class="parent primary-color-hover transition-third">
                     <p class="text margin-zero ellipsis transition-third">Submit Plugin</p>
                     <span class="icon icon-window transition-third"></span>
                 </a>
             </li>
             <li class="datatracer">
                 <a href="{{dataTracer}}" class="parent primary-color-hover transition-third" target="_blank">
-                    <p class="text margin-zero ellipsis transition-third" >Data Tracer (ALPHA)</p>
+                    <p class="text margin-zero ellipsis transition-third">Data Tracer (ALPHA)</p>
                     <span class="icon icon-code transition-third"></span>
                 </a>
             </li>
             <li>
-                <a  target="_blank" class="parent primary-color-hover transition-third" href="http://int2.myapp.buildfire.com">
+                <a target="_blank" class="parent primary-color-hover transition-third"
+                   href="http://int2.myapp.buildfire.com">
                     <p class="text margin-zero ellipsis transition-third">Control Panel</p>
                     <span class="icon icon-window transition-third"></span>
                 </a>
             </li>
             <li class="dark divider">
-				Recent Plugins
+                Recent Plugins
             </li>
             <li class="dark" ng-repeat="p in recentPlugins">
                 <a ng-cloak href="shell.html#{{p}}" class="parent primary-color-hover transition-third">
@@ -69,7 +75,8 @@
             <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
                 <div class="header clearfix">
                     <h4 class="margin-zero">Plugin</h4>
-                    <input type="text" ng-cloak value="{{pluginFolder}}" style="color:white;background-color: #5e5e5e; border:none; margin-left:15px;" >
+                    <input type="text" ng-cloak value="{{pluginFolder}}"
+                           style="color:white;background-color: #5e5e5e; border:none; margin-left:15px;">
                 </div>
                 <div class="layout padded clearfix">
                     <ul class="nav nav-tabs nav-justified">
@@ -90,21 +97,29 @@
             <section id="emulator" class="pull-right">
                 <div id="emulatorContainer" class="border-grey">
                     <span class="emulatorlabel">iOS / Android</span>
+
                     <div id="app" style="overflow: hidden;">
                         <div id="pluginRefreshPanel">
                             <p class="text-center">Pull to Refresh</p>
                         </div>
                         <div id="pluginContentPanel">
-                            <div id="widgetTitle" class="header ">
-                                Title Bar
+
+                            <div id="widgetTitle" class="header" style="min-height:45px;text-align: center;">
+                                <a class="back-btn-icon icon icon-chevron-left pull-left" ng-click="back()"></a>
+                                Title
                             </div>
-                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey"
-                                seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;"
+                                    class="border-grey"
+                                    seamless allowfullscreen
+                                    sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
 
                         </div>
 
                     </div>
-                    <h5>Tools - <a ng-show="!showTools" ng-click="showTools=true">show</a><a ng-show="showTools" ng-click="showTools=false">hide</a></h5>
+                    <h5>Tools - <a ng-show="!showTools" ng-click="showTools=true">show</a><a ng-show="showTools"
+                                                                                             ng-click="showTools=false">hide</a>
+                    </h5>
+
                     <div ng-show="showTools">
                         Deeplink Data <input id="dld" type="text" ng-model="link.deeplinkData"/>
                         <button class="btn btn-primary"

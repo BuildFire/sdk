@@ -106,6 +106,11 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
 
         $scope.init();
 
+        $scope.back=function(){
+            var packet = new Packet(null, "navigation.onBackButtonClick");
+            postMaster.widgetPluginAPI.sendMessage(null, packet);
+        };
+
         $scope.sendDeeplinkData = function () {
             debugger;
             widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.link.deeplinkData;

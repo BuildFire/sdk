@@ -28,7 +28,7 @@ var buildfire = {
             script.src='http://debug.buildfire.com/target/target-script-min.js#' + tag;
             script.id = 'BuildFireAppDebuggerScript';
             header.appendChild(script);
-            
+
         }
         , logMaxLength: 500
         , clearHistory: function () {
@@ -125,6 +125,16 @@ var buildfire = {
                 buildfire.logger.pushHistory(dv);
                 buildfire.logger.pushHistory("w: " + message);
                 w.apply(console, arguments);
+            };
+
+            var i = console.info;
+            console.info = function (message) {
+                var dv = document.createElement('div');
+                dv.innerHTML = "i: " + message;
+                dv.className = 'bg-info';
+                buildfire.logger.pushHistory(dv);
+                buildfire.logger.pushHistory("i: " + message);
+                i.apply(console, arguments);
             };
         }
         , show: function () {
@@ -226,7 +236,7 @@ var buildfire = {
         , "logger.attachRemoteLogger"]
     , _postMessageHandler: function (e) {
         if (e.source === window) return;//e.origin != "null"
-        console.log('buildfire.js received << ' + e.data, window.location.href);
+        console.info('buildfire.js received << ' + e.data, window.location.href);
         var packet = JSON.parse(e.data);
 
         if (packet.id && buildfire._callbacks[packet.id]) {
@@ -286,7 +296,7 @@ var buildfire = {
         , openWindow: function (url, target, callback) {
             if (!target) target = '_blank';
             if (!callback) callback = function () {
-                console.log('openWindow:: completed');
+                console.info('openWindow:: completed');
             };
             var actionItem = {
                 action: 'linkToWeb'
@@ -370,7 +380,7 @@ var buildfire = {
     , _sendPacket: function (packet, callback) {
         if (typeof (callback) != "function")// handels better on response
             callback = function (err, result) {
-                console.log('buildfire.js ignored callback ' + JSON.stringify(arguments));
+                console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
             };
 
         var timeout = setTimeout(function () {
@@ -391,7 +401,7 @@ var buildfire = {
         else
             p = JSON.stringify(packet);
 
-        console.log("BuildFire.js Send >> " + p, window.location.href);
+        console.info("BuildFire.js Send >> " + p, window.location.href);
         if (parent)parent.postMessage(p, "*");
     }
     , analytics: {
@@ -712,7 +722,7 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
         , onReceivedMessage: function (message) {
-            console.log('onReceivedMessage ignored', window.location);
+            console.info('onReceivedMessage ignored', window.location);
         }
     }
     , pluginInstance: {

@@ -63,6 +63,10 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 		console.log('analytics mock track view [' + viewName + ']', metadata);
 	};
 
+	postMaster.widgetPluginAPI.navigation.navigateBack = function(){
+		alert('default back behaviour');
+	};
+
 //override the imageLibTemplate url
 	imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
 	postMaster.controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';
