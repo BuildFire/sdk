@@ -111,13 +111,13 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
             widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.link.deeplinkData;
         };
 
-        if (pluginAPI && controlPluginAPI) {
-            controlPluginAPI.spinner.show = pluginAPI.spinner.show = function () {
+        if (postMaster.widgetPluginAPI && postMaster.controlPluginAPI) {
+            postMaster.controlPluginAPI.spinner.show = postMaster.widgetPluginAPI.spinner.show = function () {
                 $scope.showSpinner = true;
                 $scope.$apply();
             };
 
-            controlPluginAPI.spinner.hide = pluginAPI.spinner.hide = function () {
+            postMaster.controlPluginAPI.spinner.hide = postMaster.widgetPluginAPI.spinner.hide = function () {
                 $scope.showSpinner = false;
                 $scope.$apply();
             };

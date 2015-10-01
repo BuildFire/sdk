@@ -196,11 +196,9 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                     title: "Remove Plugin Instance",
                     message: '<p>Are you sure you want to do this?</p>\
 				<p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
-                    buttonLabels: ["Delete", "Cancel"]
+                    buttonLabels: ["Delete", "Cancel"],
+                    target: e.currentTarget
                 }, function (e) {
-                    // TODO: show the popup just at the top of the delete button not in the top of the iframe
-                    // console.log(me._getOffset(this));
-
                     var itemIndex = me._getItemIndex(item);
                     var itemId = me.items[itemIndex].instanceId;
                     if (itemIndex != -1) {
