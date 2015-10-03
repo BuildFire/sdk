@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?-6lnnd4');
-	src:url('../fonticons/icomoon.eot?#iefix-6lnnd4') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?-6lnnd4') format('woff2'),
-		url('../fonticons/icomoon.ttf?-6lnnd4') format('truetype'),
-		url('../fonticons/icomoon.woff?-6lnnd4') format('woff'),
-		url('../fonticons/icomoon.svg?-6lnnd4#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?-4ttmp6');
+	src:url('../fonticons/icomoon.eot?-4ttmp6#iefix') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?-4ttmp6') format('woff2'),
+		url('../fonticons/icomoon.ttf?-4ttmp6') format('truetype'),
+		url('../fonticons/icomoon.woff?-4ttmp6') format('woff'),
+		url('../fonticons/icomoon.svg?-4ttmp6#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -99,8 +99,11 @@
 .icon-volume-high:before {
 	content: "\e61e";
 }
-.icon-code:before {
+.icon-cli:before {
 	content: "\e619";
+}
+.icon-bug:before {
+	content: "\e626";
 }
 .icon-link2:before {
 	content: "\e60b";
@@ -138,3 +141,4 @@
 .icon-ellipsis:before {
 	content: "\e620";
 }
+
