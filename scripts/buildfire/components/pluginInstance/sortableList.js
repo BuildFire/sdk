@@ -10,13 +10,26 @@ if (typeof (buildfire.components) == "undefined")
 if (typeof (buildfire.components.pluginInstance) == "undefined")
     buildfire.components.pluginInstance = {};
 
-buildfire.components.pluginInstance.getAllPlugins = function (callback) {
+buildfire.components.pluginInstance.getAllPlugins = function (page, callback) {
     var me = this;
-    if (!callback) {
-        throw "Please provide a callback forgetAllPlugins";
+    if (typeof (page) == "function") {
+        callback = page;
+        page = 0;
     }
-    buildfire.pluginInstance.search({}, function (err, result) {
-        callback(err, buildfire.components.pluginInstance._mapFromSearch(result));
+
+    if (!callback) {
+        throw "Please provide a callback forget AllPlugins";
+    }
+    buildfire.pluginInstance.search({
+        pageIndex: page ? page : 0,
+        pageSize: 20
+    }, function (err, result) {
+        if (err) {
+            console.error("Error searching plugins: ", err);
+        }
+        var data = buildfire.components.pluginInstance._mapFromSearch(result);
+        console.log(result)
+        callback(err, { total: result.totalRecord, data: data });
     });
 },
 
@@ -297,9 +310,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                 // remove all selected plugins from this.items and from the DOM
                 me._removeAll();
 
-                buildfire.components.pluginInstance.getAllPlugins(function (err, result) {
-                    me.onLoadAll(result);
-                });
+                me.onLoadAll();
 
             } else {
                 me.onUnloadAll();
