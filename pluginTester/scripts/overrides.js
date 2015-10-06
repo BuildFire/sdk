@@ -35,7 +35,7 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 
 	postMaster.controlPluginAPI.messaging.onNewControlMessage(function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
-		controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
+		postMaster.controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
 	});
 
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
