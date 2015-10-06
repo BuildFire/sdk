@@ -317,13 +317,13 @@ buildfire.components.carousel.view.prototype = {
     },
     // this method allows you to append or replace slider images
     loadItems: function (items, appendItems, layout) {
-        this._initDimensions(layout);
-        this._renderSlider();
-
         if (this.$slider) {
             this._destroySlider();
             this._removeAll();
         }
+
+        this._initDimensions(layout);
+        this._renderSlider();
 
         this._loadItems(items, appendItems);
         this._loadImages();
