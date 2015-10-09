@@ -25,7 +25,7 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj.detail);
 		postMaster.widgetPluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
 	};
-	postMaster.controlPluginAPI.datastore.onUpdate(onUpdate);
+	postMaster.controlPluginAPI.datastore.onUpdate =onUpdate;
 
 
 	postMaster.widgetPluginAPI.messaging.onNewWidgetMessage(function (message) {
