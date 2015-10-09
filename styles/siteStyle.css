@@ -307,6 +307,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 #main-content .wrapper.largeWidth{
 	width:1160px;
+	min-height:inherit;
 }
 #main-content .header,
 html[buildfire] .item .header{
