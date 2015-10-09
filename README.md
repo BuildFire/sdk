@@ -1,4 +1,4 @@
-# BuildFire Plugin SDK
+# BuildFire Plugin SDK ![](https://api.travis-ci.org/BuildFire/sdk.svg)
 This repository provides the framework needed to create a BuildFire Plugin.
 Plugins are components that are added to a BuildFire app (http://buildfire.com) to add additional functionality to the platform. 
 ## Plugins

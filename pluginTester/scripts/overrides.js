@@ -22,10 +22,10 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 	sync
 	*/
 	var onUpdate = function (updateObj) {
-		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj.detail);
+		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
 	};
-	postMaster.controlPluginAPI.datastore.onUpdate(onUpdate);
+	postMaster.controlPluginAPI.datastore.onUpdate =onUpdate;
 
 
 	postMaster.widgetPluginAPI.messaging.onNewWidgetMessage(function (message) {
@@ -35,7 +35,7 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 
 	postMaster.controlPluginAPI.messaging.onNewControlMessage(function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
-		controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
+		postMaster.controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
 	});
 
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
