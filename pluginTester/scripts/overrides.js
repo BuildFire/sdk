@@ -22,7 +22,7 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 	sync
 	*/
 	var onUpdate = function (updateObj) {
-		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj.detail);
+		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
 	};
 	postMaster.controlPluginAPI.datastore.onUpdate =onUpdate;
