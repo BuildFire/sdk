@@ -1,0 +1,30 @@
+{
+  "name": "BuildFireSDK",
+  "version": "1.0.0",
+  "description": "This SDK helps in building BuildFire Plugins",
+  "main": "index.js",
+  "scripts": {
+    "test": ".\\node_modules\\.bin\\karma start karma.conf.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https:/github.com/BuildFire/sdk.git"
+  },
+  "keywords": [
+    "BuildFire",
+    "Plugins"
+  ],
+  "author": "Daniel Hindi",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "karma": "^0.13.10",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.2.1",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-ie-launcher": "^0.2.0",
+    "karma-mocha": "^0.2.0",
+    "karma-safari-launcher": "^0.1.1",
+    "mocha": "^2.3.3"
+  }
+}

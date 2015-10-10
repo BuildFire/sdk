@@ -9,6 +9,11 @@ var expect = chai.expect;
 
 /*******************************************************/
 describe('buildfire', function () {
+    console.log('test');
+    it("buildfire", function () {
+        expect(buildfire).to.a("object");
+    });
+
     it("buildfire.logger should exist and be a object", function () {
         expect(buildfire.logger).to.a("object");
     });
