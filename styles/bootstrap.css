@@ -1440,7 +1440,6 @@ a.bg-danger:hover {
   background-color: #cc2934;
 }
 .page-header {
-  padding-bottom: 9px;
   margin: 40px 0 20px;
   border-bottom: 1px solid #eeeeee;
 }
@@ -1597,7 +1596,7 @@ pre {
   line-height: 1.42857143;
   word-break: break-all;
   word-wrap: break-word;
-  color: #333333;
+  color: #777777;
   background-color: #eef0f0;
   border: 1px solid #dddddd;
   border-radius: 4px;
@@ -4910,10 +4909,9 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   cursor: not-allowed;
 }
 .label {
-  display: inline;
-  padding: .2em .6em .3em;
-  font-size: 75%;
-  font-weight: bold;
+  display: inline-block;
+  padding: 6px 6px 4px;
+  font-size: 70%;
   line-height: 1;
   color: #ffffff;
   text-align: center;
@@ -5509,6 +5507,7 @@ a.list-group-item-danger.active:focus {
   background-color: #ffffff;
   border: 1px solid transparent;
   border-radius: 4px;
+  overflow:hidden;
 }
 .panel-body {
   padding: 25px 15px;
@@ -5516,6 +5515,7 @@ a.list-group-item-danger.active:focus {
 .panel-heading {
   border-bottom: 1px solid transparent;
   border-radius:4px;
+  padding:8px 15px;
 }
 .panel-heading > .dropdown .dropdown-toggle {
   color: inherit;
