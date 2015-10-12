@@ -1,11 +1,11 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('../fonticons/icomoon.eot?-4ttmp6');
-	src:url('../fonticons/icomoon.eot?-4ttmp6#iefix') format('embedded-opentype'),
-		url('../fonticons/icomoon.woff2?-4ttmp6') format('woff2'),
-		url('../fonticons/icomoon.ttf?-4ttmp6') format('truetype'),
-		url('../fonticons/icomoon.woff?-4ttmp6') format('woff'),
-		url('../fonticons/icomoon.svg?-4ttmp6#icomoon') format('svg');
+	src:url('../fonticons/icomoon.eot?rgwday');
+	src:url('../fonticons/icomoon.eot?rgwday#iefix') format('embedded-opentype'),
+		url('../fonticons/icomoon.woff2?rgwday') format('woff2'),
+		url('../fonticons/icomoon.ttf?rgwday') format('truetype'),
+		url('../fonticons/icomoon.woff?rgwday') format('woff'),
+		url('../fonticons/icomoon.svg?rgwday#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -93,6 +93,9 @@
 .icon-puzzle:before {
 	content: "\e609";
 }
+.icon-fence:before {
+	content: "\e800";
+}
 .icon-bullhorn:before {
 	content: "\e60a";
 }
@@ -137,6 +140,9 @@
 }
 .icon-forward-circle:before {
 	content: "\e614";
+}
+.icon-check-square:before {
+	content: "\e801";
 }
 .icon-ellipsis:before {
 	content: "\e620";

@@ -7,6 +7,7 @@
     <!-- CSS -->
     <link href="../styles/bootstrap.css" rel="stylesheet">
     <link href="../styles/siteStyle.css" rel="stylesheet">
+    <link href="../styles/loading.css" rel="stylesheet">
     <link href="../styles/helper.css" rel="stylesheet">
     <link href="../styles/siteIcons.css" rel="stylesheet">
     <link href="http://int2.myapp.buildfire.com/styles/siteScreen.css" rel="stylesheet">
@@ -30,7 +31,6 @@
             <a href="http://buildfire.com" class="logo text-center ng-scope">
                 <img src="http://cdn.pluginserver.buildfire.com/docResources/logo.jpg">
             </a>
-
             <div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
         </div>
     </header>
@@ -40,13 +40,13 @@
                 <a ng-href="http://int2.myapp.buildfire.com:89" target="_blank"
                    class="parent primary-color-hover transition-third">
                     <p class="text margin-zero ellipsis transition-third">Submit Plugin</p>
-                    <span class="icon icon-window transition-third"></span>
+                    <span class="icon icon-check-square transition-third"></span>
                 </a>
             </li>
             <li class="datatracer">
                 <a href="{{dataTracer}}" class="parent primary-color-hover transition-third" target="_blank">
-                    <p class="text margin-zero ellipsis transition-third">Data Tracer (ALPHA)</p>
-                    <span class="icon icon-code transition-third"></span>
+                    <p class="text margin-zero ellipsis transition-third">Data Tracer</p>
+                    <span class="icon icon-cli transition-third"></span>
                 </a>
             </li>
             <li>
@@ -65,22 +65,25 @@
                 </a>
             </li>
         </ul>
-        <div style="margin-top:20px;">
-                <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/BuildfireDev" data-widget-id="649687174758010880">Tweets by @BuildfireDev</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        <div class="tweets-iframe margin-top-twenty">
+			<a class="twitter-timeline" data-dnt="true" href="https://twitter.com/BuildfireDev" data-widget-id="649687174758010880">Tweets by @BuildfireDev</a>
+          	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         </div>
     </nav>
     <section id="main-content">
         <div class="shell-sdk holder">
             <div role="alert"></div>
-            <div class="dots-loader" ng-show="showSpinner" style="position: absolute; left:50%; top:500px;">
-                Loading…
-            </div>
             <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
-                <div class="header clearfix">
+				<div class="loading-screen" ng-show="showSpinner">
+					<div class="loading-bg">
+						<div class="loading-dots">
+							<div class="dot dot1"></div>
+							<div class="dot dot2"></div>
+						</div>
+					</div>
+				</div>                <div class="header clearfix">
                     <h4 class="margin-zero">Plugin</h4>
-                    <input type="text" ng-cloak value="{{pluginFolder}}"
-                           style="color:white;background-color: #5e5e5e; border:none; margin-left:15px;">
+                    <input class="plugin-input margin-left-fifteen border-none border-radius-four" type="text" ng-cloak value="{{pluginFolder}}" placeholder="Plugin Name">
                 </div>
                 <div class="layout padded clearfix">
                     <ul class="nav nav-tabs nav-justified">
@@ -102,35 +105,43 @@
                 <div id="emulatorContainer" class="border-grey">
                     <span class="emulatorlabel">iOS / Android</span>
 
-                    <div id="app" style="overflow: hidden;">
+                    <div id="app" class="overflow-hidden">
+						<div class="loading-screen" ng-show="showSpinner">
+							<div class="loading-bg">
+								<div class="loading-dots">
+									<div class="dot dot1"></div>
+									<div class="dot dot2"></div>
+								</div>
+							</div>
+						</div>
                         <div id="pluginRefreshPanel">
                             <p class="text-center">Pull to Refresh</p>
                         </div>
                         <div id="pluginContentPanel">
-
-                            <div id="widgetTitle" class="header" style="min-height:45px;text-align: center;">
+                            <div id="widgetTitle" class="header text-center" style="min-height:45px;">
                                 <a class="back-btn-icon icon icon-chevron-left pull-left" ng-click="back()"></a>
                                 <span ng-click="titleClick()">Title</span>
                             </div>
-                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;"
-                                    class="border-grey"
-                                    seamless allowfullscreen
-                                    sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
-
+                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
                         </div>
-
                     </div>
-                    <h5>Tools - <a ng-show="!showTools" ng-click="showTools=true">show</a><a ng-show="showTools"
-                                                                                             ng-click="showTools=false">hide</a>
-                    </h5>
-
-                    <div ng-show="showTools">
-                        Deeplink Data <input id="dld" type="text" ng-model="link.deeplinkData"/>
-                        <button class="btn btn-primary"
-                                ng-click="sendDeeplinkData()"
-                                ng-disabled="!link.deeplinkData">Send
-                        </button>
-                    </div>
+					<div class="showTools-links text-center">
+                    	<a ng-show="!showTools" ng-click="showTools=true">Show Tools</a>
+						<a ng-show="showTools" ng-click="showTools=false">Hide Tools</a>
+					</div>
+                    <div class="showTools-content margin-top-ten clearfix" ng-show="showTools">
+						<div class="labels col-md-3 pull-left padding-zero margin-top-five">
+							<span>Deeplink Data</span>
+						</div>
+						<div class="main col-md-9 pull-right padding-right-zero">
+							<div class="col-md-8 pull-left padding-zero">
+								<input id="dld" type="text" class="form-control" ng-model="link.deeplinkData"/>
+							</div>
+							<div class="col-md-4 pull-right padding-right-zero">
+                        		<button class="btn btn-primary stretch" ng-click="sendDeeplinkData()" ng-disabled="!link.deeplinkData">Send </button>
+                    		</div>
+						</div>
+					</div>
                 </div>
             </section>
 
@@ -146,8 +157,6 @@
 <script type="text/javascript" src="scripts/overrides.js"></script>
 <script type="text/javascript" src="scripts/shellCtrl.js"></script>
 <script type="text/javascript" src="scripts/pullDownToRefresh.js"></script>
-
-<link rel="stylesheet" href="http://css-spinners.com/css/spinner/dots.css" type="text/css">
 
 </body>
 </html>

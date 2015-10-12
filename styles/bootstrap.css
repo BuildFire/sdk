@@ -5720,6 +5720,11 @@ accordion.margin-bottom-zero .panel-group{
 }
 .accordion-holder .panel-group{
   margin-bottom:0;
+  font-size:13px;
+}
+.accordion-holder .panel-heading .panel-title a{
+  padding:4px 0px;
+  font-size:13px;
 }
 .panel-group .panel {
   margin-bottom: 0;

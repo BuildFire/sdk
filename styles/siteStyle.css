@@ -304,6 +304,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	width:765px;
 	min-height:723px;
 	margin-bottom:138px;
+	position:relative;
 }
 #main-content .wrapper.largeWidth{
 	width:1160px;
@@ -369,7 +370,7 @@ html[buildfire] .item .header .pull-right .btn{
 }
 .inner-main .accordion-holder .item .inner-main p{
 	margin-top:6px;
-	font-size:14px;
+	font-size:13px;
 }
 .item span.tip{
 	display:inline-block;
@@ -1116,6 +1117,31 @@ body.rtl .pagination > li{
 body.rtl .pagination > li + li{
 	margin-right:4px;
 	margin-left:0;
+}
+
+/* SDK */
+.shell-sdk .plugin-input{
+	color:#fff;
+	background: #5e5e5e; 
+	padding:4px 8px;
+	font-size:13px;
+	line-height:20px;
+	margin:-5px 0;
+}
+.shell-sdk #emulatorContainer .showTools-links{
+	position:absolute;
+	width:150px;
+	font-size:13px;
+	line-height:20px;
+	bottom:19px;
+	left:50%;
+	margin-left:-75px;
+}
+.shell-sdk #emulatorContainer .showTools-content .labels span{
+	font-size:12px;
+}
+.shell-sdk #emulator #app{
+	position:relative;
 }
 
 /* Plugin iFrame */
