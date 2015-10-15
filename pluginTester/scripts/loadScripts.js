@@ -2,6 +2,7 @@ function _ScriptLoader(){
     this.domain="http://int2.myapp.buildfire.com/";
     this.scripts = [
         , this.domain + "app/scripts/framework/postMaster.js"
+        , this.domain + "app/scripts/framework/phonegapPlugins.js"
         , this.domain + "scripts/framework/pluginAPI/imageLibAPI.js"
         , this.domain + "scripts/framework/pluginAPI/actionItemsAPI.js"
         , this.domain + "app/scripts/lib/hammer.2.0.4.js"// pull down to refresh
