@@ -219,9 +219,16 @@ buildfire.components.carousel.editor.prototype = {
         // initialize add new item button
         me.selector.querySelector(".add-new-carousel").addEventListener("click", function () {
             me._openImageLib( function (imageUrls) {
-                var newItems=[];
-                for (var i=0;i<imageUrls.length ; i++)
-                    newItems.push(buildfire.actionItems.create(null,imageUrls[i],'image'));
+                var newItems = [], currentItem = null;
+                for (var i = 0; i < imageUrls.length ; i++) {
+                    currentItem = buildfire.actionItems.create(null, imageUrls[i], 'image');
+                    if (!currentItem.action) {
+                        currentItem.action = "linkToWeb";
+                    }
+
+                    newItems.push(currentItem);
+                    currentItem = null;
+                }
 
                 if(newItems.length) {
                     me.loadItems(newItems, true);
@@ -351,10 +358,12 @@ buildfire.components.carousel.view.prototype = {
     },
     _initDimensions: function (layout) {
         this.width = window.innerWidth;
-        layout = layout || 1;
-        if (layout == 1) {
+        layout = layout || "WideScreen";
+        if (layout == "WideScreen") {
             this.height = Math.ceil(9 * this.width / 16);
-        } else {
+        } else if (layout == "Square") {
+            this.height = this.width;
+        } else if (layout == "Cinema") {
             this.height = Math.ceil(1 * this.width / 2.39);
         }
 
@@ -429,6 +438,7 @@ buildfire.components.carousel.view.prototype = {
         this.selector.style.left = "0px";
         this.selector.style.width = this.cssWidth;
         this.selector.style.height = this.cssHeight;
+        this.selector.className = this.selector.className + " plugin-slider text-center";
     },
     // loop and append the images to the DOM
     _loadImages: function () {
@@ -442,6 +452,7 @@ buildfire.components.carousel.view.prototype = {
     // add new slider to the DOM
     _appendItem: function (item) {
         var slider = document.createElement("div");
+        slider.className = "plugin-slide";
         slider.addEventListener("click", function () {
             buildfire.actionItems.execute(item, function (err, result) {
                 if (err) {
@@ -451,7 +462,6 @@ buildfire.components.carousel.view.prototype = {
         });
         var image = document.createElement("img");
 
-        slider.className = "item";
         image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
         image.style.width = this.cssWidth;
         image.style.height = this.cssHeight;
