@@ -1357,6 +1357,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	height:inherit;
 	min-height:inherit;
 	font-size:14px;
+	background:none;
 }
 .user-profile.edit textarea.form-control{
 	min-height:40px;
@@ -1364,6 +1365,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .user-profile.edit .item.no-span .form-control{
 	padding:6px 0;
+}
+
+/* Appearance Sample Page */
+.appearance-sample .icons span.icon{
+	font-size:20px;
 }
 
 

@@ -1403,6 +1403,14 @@ a.text-danger:hover {
   color: #cc2934;
   text-decoration:underline;
 }
+.text-default{
+	color:#777;
+}
+a.text-default:hover {
+  cursor:pointer;
+  color: #777;
+  text-decoration:underline;
+}
 .bg-primary {
   color: #fff;
   background-color: #09A3EE;
