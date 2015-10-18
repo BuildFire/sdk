@@ -61,7 +61,7 @@ buildfire.components.pluginInstance._mapFromSearch = function (data) {
 };
 
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.pluginInstance.sortableList = function (selector, items, dialogOptions, loadAllItems) {
+buildfire.components.pluginInstance.sortableList = function (selector, items, dialogOptions, loadAllItems, hideLoadButton) {
     // sortableList requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use sortableList components");
     this.selector = selector;
@@ -69,8 +69,9 @@ buildfire.components.pluginInstance.sortableList = function (selector, items, di
     this.loadedInstances = [];
     this.checkId = "loadAllPlugins" + Math.floor((Math.random() * 1000) + 1);
     this.loadAllSelector = "#" + this.checkId;
+    this.hideLoadButton = hideLoadButton;
     this._loadAllItems = loadAllItems ? true : false;
-    this.dialogOptions = typeof (dialogOptions) == "object" ? dialogOptions : { showIcon: true };
+    this.dialogOptions = typeof (dialogOptions) == "object" && dialogOptions != null? dialogOptions : { showIcon: true };
     this.init(selector);
     this.loadItems(items);
 };
@@ -273,7 +274,9 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         contentContainer.appendChild(getAllContainer);
         contentContainer.appendChild(sliderContainer);
         componentContainer.appendChild(contentContainer);
-
+        if (this.hideLoadButton) {
+            getAllContainer.style.display = "none";
+        }
         this.selector.appendChild(componentContainer);
     },
     // initialize the generic events

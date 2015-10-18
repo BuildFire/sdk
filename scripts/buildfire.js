@@ -917,6 +917,14 @@ var buildfire = {
             return buildfire.eventManager.add('authOnLogout', data);
         }
     }
+    /// https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
+    , device: {
+        calendar:{
+            addEvent: function(event,callback){
+                buildfire._sendPacket(new Packet(null,'device.calendar.addEvent',event),callback);
+            }
+        }
+    }
 };
 buildfire.init();
 
