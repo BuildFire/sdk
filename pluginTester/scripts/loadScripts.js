@@ -16,6 +16,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/actionItemsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/pluginInstanceAPI.js"
         , this.domain + "scripts/framework/pluginAPI/pluginInstanceLibAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/deviceAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/pluginAPI.js"
         , this.domain + "scripts/framework/openDialogCtrl.js"
     ];
