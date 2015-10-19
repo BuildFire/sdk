@@ -184,13 +184,6 @@ textarea{
 	padding:3px;
 }
 
-/* Launcher Plugin */
-#launcherPlugin{
-	border:none;
-	height:100%;
-	width:100%;
-}
-
 /* Plugin Nav */
 #pluginNav{
     height:auto !important;
@@ -223,7 +216,7 @@ textarea{
 	margin:0 auto;
 	max-width:65%;
 	font-size:16px;
-	line-height:19px;
+	line-height:24px;
 	position:relative;
 	top:3px;
 	font-weight:100;
@@ -671,7 +664,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	min-height:71px;
 }
 .layout3 .list-layout .list-item-copy{
-	padding:11px 10px 5px;
+	padding:6px 10px 5px;
 }
 
 
@@ -1020,36 +1013,35 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder{
 	background:#fff;
 }
-.events-plugin .event-calendar .calendar-week span,
-.events-plugin .event-calendar .calendar-month .calendar-day{
-	width:14.25%;
-	display:inline-block;
-	float:left;
-	text-align:center;
+.events-plugin .event-calendar-holder table{
+	border:none;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day{
-	padding:10px;
+.events-plugin .event-calendar-holder table thead tr .small{
+	font-size:13px;
+}
+.events-plugin .event-calendar-holder table thead tr .btn strong{
+	font-weight:100 !important;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
 	position:relative;
+	max-width:100%;
+	display:block;
+	font-size:14px;
+	line-height:22px;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day.disabled{
+.events-plugin .event-calendar-holder .btn-default{
+	background:none !important;
+}
+.events-plugin .event-calendar-holder .disabled{
 	opacity:0.6;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day.active:after{
-	content:'';
-	position:absolute;
-	top:12px;
-	left:50%;
-	width:8px;
-	height:8px;
-	margin-left:-4px;
-	border-radius:100%;
-	background:#09a3ee;
-}
-.events-plugin .event-calendar .calendar-month .calendar-day span{
+.events-plugin .event-calendar-holder .btn.active,
+.events-plugin .event-calendar-holder .btn.btn-info{
 	position:relative;
-	top:12px;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day.selected:before{
+.events-plugin .event-calendar-holder .btn.active:after,
+.events-plugin .event-calendar-holder .btn.btn-info:after{
 	content:'';
 	display:inline-block;
 	width:40px;
@@ -1167,6 +1159,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 
 /* Launcher Plugin */
+#launcherPlugin{
+	border:none;
+	height:100%;
+	width:100%;
+}
 .launcher-plugin .main-logo{
 	text-align:center;
 	height:180px;
@@ -1206,6 +1203,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .launcher-plugin .launcher-icons .launcher-icon span.icon{
 	font-size:22px;
+}
+.launcher-plugin .launcher-icons .launcher-icon img{
+	max-width:22px;
+	height:auto;
+	border-radius:2px;
 }
 .launcher-plugin .launcher-icons .launcher-icon .text-holder p{
 	margin:6px 0 0;
