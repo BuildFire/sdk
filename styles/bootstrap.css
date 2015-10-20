@@ -1403,6 +1403,14 @@ a.text-danger:hover {
   color: #cc2934;
   text-decoration:underline;
 }
+.text-default{
+	color:#777;
+}
+a.text-default:hover {
+  cursor:pointer;
+  color: #777;
+  text-decoration:underline;
+}
 .bg-primary {
   color: #fff;
   background-color: #09A3EE;
@@ -4756,8 +4764,8 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 }
 .breadcrumb > li + li:before {
   content: "/\00a0";
-  margin-left:5px;
-  margin-right:5px;
+  margin-left:10px;
+  margin-right:0px;
   color: #cccccc;
 }
 .breadcrumb > .active {

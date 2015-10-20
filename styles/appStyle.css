@@ -12,8 +12,11 @@ body{
 	color:#5f5f5f;
 	height:100%;
     margin:0px;
-	overflow-x:hidden;
+	overflow:auto;
 	-ms-overflow-style:none;
+	-webkit-overflow-scrolling:touch;
+	overflow-x:hidden;
+	overflow-y:auto;
 }
 ::-webkit-scrollbar{
     display:none;
@@ -95,18 +98,22 @@ textarea{
 .holder .places-plugin .bottom.active{
 	bottom:0;
 }
-.holder .bottom .hidden-content .tabs .tab a{
+.holder .bottom .hidden-content .tabs .tab a,
+.notification-plugin .tabs .tab a{
 	display:block;
 	padding-top:10px;
 	color:#5f5f5f;
 }
-.holder .bottom .hidden-content .tabs .tab + .tab{
+.holder .bottom .hidden-content .tabs .tab + .tab,
+.notification-plugin .tabs .tab + .tab{
 	border-left:1px solid #e5e5e5;
 }
-.holder .bottom .hidden-content .tabs .tab.active a{
+.holder .bottom .hidden-content .tabs .tab.active a,
+.notification-plugin .tabs .tab.active a{
 	color:#09a3ee;
 }
-.holder .bottom .hidden-content .tabs .tab.active:after{
+.holder .bottom .hidden-content .tabs .tab.active:after,
+.notification-plugin .tabs .tab.active:after{
 	content:'';
 	display:block;
 	width:100%;
@@ -121,10 +128,19 @@ textarea{
 	height:229px;
 	overflow:auto;
 }
-.holder .bottom .hidden-content .tab-content .tab.active{
+.notification-plugin .tabs .tab a{
+	padding:10px 8px 8px;
 	display:block;
 }
-.holder .bottom .hidden-content .tab-content a{
+.notification-plugin .tab-content .tab{
+	display:none;
+}
+.holder .bottom .hidden-content .tab-content .tab.active,
+.notification-plugin .tab-content .tab.active{
+	display:block;
+}
+.holder .bottom .hidden-content .tab-content a,
+.notification-plugin .tab-content a{
 	height:auto;
 }
 .holder .bottom .hidden-content .tab-content a.list-item.active{
@@ -168,13 +184,6 @@ textarea{
 	padding:3px;
 }
 
-/* Launcher Plugin */
-#launcherPlugin{
-	border:none;
-	height:100%;
-	width:100%;
-}
-
 /* Plugin Nav */
 #pluginNav{
     height:auto !important;
@@ -207,7 +216,7 @@ textarea{
 	margin:0 auto;
 	max-width:65%;
 	font-size:16px;
-	line-height:19px;
+	line-height:24px;
 	position:relative;
 	top:3px;
 	font-weight:100;
@@ -223,9 +232,25 @@ textarea{
 	right:0;
 	z-index:9999999;
 	background:#fff;
+	cursor:pointer;
 }
 #menuToggle span.icon{
 	font-size:21px;
+}
+#menuToggle .notification-circle{
+	position:absolute;
+	top:8px;
+	left:-12px;
+	width:22px;
+	height:22px;
+	text-align:center;
+	border-radius:100%;
+}
+#menuToggle .notification-circle span{
+	font-size:10px;
+	position:relative;
+	top:-2px;
+	text-align:center;
 }
 
 /* Menu */
@@ -237,6 +262,7 @@ nav.menu{
 	height:100%;
 	z-index:99999999;
 	background:#fff;
+	opacity:0.95;
 	overflow-x:hidden;
 	overflow-y:auto;
 	transition:all 0.35s ease;
@@ -252,6 +278,7 @@ nav.menu a{
 	width:100%;
 	padding:12px;
 	text-decoration:none;
+	position:relative;
 }
 nav.menu a.username{
 	padding-top:15px;
@@ -265,6 +292,11 @@ nav.menu span.menu-close{
 	font-size:13px;
 	font-weight:600;
 	cursor:pointer;
+	z-index:99;
+}
+nav.menu #sideMenuCloseButton{
+    padding:15px;
+    margin:-15px;
 }
 nav.menu a.divider{
 	padding-top:6px;
@@ -293,6 +325,23 @@ nav.menu a p{
 	max-width:100%;
 	font-size:13px;
 	line-height:18px;
+}
+nav.menu a.notifications p{
+	padding-right:45px;
+}
+nav.menu a.notifications .notification-circle{
+	position:absolute;
+	top:13px;
+	right:12px;
+	height:20px;
+	padding:0 7px;
+	border-radius:10px;
+}
+nav.menu a.notifications .notification-circle span{
+	color:#fff !important;
+	font-size:11px;
+	position:relative;
+	top:-1px;
 }
 
 /* People Plugin */
@@ -615,7 +664,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	min-height:71px;
 }
 .layout3 .list-layout .list-item-copy{
-	padding:11px 10px 5px;
+	padding:6px 10px 5px;
 }
 
 
@@ -858,7 +907,8 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	font-size:15px;
 	line-height:20px;
 }
-.media-player-settings .settings-list .checkbox label::after{
+.media-player-settings .settings-list .checkbox label::after,
+.notification-plugin .notification-item .checkbox label::after{
 	left:-1px;
 }
 
@@ -963,36 +1013,35 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder{
 	background:#fff;
 }
-.events-plugin .event-calendar .calendar-week span,
-.events-plugin .event-calendar .calendar-month .calendar-day{
-	width:14.25%;
-	display:inline-block;
-	float:left;
-	text-align:center;
+.events-plugin .event-calendar-holder table{
+	border:none;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day{
-	padding:10px;
+.events-plugin .event-calendar-holder table thead tr .small{
+	font-size:13px;
+}
+.events-plugin .event-calendar-holder table thead tr .btn strong{
+	font-weight:100 !important;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
 	position:relative;
+	max-width:100%;
+	display:block;
+	font-size:14px;
+	line-height:22px;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day.disabled{
+.events-plugin .event-calendar-holder .btn-default{
+	background:none !important;
+}
+.events-plugin .event-calendar-holder .disabled{
 	opacity:0.6;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day.active:after{
-	content:'';
-	position:absolute;
-	top:12px;
-	left:50%;
-	width:8px;
-	height:8px;
-	margin-left:-4px;
-	border-radius:100%;
-	background:#09a3ee;
-}
-.events-plugin .event-calendar .calendar-month .calendar-day span{
+.events-plugin .event-calendar-holder .btn.active,
+.events-plugin .event-calendar-holder .btn.btn-info{
 	position:relative;
-	top:12px;
 }
-.events-plugin .event-calendar .calendar-month .calendar-day.selected:before{
+.events-plugin .event-calendar-holder .btn.active:after,
+.events-plugin .event-calendar-holder .btn.btn-info:after{
 	content:'';
 	display:inline-block;
 	width:40px;
@@ -1110,6 +1159,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 
 /* Launcher Plugin */
+#launcherPlugin{
+	border:none;
+	height:100%;
+	width:100%;
+}
 .launcher-plugin .main-logo{
 	text-align:center;
 	height:180px;
@@ -1150,6 +1204,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .launcher-plugin .launcher-icons .launcher-icon span.icon{
 	font-size:22px;
 }
+.launcher-plugin .launcher-icons .launcher-icon img{
+	max-width:22px;
+	height:auto;
+	border-radius:2px;
+}
 .launcher-plugin .launcher-icons .launcher-icon .text-holder p{
 	margin:6px 0 0;
 	font-size:12px;
@@ -1188,6 +1247,133 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	top:4px;
 }
 
+/* Push Notifications */
+.push-notifications .push-item{
+	display:block;
+}
+.push-notifications .push-item .ellipsis-two{
+	max-height:45px;
+	overflow:hidden;
+}
+.push-notifications .push-item .indicator{
+	display:inline-block;
+	width:12px;
+	height:12px;
+	border-radius:100%;
+	display:none;
+}
+.push-notifications .push-item .indicator.active{
+	display:inline-block;
+}
+
+/* User Profile */
+.user-profile .edit-profile{
+	position:absolute;
+	bottom:0;
+	left:0;
+	width:100%;
+}
+.user-profile .edit-profile .inner{
+	max-width:677px;
+	padding:10px;
+	width:100%;
+	margin:0 auto;
+}
+.user-profile .user-info{
+	max-width:677px;
+	margin:0 auto;
+	padding:0 15px;
+	width:100%;
+	position:relative;
+}
+.user-profile .user-info .user-avatar{
+	position:absolute;
+	top:-60px;
+	border-radius:100%;
+	border:2px solid #fff;
+	overflow:hidden;
+	width:120px;
+	height:120px;
+	background:#32373a;
+}
+.user-profile .user-info .user-personal{
+	padding-left:140px;
+}
+.user-profile .user-list-items .item{
+	border-top:1px solid #ddd;
+	padding:4px 0 2px;
+	width:100%;
+}
+.user-profile .user-list-items .item span{
+	font-size:12px;
+	line-height:12px;
+}
+.user-profile .user-list-items .item p{
+	margin:-4px 0 0;
+}
+.user-profile .item.location,
+.user-profile .item.bio{
+	border-top:none;
+}
+.user-profile .user-list-items .item:first-child{
+	border-top:none;
+	padding-bottom:0;
+}
+.user-profile .item.location{
+	padding-top:0;
+	margin-top:-8px;
+}
+.user-profile .item.location p{
+	font-size:13px;
+}
+.user-profile .user-list-items{
+	margin:70px auto 0;
+	max-width:677px;
+}
+
+
+/* Edit User Profile */
+.user-profile.edit .plugin-slider:after,
+.user-profile.edit .user-info .user-avatar:after{
+	content:'Upload Photo';
+	position:absolute;
+	top:37%;
+	left:50%;
+	margin-left:-32px;
+	font-size:12px;
+	line-height:16px;
+	width:64px;
+	text-align:center;
+	color:#fff;
+}
+.user-profile.edit .plugin-slider:after{
+	top:48%;
+	font-size:14px;
+	line-height:18px;
+	width:120px;
+	margin-left:-60px;
+}
+.user-profile.edit .form-control{
+	border:none;
+	padding:0;
+	height:inherit;
+	min-height:inherit;
+	font-size:14px;
+	background:none;
+}
+.user-profile.edit textarea.form-control{
+	min-height:40px;
+	resize:none;
+}
+.user-profile.edit .item.no-span .form-control{
+	padding:6px 0;
+}
+
+/* Appearance Sample Page */
+.appearance-sample .icons span.icon{
+	font-size:20px;
+}
+
 
 /* iFrame */
 /* Plugin iFrame */
@@ -1197,7 +1383,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	width:100%;
 	min-width:100%;
 	max-width:100%;
-	min-height:600px;
+	min-height:544px;
 }
 html[buildfire],
 html[buildfire] body{
