@@ -816,7 +816,7 @@ table.table span.sort-icon{
 	width:100%;
 	height:85px;
 	padding:0;
-	line-height:82px;
+	line-height:80px;
 	vertical-align:top;
 	margin-bottom:5px;	
 	background:#eef0f0;
@@ -928,6 +928,13 @@ table.table span.sort-icon{
 }
 .screens .screen:hover > span.icon{
 	opacity:1;
+}
+.screens .screen span.icon.icon-main{
+	position:relative;
+	top:inherit;
+	right:inherit;
+	opacity:1;
+	font-size:32px;
 }
 p.info{
 	font-size:12px;
