@@ -1204,7 +1204,8 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .launcher-plugin .launcher-icons .launcher-icon span.icon{
 	font-size:22px;
 }
-.launcher-plugin .launcher-icons .launcher-icon img{
+.launcher-plugin .launcher-icons .launcher-icon img,
+.launcher-plugin.layout7 .menu-links .menu-item img{
 	max-width:22px;
 	height:auto;
 	border-radius:2px;
