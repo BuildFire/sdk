@@ -534,6 +534,18 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	border-radius:4px;
 	vertical-align:middle;
 }
+.update-plugin .item .media.media-holder .main-icon,
+.plugin-workspace .item .media.media-holder .main-icon,
+.plugin-manager .item .media.media-holder .main-icon{
+	font-size:65px;
+	position:relative !important;
+	top:25px;
+}
+.update-plugin .item .media.media-holder .main-icon.glyphicon,
+.plugin-workspace .item .media.media-holder .main-icon.glyphicon,
+.plugin-manager .item .media.media-holder .main-icon.glyphicon{
+	top:26px;
+}
 .active-plugins .item .media-holder.no-background{
 	background:none;
 }
@@ -878,6 +890,11 @@ table.table span.sort-icon{
 	height:80px;
 	line-height:75px;
 }
+.screens .screen.widelogoicon,
+.screens .screen.widelogoicon a{
+	width:375px;
+	max-width:inherit;
+}
 .screens .screen a span.add-icon{
 	content:'+';
 	color:#14cb5d;
@@ -929,9 +946,9 @@ table.table span.sort-icon{
 .screens .screen:hover > span.icon{
 	opacity:1;
 }
-.screens .screen span.icon.icon-main{
+.screens .screen span.icon.main-icon{
 	position:relative;
-	top:inherit;
+	top:12px;
 	right:inherit;
 	opacity:1;
 	font-size:32px;
