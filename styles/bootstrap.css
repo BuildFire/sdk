@@ -2611,6 +2611,7 @@ output {
   background-image: none;
   border: 1px solid #dddddd;
   border-radius: 4px;
+  box-shadow:none;
 }
 input[type="checkbox"].form-control,
 input[type="radio"].form-control{

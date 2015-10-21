@@ -1274,6 +1274,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	left:0;
 	width:100%;
 }
+.user-profile .edit-profile.done-editing{
+	bottom:-27px;
+}
 .user-profile .edit-profile .inner{
 	max-width:677px;
 	padding:10px;
