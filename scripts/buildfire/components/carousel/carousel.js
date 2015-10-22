@@ -402,25 +402,28 @@ buildfire.components.carousel.view.prototype = {
     },
     // initialize the slider
     _applySlider: function () {
-        var sliderOptions = {
-            navigation: false,
-            dots: true,
-            slideSpeed: 450,
-            paginationSpeed: 400,
-            singleItem: true,
-            pagination: false,
-            items: 1,
-            itemsMobile: true,
-            autoHeight: false
-        };
-
+        this.$slider = $(this.selector);
         if (this.items.length > 1) {
+
+            var sliderOptions = {
+                navigation: false,
+                dots: true,
+                slideSpeed: 450,
+                paginationSpeed: 400,
+                singleItem: true,
+                pagination: false,
+                items: 1,
+                itemsMobile: true,
+                autoHeight: false
+            };
+
             sliderOptions.autoplay = 3000;
             sliderOptions.autoplaySpeed = 500;
             sliderOptions.loop = true;
+
+            this.$slider.owlCarousel(sliderOptions);
         }
 
-        this.$slider = $(this.selector).owlCarousel(sliderOptions);
     },
     // destroy the slider if it's already in the DOM
     _destroySlider: function () {
@@ -453,13 +456,15 @@ buildfire.components.carousel.view.prototype = {
     _appendItem: function (item) {
         var slider = document.createElement("div");
         slider.className = "plugin-slide";
-        slider.addEventListener("click", function () {
-            buildfire.actionItems.execute(item, function (err, result) {
-                if (err) {
-                    console.warn('Error openning slider action: ', err);
-                }
+        if (item.url) {
+            slider.addEventListener("click", function () {
+                buildfire.actionItems.execute(item, function (err, result) {
+                    if (err) {
+                        console.warn('Error openning slider action: ', err);
+                    }
+                });
             });
-        });
+        }
         var image = document.createElement("img");
 
         image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
