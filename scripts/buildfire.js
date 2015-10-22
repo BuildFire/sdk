@@ -7,6 +7,7 @@ function Packet(id, cmd, data) {
     this.instanceId = null;
 }
 
+/// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
     logger: {
         _suppress: false
@@ -202,6 +203,16 @@ var buildfire = {
         }
     }
     , _callbacks: {}
+    , parseQueryString: function () {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        var obj = new Object();
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+        return obj;
+    }
     ///custom events are super thus this implementation
     , eventManager: {
         events: {}
@@ -303,10 +314,38 @@ var buildfire = {
             //alert('parent sent: ' + packet.data);
         }
     }
+    , _sendPacket: function (packet, callback) {
+        if (typeof (callback) != "function")// handels better on response
+            callback = function (err, result) {
+                console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
+            };
+
+        var timeout = setTimeout(function () {
+            console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
+        }, 5000);
+        var wrapper = function (err, data) {
+
+            clearTimeout(timeout);
+            callback(err, data);
+        };
+
+        buildfire._callbacks[packet.id] = wrapper;
+
+        packet.fid= buildfire.fid;
+        var p;
+        if (typeof(angular) != "undefined")
+            p = angular.toJson(packet);
+        else
+            p = JSON.stringify(packet);
+
+        console.info("BuildFire.js Send >> " + p, window.location.href);
+        if (parent)parent.postMessage(p, "*");
+    }
     , getContext: function (callback) {
         var p = new Packet(null, 'getContext');
         buildfire._sendPacket(p, callback);
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
     , navigation: {
         /**
          * Navigate To plugin
@@ -362,6 +401,7 @@ var buildfire = {
             buildfire.navigation.onBackButtonClick();
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
          insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
@@ -526,33 +566,7 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
     }
-    , _sendPacket: function (packet, callback) {
-        if (typeof (callback) != "function")// handels better on response
-            callback = function (err, result) {
-                console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
-            };
-
-        var timeout = setTimeout(function () {
-            console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
-        }, 5000);
-        var wrapper = function (err, data) {
-
-            clearTimeout(timeout);
-            callback(err, data);
-        };
-
-        buildfire._callbacks[packet.id] = wrapper;
-
-        packet.fid= buildfire.fid;
-        var p;
-        if (typeof(angular) != "undefined")
-            p = angular.toJson(packet);
-        else
-            p = JSON.stringify(packet);
-
-        console.info("BuildFire.js Send >> " + p, window.location.href);
-        if (parent)parent.postMessage(p, "*");
-    }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
     , analytics: {
         trackAction: function (actionName, metadata) {
             var p = new Packet(null, "analytics.trackActionCommand", {
@@ -801,6 +815,7 @@ var buildfire = {
         }
 
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
             var p = new Packet(null, 'notificationsAPI.alert', options);
@@ -823,6 +838,8 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-action-Items
+    /// also https://github.com/BuildFire/sdk/wiki/BuildFire-Action-Items-Component
     , actionItems: {
         showDialog: function (actionItem, options, callback) {
             var p = new Packet(null, 'actionItems.showDialog', {actionItem: actionItem, options: options});
@@ -846,6 +863,7 @@ var buildfire = {
             return actionItem;
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Breadcrumbs
     , history: {
         push: function (label, options, callback) {
             var p = new Packet(null, 'history.push', {label: label, options: options, source: "plugin"});
@@ -861,6 +879,7 @@ var buildfire = {
             // add to allow user to popup history items
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Messaging-to-sync-your-Control-to-Widget
     , messaging: {
         sendMessageToControl: function (data) {
             var p = new Packet(null, 'messaging.triggerOnNewControlMessage', data);
@@ -874,6 +893,7 @@ var buildfire = {
             console.info('onReceivedMessage ignored', window.location);
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Instances
     , pluginInstance: {
         showDialog: function (options, callback) {
             var p = new Packet(null, 'pluginInstances.showDialog', {options: options});
@@ -895,16 +915,7 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
     }
-    , parseQueryString: function () {
-        var query = window.location.search.substring(1);
-        var vars = query.split('&');
-        var obj = new Object();
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split('=');
-            obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
-        }
-        return obj;
-    }
+    /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
     , deeplink: {
         getData: function (callback) {
             var qs = buildfire.parseQueryString();
@@ -918,6 +929,7 @@ var buildfire = {
                 return root + "?dld=" + JSON.stringify(obj);
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
         show: function () {
             buildfire._sendPacket(new Packet(null, 'spinner.show'));
@@ -926,6 +938,7 @@ var buildfire = {
             buildfire._sendPacket(new Packet(null, 'spinner.hide'));
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Auth
     , auth: {
         login: function (options, callback) {
             var p = new Packet(null, 'auth.login', options);
@@ -952,7 +965,7 @@ var buildfire = {
             return buildfire.eventManager.add('authOnLogout', data);
         }
     }
-    /// https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
+    /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
     , device: {
         calendar:{
             addEvent: function(event,callback){
