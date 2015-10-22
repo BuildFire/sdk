@@ -779,9 +779,14 @@ var buildfire = {
             var p = new Packet(null, 'imageLib.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
+        //options:{
+        // width: integer or 'full'
+        // height: integer or 'full'
+        // disablePixelRation: bool
+        // }
         , resizeImage: function (url, options) {
             var root = "http://s7obnu.cloudimage.io/s/";
-
+            var ratio = options.disablePixelRation?1:window.devicePixelRatio;
             if (!options)
                 options = {width: window.innerWidth};
             else if (typeof(options) != "object")
@@ -791,11 +796,11 @@ var buildfire = {
             if (options.height == 'full') options.height = window.innerHeight;
 
             if (options.width && !options.height)
-                return root + "width/" + options.width + "/" + url;
+                return root + "width/" + (options.width * ratio) + "/" + url;
             else if (!options.width && options.height)
-                return root + "height/" + options.height + "/" + url;
+                return root + "height/" + (options.height * ratio) + "/" + url;
             else if (options.width && options.height)
-                return root + "resizenp/" + options.width + "x" + options.height + "/" + url;
+                return root + "resizenp/" + (options.width * ratio) + "x" + (options.height * ratio) + "/" + url;
             else
                 return url;
         }
