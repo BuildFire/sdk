@@ -957,7 +957,8 @@ table.table span.sort-icon{
 .screens .screen:hover > span.icon{
 	opacity:1;
 }
-.screens .screen span.icon.main-icon{
+.screens .screen span.icon.main-icon,
+.screens .screen span.glyphicon.main-icon{
 	position:relative;
 	top:12px;
 	right:inherit;

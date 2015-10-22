@@ -1044,11 +1044,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder .btn.btn-info:after{
 	content:'';
 	display:inline-block;
-	width:38px;
-	height:38px;
-	margin-left:-19px;
+	width:34px;
+	height:34px;
+	margin-left:-17px;
 	position:absolute;
-	top:-7px;
+	top:-3px;
 	left:50%;
 	box-shadow:0 0 0 1px #09a3ee;
 	border-radius:100%;
