@@ -320,6 +320,10 @@ nav.menu a .media img{
 	width:auto;
 	border-radius:2px;
 }
+nav.menu a .media .main-icon{
+	vertical-align:middle;
+	font-size:16px;
+}
 nav.menu a p{
 	margin:3px 0 0;
 	max-width:100%;

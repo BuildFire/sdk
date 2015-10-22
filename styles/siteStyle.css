@@ -432,6 +432,13 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	vertical-align:middle;
 	border-radius:4px;
 }
+.draggable-list-view .d-item .media-holder .main-icon{
+	font-size:20px;
+	top:0;
+	margin:10px 0 0;
+	display:inline-block;
+	color:#5f5f5f;
+}
 .draggable-list-view .d-item span.title{
 	display:inline-block;
 	width:76%;
