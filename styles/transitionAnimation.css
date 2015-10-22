@@ -1,0 +1,55 @@
+/************** plugin + nav  **********/
+.slide {
+    position: absolute;
+    top: 0;
+    /*left: 90%; /* dont scroll till data loaded*/
+    width: 100%;
+    height: 100%;
+	overflow-x:hidden;
+	overflow-y:auto;
+    background-color:white;
+
+    -webkit-transition: -webkit-transform 0.3s ease-in-out;
+    -moz-transition: -moz-transform 0.3s ease-in-out;
+    -o-transition: -o-transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
+
+.slide.final {
+    position: absolute;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
+
+.slide.ng-enter {
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+}
+
+.slide.ng-enter.ng-enter-active, .slide.ng-leave {
+    /*
+    position: absolute;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);*/
+}
+
+.slide.ng-leave.ng-leave-active {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+}
+
+/********ng-Show Fade*********/
+.ngShowFade {
+    transition: 0.3s linear all;
+    opacity: 1;
+}
+.ngShowFade.ng-hide {
+    opacity: 0;
+}
+
+.ngShowFade.ng-hide-add, .ngShowFade.ng-hide-remove {
+    /* ensure visibility during the transition */
+    display: block !important; /* yes, important */
+}
