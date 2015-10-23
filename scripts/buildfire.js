@@ -7,6 +7,7 @@ function Packet(id, cmd, data) {
     this.instanceId = null;
 }
 
+/// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
     logger: {
         _suppress: false
@@ -202,6 +203,16 @@ var buildfire = {
         }
     }
     , _callbacks: {}
+    , parseQueryString: function () {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        var obj = new Object();
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+        return obj;
+    }
     ///custom events are super thus this implementation
     , eventManager: {
         events: {}
@@ -239,7 +250,6 @@ var buildfire = {
                 }
         }
     }
-
     , context: null
     , init: function () {
         // Listen to message from child window
@@ -262,7 +272,7 @@ var buildfire = {
             }
         });
 
-        buildfire._insertHTMLAttributes();
+        buildfire.appearance.insertHTMLAttributes();
         buildfire.appearance.attachCSSFiles();
     }
     , _whitelistedCommands: ["datastore.triggerOnUpdate"
@@ -304,10 +314,38 @@ var buildfire = {
             //alert('parent sent: ' + packet.data);
         }
     }
+    , _sendPacket: function (packet, callback) {
+        if (typeof (callback) != "function")// handels better on response
+            callback = function (err, result) {
+                console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
+            };
+
+        var timeout = setTimeout(function () {
+            console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
+        }, 5000);
+        var wrapper = function (err, data) {
+
+            clearTimeout(timeout);
+            callback(err, data);
+        };
+
+        buildfire._callbacks[packet.id] = wrapper;
+
+        packet.fid= buildfire.fid;
+        var p;
+        if (typeof(angular) != "undefined")
+            p = angular.toJson(packet);
+        else
+            p = JSON.stringify(packet);
+
+        console.info("BuildFire.js Send >> " + p, window.location.href);
+        if (parent)parent.postMessage(p, "*");
+    }
     , getContext: function (callback) {
         var p = new Packet(null, 'getContext');
         buildfire._sendPacket(p, callback);
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
     , navigation: {
         /**
          * Navigate To plugin
@@ -363,8 +401,82 @@ var buildfire = {
             buildfire.navigation.onBackButtonClick();
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
-        getCSSFiles: function (callback) {
+         insertHTMLAttributes: function () {
+            var html = document.getElementsByTagName('html')[0];
+            html.setAttribute('buildfire', 'enabled');
+
+            var nVer = navigator.appVersion;
+            var nAgt = navigator.userAgent;
+            var browserName = navigator.appName;
+            var fullVersion = '' + parseFloat(navigator.appVersion);
+            var majorVersion = parseInt(navigator.appVersion, 10);
+            var nameOffset, verOffset, ix;
+            var os = "Unknown OS";
+// In Opera, the true version is after "Opera" or after "Version"
+            if ((verOffset = nAgt.indexOf("Opera")) != -1) {
+                browserName = "Opera";
+                fullVersion = nAgt.substring(verOffset + 6);
+                if ((verOffset = nAgt.indexOf("Version")) != -1)
+                    fullVersion = nAgt.substring(verOffset + 8);
+            }
+// In MSIE, the true version is after "MSIE" in userAgent
+            else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
+                browserName = "Microsoft Internet Explorer";
+                fullVersion = nAgt.substring(verOffset + 5);
+            }
+// In Chrome, the true version is after "Chrome"
+            else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
+                browserName = "Chrome";
+                fullVersion = nAgt.substring(verOffset + 7);
+            }
+// In Safari, the true version is after "Safari" or after "Version"
+            else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
+                browserName = "Safari";
+                fullVersion = nAgt.substring(verOffset + 7);
+                if ((verOffset = nAgt.indexOf("Version")) != -1)
+                    fullVersion = nAgt.substring(verOffset + 8);
+            }
+// In Firefox, the true version is after "Firefox"
+            else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
+                browserName = "Firefox";
+                fullVersion = nAgt.substring(verOffset + 8);
+            }
+// In most other browsers, "name/version" is at the end of userAgent
+            else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) <
+                (verOffset = nAgt.lastIndexOf('/'))) {
+                browserName = nAgt.substring(nameOffset, verOffset);
+                fullVersion = nAgt.substring(verOffset + 1);
+                if (browserName.toLowerCase() == browserName.toUpperCase()) {
+                    browserName = navigator.appName;
+                }
+            }
+// trim the fullVersion string at semicolon/space if present
+            if ((ix = fullVersion.indexOf(";")) != -1)
+                fullVersion = fullVersion.substring(0, ix);
+            if ((ix = fullVersion.indexOf(" ")) != -1)
+                fullVersion = fullVersion.substring(0, ix);
+
+            majorVersion = parseInt('' + fullVersion, 10);
+            if (isNaN(majorVersion)) {
+                fullVersion = '' + parseFloat(navigator.appVersion);
+                majorVersion = parseInt(navigator.appVersion, 10);
+            }
+
+
+            if (navigator.appVersion.indexOf("Win") != -1) os = "Windows";
+            if (navigator.appVersion.indexOf("Mac") != -1) os = "MacOS";
+            if (navigator.appVersion.indexOf("X11") != -1) os = "UNIX";
+            if (navigator.appVersion.indexOf("Linux") != -1)os = "Linux";
+
+            html.setAttribute('os', os);
+            html.setAttribute('browser', browserName);
+            html.setAttribute('majorVersion', majorVersion);
+            html.setAttribute('fullVersion', fullVersion);
+
+        }
+        , getCSSFiles: function (callback) {
             var p = new Packet(null, 'appearance.getCSSFiles');
             buildfire._sendPacket(p, callback);
         }
@@ -390,7 +502,43 @@ var buildfire = {
             for (var i = 0; i < files.length; i++)
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
+        }
+        , attachFastClick: function(){
 
+            var path;
+            var scripts = document.getElementsByTagName("script");
+            for (var i = 0; i < scripts.length; i++) {
+                if (scripts[i].src.indexOf('buildfire.js') > 0)
+                    path = scripts[i].src.replace('buildfire.js', 'fastclick.js');
+                else if (scripts[i].src.indexOf('fastclick.js') > 0){
+                    console.warn('fastclick already attached');
+                    return;
+                }
+            }
+            if(!path){
+                console.error('buildfire.js not found? This should never happen. I cant trust anything anymore.. mommy!');
+                return;
+            }
+            else {
+                var script = document.createElement('script');
+                script.src = path;
+                script.type="text/javascript";
+                script.onload=function(){
+                    console.info('fastclick.js loaded');
+                    if(typeof(FastClick) == "undefined")
+                        console.error('fastclick undefined');
+                    else
+                        FastClick.attach(document.body);
+                };
+                document.body.appendChild(script);
+            }
+        }
+        , applyFastClick: function(element){
+            if(!element)element=document.body;
+            if(typeof(FastClick) == "undefined")
+                console.error('fastclick undefined');
+            else
+                FastClick.attach(element);
         }
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
             var linkElement = document.createElement("link");
@@ -418,33 +566,7 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
     }
-    , _sendPacket: function (packet, callback) {
-        if (typeof (callback) != "function")// handels better on response
-            callback = function (err, result) {
-                console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
-            };
-
-        var timeout = setTimeout(function () {
-            console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
-        }, 5000);
-        var wrapper = function (err, data) {
-
-            clearTimeout(timeout);
-            callback(err, data);
-        };
-
-        buildfire._callbacks[packet.id] = wrapper;
-
-        packet.fid= buildfire.fid;
-        var p;
-        if (typeof(angular) != "undefined")
-            p = angular.toJson(packet);
-        else
-            p = JSON.stringify(packet);
-
-        console.info("BuildFire.js Send >> " + p, window.location.href);
-        if (parent)parent.postMessage(p, "*");
-    }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
     , analytics: {
         trackAction: function (actionName, metadata) {
             var p = new Packet(null, "analytics.trackActionCommand", {
@@ -657,9 +779,14 @@ var buildfire = {
             var p = new Packet(null, 'imageLib.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
+        //options:{
+        // width: integer or 'full'
+        // height: integer or 'full'
+        // disablePixelRation: bool
+        // }
         , resizeImage: function (url, options) {
             var root = "http://s7obnu.cloudimage.io/s/";
-
+            var ratio = options.disablePixelRation?1:window.devicePixelRatio;
             if (!options)
                 options = {width: window.innerWidth};
             else if (typeof(options) != "object")
@@ -669,11 +796,11 @@ var buildfire = {
             if (options.height == 'full') options.height = window.innerHeight;
 
             if (options.width && !options.height)
-                return root + "width/" + options.width + "/" + url;
+                return root + "width/" + (options.width * ratio) + "/" + url;
             else if (!options.width && options.height)
-                return root + "height/" + options.height + "/" + url;
+                return root + "height/" + (options.height * ratio) + "/" + url;
             else if (options.width && options.height)
-                return root + "resizenp/" + options.width + "x" + options.height + "/" + url;
+                return root + "resizenp/" + (options.width * ratio) + "x" + (options.height * ratio) + "/" + url;
             else
                 return url;
         }
@@ -693,6 +820,7 @@ var buildfire = {
         }
 
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
             var p = new Packet(null, 'notificationsAPI.alert', options);
@@ -715,6 +843,8 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-action-Items
+    /// also https://github.com/BuildFire/sdk/wiki/BuildFire-Action-Items-Component
     , actionItems: {
         showDialog: function (actionItem, options, callback) {
             var p = new Packet(null, 'actionItems.showDialog', {actionItem: actionItem, options: options});
@@ -738,6 +868,7 @@ var buildfire = {
             return actionItem;
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Breadcrumbs
     , history: {
         push: function (label, options, callback) {
             var p = new Packet(null, 'history.push', {label: label, options: options, source: "plugin"});
@@ -753,6 +884,7 @@ var buildfire = {
             // add to allow user to popup history items
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Messaging-to-sync-your-Control-to-Widget
     , messaging: {
         sendMessageToControl: function (data) {
             var p = new Packet(null, 'messaging.triggerOnNewControlMessage', data);
@@ -766,6 +898,7 @@ var buildfire = {
             console.info('onReceivedMessage ignored', window.location);
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Instances
     , pluginInstance: {
         showDialog: function (options, callback) {
             var p = new Packet(null, 'pluginInstances.showDialog', {options: options});
@@ -787,16 +920,7 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
     }
-    , parseQueryString: function () {
-        var query = window.location.search.substring(1);
-        var vars = query.split('&');
-        var obj = new Object();
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split('=');
-            obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
-        }
-        return obj;
-    }
+    /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
     , deeplink: {
         getData: function (callback) {
             var qs = buildfire.parseQueryString();
@@ -810,6 +934,7 @@ var buildfire = {
                 return root + "?dld=" + JSON.stringify(obj);
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
         show: function () {
             buildfire._sendPacket(new Packet(null, 'spinner.show'));
@@ -818,79 +943,7 @@ var buildfire = {
             buildfire._sendPacket(new Packet(null, 'spinner.hide'));
         }
     }
-    , _insertHTMLAttributes: function () {
-        var html = document.getElementsByTagName('html')[0];
-        html.setAttribute('buildfire', 'enabled');
-
-        var nVer = navigator.appVersion;
-        var nAgt = navigator.userAgent;
-        var browserName = navigator.appName;
-        var fullVersion = '' + parseFloat(navigator.appVersion);
-        var majorVersion = parseInt(navigator.appVersion, 10);
-        var nameOffset, verOffset, ix;
-        var os = "Unknown OS";
-// In Opera, the true version is after "Opera" or after "Version"
-        if ((verOffset = nAgt.indexOf("Opera")) != -1) {
-            browserName = "Opera";
-            fullVersion = nAgt.substring(verOffset + 6);
-            if ((verOffset = nAgt.indexOf("Version")) != -1)
-                fullVersion = nAgt.substring(verOffset + 8);
-        }
-// In MSIE, the true version is after "MSIE" in userAgent
-        else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
-            browserName = "Microsoft Internet Explorer";
-            fullVersion = nAgt.substring(verOffset + 5);
-        }
-// In Chrome, the true version is after "Chrome"
-        else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
-            browserName = "Chrome";
-            fullVersion = nAgt.substring(verOffset + 7);
-        }
-// In Safari, the true version is after "Safari" or after "Version"
-        else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
-            browserName = "Safari";
-            fullVersion = nAgt.substring(verOffset + 7);
-            if ((verOffset = nAgt.indexOf("Version")) != -1)
-                fullVersion = nAgt.substring(verOffset + 8);
-        }
-// In Firefox, the true version is after "Firefox"
-        else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
-            browserName = "Firefox";
-            fullVersion = nAgt.substring(verOffset + 8);
-        }
-// In most other browsers, "name/version" is at the end of userAgent
-        else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) <
-            (verOffset = nAgt.lastIndexOf('/'))) {
-            browserName = nAgt.substring(nameOffset, verOffset);
-            fullVersion = nAgt.substring(verOffset + 1);
-            if (browserName.toLowerCase() == browserName.toUpperCase()) {
-                browserName = navigator.appName;
-            }
-        }
-// trim the fullVersion string at semicolon/space if present
-        if ((ix = fullVersion.indexOf(";")) != -1)
-            fullVersion = fullVersion.substring(0, ix);
-        if ((ix = fullVersion.indexOf(" ")) != -1)
-            fullVersion = fullVersion.substring(0, ix);
-
-        majorVersion = parseInt('' + fullVersion, 10);
-        if (isNaN(majorVersion)) {
-            fullVersion = '' + parseFloat(navigator.appVersion);
-            majorVersion = parseInt(navigator.appVersion, 10);
-        }
-
-
-        if (navigator.appVersion.indexOf("Win") != -1) os = "Windows";
-        if (navigator.appVersion.indexOf("Mac") != -1) os = "MacOS";
-        if (navigator.appVersion.indexOf("X11") != -1) os = "UNIX";
-        if (navigator.appVersion.indexOf("Linux") != -1)os = "Linux";
-
-        html.setAttribute('os', os);
-        html.setAttribute('browser', browserName);
-        html.setAttribute('majorVersion', majorVersion);
-        html.setAttribute('fullVersion', fullVersion);
-
-    }
+    /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Auth
     , auth: {
         login: function (options, callback) {
             var p = new Packet(null, 'auth.login', options);
@@ -917,7 +970,7 @@ var buildfire = {
             return buildfire.eventManager.add('authOnLogout', data);
         }
     }
-    /// https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
+    /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
     , device: {
         calendar:{
             addEvent: function(event,callback){
@@ -931,6 +984,9 @@ buildfire.init();
 
 document.addEventListener("DOMContentLoaded", function (event) {
     buildfire.appearance.autosizeContainer();
+    console.info('DOMContentLoaded');
+    if(window.location.href.indexOf('/widget/'))
+        buildfire.appearance.attachFastClick();
 });
 document.addEventListener("resize", function (event) {
     buildfire.appearance.autosizeContainer();
