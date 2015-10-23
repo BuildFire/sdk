@@ -527,9 +527,9 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,
 .plugin-manager .item .media.media-holder{
-	width:140px;
-	height:140px;
-	line-height:136px;
+	width:110px;
+	height:110px;
+	line-height:106px;
 	text-align:center;
 	background:#eef0f0;
 	position:relative;
@@ -787,7 +787,8 @@ table.table span.sort-icon{
 	overflow:hidden;
 	border-radius:0 0 4px 4px;
 }
-.modal .modal-content .bottom div{
+.modal .modal-content .bottom div,
+.section .bottom.border-top-grey div{
 	padding:0;
 }
 .modal .modal-content .bottom div a,
@@ -1205,4 +1206,12 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+}
+
+
+/* Phase 2 */
+
+/* Hide Help Button on top of each page */
+.header .pull-right .btn:first-child{
+	display:none;
 }

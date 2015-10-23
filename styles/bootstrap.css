@@ -5191,6 +5191,8 @@ a.thumbnail.active {
 	padding:5px 10px;
 	opacity:0;
 	top:15px;
+	height:34px;
+	overflow:hidden;
 }
 .site-alert.alert.active{
 	opacity:1;
