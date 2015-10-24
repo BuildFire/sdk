@@ -524,6 +524,7 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	max-width:91.5%;
 }
 
+.add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,
 .plugin-manager .item .media.media-holder{
@@ -534,25 +535,31 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	background:#eef0f0;
 	position:relative;
 }
+.add-plugin .item .media.media-holder{
+	width:81px;
+	height:81px;
+	line-height:76px;
+}
+.add-plugin .item .media.media-holder img,
 .update-plugin .item .media.media-holder img,
 .plugin-workspace .item .media.media-holder img,
 .plugin-manager .item .media.media-holder img{
-	max-width:100%;
-	max-height:100%;
+	max-width:101%;
+	max-height:101%;
 	border-radius:4px;
 	vertical-align:middle;
 }
+.add-plugin .item .media.media-holder .main-icon,
 .update-plugin .item .media.media-holder .main-icon,
 .plugin-workspace .item .media.media-holder .main-icon,
 .plugin-manager .item .media.media-holder .main-icon{
 	font-size:65px;
 	position:relative !important;
-	top:25px;
+	top:23px;
 }
-.update-plugin .item .media.media-holder .main-icon.glyphicon,
-.plugin-workspace .item .media.media-holder .main-icon.glyphicon,
-.plugin-manager .item .media.media-holder .main-icon.glyphicon{
-	top:26px;
+.add-plugin .item .media.media-holder .main-icon{
+	font-size:50px;
+	top:16px;
 }
 .active-plugins .item .media-holder.no-background{
 	background:none;
