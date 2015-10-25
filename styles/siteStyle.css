@@ -15,6 +15,9 @@ html{
 	min-width:1024px;
 	max-width:1400px;
 }
+html.no-transition{
+	transition:none !important;
+}
 body{
     color:#5f5f5f;
     background-color: transparent;
@@ -1178,6 +1181,7 @@ body.rtl .pagination > li + li{
 	font-size:13px;
 	line-height:20px;
 	margin:-5px 0;
+	width:250px;
 }
 .shell-sdk #emulatorContainer .showTools-links{
 	position:absolute;

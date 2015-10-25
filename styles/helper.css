@@ -83,6 +83,14 @@ and targeted by Bootstrap like classes */
 .primary-background-hover:hover{
 	background:#09A3EE !important;
 }
+/* No background */
+.no-background{
+	background:none !important;
+}
+/* No background on hover */
+.no-background-hover:hover{
+	background:none !important;
+}
 
 
 
