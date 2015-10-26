@@ -1219,6 +1219,18 @@ html[buildfire] body{
 	overflow-x:hidden;
 }
 
+/* Plugin Control Header */
+#pluginControlHeader .screens .screen{
+	width:50px;
+}
+#pluginControlHeader .screens .screen a{
+	height:50px;
+	line-height:45px;
+}
+#pluginControlHeader hr.none{
+	margin:4px 0;
+}
+
 
 /* Phase 2 */
 
