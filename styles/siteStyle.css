@@ -15,6 +15,9 @@ html{
 	min-width:1024px;
 	max-width:1400px;
 }
+html.no-transition{
+	transition:none !important;
+}
 body{
     color:#5f5f5f;
     background-color: transparent;
@@ -305,6 +308,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	min-height:723px;
 	margin-bottom:138px;
 	position:relative;
+	position:absolute;
 }
 #main-content .wrapper.largeWidth{
 	width:1160px;
@@ -431,6 +435,13 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	vertical-align:middle;
 	border-radius:4px;
 }
+.draggable-list-view .d-item .media-holder .main-icon{
+	font-size:20px;
+	top:0;
+	margin:10px 0 0;
+	display:inline-block;
+	color:#5f5f5f;
+}
 .draggable-list-view .d-item span.title{
 	display:inline-block;
 	width:76%;
@@ -516,35 +527,42 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	max-width:91.5%;
 }
 
+.add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,
 .plugin-manager .item .media.media-holder{
-	width:140px;
-	height:140px;
-	line-height:136px;
+	width:110px;
+	height:110px;
+	line-height:106px;
 	text-align:center;
 	background:#eef0f0;
 	position:relative;
 }
+.add-plugin .item .media.media-holder{
+	width:81px;
+	height:81px;
+	line-height:76px;
+}
+.add-plugin .item .media.media-holder img,
 .update-plugin .item .media.media-holder img,
 .plugin-workspace .item .media.media-holder img,
 .plugin-manager .item .media.media-holder img{
-	max-width:100%;
-	max-height:100%;
+	max-width:101%;
+	max-height:101%;
 	border-radius:4px;
 	vertical-align:middle;
 }
+.add-plugin .item .media.media-holder .main-icon,
 .update-plugin .item .media.media-holder .main-icon,
 .plugin-workspace .item .media.media-holder .main-icon,
 .plugin-manager .item .media.media-holder .main-icon{
 	font-size:65px;
 	position:relative !important;
-	top:25px;
+	top:23px;
 }
-.update-plugin .item .media.media-holder .main-icon.glyphicon,
-.plugin-workspace .item .media.media-holder .main-icon.glyphicon,
-.plugin-manager .item .media.media-holder .main-icon.glyphicon{
-	top:26px;
+.add-plugin .item .media.media-holder .main-icon{
+	font-size:50px;
+	top:16px;
 }
 .active-plugins .item .media-holder.no-background{
 	background:none;
@@ -638,6 +656,10 @@ table.table span.sort-icon{
 .draggable-list-view.tab-order.wide-list .d-item span.title{
 	max-width:82%;
 	width:82%;
+}
+.self-provisioning-wl .draggable-list-view.tab-order.wide-list,
+.self-provisioning-wl .draggable-list-view.wide-list{
+	max-height:473px;
 }
 
 /* Media Gallery */
@@ -769,7 +791,14 @@ table.table span.sort-icon{
 .modal .modal-content .padded{
 	padding:30px 15px;
 }
-.modal .modal-content .bottom div{
+.modal .modal-content .bottom,
+.section .bottom.border-top-grey{
+	height:39px;
+	overflow:hidden;
+	border-radius:0 0 4px 4px;
+}
+.modal .modal-content .bottom div,
+.section .bottom.border-top-grey div{
 	padding:0;
 }
 .modal .modal-content .bottom div a,
@@ -946,7 +975,8 @@ table.table span.sort-icon{
 .screens .screen:hover > span.icon{
 	opacity:1;
 }
-.screens .screen span.icon.main-icon{
+.screens .screen span.icon.main-icon,
+.screens .screen span.glyphicon.main-icon{
 	position:relative;
 	top:12px;
 	right:inherit;
@@ -1151,6 +1181,7 @@ body.rtl .pagination > li + li{
 	font-size:13px;
 	line-height:20px;
 	margin:-5px 0;
+	width:250px;
 }
 .shell-sdk #emulatorContainer .showTools-links{
 	position:absolute;
@@ -1186,4 +1217,24 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+}
+
+/* Plugin Control Header */
+#pluginControlHeader .screens .screen{
+	width:50px;
+}
+#pluginControlHeader .screens .screen a{
+	height:50px;
+	line-height:45px;
+}
+#pluginControlHeader hr.none{
+	margin:4px 0;
+}
+
+
+/* Phase 2 */
+
+/* Hide Help Button on top of each page */
+.header .pull-right .btn:first-child{
+	display:none;
 }

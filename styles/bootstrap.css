@@ -1173,6 +1173,9 @@ hr.small,
 hr.none{
   margin:10px 0;
 }
+hr.xsmall{
+	margin:4px 0;
+}
 hr.none{
   border-top:1px solid transparent;
 }
@@ -2611,6 +2614,7 @@ output {
   background-image: none;
   border: 1px solid #dddddd;
   border-radius: 4px;
+  box-shadow:none;
 }
 input[type="checkbox"].form-control,
 input[type="radio"].form-control{
@@ -4756,7 +4760,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   color: #444444;
 }
 .breadcrumb {
-  margin-bottom:30px;
+  margin-bottom:15px;
   list-style: none;
 }
 .breadcrumb > li {
@@ -4767,6 +4771,11 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   margin-left:10px;
   margin-right:0px;
   color: #cccccc;
+}
+.breadcrumb li span.ellipsis{
+  max-width:250px; 
+  display:inline-block; 
+  vertical-align:bottom;
 }
 .breadcrumb > .active {
   color: #777777;
@@ -4847,6 +4856,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   background-color: #ffffff;
   border-color: #dddddd;
   cursor: not-allowed;
+  opacity:0.6;
 }
 .pagination-lg > li > a,
 .pagination-lg > li > span {
@@ -5190,6 +5200,8 @@ a.thumbnail.active {
 	padding:5px 10px;
 	opacity:0;
 	top:15px;
+	height:34px;
+	overflow:hidden;
 }
 .site-alert.alert.active{
 	opacity:1;

@@ -5,22 +5,29 @@
 	box-sizing: border-box;
 	font-family:Helvetica, Sans-Serif;
 }
+
 html,
 body{
 	font-family:Helvetica, Sans-Serif;
 	font-weight:100;
 	color:#5f5f5f;
-	height:100%;
     margin:0px;
 	overflow:auto;
-	-ms-overflow-style:none;
+
+	/* messes with scrolling
+	height:100%;
 	-webkit-overflow-scrolling:touch;
+	*/
+
+	-ms-overflow-style:none;
 	overflow-x:hidden;
 	overflow-y:auto;
+
 }
 ::-webkit-scrollbar{
     display:none;
 }
+
 img,
 iframe, 
 object{
@@ -54,6 +61,207 @@ textarea{
 .holder .btn.dropdown-toggle{
 	width:100%;
 }
+
+/* Plugin Nav */
+#pluginNav{
+    height:auto !important;
+	background:#09a3ee;
+	padding:14px 10px;
+	border-bottom:none;
+	margin-bottom:0;
+}
+#pluginNav a.back-btn-icon,
+#pluginNav a.menu-btn-icon{
+	position:absolute;
+	top:17px;
+	left:10px;
+	font-size:15px;
+	color:#fff;
+	font-weight:600;
+	text-decoration:none;
+	cursor:default;
+}
+#pluginNav a.menu-btn-icon{
+	left:auto;
+	right:10px;
+	font-size:21px;
+	top:14px;
+}
+#pluginNav h4,
+#pluginNav h5{
+	text-align:center;
+	color:#fff;
+	margin:0 auto;
+	max-width:65%;
+	font-size:16px;
+	line-height:18px;
+	position:relative;
+	top:4px;
+	font-weight:100;
+}
+/* Target Webkit browsers for alignment */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	#pluginNav h4,
+	#pluginNav h5{
+		top:3px;
+	}
+}
+#pluginNav #pluginTitle{
+	padding:15px;
+	margin:-15px auto;
+}
+#pluginNav #btnBack{
+	padding:17px;
+	margin:-17px;
+}
+
+/* Menu Toggle */
+#menuToggle{
+	border-radius:5px 0 0 5px;
+	font-size:21px;
+	padding:8px 10px 4px;
+	position:fixed;
+	top:6px;
+	right:0;
+	z-index:9999999;
+	background:#fff;
+	cursor:pointer;
+}
+#menuToggle span.icon{
+	font-size:21px;
+}
+#menuToggle .notification-circle{
+	position:absolute;
+	top:8px;
+	left:-12px;
+	width:22px;
+	height:22px;
+	text-align:center;
+	border-radius:100%;
+}
+#menuToggle .notification-circle span{
+	font-size:10px;
+	position:relative;
+	top:-2px;
+	text-align:center;
+}
+
+/* Menu */
+nav.menu{
+	position:absolute;
+	right:0;
+	top:0;
+	width:100%;
+	height:100%;
+	z-index:99999999;
+	background:#fff;
+	opacity:0.95;
+	overflow-x:hidden;
+	overflow-y:auto;
+	transition:all 0.35s ease;
+	-webkit-transform:translateX(100%);
+	transform:translateX(100%);
+}
+nav.menu.active{
+	-webkit-transform:translateX(0%);
+	transform:translateX(0%);
+}
+nav.menu a{
+	display:block;
+	width:100%;
+	padding:10px 12px;
+	text-decoration:none;
+	position:relative;
+}
+nav.menu a.username{
+	padding-top:15px;
+	padding-bottom:14px;
+	padding-right:37px;
+}
+nav.menu span.menu-close{
+	position:absolute;
+	top:19px;
+	right:12px;
+	font-size:13px;
+	font-weight:600;
+	cursor:pointer;
+	z-index:99;
+}
+nav.menu #sideMenuCloseButton{
+    padding:15px;
+    margin:-15px;
+}
+nav.menu a.divider{
+	padding-top:6px;
+	padding-bottom:6px;
+	border-top:none !important;
+	background:#efefef;
+}
+nav.menu a .media{
+	display:inline-block;
+	width:22px;
+	height:22px;
+	line-height:22px;
+	margin-right:12px;
+	text-align:center;
+}
+nav.menu a .media img{
+	vertical-align:middle;
+	max-width:22px;
+	max-height:22px;
+	height:auto;
+	width:auto;
+	border-radius:2px;
+}
+nav.menu a .media .main-icon{
+	vertical-align:middle;
+	font-size:16px;
+}
+nav.menu a p{
+	margin:3px 0 0;
+	max-width:100%;
+	font-size:13px;
+	line-height:18px;
+}
+nav.menu a.notifications p{
+	padding-right:45px;
+}
+nav.menu a.notifications .notification-circle{
+	position:absolute;
+	top:13px;
+	right:12px;
+	height:20px;
+	padding:0 7px;
+	border-radius:10px;
+}
+nav.menu a.notifications .notification-circle span{
+	color:#fff !important;
+	font-size:11px;
+	position:relative;
+	top:-1px;
+}
+
+/* Slider */
+.plugin-slider,
+.plugin-slide,
+.contact-maps{
+	max-height:380px;
+	background:#eef0f0;
+	background:#32373a;
+}
+.contact-maps{
+	background:#32373a;
+}
+.plugin-slide.show-map{
+	height:320px;
+}
+.plugin-slide img,
+.contact-maps img{
+	max-height:380px;
+	width:auto !important;
+	margin:0 auto;
+}
+
 
 /* Bottom */
 .holder.has-bottom{
@@ -184,166 +392,6 @@ textarea{
 	padding:3px;
 }
 
-/* Plugin Nav */
-#pluginNav{
-    height:auto !important;
-	background:#09a3ee;
-	padding:14px 10px;
-	border-bottom:none;
-	margin-bottom:0;
-}
-#pluginNav a.back-btn-icon,
-#pluginNav a.menu-btn-icon{
-	position:absolute;
-	top:17px;
-	left:10px;
-	font-size:15px;
-	color:#fff;
-	font-weight:600;
-	text-decoration:none;
-	cursor:default;
-}
-#pluginNav a.menu-btn-icon{
-	left:auto;
-	right:10px;
-	font-size:21px;
-	top:14px;
-}
-#pluginNav h4,
-#pluginNav h5{
-	text-align:center;
-	color:#fff;
-	margin:0 auto;
-	max-width:65%;
-	font-size:16px;
-	line-height:24px;
-	position:relative;
-	top:3px;
-	font-weight:100;
-}
-
-/* Menu Toggle */
-#menuToggle{
-	border-radius:5px 0 0 5px;
-	font-size:21px;
-	padding:8px 10px 4px;
-	position:fixed;
-	top:6px;
-	right:0;
-	z-index:9999999;
-	background:#fff;
-	cursor:pointer;
-}
-#menuToggle span.icon{
-	font-size:21px;
-}
-#menuToggle .notification-circle{
-	position:absolute;
-	top:8px;
-	left:-12px;
-	width:22px;
-	height:22px;
-	text-align:center;
-	border-radius:100%;
-}
-#menuToggle .notification-circle span{
-	font-size:10px;
-	position:relative;
-	top:-2px;
-	text-align:center;
-}
-
-/* Menu */
-nav.menu{
-	position:absolute;
-	right:0;
-	top:0;
-	width:100%;
-	height:100%;
-	z-index:99999999;
-	background:#fff;
-	opacity:0.95;
-	overflow-x:hidden;
-	overflow-y:auto;
-	transition:all 0.35s ease;
-	-webkit-transform:translateX(100%);
-	transform:translateX(100%);
-}
-nav.menu.active{
-	-webkit-transform:translateX(0%);
-	transform:translateX(0%);
-}
-nav.menu a{
-	display:block;
-	width:100%;
-	padding:12px;
-	text-decoration:none;
-	position:relative;
-}
-nav.menu a.username{
-	padding-top:15px;
-	padding-bottom:14px;
-	padding-right:37px;
-}
-nav.menu span.menu-close{
-	position:absolute;
-	top:19px;
-	right:12px;
-	font-size:13px;
-	font-weight:600;
-	cursor:pointer;
-	z-index:99;
-}
-nav.menu #sideMenuCloseButton{
-    padding:15px;
-    margin:-15px;
-}
-nav.menu a.divider{
-	padding-top:6px;
-	padding-bottom:6px;
-	border-top:none !important;
-	background:#efefef;
-}
-nav.menu a .media{
-	display:inline-block;
-	width:22px;
-	height:22px;
-	line-height:22px;
-	margin-right:12px;
-	text-align:center;
-}
-nav.menu a .media img{
-	vertical-align:middle;
-	max-width:22px;
-	max-height:22px;
-	height:auto;
-	width:auto;
-	border-radius:2px;
-}
-nav.menu a p{
-	margin:3px 0 0;
-	max-width:100%;
-	font-size:13px;
-	line-height:18px;
-}
-nav.menu a.notifications p{
-	padding-right:45px;
-}
-nav.menu a.notifications .notification-circle{
-	position:absolute;
-	top:13px;
-	right:12px;
-	height:20px;
-	padding:0 7px;
-	border-radius:10px;
-}
-nav.menu a.notifications .notification-circle span{
-	color:#fff !important;
-	font-size:11px;
-	position:relative;
-	top:-1px;
-}
-
 /* People Plugin */
 .people-banner .people-media img{
 	max-width:140px;
@@ -423,25 +471,6 @@ nav.menu a.notifications .notification-circle span{
 	background:rgba(255, 255, 255, 0.9);
 }
 
-.plugin-slider,
-.plugin-slide,
-.contact-maps{
-	max-height:380px;
-	background:#eef0f0;
-	background:#32373a;
-}
-.contact-maps{
-	background:#32373a;
-}
-.plugin-slide.show-map{
-	height:320px;
-}
-.plugin-slide img,
-.contact-maps img{
-	max-height:380px;
-	width:auto !important;
-	margin:0 auto;
-}
 .contact-plugin.layout2 .contact-maps{
 	position:relative;
 }
@@ -657,6 +686,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	max-height:100%;
 	vertical-align:middle;
 	border-radius:2px;
+}
+.layout3 .list-layout .list-item-media .list-media-holder .main-icon{
+	font-size:44px;
+	position:relative;
+	top:8px;
 }
 .layout3 .list-layout .list-item{
 	padding:0;
@@ -1044,11 +1078,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder .btn.btn-info:after{
 	content:'';
 	display:inline-block;
-	width:38px;
-	height:38px;
-	margin-left:-19px;
+	width:34px;
+	height:34px;
+	margin-left:-17px;
 	position:absolute;
-	top:-7px;
+	top:-3px;
 	left:50%;
 	box-shadow:0 0 0 1px #09a3ee;
 	border-radius:100%;
@@ -1273,6 +1307,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	bottom:0;
 	left:0;
 	width:100%;
+}
+.user-profile .edit-profile.done-editing{
+	bottom:-27px;
 }
 .user-profile .edit-profile .inner{
 	max-width:677px;
