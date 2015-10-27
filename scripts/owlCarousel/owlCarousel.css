@@ -110,6 +110,9 @@
 	background:#fff;
 	opacity:0.5;
 }
+.owl-carousel .owl-controls .owl-dot:only-child{
+	display:none;
+}
 .owl-carousel .owl-controls .owl-dot + .owl-dot{
 	margin-left:10px;
 }

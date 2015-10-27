@@ -4,7 +4,8 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	font-family:Helvetica, Sans-Serif;
-	-webkit-tap-highlight-color:rgba(0,0,0,0);
+	-webkit-tap-highlight-color: transparent !important;
+	-webkit-tap-highlight-color:rgba(0,0,0,0) !important;
 }
 
 html,
@@ -34,6 +35,8 @@ iframe,
 object{
 	max-width:100%;
 	vertical-align:top;
+	-webkit-tap-highlight-color: transparent !important;
+	-webkit-tap-highlight-color:rgba(0,0,0,0) !important;
 }
 iframe{
 	border:none;
@@ -1245,6 +1248,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .launcher-plugin .launcher-icons.four-row .launcher-icon{
 	width:25%;
+	padding:0 3px;
 }
 .launcher-plugin .launcher-icons.three-row .launcher-icon{
 	width:33.333%;
@@ -1325,11 +1329,15 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .user-profile .edit-profile.done-editing{
 	bottom:-27px;
 }
-.user-profile .edit-profile .inner{
+.user-profile .edit-profile .inner,
+.user-profile .edit-profile .cancel-link{
 	max-width:677px;
 	padding:10px;
 	width:100%;
 	margin:0 auto;
+}
+.user-profile .edit-profile .cancel-link{
+	padding:5px 15px 0 0;
 }
 .user-profile .user-info{
 	max-width:677px;
@@ -1397,6 +1405,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	width:64px;
 	text-align:center;
 	color:#fff;
+}
+.user-profile.edit .user-info .user-avatar .user-media{
+	height:100%;
 }
 .user-profile.edit .plugin-slider:after{
 	top:44%;
