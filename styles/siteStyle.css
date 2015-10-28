@@ -1045,7 +1045,7 @@ p.info{
 	width:60px;
 }
 .colorgrid.themegrid .coloritem a.img-thumbnail span{
-	width:33%;
+	width:33.33%;
 	height:50%;
 	float:left;
 }

@@ -528,6 +528,9 @@ and targeted by Bootstrap like classes */
 .break-word{
 	word-wrap:break-word;
 }
+.cursor-pointer{
+	cursor:pointer;
+}
 
 /* html[buildfire] Override */
 html[buildfire] .btn-plus-icon::after, 

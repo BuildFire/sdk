@@ -4,6 +4,7 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	font-family:Helvetica, Sans-Serif;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
 }
 
 html,
@@ -12,17 +13,12 @@ body{
 	font-weight:100;
 	color:#5f5f5f;
     margin:0px;
-	overflow:auto;
-
-	/* messes with scrolling
 	height:100%;
-	-webkit-overflow-scrolling:touch;
-	*/
-
-	-ms-overflow-style:none;
 	overflow-x:hidden;
-	overflow-y:auto;
-
+}
+:not(html[buildfire]),
+:not(html[buildfire] body){
+	overflow:hidden;
 }
 ::-webkit-scrollbar{
     display:none;
@@ -1049,8 +1045,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .events-plugin .event-calendar-holder table{
 	border:none;
+	width:100%;
 }
-.events-plugin .event-calendar-holder table thead tr .small{
+.events-plugin .event-calendar-holder table thead tr small{
 	font-size:13px;
 }
 .events-plugin .event-calendar-holder table thead tr .btn strong{
@@ -1067,6 +1064,18 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder .btn-default{
 	background:none !important;
 }
+.events-plugin .event-calendar-holder .btn-default i.glyphicon-chevron-left:before{
+	top:0;
+	font-family:'icomoon';
+	content:'\e610';
+	font-weight:700;
+}
+.events-plugin .event-calendar-holder .btn-default i.glyphicon-chevron-right:before{
+	top:0;
+	font-family:'icomoon';
+	content:'\e625';
+	font-weight:700;
+}
 .events-plugin .event-calendar-holder .disabled{
 	opacity:0.6;
 }
@@ -1078,11 +1087,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder .btn.btn-info:after{
 	content:'';
 	display:inline-block;
-	width:34px;
-	height:34px;
-	margin-left:-17px;
+	width:38px;
+	height:38px;
+	margin-left:-19px;
 	position:absolute;
-	top:-3px;
+	top:-2px;
 	left:50%;
 	box-shadow:0 0 0 1px #09a3ee;
 	border-radius:100%;
@@ -1212,6 +1221,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .launcher-plugin .main-logo .logo-holder .logo-media{
 	width:100vw;
+	max-width:400px;
 	padding:15px;
 }
 .launcher-plugin .main-logo .logo-holder img{
@@ -1231,6 +1241,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .launcher-plugin .launcher-icons.four-row .launcher-icon{
 	width:25%;
+	padding:0 3px;
 }
 .launcher-plugin .launcher-icons.three-row .launcher-icon{
 	width:33.333%;
@@ -1311,11 +1322,15 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .user-profile .edit-profile.done-editing{
 	bottom:-27px;
 }
-.user-profile .edit-profile .inner{
+.user-profile .edit-profile .inner,
+.user-profile .edit-profile .cancel-link{
 	max-width:677px;
 	padding:10px;
 	width:100%;
 	margin:0 auto;
+}
+.user-profile .edit-profile .cancel-link{
+	padding:5px 15px 0 0;
 }
 .user-profile .user-info{
 	max-width:677px;
@@ -1384,8 +1399,11 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	text-align:center;
 	color:#fff;
 }
+.user-profile.edit .user-info .user-avatar .user-media{
+	height:100%;
+}
 .user-profile.edit .plugin-slider:after{
-	top:48%;
+	top:44%;
 	font-size:14px;
 	line-height:18px;
 	width:120px;
@@ -1421,7 +1439,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	width:100%;
 	min-width:100%;
 	max-width:100%;
-	min-height:544px;
+	height:100%;
+	height:100vh;
+	overflow-x:hidden;
+	-webkit-overflow-scrolling:touch;
 }
 html[buildfire],
 html[buildfire] body{

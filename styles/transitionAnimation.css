@@ -1,6 +1,6 @@
 /************** plugin + nav  **********/
 .slide {
-    /*position: absolute;*/
+    position: absolute;
     top: 0;
     /*left: 90%; /* dont scroll till data loaded*/
     width: 100%;
@@ -16,7 +16,9 @@
     -webkit-transform: translateX(0);
     transform: translateX(0);
 }
-
+.slide.relative{
+	position:relative;
+}
 .slide.final {
     position: absolute;
     -webkit-transform: translateX(0);
