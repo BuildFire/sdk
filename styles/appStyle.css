@@ -4,8 +4,7 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	font-family:Helvetica, Sans-Serif;
-	-webkit-tap-highlight-color: transparent !important;
-	-webkit-tap-highlight-color:rgba(0,0,0,0) !important;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
 }
 
 html,
@@ -14,17 +13,12 @@ body{
 	font-weight:100;
 	color:#5f5f5f;
     margin:0px;
-	overflow:auto;
 	height:100%;
-	/* messes with scrolling
-
-	-webkit-overflow-scrolling:touch;
-	*/
-
-	-ms-overflow-style:none;
 	overflow-x:hidden;
-	overflow-y:auto;
-
+}
+:not(html[buildfire]),
+:not(html[buildfire] body){
+	overflow:hidden;
 }
 ::-webkit-scrollbar{
     display:none;
@@ -35,8 +29,6 @@ iframe,
 object{
 	max-width:100%;
 	vertical-align:top;
-	-webkit-tap-highlight-color: transparent !important;
-	-webkit-tap-highlight-color:rgba(0,0,0,0) !important;
 }
 iframe{
 	border:none;
@@ -1229,6 +1221,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .launcher-plugin .main-logo .logo-holder .logo-media{
 	width:100vw;
+	max-width:400px;
 	padding:15px;
 }
 .launcher-plugin .main-logo .logo-holder img{
@@ -1446,7 +1439,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	width:100%;
 	min-width:100%;
 	max-width:100%;
-	min-height:544px;
+	height:100%;
+	height:100vh;
+	overflow-x:hidden;
+	-webkit-overflow-scrolling:touch;
 }
 html[buildfire],
 html[buildfire] body{
