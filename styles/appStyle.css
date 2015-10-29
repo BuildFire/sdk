@@ -4,9 +4,17 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	font-family:Helvetica, Sans-Serif;
-	-webkit-tap-highlight-color:rgba(0,0,0,0);
-}
 
+	/* Prevent user selection */
+	-webkit-tap-highlight-color: transparent !important;
+	-webkit-tap-highlight-color:rgba(0,0,0,0) !important;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+ 	-khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 html,
 body{
 	font-family:Helvetica, Sans-Serif;
@@ -16,14 +24,13 @@ body{
 	height:100%;
 	overflow-x:hidden;
 }
-:not(html[buildfire]),
-:not(html[buildfire] body){
+html:not([buildfire='enabled']),
+html:not([buildfire='enabled']) body){
 	overflow:hidden;
 }
 ::-webkit-scrollbar{
     display:none;
 }
-
 img,
 iframe, 
 object{
@@ -47,7 +54,6 @@ ol li{
 textarea{
 	overflow:auto;
 }
-
 .holder{
 	padding:15px;
 }
@@ -143,8 +149,11 @@ textarea{
 }
 
 /* Menu */
+#menu{
+	position:relative;
+}
 nav.menu{
-	position:absolute;
+	position:fixed;
 	right:0;
 	top:0;
 	width:100%;
@@ -154,6 +163,7 @@ nav.menu{
 	opacity:0.95;
 	overflow-x:hidden;
 	overflow-y:auto;
+	-webkit-overflow-scrolling:touch;
 	transition:all 0.35s ease;
 	-webkit-transform:translateX(100%);
 	transform:translateX(100%);
@@ -256,6 +266,9 @@ nav.menu a.notifications .notification-circle span{
 	max-height:380px;
 	width:auto !important;
 	margin:0 auto;
+}
+.no-background .plugin-slide{
+	background:none;
 }
 
 
@@ -1442,6 +1455,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	height:100%;
 	height:100vh;
 	overflow-x:hidden;
+	overflow-y:auto;
 	-webkit-overflow-scrolling:touch;
 }
 html[buildfire],
@@ -1503,6 +1517,12 @@ html[buildfire] body{
 	.launcher-plugin .main-logo .logo-holder img{
 		max-height:90px;
 		width:auto;
+	}
+	.login-holder .login.content{
+		padding-top:60px;
+	}
+	.login-holder .moreoptions{
+		margin-top:0;
 	}
 }
 
