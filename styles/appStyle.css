@@ -1053,9 +1053,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-info p + p{
 	margin-bottom:-1px !important;
 }
-.events-plugin .event-calendar-holder{
-	background:#fff;
-}
 .events-plugin .event-calendar-holder table{
 	border:none;
 	width:100%;
@@ -1175,7 +1172,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	transition: all 0.35s;
 }
 .events-plugin .event-list .event-item .calendar-icon span{
-	color:#fff;
+	color:#fff !important;
 	font-size:28px;
 	position:relative;
 	top:-7px;
@@ -1215,11 +1212,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 
 /* Launcher Plugin */
-#launcherPlugin{
-	border:none;
-	height:100%;
-	width:100%;
-}
 .launcher-plugin .main-logo{
 	text-align:center;
 	height:180px;
@@ -1448,7 +1440,8 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 /* Plugin iFrame */
 #iframeControl,
 #controlIFrame,
-#pluginFrame{
+#pluginFrame,
+#launcherPlugin{
 	width:100%;
 	min-width:100%;
 	max-width:100%;
@@ -1519,10 +1512,10 @@ html[buildfire] body{
 		width:auto;
 	}
 	.login-holder .login.content{
-		padding-top:60px;
+		padding-top:60px !important;
 	}
 	.login-holder .moreoptions{
-		margin-top:0;
+		margin-top:0 !important;
 	}
 }
 
