@@ -45,12 +45,12 @@ buildfire.components.pluginInstance._mapFromSearch = function (data) {
                 tempObj = {};
 
                 tempObj.folderName = currentPlugin.data._buildfire.pluginType.result[0].folderName;
-                tempObj.instanceId = currentPlugin.id;
+                tempObj.instanceId = currentPlugin.data.instanceId;
                 tempObj.iconUrl = currentPlugin.data.iconUrl;
                 tempObj.pluginTypeId = currentPlugin.data._buildfire.pluginType.data;
                 tempObj.pluginTypeName = currentPlugin.data._buildfire.pluginType.result[0].name;
                 tempObj.title = currentPlugin.data.title;
-
+                tempObj.iconClassName = currentPlugin.data.iconClassName;
                 result.push(tempObj);
                 tempObj = null;
                 currentPlugin = null;
@@ -71,7 +71,7 @@ buildfire.components.pluginInstance.sortableList = function (selector, items, di
     this.loadAllSelector = "#" + this.checkId;
     this.hideLoadButton = hideLoadButton;
     this._loadAllItems = loadAllItems ? true : false;
-    this.dialogOptions = typeof (dialogOptions) == "object" && dialogOptions != null? dialogOptions : { showIcon: true };
+    this.dialogOptions = typeof (dialogOptions) == "object" && dialogOptions != null ? dialogOptions : { showIcon: true };
     this.init(selector);
     this.loadItems(items);
 };
@@ -214,11 +214,12 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                     target: e.currentTarget
                 }, function (e) {
                     var itemIndex = me._getItemIndex(item);
-                    var itemId = me.items[itemIndex].instanceId;
+                    var itemId = me.items[itemIndex].instanceId,
+                        parent = this.parentNode.parentNode.parentNode;
                     if (itemIndex != -1) {
                         me.items.splice(itemIndex, 1);
                         me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
-                        this.parentNode.parentNode.parentNode.remove()
+                        parent.parentNode.removeChild(parent);
                         me.onDeleteItem(item, itemIndex);
                     }
                 }.bind(this));

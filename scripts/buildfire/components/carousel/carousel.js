@@ -109,7 +109,6 @@ buildfire.components.carousel.editor.prototype = {
     _removeAll: function () {
         this.items = [];
         var fc = this.itemsContainer.firstChild;
-
         while (fc) {
             this.itemsContainer.removeChild(fc);
             fc = this.itemsContainer.firstChild;
@@ -176,10 +175,11 @@ buildfire.components.carousel.editor.prototype = {
 
             deleteButton.addEventListener("click", function (e) {
                 e.preventDefault();
-                var itemIndex = me._getItemIndex(item);
+                var itemIndex = me._getItemIndex(item),
+                    parent = this.parentNode.parentNode.parentNode;
                 if (itemIndex != -1) {
                     me.items.splice(itemIndex, 1);
-                    this.parentNode.parentNode.parentNode.remove()
+                    parent.parentNode.removeChild(parent);
                     me.onDeleteItem(item, itemIndex);
                 }
             });
@@ -374,7 +374,6 @@ buildfire.components.carousel.view.prototype = {
     _removeAll: function () {
         var slider = this.$slider.get(0);
         var fc = slider.firstChild;
-
         while (fc) {
             slider.removeChild(fc);
             fc = slider.firstChild;
@@ -436,12 +435,13 @@ buildfire.components.carousel.view.prototype = {
     },
     // render the slider wrapper HTML
     _renderSlider: function () {
-        this.selector.style.position = "relative";
-        this.selector.style.top = "0px";
-        this.selector.style.left = "0px";
-        this.selector.style.width = this.cssWidth;
-        this.selector.style.height = this.cssHeight;
-        this.selector.className = this.selector.className + " plugin-slider text-center";
+        var me = this;
+        me.selector.style.position = "relative";
+        me.selector.style.top = "0px";
+        me.selector.style.left = "0px";
+        me.selector.style.width = this.cssWidth;
+        me.selector.style.height = this.cssHeight;
+        me.selector.className = this.selector.className + " plugin-slider text-center";
     },
     // loop and append the images to the DOM
     _loadImages: function () {
