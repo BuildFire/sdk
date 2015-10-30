@@ -8,12 +8,6 @@
 	/* Prevent user selection */
 	-webkit-tap-highlight-color: transparent !important;
 	-webkit-tap-highlight-color:rgba(0,0,0,0) !important;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
- 	-khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 html,
 body{
@@ -1438,6 +1432,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 /* iFrame */
 /* Plugin iFrame */
+section .pluginPage,
+section .pluginPage #pluginContentPanel{
+	height:100%;
+}
 #iframeControl,
 #controlIFrame,
 #pluginFrame,
@@ -1446,10 +1444,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	min-width:100%;
 	max-width:100%;
 	height:100%;
-	height:100vh;
+	/*height:100vh;*/
 	overflow-x:hidden;
 	overflow-y:auto;
-	-webkit-overflow-scrolling:touch;
+	-webkit-overflow-scrolling:touch !important;
 }
 html[buildfire],
 html[buildfire] body{
@@ -1458,6 +1456,7 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+	-webkit-overflow-scrolling:touch !important;
 }
 
 /* 767px Screen */

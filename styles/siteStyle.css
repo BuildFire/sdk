@@ -166,7 +166,7 @@ nav ul.menu li .parent{
 	background-size:22px 22px;*/
 	display:block;
 	position:relative;
-	font-size:15px;
+	font-size:14px;
 	line-height:20px;
 	font-weight:300;
 	cursor:pointer;
@@ -186,6 +186,10 @@ nav ul.menu li.datatracer .parent span.icon{
 }
 nav ul.menu li.help .parent span.icon{
 	top:21px;
+}
+nav ul.menu li.selfprovisioning .parent span.icon{
+	font-size:18px;
+	top:19px;
 }
 nav ul.menu li .parent:hover > span.icon,
 nav ul.menu li .parent.active > span.icon{
@@ -350,6 +354,7 @@ html[buildfire] .item .header .pull-right .btn{
 }
 .dropdown-toggle{
 	background:#fff;
+	border:1px solid #ddd;
 }
 .dropdown-toggle span.chevron{
 	margin-top:0;
@@ -538,7 +543,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	background:#eef0f0;
 	position:relative;
 }
-.add-plugin .item .media.media-holder{
+.add-plugin .item .media.media-holder,
+.plugin-manager .item .media.media-holder{
 	width:81px;
 	height:81px;
 	line-height:76px;
@@ -560,7 +566,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	position:relative !important;
 	top:23px;
 }
-.add-plugin .item .media.media-holder .main-icon{
+.add-plugin .item .media.media-holder .main-icon,
+.plugin-manager .item .media.media-holder .main-icon{
 	font-size:50px;
 	top:16px;
 }
