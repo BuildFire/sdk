@@ -2615,6 +2615,11 @@ output {
   border: 1px solid #dddddd;
   border-radius: 4px;
   box-shadow:none;
+  -webkit-appearance:none;
+}
+input:-webkit-autofill {
+	-webkit-text-fill-color:#5f5f5f !important;
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
 }
 input[type="checkbox"].form-control,
 input[type="radio"].form-control{
@@ -2660,6 +2665,7 @@ textarea.form-control {
   height:80px;
   min-height:80px;
   max-height:140px;
+  -webkit-appearance:none;
 }
 input[type="search"] {
   -webkit-appearance: none;
@@ -3116,7 +3122,7 @@ fieldset[disabled] .btn {
 .btn-default {
   color: #5f5f5f;
   background-color: #ffffff;
-  border-color: #dddddd;
+  border: 1px solid #ddd;
   -moz-transition: all 0.35s;
   -o-transition: all 0.35s;
   -webkit-transition: all 0.35s;

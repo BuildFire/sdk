@@ -8,12 +8,6 @@
 	/* Prevent user selection */
 	-webkit-tap-highlight-color: transparent !important;
 	-webkit-tap-highlight-color:rgba(0,0,0,0) !important;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
- 	-khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 html,
 body{
@@ -24,8 +18,7 @@ body{
 	height:100%;
 	overflow-x:hidden;
 }
-html:not([buildfire='enabled']),
-html:not([buildfire='enabled']) body){
+html:not([buildfire='enabled']){
 	overflow:hidden;
 }
 ::-webkit-scrollbar{
@@ -41,6 +34,7 @@ iframe{
 	border:none;
 	outline:none;
 	width:100%;
+	display:block;
 }
 ul,
 ol{
@@ -1053,9 +1047,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-info p + p{
 	margin-bottom:-1px !important;
 }
-.events-plugin .event-calendar-holder{
-	background:#fff;
-}
 .events-plugin .event-calendar-holder table{
 	border:none;
 	width:100%;
@@ -1175,7 +1166,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	transition: all 0.35s;
 }
 .events-plugin .event-list .event-item .calendar-icon span{
-	color:#fff;
+	color:#fff !important;
 	font-size:28px;
 	position:relative;
 	top:-7px;
@@ -1215,11 +1206,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 
 /* Launcher Plugin */
-#launcherPlugin{
-	border:none;
-	height:100%;
-	width:100%;
-}
 .launcher-plugin .main-logo{
 	text-align:center;
 	height:180px;
@@ -1446,17 +1432,22 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 /* iFrame */
 /* Plugin iFrame */
+section .pluginPage,
+section .pluginPage #pluginContentPanel{
+	height:100%;
+}
 #iframeControl,
 #controlIFrame,
-#pluginFrame{
+#pluginFrame,
+#launcherPlugin{
 	width:100%;
 	min-width:100%;
 	max-width:100%;
 	height:100%;
-	height:100vh;
+	/*height:100vh;*/
 	overflow-x:hidden;
 	overflow-y:auto;
-	-webkit-overflow-scrolling:touch;
+	-webkit-overflow-scrolling:touch !important;
 }
 html[buildfire],
 html[buildfire] body{
@@ -1465,6 +1456,7 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+	-webkit-overflow-scrolling:touch !important;
 }
 
 /* 767px Screen */
@@ -1519,10 +1511,10 @@ html[buildfire] body{
 		width:auto;
 	}
 	.login-holder .login.content{
-		padding-top:60px;
+		padding-top:60px !important;
 	}
 	.login-holder .moreoptions{
-		margin-top:0;
+		margin-top:0 !important;
 	}
 }
 
