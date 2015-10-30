@@ -167,10 +167,11 @@ buildfire.components.actionItems.sortableList.prototype = {
 
             deleteButton.addEventListener("click", function (e) {
                 e.preventDefault();
-                var itemIndex = me._getItemIndex(item);
+                var itemIndex = me._getItemIndex(item),
+                    parent = this.parentNode.parentNode.parentNode;
                 if (itemIndex != -1) {
                     me.items.splice(itemIndex, 1);
-                    this.parentNode.parentNode.parentNode.remove()
+                    parent.parentNode.removeChild(parent);
                     me.onDeleteItem(item, itemIndex);
                 }
             });
