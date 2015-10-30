@@ -872,6 +872,7 @@ table.table span.sort-icon{
 	vertical-align:top;
 	margin-bottom:5px;	
 	background:#eef0f0;
+	border:none !important;
 }
 .screens .screen.mostdevices a{
 	height:110px;
