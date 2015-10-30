@@ -81,8 +81,10 @@ var buildfire = {
                 select.className = 'form-control';
                 select.onchange = function(){
                     var value=select.options[select.selectedIndex].value;
-                    if(value=='close')
+                    if(value=='close') {
                         buildfire.logger.hideHistory();
+                        select.selectedIndex=0;
+                    }
                     else
                         filterOutLogs(value);
                 };
