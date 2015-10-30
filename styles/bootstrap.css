@@ -3122,7 +3122,7 @@ fieldset[disabled] .btn {
 .btn-default {
   color: #5f5f5f;
   background-color: #ffffff;
-  border: none;
+  border: 1px solid #ddd;
   -moz-transition: all 0.35s;
   -o-transition: all 0.35s;
   -webkit-transition: all 0.35s;
