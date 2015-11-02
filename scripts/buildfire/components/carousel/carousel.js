@@ -140,7 +140,7 @@ buildfire.components.carousel.editor.prototype = {
 
         image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
         title.innerHTML = item.title;
-        editButton.innerHTML = item.action ? "Edit Action" : "Add Action";
+        editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action" : "Add Action";
 
         // Append elements to the DOM
         wrapper.appendChild(moveHandle);
@@ -223,7 +223,7 @@ buildfire.components.carousel.editor.prototype = {
                 for (var i = 0; i < imageUrls.length ; i++) {
                     currentItem = buildfire.actionItems.create(null, imageUrls[i], 'image');
                     if (!currentItem.action) {
-                        currentItem.action = "linkToWeb";
+                        currentItem.action = "noAction";
                     }
 
                     newItems.push(currentItem);
@@ -264,7 +264,7 @@ buildfire.components.carousel.editor.prototype = {
     },
     // a wrapper method over buildfire showDialog
     _openActionItem: function (item, callback) {
-        buildfire.actionItems.showDialog(item, { showIcon: true }, function (err, actionItem) {
+        buildfire.actionItems.showDialog(item, { showIcon: true, allowNoAction: true }, function (err, actionItem) {
             if (err)
                 console.error("Error getting item details: ", err);
             else {
