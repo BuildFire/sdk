@@ -115,9 +115,9 @@ textarea{
 #menuToggle{
 	border-radius:5px 0 0 5px;
 	font-size:21px;
-	padding:8px 10px 4px;
+	padding:6px 10px;
 	position:fixed;
-	top:6px;
+	top:9px;
 	right:0;
 	z-index:9999999;
 	background:#fff;
@@ -125,6 +125,7 @@ textarea{
 }
 #menuToggle span.icon{
 	font-size:21px;
+	vertical-align:top;
 }
 #menuToggle .notification-circle{
 	position:absolute;
@@ -1456,6 +1457,7 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+	overflow-y:scroll;
 	-webkit-overflow-scrolling:touch !important;
 }
 

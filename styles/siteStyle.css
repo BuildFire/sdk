@@ -812,6 +812,10 @@ table.table span.sort-icon{
 .section .bottom.border-top-grey div{
 	padding:0;
 }
+.modal .modal-content .bottom .col-md-6,
+.section .bottom.border-top-grey .col-md-6{
+	width:50%;
+}
 .modal .modal-content .bottom div a,
 .bottom div a.action{
 	width:100%;
