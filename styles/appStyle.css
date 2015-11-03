@@ -193,8 +193,8 @@ nav.menu #sideMenuCloseButton{
     margin:-15px;
 }
 nav.menu a.divider{
-	padding-top:6px;
-	padding-bottom:6px;
+	padding-top:2px;
+	padding-bottom:4px;
 	border-top:none !important;
 	background:#efefef;
 }
@@ -213,6 +213,8 @@ nav.menu a .media img{
 	height:auto;
 	width:auto;
 	border-radius:2px;
+	border-radius:50px;
+	border-radius:100%;
 }
 nav.menu a .media .main-icon{
 	vertical-align:middle;
@@ -1375,10 +1377,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .user-profile .item.location{
 	padding-top:0;
-	margin-top:-8px;
+	margin-top:-10px;
 }
 .user-profile .item.location p{
-	font-size:13px;
+	font-size:12px;
 }
 .user-profile .user-list-items{
 	margin:70px auto 0;
