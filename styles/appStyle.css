@@ -120,7 +120,7 @@ textarea{
 	top:9px;
 	right:0;
 	z-index:9999999;
-	background:#fff;
+	background:#efefef;
 	cursor:pointer;
 }
 #menuToggle span.icon{
@@ -502,6 +502,7 @@ nav.menu a.notifications .notification-circle span{
 	padding:10px 0;
 	opacity:0.85;
 	z-index:9;
+	background:#efefef;
 }
 .holder .info-circle{
 	bottom:inherit;

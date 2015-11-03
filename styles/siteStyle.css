@@ -106,6 +106,9 @@ header .usermenus{
 header .appid p{
 	margin-top:6px;
 }
+header .usermenus .dropdown{
+	max-width:220px;
+}
 header .usermenus .dropdown .dropdown-toggle:hover,
 header .usermenus .dropdown.open .dropdown-toggle{
 	background:#fff !important;
@@ -849,7 +852,7 @@ table.table span.sort-icon{
 	width:20%;
 	float:left;
 	position:relative;
-	max-width:92px;
+	max-width:85px;
 }
 .screens .screen.layoutgrid{
 	max-width:inherit;
@@ -880,23 +883,23 @@ table.table span.sort-icon{
 }
 .screens .screen.mostdevices a{
 	height:110px;
-	width:90%;
+	width:74px;
 	line-height:107px;
 }
 .screens .screen.iphone a{
-	width:85%;
+	width:69px;
 	height:122px;
 	line-height:119px;
 }
 .screens .screen.ipads a{
 	height:105px;
 	line-height:102px;
-	width:90%;
+	width:79px;
 }
 .screens .screen.tablets a{
 	height:122px;
 	line-height:119px;
-	width:90%;
+	width:77px;
 }
 .screens .screen.layouticon a,
 .screens .layoutgrid .layouticon{
@@ -1059,6 +1062,8 @@ p.info{
 .colorgrid.themegrid .coloritem a.img-thumbnail{
 	height:44px;
 	width:60px;
+	display: block;
+	margin: 0 auto;
 }
 .colorgrid.themegrid .coloritem a.img-thumbnail span{
 	width:33.33%;
@@ -1066,7 +1071,10 @@ p.info{
 	float:left;
 }
 .holder .colorgrid.themegrid .coloritem label{
-	top:-18px;
+	top: 0;
+	margin-top: 5px;
+	display: block;
+	text-align: center;
 }
 
 /* Emulator */
