@@ -5,8 +5,10 @@
     /*left: 90%; /* dont scroll till data loaded*/
     width: 100%;
     height: 100%;
-	/*overflow-x:hidden;
-	overflow-y:auto;*/
+	overflow-x:hidden;
+	overflow-y:auto;
+	-webkit-overflow-scrolling:touch;
+	
     background-color:white;
 
     -webkit-transition: -webkit-transform 0.3s ease-in-out;
@@ -18,6 +20,8 @@
 }
 .slide.relative{
 	position:relative;
+	overflow-x:inherit;
+	overflow-y:inherit;
 }
 .slide.final {
     position: absolute;
