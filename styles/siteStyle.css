@@ -94,17 +94,24 @@ header a.logo{
 	display:inline-block;
 	width:200px;
 	padding:16px 15px;
+	height:64px;
+	line-height:28px;
 }
 header a.logo img{
 	max-width:100%;
 	position:relative;
 	top:1px;
+	max-height:32px;
+	vertical-align:middle;
 }
 header .usermenus{
 	padding:15px 20px;
 }
 header .appid p{
 	margin-top:6px;
+}
+header .usermenus .dropdown{
+	max-width:220px;
 }
 header .usermenus .dropdown .dropdown-toggle:hover,
 header .usermenus .dropdown.open .dropdown-toggle{
@@ -812,6 +819,10 @@ table.table span.sort-icon{
 .section .bottom.border-top-grey div{
 	padding:0;
 }
+.modal .modal-content .bottom .col-md-6,
+.section .bottom.border-top-grey .col-md-6{
+	width:50%;
+}
 .modal .modal-content .bottom div a,
 .bottom div a.action{
 	width:100%;
@@ -845,7 +856,7 @@ table.table span.sort-icon{
 	width:20%;
 	float:left;
 	position:relative;
-	max-width:92px;
+	max-width:85px;
 }
 .screens .screen.layoutgrid{
 	max-width:inherit;
@@ -876,23 +887,23 @@ table.table span.sort-icon{
 }
 .screens .screen.mostdevices a{
 	height:110px;
-	width:90%;
+	width:74px;
 	line-height:107px;
 }
 .screens .screen.iphone a{
-	width:85%;
+	width:69px;
 	height:122px;
 	line-height:119px;
 }
 .screens .screen.ipads a{
 	height:105px;
 	line-height:102px;
-	width:90%;
+	width:79px;
 }
 .screens .screen.tablets a{
 	height:122px;
 	line-height:119px;
-	width:90%;
+	width:77px;
 }
 .screens .screen.layouticon a,
 .screens .layoutgrid .layouticon{
@@ -990,7 +1001,7 @@ table.table span.sort-icon{
 .screens .screen span.icon.main-icon,
 .screens .screen span.glyphicon.main-icon{
 	position:relative;
-	top:12px;
+	top:9px;
 	right:inherit;
 	opacity:1;
 	font-size:32px;
@@ -1035,7 +1046,6 @@ p.info{
 	height:35px;
 }
 .colorgrid .coloritem a:hover{
-	background:#eef0f0;
 	cursor:pointer;
 }
 .colorgrid .coloritem a span{
@@ -1052,6 +1062,9 @@ p.info{
 	margin-left:8px;
 	font-weight:300;
 }
+.colorgrid.themegrid .coloritem label{
+	top:-18px;
+}
 .colorgrid.themegrid .coloritem a.img-thumbnail{
 	height:44px;
 	width:60px;
@@ -1060,9 +1073,6 @@ p.info{
 	width:33.33%;
 	height:50%;
 	float:left;
-}
-.holder .colorgrid.themegrid .coloritem label{
-	top:-18px;
 }
 
 /* Emulator */

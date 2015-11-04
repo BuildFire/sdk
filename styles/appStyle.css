@@ -115,16 +115,17 @@ textarea{
 #menuToggle{
 	border-radius:5px 0 0 5px;
 	font-size:21px;
-	padding:8px 10px 4px;
+	padding:6px 10px;
 	position:fixed;
-	top:6px;
+	top:9px;
 	right:0;
 	z-index:9999999;
-	background:#fff;
+	background:#efefef;
 	cursor:pointer;
 }
 #menuToggle span.icon{
 	font-size:21px;
+	vertical-align:top;
 }
 #menuToggle .notification-circle{
 	position:absolute;
@@ -192,8 +193,8 @@ nav.menu #sideMenuCloseButton{
     margin:-15px;
 }
 nav.menu a.divider{
-	padding-top:6px;
-	padding-bottom:6px;
+	padding-top:2px;
+	padding-bottom:4px;
 	border-top:none !important;
 	background:#efefef;
 }
@@ -212,6 +213,8 @@ nav.menu a .media img{
 	height:auto;
 	width:auto;
 	border-radius:2px;
+	border-radius:50px;
+	border-radius:100%;
 }
 nav.menu a .media .main-icon{
 	vertical-align:middle;
@@ -501,6 +504,7 @@ nav.menu a.notifications .notification-circle span{
 	padding:10px 0;
 	opacity:0.85;
 	z-index:9;
+	background:#efefef;
 }
 .holder .info-circle{
 	bottom:inherit;
@@ -1373,10 +1377,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 .user-profile .item.location{
 	padding-top:0;
-	margin-top:-8px;
+	margin-top:-10px;
 }
 .user-profile .item.location p{
-	font-size:13px;
+	font-size:12px;
 }
 .user-profile .user-list-items{
 	margin:70px auto 0;
@@ -1456,6 +1460,7 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+	overflow-y:scroll;
 	-webkit-overflow-scrolling:touch !important;
 }
 
