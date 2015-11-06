@@ -456,15 +456,15 @@ buildfire.components.carousel.view.prototype = {
     _appendItem: function (item) {
         var slider = document.createElement("div");
         slider.className = "plugin-slide";
-        if (item.url) {
-            slider.addEventListener("click", function () {
-                buildfire.actionItems.execute(item, function (err, result) {
-                    if (err) {
-                        console.warn('Error openning slider action: ', err);
-                    }
-                });
+
+        slider.addEventListener("click", function () {
+            buildfire.actionItems.execute(item, function (err, result) {
+                if (err) {
+                    console.warn('Error openning slider action: ', err);
+                }
             });
-        }
+        });
+
         var image = document.createElement("img");
 
         image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
