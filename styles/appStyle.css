@@ -1254,7 +1254,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .launcher-plugin.layout7 .menu-links .menu-item img{
 	max-width:22px;
 	height:auto;
-	border-radius:2px;
 }
 .launcher-plugin .launcher-icons .launcher-icon .text-holder p{
 	margin:6px 0 0;
@@ -1438,9 +1437,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 /* iFrame */
 /* Plugin iFrame */
 section .pluginPage,
-section .pluginPage #pluginContentPanel{
-	height:100%;
-}
+section .pluginPage #pluginContentPanel,
 #iframeControl,
 #iframeControl body,
 #controlIFrame,
@@ -1458,9 +1455,9 @@ html[buildfire]{
 	overflow:hidden !important;
 }
 html[buildfire] body{
-	height:100%;
-	width:100%;
-	overflow-y:auto !important;
+	height:100% !important;
+	width:100% !important;
+	overflow-y:scroll !important;
 	-webkit-overflow-scrolling:touch !important;
 }
 
