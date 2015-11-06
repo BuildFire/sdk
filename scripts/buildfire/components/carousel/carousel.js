@@ -367,7 +367,7 @@ buildfire.components.carousel.view.prototype = {
             this.height = Math.ceil(1 * this.width / 2.39);
         }
 
-        this.cssWidth = this.width + "px";
+        this.cssWidth = "100%";//this.width + "px";
         this.cssHeight = this.height + "px";
     },
     // remove all nodes from the slider
