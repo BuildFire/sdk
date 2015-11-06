@@ -22,6 +22,11 @@
 .slide.overflow-hidden{
 	overflow:hidden;
 }
+.slide.scroll{
+	overflow-x:hidden;
+	overflow-y:scroll;
+	-webkit-overflow-scrolling:touch;
+}
 .slide.final {
     position: absolute;
     -webkit-transform: translateX(0);
