@@ -158,7 +158,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
             wrapper = document.createElement("div"),
             moveHandle = document.createElement("span"),
             mediaHolder = null,
-            image = null,
+            media = null,
             details = document.createElement("div"),
             title = document.createElement("span"),
             buttonsWrapper = document.createElement("div"),
@@ -182,9 +182,16 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         if (this.dialogOptions.showIcon == true) {
             mediaHolder = document.createElement("div");
             mediaHolder.className = "media-holder pull-left";
-            image = document.createElement("img");
-            image.src = this._resizeImage(item.iconUrl, { width: 80, height: 40 });
-            mediaHolder.appendChild(image);
+            if (item.iconUrl) {
+                media = document.createElement("img");
+                media.src = this._resizeImage(item.iconUrl, { width: 80, height: 40 });
+                mediaHolder.appendChild(media);
+            } else if (item.iconClassName) {
+                media = document.createElement("i");
+                media.className = "main-icon " + item.iconClassName;
+                mediaHolder.appendChild(media);
+            }
+           
             wrapper.appendChild(mediaHolder);
         }
 
