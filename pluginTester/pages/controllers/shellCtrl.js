@@ -3,7 +3,7 @@
  */
 
 
-$app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce, $http) {
+$app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function ($scope, $routeParams,$sce, $http) {
         window.$http = $http;
         var config = null;
         var widgetIframe = document.getElementById('widget');
@@ -12,9 +12,9 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
         };
 
         $scope.dataTracer = "http://int2.myapp.buildfire.com:89/#/dataTracer/" + window.appContext.currentApp.appId
-        + "/" + window.appContext.currentPlugin.pluginPath
-        + "/" + window.appContext.currentPlugin.instanceId
-        + "/" + window.appContext.currentApp.keys.datastoreKey;
+            + "/" + window.appContext.currentPlugin.pluginPath
+            + "/" + window.appContext.currentPlugin.instanceId
+            + "/" + window.appContext.currentApp.keys.datastoreKey;
 
 
         $scope.loadFrames = function (pluginFolder, config) {
@@ -40,7 +40,8 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
         };
 
         $scope.loadIFrame = function (section, e) {
-            var pluginFolder = window.location.hash.replace('#', '');
+
+            var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
             $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html';
@@ -52,6 +53,8 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
 
         /****************keep track of recent plugins *****/
         function keepTrackOfRecentPlugins(pluginFolder) {
+
+            window.localStorage.setItem('lastPlugin',pluginFolder);
             var recentPlugins = localStorage.getItem('__recentPlugins');
             if (recentPlugins) {
                 try {
@@ -78,7 +81,7 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
         }
 
         $scope.init = function () {
-            var pluginFolder = window.location.hash.replace('#', '');
+            var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
             var xmlhttp = new XMLHttpRequest();
@@ -88,9 +91,10 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     config = JSON.parse(xmlhttp.responseText);
                     $scope.loadFrames(pluginFolder, config);
-                    keepTrackOfRecentPlugins(pluginFolder);
-                    $scope.pluginFolder=pluginFolder;
+                    $scope.navToValue=$scope.pluginFolder = pluginFolder;
                     $scope.$apply();
+                    keepTrackOfRecentPlugins(pluginFolder);
+
                 }
                 else if (xmlhttp.status >= 300)
                     alert('Error loading plugin');
@@ -106,24 +110,31 @@ $app.controller('shellCtrl', ['$scope', '$sce', '$http', function ($scope, $sce,
 
         $scope.init();
 
-        $scope.back=function(){
+        $scope.back = function () {
             var packet = new Packet(null, "navigation.onBackButtonClick");
             postMaster.widgetPluginAPI.sendMessage(null, packet);
         };
 
-        var clickCounter=0;
-        $scope.titleClick = function(){
+        var clickCounter = 0;
+        $scope.titleClick = function () {
             clickCounter++;
-            setTimeout(function(){clickCounter--;},3000);
-            if(clickCounter>5) {
+            setTimeout(function () {
+                clickCounter--;
+            }, 3000);
+            if (clickCounter > 5) {
                 var packet = new Packet(null, "logger.showHistory");
                 postMaster.widgetPluginAPI.sendMessage(null, packet);
             }
         };
 
         $scope.sendDeeplinkData = function () {
-            debugger;
             widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.link.deeplinkData;
+        };
+
+        $scope.navTo= function($event){
+
+            if($event.keyCode == 13)
+                window.location.hash='/plugin/' + $scope.navToValue;
         };
 
         if (postMaster.widgetPluginAPI && postMaster.controlPluginAPI) {

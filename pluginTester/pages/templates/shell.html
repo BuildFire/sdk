@@ -1,0 +1,21 @@
+<div ng-controller="shellCtrl">
+    <div class="header clearfix">
+        <h4 class="margin-zero">Plugin</h4>
+        <input class="plugin-input margin-left-fifteen border-none border-radius-four" type="text" ng-cloak ng-model="navToValue" ng-keypress="navTo($event);" placeholder="Plugin Name">
+    </div>
+    <div class="layout padded clearfix">
+        <ul class="nav nav-tabs nav-justified">
+            <li ng-show="contentSrc">
+                <a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)">Content</a>
+            </li>
+            <li ng-show="designSrc">
+                <a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
+            </li>
+            <li ng-show="settingsSrc">
+                <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
+            </li>
+        </ul>
+        <iframe id="iframeControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
+                ng-src="{{currentControl}}"></iframe>
+    </div>
+</div>

@@ -16,16 +16,19 @@
 
     <!-- JS -->
     <script type="text/javascript" src="../scripts/angular/angular.min.js"></script>
-    <script type="text/javascript" src="../scripts/angular/ng-file-upload.min.js"></script>
-    <script type="text/javascript" src="../scripts/angular/ng-file-upload-shim.min.js"></script>
-    <script type="text/javascript" src="../scripts/angular/ui-bootstrap.min.js"></script>
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
-    <script type="text/javascript" src="../scripts/angular/ng-map.min.js"></script>
-    <script type="text/javascript" src="../scripts/angular/ngAutocomplete.js"></script>
+
 
 </head>
-<body onhashchange="window.location.reload()" ng-controller="shellCtrl">
+<body onhashchange="window.location.reload()" >
 <div id="container" ng-controller="openDialogCtrl">
+    <div class="loading-screen"  ng-show="showSpinner">
+        <div class="loading-bg">
+            <div class="loading-dots">
+                <div class="dot dot1"></div>
+                <div class="dot dot2"></div>
+            </div>
+        </div>
+    </div>
     <header class="navbar-fixed-top border-bottom-grey">
         <div class="contain">
             <a href="http://buildfire.com" class="logo text-center ng-scope">
@@ -36,6 +39,19 @@
     </header>
     <nav>
         <ul class="menu">
+            <li>
+                <a href="#/" class="parent primary-color-hover transition-third">
+                    <p class="text margin-zero ellipsis transition-third">Tester</p>
+                    <span class="icon icon-home transition-third"></span>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/BuildfireDev" target="_blank"
+                   class="parent primary-color-hover transition-third" >
+                    <p class="text margin-zero ellipsis transition-third">BuildFire News</p>
+                    <span class="icon icon-bullhorn transition-third"></span>
+                </a>
+            </li>
             <li>
                 <a ng-href="http://int2.myapp.buildfire.com:89" target="_blank"
                    class="parent primary-color-hover transition-third">
@@ -56,50 +72,28 @@
                     <span class="icon icon-window transition-third"></span>
                 </a>
             </li>
+            <li>
+                <a href="#/settings" class="parent primary-color-hover transition-third">
+                    <p class="text margin-zero ellipsis transition-third">Settings</p>
+                    <span class="icon icon-cog transition-third"></span>
+                </a>
+            </li>
             <li class="dark divider">
                 Recent Plugins
             </li>
-            <li class="dark" ng-repeat="p in recentPlugins">
-                <a ng-cloak href="shell.html#{{p}}" class="parent primary-color-hover transition-third">
-                    <p class="text margin-zero ellipsis transition-third">{{p}}</p>
-                </a>
-            </li>
+            <div ng-controller="recentPluginsCtrl">
+                <li class="dark" ng-repeat="p in recentPlugins" >
+                    <a ng-cloak href="#/plugin/{{p}}" class="parent primary-color-hover transition-third">
+                        <p class="text margin-zero ellipsis transition-third">{{p}}</p>
+                    </a>
+                </li>
+            </div>
         </ul>
-        <div class="tweets-iframe margin-top-twenty">
-			<a class="twitter-timeline" data-dnt="true" href="https://twitter.com/BuildfireDev" data-widget-id="649687174758010880">Tweets by @BuildfireDev</a>
-          	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-        </div>
     </nav>
+
     <section id="main-content">
         <div class="shell-sdk holder">
-            <div role="alert"></div>
-            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey">
-				<div class="loading-screen" ng-show="showSpinner">
-					<div class="loading-bg">
-						<div class="loading-dots">
-							<div class="dot dot1"></div>
-							<div class="dot dot2"></div>
-						</div>
-					</div>
-				</div>                <div class="header clearfix">
-                    <h4 class="margin-zero">Plugin</h4>
-                    <input class="plugin-input margin-left-fifteen border-none border-radius-four" type="text" ng-cloak value="{{pluginFolder}}" placeholder="Plugin Name">
-                </div>
-                <div class="layout padded clearfix">
-                    <ul class="nav nav-tabs nav-justified">
-                        <li ng-show="contentSrc">
-                            <a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)">Content</a>
-                        </li>
-                        <li ng-show="designSrc">
-                            <a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
-                        </li>
-                        <li ng-show="settingsSrc">
-                            <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
-                        </li>
-                    </ul>
-                    <iframe id="iframeControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
-                            ng-src="{{currentControl}}"></iframe>
-                </div>
+            <section id="pageContent" class="pull-left slide wrapper border-radius-six border-grey" ng-view>
             </section>
             <section id="emulator" class="pull-right">
                 <div id="emulatorContainer" class="border-grey">
@@ -149,13 +143,24 @@
     </section>
 </div>
 
+<script type="text/javascript" src="../scripts/angular/angular-route.min.js"></script>
+<script type="text/javascript" src="../scripts/angular/ng-file-upload.min.js"></script>
+<script type="text/javascript" src="../scripts/angular/ng-file-upload-shim.min.js"></script>
+<script type="text/javascript" src="../scripts/angular/ui-bootstrap.min.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+<script type="text/javascript" src="../scripts/angular/ng-map.min.js"></script>
+<script type="text/javascript" src="../scripts/angular/ngAutocomplete.js"></script>
+
 <!-- JS -->
-<script type="text/javascript" src="scripts/app.js"></script>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="pages/controllers/shellCtrl.js"></script>
+<script type="text/javascript" src="pages/controllers/settingsCtrl.js"></script>
+<script type="text/javascript" src="pages/controllers/recentPluginsCtrl.js"></script>
+
 <script type="text/javascript" src="scripts/siteConfig.js"></script>
 <script type="text/javascript" src="scripts/appContext.js"></script>
 <script type="text/javascript" src="scripts/loadScripts.js"></script>
 <script type="text/javascript" src="scripts/overrides.js"></script>
-<script type="text/javascript" src="scripts/shellCtrl.js"></script>
 <script type="text/javascript" src="scripts/pullDownToRefresh.js"></script>
 
 </body>
