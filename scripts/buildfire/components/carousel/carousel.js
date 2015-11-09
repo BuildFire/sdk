@@ -307,6 +307,7 @@ buildfire.components.carousel.view = function (selector, items, layout) {
     this._initDimensions(layout);
     this._loadItems(items, false);
     this.init(selector);
+	window.dispatchEvent(new Event('resize'));
 };
 
 // Carousel view methods
@@ -367,7 +368,7 @@ buildfire.components.carousel.view.prototype = {
             this.height = Math.ceil(1 * this.width / 2.39);
         }
 
-        this.cssWidth = "100%";//this.width + "px";
+        this.cssWidth = this.width + "px";
         this.cssHeight = this.height + "px";
     },
     // remove all nodes from the slider
@@ -439,8 +440,8 @@ buildfire.components.carousel.view.prototype = {
         me.selector.style.position = "relative";
         me.selector.style.top = "0px";
         me.selector.style.left = "0px";
-        me.selector.style.width = this.cssWidth;
-        me.selector.style.height = this.cssHeight;
+        //me.selector.style.width = this.cssWidth;
+        //me.selector.style.height = this.cssHeight;
         me.selector.className = this.selector.className + " plugin-slider text-center";
     },
     // loop and append the images to the DOM
@@ -468,8 +469,8 @@ buildfire.components.carousel.view.prototype = {
         var image = document.createElement("img");
 
         image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
-        image.style.width = this.cssWidth;
-        image.style.height = this.cssHeight;
+        //image.style.width = this.'cssWidth';
+        //image.style.height = this.cssHeight;
         image.style.transform = "translateZ(0)";
         slider.appendChild(image);
         this.selector.appendChild(slider);

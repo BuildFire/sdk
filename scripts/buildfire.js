@@ -407,7 +407,12 @@ var buildfire = {
     , appearance: {
          insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
-            html.setAttribute('buildfire', 'enabled');
+		
+			if(window.location.href.indexOf('widget') > 0){
+				html.setAttribute('buildfire', 'widget');          
+			}else{
+	            html.setAttribute('buildfire', 'control');				
+			}
 
             var nVer = navigator.appVersion;
             var nAgt = navigator.userAgent;
