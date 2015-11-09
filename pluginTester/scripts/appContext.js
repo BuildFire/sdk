@@ -19,7 +19,7 @@
             }
             , currentPlugin: {
                 pluginId: key
-                , pluginPath: 'myPlugin' 
+                , pluginPath: ''
                 , instanceId: key
                 , mode: 0
             }
@@ -27,13 +27,15 @@
 
         window.localStorage.setItem('appContext',JSON.stringify(window.appContext));
     }
-    /*
-    var hash = window.location.hash;
-    if(hash && hash.length > 1)
-        hash= hash.substring(1);
+
+
+    var hash = window.location.hash.split('/');
+    if(hash && hash.length > 2)
+        hash= hash[2];
     else
         hash="myPlugin";
-*/
+
+    window.appContext.currentPlugin.pluginPath = hash;
 
 
 
