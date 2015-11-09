@@ -19,7 +19,7 @@
             }
             , currentPlugin: {
                 pluginId: key
-                , pluginPath: hash // [Enter your Plugin Folder Name here]
+                , pluginPath: 'myPlugin' 
                 , instanceId: key
                 , mode: 0
             }
