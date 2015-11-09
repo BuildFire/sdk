@@ -19,7 +19,7 @@
 
 
 </head>
-<body onhashchange="window.location.reload()" >
+<body onhashchange="window.location.reload()" ng-controller="indexCtrl" >
 <div id="container" ng-controller="openDialogCtrl">
     <div class="loading-screen"  ng-show="showSpinner">
         <div class="loading-bg">
@@ -59,8 +59,8 @@
                     <span class="icon icon-check-square transition-third"></span>
                 </a>
             </li>
-            <li class="datatracer">
-                <a href="{{dataTracer}}" class="parent primary-color-hover transition-third" target="_blank">
+            <li class="datatracer" >
+                <a href="{{dataTracer}}" ng-show="dataTracer" class="parent primary-color-hover transition-third" target="_blank">
                     <p class="text margin-zero ellipsis transition-third">Data Tracer</p>
                     <span class="icon icon-cli transition-third"></span>
                 </a>
@@ -81,7 +81,7 @@
             <li class="dark divider">
                 Recent Plugins
             </li>
-            <div ng-controller="recentPluginsCtrl">
+            <div >
                 <li class="dark" ng-repeat="p in recentPlugins" >
                     <a ng-cloak href="#/plugin/{{p}}" class="parent primary-color-hover transition-third">
                         <p class="text margin-zero ellipsis transition-third">{{p}}</p>
@@ -119,23 +119,25 @@
                             <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" class="border-grey" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
                         </div>
                     </div>
-					<div class="showTools-links text-center">
-                    	<a ng-show="!showTools" ng-click="showTools=true">Show Tools</a>
-						<a ng-show="showTools" ng-click="showTools=false">Hide Tools</a>
-					</div>
-                    <div class="showTools-content margin-top-ten clearfix" ng-show="showTools">
-						<div class="labels col-md-3 pull-left padding-zero margin-top-five">
-							<span>Deeplink Data</span>
-						</div>
-						<div class="main col-md-9 pull-right padding-right-zero">
-							<div class="col-md-8 pull-left padding-zero">
-								<input id="dld" type="text" class="form-control" ng-model="link.deeplinkData"/>
-							</div>
-							<div class="col-md-4 pull-right padding-right-zero">
-                        		<button class="btn btn-primary stretch" ng-click="sendDeeplinkData()" ng-disabled="!link.deeplinkData">Send </button>
-                    		</div>
-						</div>
-					</div>
+                    <div >
+                        <div class="showTools-links text-center">
+                            <a ng-show="!showTools" ng-click="showTools=true">Show Tools</a>
+                            <a ng-show="showTools" ng-click="showTools=false">Hide Tools</a>
+                        </div>
+                        <div class="showTools-content margin-top-ten clearfix" ng-show="showTools">
+                            <div class="labels col-md-3 pull-left padding-zero margin-top-five">
+                                <span>Deeplink Data</span>
+                            </div>
+                            <div class="main col-md-9 pull-right padding-right-zero">
+                                <div class="col-md-8 pull-left padding-zero">
+                                    <input id="dld" type="text" class="form-control" ng-model="link.deeplinkData"/>
+                                </div>
+                                <div class="col-md-4 pull-right padding-right-zero">
+                                    <button class="btn btn-primary stretch" ng-click="sendDeeplinkData()" ng-disabled="!link.deeplinkData">Send </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -154,8 +156,9 @@
 <!-- JS -->
 <script type="text/javascript" src="app.js"></script>
 <script type="text/javascript" src="pages/controllers/shellCtrl.js"></script>
+<script type="text/javascript" src="pages/controllers/indexCtrl.js"></script>
 <script type="text/javascript" src="pages/controllers/settingsCtrl.js"></script>
-<script type="text/javascript" src="pages/controllers/recentPluginsCtrl.js"></script>
+
 
 <script type="text/javascript" src="scripts/siteConfig.js"></script>
 <script type="text/javascript" src="scripts/appContext.js"></script>

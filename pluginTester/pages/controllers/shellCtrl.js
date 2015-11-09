@@ -11,11 +11,6 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
             deeplinkData: ""
         };
 
-        $scope.dataTracer = "http://int2.myapp.buildfire.com:89/#/dataTracer/" + window.appContext.currentApp.appId
-            + "/" + window.appContext.currentPlugin.pluginPath
-            + "/" + window.appContext.currentPlugin.instanceId
-            + "/" + window.appContext.currentApp.keys.datastoreKey;
-
 
         $scope.loadFrames = function (pluginFolder, config) {
             var root = '../plugins/';
