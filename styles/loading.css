@@ -2,11 +2,10 @@
   opacity:1;
   position: absolute;
   z-index: 10002;
-  top:20%;
-  left:50%;
+  top:30%;
+  left:567px;
   width:80px;
   height:80px;
-  margin-left:-40px;
   margin-top:-40px;
   border-radius:100%;
   transition: all 0.5s;
@@ -51,6 +50,14 @@
   bottom: 0;
   -webkit-animation-delay: -1.0s;
   animation-delay: -1.0s;
+}
+
+/* Media Screen */
+@media(max-width: 1400px){
+	.loading-screen {
+		left:445px;
+		top:34%;
+	}
 }
 
 @-webkit-keyframes rotate { 100% { -webkit-transform: rotate(360deg) }}
