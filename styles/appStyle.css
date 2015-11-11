@@ -18,9 +18,11 @@ body{
 	height:100%;
 	overflow:hidden !important;
 }
+/*
 html:not([buildfire='enabled']){
 	overflow:hidden !important;
 }
+*/
 ::-webkit-scrollbar{
     display:none;
 }
@@ -29,6 +31,9 @@ iframe,
 object{
 	max-width:100%;
 	vertical-align:top;
+}
+img{
+	height:auto;
 }
 iframe{
 	border:none;
@@ -120,12 +125,13 @@ textarea{
 	top:9px;
 	right:0;
 	z-index:9999999;
-	background:#efefef;
+	background:#09a3ee;
 	cursor:pointer;
 }
 #menuToggle span.icon{
 	font-size:21px;
 	vertical-align:top;
+	color:#fff;
 }
 #menuToggle .notification-circle{
 	position:absolute;

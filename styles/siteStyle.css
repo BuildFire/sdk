@@ -430,7 +430,7 @@ html[buildfire] .item .header .pull-right .btn{
 	line-height:36px;
 }
 html[browser="Firefox"] .draggable-list-view .d-item .media-holder{
-	line-height:35px;
+	line-height:37px;
 }
 .draggable-list-view .d-item.square-icon .media-holder{
 	width:40px;
@@ -438,7 +438,6 @@ html[browser="Firefox"] .draggable-list-view .d-item .media-holder{
 	line-height:36px;
 }
 html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
-	line-height:35px;
 	line-height:37px;
 }
 .draggable-list-view .d-item .media-holder img{
