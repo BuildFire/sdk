@@ -92,6 +92,28 @@ and targeted by Bootstrap like classes */
 	background:none !important;
 }
 
+/* White and Black Theme */
+.whiteTheme,
+.whiteTheme:hover,
+.whiteTheme:focus{
+	color:#fff !important;
+}
+.whiteBackgroundTheme,
+.whiteBackgroundTheme:hover,
+.whiteBackgroundTheme:focus{
+	background:#fff !important;
+}
+.blackTheme,
+.blackTheme:hover,
+.blackTheme:focus{
+	color:#000 !important;
+}
+.blackBackgroundTheme,
+.blackBackgroundTheme:hover,
+.blackBackgroundTheme:focus{
+	background:#000 !important;
+}
+
 
 
 /***** Margins *****/
