@@ -16,12 +16,10 @@ body{
 	color:#5f5f5f;
     margin:0px;
 	height:100%;
-}
-html{
 	overflow-x:hidden !important;
 	overflow-y:hidden;
 }
-html:not(html[buildfire]){
+html:not([buildfire]){
 	overflow:hidden !important;
 }
 ::-webkit-scrollbar{
@@ -55,29 +53,6 @@ textarea{
 .holder .btn.dropdown-toggle{
 	width:100%;
 }
-
-/* White and Black Theme */
-.whiteTheme,
-.whiteTheme:hover,
-.whiteTheme:focus{
-	color:#fff !important;
-}
-.whiteBackgroundTheme,
-.whiteBackgroundTheme:hover,
-.whiteBackgroundTheme:focus{
-	background:#fff !important;
-}
-.blackTheme,
-.blackTheme:hover,
-.blackTheme:focus{
-	color:#000 !important;
-}
-.blackBackgroundTheme,
-.blackBackgroundTheme:hover,
-.blackBackgroundTheme:focus{
-	background:#000 !important;
-}
-
 
 /* Plugin Nav */
 #pluginNav{
@@ -1461,6 +1436,10 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 /* Plugin iFrame */
 section .pluginPage,
 section .pluginPage #pluginContentPanel,
+#iframeControl,
+#iframeControl body,
+#controlIFrame,
+#controlIFrame body,
 #pluginFrame,
 #launcherPlugin,
 html[buildfire]{
