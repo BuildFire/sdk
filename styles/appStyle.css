@@ -16,14 +16,14 @@ body{
 	color:#5f5f5f;
     margin:0px;
 	height:100%;
+}
+html{
 	overflow-x:hidden !important;
 	overflow-y:hidden;
 }
-/*
-html:not([buildfire='enabled']){
+html:not(html[buildfire]){
 	overflow:hidden !important;
 }
-*/
 ::-webkit-scrollbar{
     display:none;
 }
@@ -1220,6 +1220,7 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	border:none;
 }
 .launcher-plugin .main-logo .logo-holder .logo-media{
+	width:100%;
 	width:100vw;
 	max-width:400px;
 	padding:15px;
@@ -1437,14 +1438,8 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 /* Plugin iFrame */
 section .pluginPage,
 section .pluginPage #pluginContentPanel,
-#iframeControl,
-#iframeControl body,
-#controlIFrame,
-#controlIFrame body,
 #pluginFrame,
-#pluginFrame body,
 #launcherPlugin,
-#launcherPlugin body,
 html[buildfire]{
 	width:100%;
 	min-width:100%;
