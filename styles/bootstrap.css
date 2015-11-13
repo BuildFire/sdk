@@ -5113,6 +5113,9 @@ a.thumbnail.active {
   border: 1px solid transparent;
   border-radius: 4px;
   font-size:13px;
+
+  padding: 6px;
+  font-size:12px;
 }
 .alert.alert-sm{
   padding:6px;
