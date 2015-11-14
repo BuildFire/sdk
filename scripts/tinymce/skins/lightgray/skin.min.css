@@ -94,6 +94,12 @@
 	-ms-transform:rotate(-180deg); 
 	-webkit-transform:rotate(-180deg);
 }
+.mce-window .mce-menubtn.mce-active .mce-caret,
+.mce-window .mce-menubtn.mce-active:hover .mce-caret{
+	transform:rotate(0deg);
+	-ms-transform:rotate(0deg); 
+	-webkit-transform:rotate(0deg);
+}
 .mce-btn-group:not(:first-child){
 	border-left:none;
 	padding-left:0;
@@ -187,6 +193,16 @@
 }
 .mce-window{
 	border-radius:4px;
+	top:335px !important;
+}
+.mce-window-head .mce-title{
+	font-size:16px;
+	font-weight:100;
+}
+.mce-window input,
+.mce-window textarea{
+  	border: 1px solid #dddddd;
+  	border-radius: 4px;
 }
 .mce-window .mce-window-body{
 	background:#fff;
