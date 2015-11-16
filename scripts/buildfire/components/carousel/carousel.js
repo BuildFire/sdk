@@ -408,8 +408,8 @@ buildfire.components.carousel.view.prototype = {
             var sliderOptions = {
                 navigation: false,
                 dots: true,
-                slideSpeed: 450,
-                paginationSpeed: 400,
+                slideSpeed: 800,
+                paginationSpeed: 800,
                 singleItem: true,
                 pagination: false,
                 items: 1,
@@ -418,7 +418,7 @@ buildfire.components.carousel.view.prototype = {
             };
 
             sliderOptions.autoplay = 3000;
-            sliderOptions.autoplaySpeed = 500;
+            sliderOptions.autoplaySpeed = 800;
             sliderOptions.loop = true;
 
             this.$slider.owlCarousel(sliderOptions);

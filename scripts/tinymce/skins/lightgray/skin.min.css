@@ -180,7 +180,7 @@
 
 /* Modal Popups */
 #mce-modal-block{
-	background:#32373a;
+	background:#fff;
 }
 #mce-modal-block.mce-in{
 	opacity:0.78;
