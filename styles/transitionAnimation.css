@@ -6,7 +6,7 @@
     width: 100%;
     height: 100%;
 	overflow-x:hidden;
-	overflow-y:scroll;
+	overflow-y:auto;
 	-webkit-overflow-scrolling:touch;	
     background-color:#fff;
     -webkit-transition: -webkit-transform 0.3s ease-in-out;
@@ -28,7 +28,6 @@
     -webkit-transform: translateX(0);
     transform: translateX(0);
 }
-
 .slide.ng-enter {
     -webkit-transform: translateX(100%);
     transform: translateX(100%);
