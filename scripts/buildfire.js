@@ -569,7 +569,7 @@ var buildfire = {
             buildfire.appearance._resizedTo = height;
         }
         , setHeaderVisibility: function (value) {
-            var p = new Packet(null, "appearanceAPI.setHeaderVisibility", value);
+            var p = new Packet(null, "appearance.setHeaderVisibility", value);
             buildfire._sendPacket(p);
         }
     }
