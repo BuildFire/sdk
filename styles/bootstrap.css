@@ -8315,67 +8315,102 @@ Variations
 
 
 /* Override Bootstrap Columns for CP */
-:not([buildfire='widget']) .col-xs-1, 
-:not([buildfire='widget']) .col-sm-1, 
-:not([buildfire='widget']) .col-md-1{
+html[buildfire='content'] .col-xs-1,
+html:not([buildfire]) .col-xs-1,
+html[buildfire='content'] .col-sm-1,
+html:not([buildfire]) .col-sm-1,
+html[buildfire='content'] .col-md-1,
+html:not([buildfire]) .col-md-1{
   width: 8.33333333%;	
 }
-:not([buildfire='widget']) .col-xs-2, 
-:not([buildfire='widget']) .col-sm-2, 
-:not([buildfire='widget']) .col-md-2{
+html[buildfire='content'] .col-xs-2,
+html:not([buildfire]) .col-xs-2,
+html[buildfire='content'] .col-sm-2,
+html:not([buildfire]) .col-sm-2,
+html[buildfire='content'] .col-md-2,
+html:not([buildfire]) .col-md-2{
   width: 16.66666667%;
 }
-:not([buildfire='widget']) .col-xs-3, 
-:not([buildfire='widget']) .col-sm-3, 
-:not([buildfire='widget']) .col-md-3{
-  width: 25%;		
+html[buildfire='content'] .col-xs-3,
+html:not([buildfire]) .col-xs-3,
+html[buildfire='content'] .col-sm-3,
+html:not([buildfire]) .col-sm-3,
+html[buildfire='content'] .col-md-3,
+html:not([buildfire]) .col-md-3{
+  width:25%;	
 }
-:not([buildfire='widget']) .col-xs-4, 
-:not([buildfire='widget']) .col-sm-4, 
-:not([buildfire='widget']) .col-md-4{
+html[buildfire='content'] .col-xs-4,
+html:not([buildfire]) .col-xs-4,
+html[buildfire='content'] .col-sm-4,
+html:not([buildfire]) .col-sm-4,
+html[buildfire='content'] .col-md-4,
+html:not([buildfire]) .col-md-4{
   width: 33.33333333%;		
 }
-:not([buildfire='widget']) .col-xs-5, 
-:not([buildfire='widget']) .col-sm-5, 
-:not([buildfire='widget']) .col-md-5{
+html[buildfire='content'] .col-xs-5,
+html:not([buildfire]) .col-xs-5,
+html[buildfire='content'] .col-sm-5,
+html:not([buildfire]) .col-sm-5,
+html[buildfire='content'] .col-md-5,
+html:not([buildfire]) .col-md-5{
   width: 41.66666667%;	
 }
-:not([buildfire='widget']) .col-xs-6, 
-:not([buildfire='widget']) .col-sm-6, 
-:not([buildfire='widget']) .col-md-6{
-	width: 50%;	
+html[buildfire='content'] .col-xs-6,
+html:not([buildfire]) .col-xs-6,
+html[buildfire='content'] .col-sm-6,
+html:not([buildfire]) .col-sm-6,
+html[buildfire='content'] .col-md-6,
+html:not([buildfire]) .col-md-6{
+  width: 50%;	
 }
-:not([buildfire='widget']) .col-xs-7, 
-:not([buildfire='widget']) .col-sm-7, 
-:not([buildfire='widget']) .col-md-7{
-	width: 58.33333333%;	
+html[buildfire='content'] .col-xs-7,
+html:not([buildfire]) .col-xs-7,
+html[buildfire='content'] .col-sm-7,
+html:not([buildfire]) .col-sm-7,
+html[buildfire='content'] .col-md-7,
+html:not([buildfire]) .col-md-7{
+  width: 58.33333333%;	
 }
-:not([buildfire='widget']) .col-xs-8, 
-:not([buildfire='widget']) .col-sm-8, 
-:not([buildfire='widget']) .col-md-8{
+html[buildfire='content'] .col-xs-8,
+html:not([buildfire]) .col-xs-8,
+html[buildfire='content'] .col-sm-8,
+html:not([buildfire]) .col-sm-8,
+html[buildfire='content'] .col-md-8,
+html:not([buildfire]) .col-md-8{
 	width: 66.66666667%;	
 }
-:not([buildfire='widget']) .col-xs-9, 
-:not([buildfire='widget']) .col-sm-9, 
-:not([buildfire='widget']) .col-md-9{
+html[buildfire='content'] .col-xs-9,
+html:not([buildfire]) .col-xs-9,
+html[buildfire='content'] .col-sm-9,
+html:not([buildfire]) .col-sm-9,
+html[buildfire='content'] .col-md-9,
+html:not([buildfire]) .col-md-9{
   width: 75%;		
 }
-:not([buildfire='widget']) .col-xs-10, 
-:not([buildfire='widget']) .col-sm-10, 
-:not([buildfire='widget']) .col-md-10{
+html[buildfire='content'] .col-xs-10,
+html:not([buildfire]) .col-xs-10,
+html[buildfire='content'] .col-sm-10,
+html:not([buildfire]) .col-sm-10,
+html[buildfire='content'] .col-md-10,
+html:not([buildfire]) .col-md-10{
   width: 83.33333333%;	
 }
-:not([buildfire='widget']) .col-xs-11, 
-:not([buildfire='widget']) .col-sm-11, 
-:not([buildfire='widget']) .col-md-11{
+html[buildfire='content'] .col-xs-11,
+html:not([buildfire]) .col-xs-11,
+html[buildfire='content'] .col-sm-11,
+html:not([buildfire]) .col-sm-11,
+html[buildfire='content'] .col-md-11,
+html:not([buildfire]) .col-md-11{
   width: 91.66666667%;		
 }
-:not([buildfire='widget']) .col-xs-12, 
-:not([buildfire='widget']) .col-sm-12, 
-:not([buildfire='widget']) .col-md-12{
+html[buildfire='content'] .col-xs-12,
+html:not([buildfire]) .col-xs-12,
+html[buildfire='content'] .col-sm-12,
+html:not([buildfire]) .col-sm-12,
+html[buildfire='content'] .col-md-12,
+html:not([buildfire]) .col-md-12{
   width: 100%;	
 }
-
 
 
 /* Modal for Plugins */
