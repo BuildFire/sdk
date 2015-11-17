@@ -209,12 +209,10 @@ nav.menu a .media img{
 	height:auto;
 	width:auto;
 	border-radius:2px;
-	border-radius:50px;
-	border-radius:100%;
 }
 nav.menu a .media .main-icon{
 	vertical-align:middle;
-	font-size:16px;
+	font-size:18px;
 }
 nav.menu a p{
 	margin:3px 0 0;
