@@ -207,7 +207,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         (function () {
             navigateButton.addEventListener("click", function (e) {
                 e.preventDefault();
-                buildfire.navigation.navigateTo(item.pluginTypeId, item.instanceId, item.title);
+                buildfire.navigation.navigateTo({pluginTypeId : item.pluginTypeId ,  instanceId :  item.instanceId  , folderName : item.folderName , title : item.title });
             });
 
             deleteButton.addEventListener("click", function (e) {
