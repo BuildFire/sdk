@@ -353,7 +353,8 @@ nav.menu a.notifications .notification-circle span{
 	border:1px solid #09a3ee;
 }
 .holder .bottom .hidden-content .toggle-btns a{
-	padding:9px 8px 7px;
+	padding:6px 8px 4px;
+	font-size:12px;
 }
 .holder .bottom .hidden-content .toggle-btns a.active{
 	color:#fff;
