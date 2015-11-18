@@ -8412,6 +8412,28 @@ html:not([buildfire]) .col-md-12{
   width: 100%;	
 }
 
+/* White and Black Theme */
+.whiteTheme,
+.whiteTheme:hover,
+.whiteTheme:focus{
+	color:#fff !important;
+}
+.whiteBackgroundTheme,
+.whiteBackgroundTheme:hover,
+.whiteBackgroundTheme:focus{
+	background:#fff !important;
+}
+.blackTheme,
+.blackTheme:hover,
+.blackTheme:focus{
+	color:#000 !important;
+}
+.blackBackgroundTheme,
+.blackBackgroundTheme:hover,
+.blackBackgroundTheme:focus{
+	background:#000 !important;
+}
+
 
 /* Modal for Plugins */
 html[buildfire] .modal .modal-dialog{
