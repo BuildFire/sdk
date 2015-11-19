@@ -336,7 +336,7 @@ var buildfire = {
                 });
                 buildfire._resendAttempts++;
             }
-        }, 2000);
+        }, 1000);
         var wrapper = function (err, data) {
             clearTimeout(timeout);
             callback(err, data);
@@ -997,6 +997,19 @@ var buildfire = {
             }
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
+    , geo : {
+        getCurrentPosition:function(options, callback){
+            buildfire._sendPacket(new Packet(null,"geo.getCurrentPosition",options),callback);
+        }
+        ,watchPosition:function(options, callback){
+            buildfire._sendPacket(new Packet(null,"geo.watchPosition",options),callback);
+        }
+        ,clearWatch:function(watchId, callback){
+            buildfire._sendPacket(new Packet(null,"geo.clearWatch",watchId),callback);
+        }
+    }
+
 };
 buildfire.init();
 
