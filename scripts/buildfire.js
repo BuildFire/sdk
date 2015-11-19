@@ -288,7 +288,10 @@ var buildfire = {
         , "logger.showHistory"
         , "logger.attachRemoteLogger"]
     , _postMessageHandler: function (e) {
-        if (e.source === window) return;//e.origin != "null"
+        if (e.source === window) {
+            console.log(' >>>> IGNORE MESSAGE <<<< ');
+            return;
+        }//e.origin != "null"
         console.info('buildfire.js received << ' + e.data, window.location.href);
         var packet = JSON.parse(e.data);
 
@@ -316,6 +319,7 @@ var buildfire = {
             //alert('parent sent: ' + packet.data);
         }
     }
+    , _resendAttempts:0
     , _sendPacket: function (packet, callback) {
         if (typeof (callback) != "function")// handels better on response
             callback = function (err, result) {
@@ -324,9 +328,16 @@ var buildfire = {
 
         var timeout = setTimeout(function () {
             console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
-        }, 5000);
+            if(packet.cmd.indexOf('datastore') == 0 && buildfire._resendAttempts < 15){
+                console.warn("calling" + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
+                buildfire._sendPacket(packet,function(e,d){
+                    buildfire._resendAttempts--;
+                    callback(e,d);
+                });
+                buildfire._resendAttempts++;
+            }
+        }, 2000);
         var wrapper = function (err, data) {
-
             clearTimeout(timeout);
             callback(err, data);
         };
