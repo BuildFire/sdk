@@ -3135,6 +3135,7 @@ fieldset[disabled] .btn {
 .open > .dropdown-toggle.btn-default {
   background-color: #e6e6e6;
   border-color: #dddddd;
+  color:#5f5f5f;
 }
 .btn-default:active,
 .btn-default.active,
@@ -8410,6 +8411,28 @@ html:not([buildfire]) .col-sm-12,
 html[buildfire='control'] .col-md-12,
 html:not([buildfire]) .col-md-12{
   width: 100%;	
+}
+
+/* White and Black Theme */
+.whiteTheme,
+.whiteTheme:hover,
+.whiteTheme:focus{
+	color:#fff !important;
+}
+.whiteBackgroundTheme,
+.whiteBackgroundTheme:hover,
+.whiteBackgroundTheme:focus{
+	background:#fff !important;
+}
+.blackTheme,
+.blackTheme:hover,
+.blackTheme:focus{
+	color:#000 !important;
+}
+.blackBackgroundTheme,
+.blackBackgroundTheme:hover,
+.blackBackgroundTheme:focus{
+	background:#000 !important;
 }
 
 

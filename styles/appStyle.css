@@ -209,12 +209,10 @@ nav.menu a .media img{
 	height:auto;
 	width:auto;
 	border-radius:2px;
-	border-radius:50px;
-	border-radius:100%;
 }
 nav.menu a .media .main-icon{
 	vertical-align:middle;
-	font-size:16px;
+	font-size:18px;
 }
 nav.menu a p{
 	margin:3px 0 0;
@@ -355,7 +353,8 @@ nav.menu a.notifications .notification-circle span{
 	border:1px solid #09a3ee;
 }
 .holder .bottom .hidden-content .toggle-btns a{
-	padding:9px 8px 7px;
+	padding:6px 8px 4px;
+	font-size:12px;
 }
 .holder .bottom .hidden-content .toggle-btns a.active{
 	color:#fff;
@@ -1448,7 +1447,6 @@ html[buildfire] body{
 	height:100% !important;
 	width:100% !important;
 	overflow-y:auto !important;
-	overflow-y:scroll !important;
 	-webkit-overflow-scrolling:touch !important;
 }
 
