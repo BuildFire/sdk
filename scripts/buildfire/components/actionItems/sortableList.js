@@ -107,7 +107,7 @@ buildfire.components.actionItems.sortableList.prototype = {
         detailsText.className = "col-md-7 padding-zero pull-left";
         title.className = "title ellipsis item-title";
         actionName.className = "title ellipsis item-link";
-        buttonsWrapper.className = "col-md-5 text-right pull-right";
+        buttonsWrapper.className = "col-md-5 text-right pull-right padding-right-zero";
         editButton.className = "text-primary text";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
