@@ -107,7 +107,7 @@ buildfire.components.actionItems.sortableList.prototype = {
         detailsText.className = "col-md-7 padding-zero pull-left";
         title.className = "title ellipsis item-title";
         actionName.className = "title ellipsis item-link";
-        buttonsWrapper.className = "col-md-5 text-right pull-right";
+        buttonsWrapper.className = "col-md-5 text-right pull-right padding-right-zero";
         editButton.className = "text-primary text";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
@@ -192,7 +192,7 @@ buildfire.components.actionItems.sortableList.prototype = {
         contentContainer.className = "main col-md-9 pull-right";
         buttonContainer.className = "clearfix";
         button.className = "btn btn-success pull-left add-new-item";
-        sliderContainer.className = "hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey has-btn links-list";
+        sliderContainer.className = "hide-empty dynamic-link-list draggable-list-view margin-top-twenty border-radius-four border-grey has-btn links-list";
 
         button.innerHTML = "Add Link";
 

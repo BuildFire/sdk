@@ -122,4 +122,8 @@
 	html[buildfire] .draggable-list-view.no-sort-icon .d-item .copy span.title{
 		width:76%;
 	}
+	html[buildfire] .draggable-list-view.dynamic-links-list .d-item .copy{
+		max-width:75.5%;
+		width:75.5%;
+	}
 }
