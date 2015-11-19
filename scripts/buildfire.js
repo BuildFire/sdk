@@ -899,7 +899,8 @@ var buildfire = {
             buildfire.eventManager.trigger('historyOnPop', obj);
         },
         pop: function () {
-            // add to allow user to popup history items
+            var p = new Packet(null, 'history.pop');
+            buildfire._sendPacket(p);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Messaging-to-sync-your-Control-to-Widget
