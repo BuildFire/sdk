@@ -538,6 +538,10 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	width:91.5%;
 	max-width:91.5%;
 }
+.draggable-list-view.dynamic-links-list .d-item .copy{
+	max-width:81.5%;
+	width:81.5%;
+}
 
 .add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
