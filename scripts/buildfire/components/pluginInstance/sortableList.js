@@ -10,20 +10,32 @@ if (typeof (buildfire.components) == "undefined")
 if (typeof (buildfire.components.pluginInstance) == "undefined")
     buildfire.components.pluginInstance = {};
 
-buildfire.components.pluginInstance.getAllPlugins = function (page, callback) {
-    var me = this;
-    if (typeof (page) == "function") {
-        callback = page;
-        page = 0;
+/*
+ options: { //optional will also ecep a number for page index
+    pageIndex: 0 ,
+    pageSize: 20
+ }
+*/
+buildfire.components.pluginInstance.getAllPlugins = function (options, callback) {
+  //  var me = this;
+    if (typeof (options) == "function") {
+        callback = options;
+        options = {
+            pageIndex: 0 ,
+            pageSize: 20
+        };
+    }
+    else if(typeof(options) == "number"){
+        options = {
+            pageIndex: options ,
+            pageSize: 20
+        };
     }
 
     if (!callback) {
         throw "Please provide a callback forget AllPlugins";
     }
-    buildfire.pluginInstance.search({
-        pageIndex: page ? page : 0,
-        pageSize: 20
-    }, function (err, result) {
+    buildfire.pluginInstance.search(options, function (err, result) {
         if (err) {
             console.error("Error searching plugins: ", err);
         }
