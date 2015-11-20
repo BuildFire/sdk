@@ -355,6 +355,7 @@ nav.menu a.notifications .notification-circle span{
 .holder .bottom .hidden-content .toggle-btns a{
 	padding:6px 8px 4px;
 	font-size:12px;
+	vertical-align:top;
 }
 .holder .bottom .hidden-content .toggle-btns a.active{
 	color:#fff;
@@ -967,17 +968,31 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* Dynamic Links */
-.dynamic-links a{
+.dynamic-links a,
+.dynamic-links p{
 	display:block;
 	width:100%;
 	border-top:1px solid #ddd;
 	padding:10px 0;
+	margin:0;
 }
-.dynamic-links a .icon{
+.dynamic-links p:hover{
+	cursor:pointer;
+}
+.dynamic-links a img,
+.dynamic-links p img{
+	width:17px;
+	height:auto;
+	position:relative;
+	top:1px;
+	border-radius:2px;
+}
+.dynamic-links a .icon,
+.dynamic-links p .icon{
 	font-size:17px;
 	margin-right:5px;
 	position:relative;
-	top:2px;
+	top:3px;
 }
 
 /* Places */
