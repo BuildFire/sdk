@@ -17,6 +17,7 @@ function _ScriptLoader(){
         , this.domain + "scripts/framework/pluginAPI/pluginInstanceLibAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/deviceAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/pluginAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/geoAPI.js"
         , this.domain + "scripts/framework/openDialogCtrl.js"
     ];
 }
