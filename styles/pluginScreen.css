@@ -1,4 +1,7 @@
 @media(max-width: 600px){
+	html[buildfire] body{
+		font-size:13px;
+	}
 	html[buildfire] .item .labels span{
 		font-size:13px;
 	}

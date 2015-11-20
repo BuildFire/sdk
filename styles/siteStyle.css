@@ -668,6 +668,39 @@ table.table span.sort-icon{
 	border-radius:4px;
 }
 
+/* Social Plugin */
+.social-plugin .social-item .padded{
+	padding:15px;
+}
+.social-plugin .social-item + .social-item{
+	margin-top:15px;
+}
+.social-plugin .social-item .head .media-holder{
+	width:40px;
+	height:40px;
+	overflow:hidden;
+	border-radius:100%;
+}
+.social-plugin .social-item .head .media-holder img{
+	width:100%;
+	height:auto;
+	border-radius:100%;
+}
+.social-plugin .social-item .social-icon .icon{
+	font-size:18px;
+	position:relative;
+	top:3px;
+}
+.social-plugin .social-item .head-btn a{
+	display:block;
+}
+.social-plugin .social-item .comments-list .social-comment{
+	padding-left:60px;
+}
+.social-plugin .social-item .comments-list .social-comment + .social-comment{
+	border-top:1px solid #ddd;
+}
+
 /* Side Menu/Associate Plugin Page */
 .draggable-list-view.tab-order.wide-list,
 .draggable-list-view.wide-list{
