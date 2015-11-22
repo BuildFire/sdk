@@ -1419,14 +1419,6 @@ html[buildfire] body{
 	.map-layout2 .places-plugin .location-map .map-holder{
 		padding-top:200px;
 	}
-	.launcher-plugin .main-logo,
-	.launcher-plugin .main-logo .logo-holder{
-		height:120px;
-	}
-	.launcher-plugin .main-logo .logo-holder img{
-		max-height:90px;
-		width:auto;
-	}
 	.login-holder .login.content{
 		padding-top:60px !important;
 	}
