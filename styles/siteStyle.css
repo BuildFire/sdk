@@ -716,7 +716,9 @@ table.table span.sort-icon{
 .self-provisioning-wl .draggable-list-view.wide-list{
 	max-height:473px;
 }
-.side-menu .draggable-list-view.tab-order.wide-list{
+.side-menu .draggable-list-view.tab-order.wide-list,
+.draggable-list-view.tab-order.wide-list.no-scroll,
+.draggable-list-view.wide-list.no-scroll{
 	max-height:inherit;
 	overflow:inherit;
 }
