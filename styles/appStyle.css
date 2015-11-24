@@ -295,10 +295,12 @@ nav.menu a.notifications .notification-circle span{
 .holder .bottom > .hidden-content{
 	background:#fff;
 }
-.holder .places-plugin .bottom{
+.holder .places-plugin .bottom,
+.holder .fixed-bottom.bottom{
 	bottom:-270px;
 }
-.holder .places-plugin .bottom.active{
+.holder .places-plugin .bottom.active,
+.holder .fixed-bottom.bottom.active{
 	bottom:0;
 }
 .holder .bottom .hidden-content .tabs .tab a,
@@ -1383,6 +1385,8 @@ html[buildfire] body.no-scroll{
 html[buildfire] body.no-scroll .scrollable{
 	overflow-y:auto !important;
 	-webkit-overflow-scrolling:touch !important;
+	height:100% !important;
+	width:100% !important;
 }
 
 /* 767px Screen */

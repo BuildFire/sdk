@@ -1300,6 +1300,36 @@ html[buildfire] body{
 	margin:4px 0;
 }
 
+/*  Override Intercom UI */
+#intercom-container .intercom-launcher-button, 
+#intercom-container .intercom-launcher-preview{
+	box-shadow:none !important;
+}
+#intercom-container .intercom-launcher-button{
+	background:#09a3ee !important;
+	position:relative;
+	border:none !important;
+}
+#intercom-container .intercom-launcher-button:before{
+	content: "\e607";
+	font-family: 'icomoon';
+	font-size:24px;
+	position:relative;
+	top:12px;
+	left:13px;
+	color:#fff;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
 
 /* Phase 2 */
 
