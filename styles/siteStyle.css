@@ -538,13 +538,13 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	width:91.5%;
 	max-width:91.5%;
 }
-.draggable-list-view.dynamic-links-list .d-item .copy{
+.draggable-list-view.dynamic-link-list .d-item .copy{
 	max-width:81.5%;
 	width:81.5%;
 	margin-top:-8px;
 	top:4px;
 }
-.draggable-list-view.dynamic-links-list .d-item .copy .col-md-5{
+.draggable-list-view.dynamic-link-list .d-item .copy .col-md-5{
 	margin-top:2px;
 }
 .add-plugin .item .media.media-holder,
