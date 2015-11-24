@@ -898,9 +898,13 @@ var buildfire = {
         triggerOnPop: function (obj) {
             buildfire.eventManager.trigger('historyOnPop', obj);
         },
-        pop: function () {
+        pop: function (callback) {
             var p = new Packet(null, 'history.pop');
-            buildfire._sendPacket(p);
+            buildfire._sendPacket(p, callback);
+        },
+        get: function (callback) {
+            var p = new Packet(null, 'history.get');
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Messaging-to-sync-your-Control-to-Widget
