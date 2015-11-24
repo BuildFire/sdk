@@ -902,8 +902,8 @@ var buildfire = {
             var p = new Packet(null, 'history.pop');
             buildfire._sendPacket(p, callback);
         },
-        get: function (callback) {
-            var p = new Packet(null, 'history.get');
+        get: function (options, callback) {
+            var p = new Packet(null, 'history.get', options);
             buildfire._sendPacket(p, callback);
         }
     }
