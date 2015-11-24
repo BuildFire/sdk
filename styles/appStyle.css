@@ -1376,6 +1376,14 @@ html[buildfire] body{
 	overflow-y:auto !important;
 	-webkit-overflow-scrolling:touch !important;
 }
+html[buildfire] body.no-scroll{
+	overflow:hidden !important;
+	-webkit-overflow-scrolling:inherit !important;
+}
+html[buildfire] body.no-scroll .scrollable{
+	overflow-y:auto !important;
+	-webkit-overflow-scrolling:touch !important;
+}
 
 /* 767px Screen */
 @media(max-width: 767px){
