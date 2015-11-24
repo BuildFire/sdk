@@ -169,7 +169,7 @@ buildfire.components.carousel.editor.prototype = {
                     me.onItemChange(actionItem, itemIndex);
                     parentElement.querySelector("img").src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
                     parentElement.querySelector(".title").innerHTML = actionItem.title;
-                    currentTarget.innerHTML = actionItem.action ? "Edit Action" : "Add Action";
+                    currentTarget.innerHTML = actionItem.action && actionItem.action != "noAction" ? "Edit Action" : "Add Action";
                 });
             });
 
