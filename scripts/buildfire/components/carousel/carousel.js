@@ -427,6 +427,7 @@ buildfire.components.carousel.view.prototype = {
     },
     // destroy the slider if it's already in the DOM
     _destroySlider: function () {
+        if(!this.$slider || !this.$slider.data) return;
         var sliderData = this.$slider.data('owlCarousel');
         if (sliderData) {
             this.$slider.trigger('autoplay.stop.owl');
