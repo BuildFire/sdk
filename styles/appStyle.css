@@ -497,6 +497,9 @@ nav.menu a.notifications .notification-circle span{
 	opacity:0.85;
 	z-index:9;
 }
+.holder .info-bar{
+	background:rgba(0,0,0,0.8);
+}
 .holder .info-circle{
 	bottom:inherit;
 	top:28px;
@@ -1353,6 +1356,23 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	font-size:20px;
 }
 
+/* iOS Transparent Nav */
+/* Media Query */
+html[os='iOS'] #pluginNav{
+	padding-top:21px !important;
+}
+html[os="iOS"] #pluginNav a.back-btn-icon{
+	top:26px !important;
+} 
+html[os="iOS"] #pluginNav a.menu-btn-icon{
+	top:22px !important;
+}
+html[os="iOS"] #menuToggle{
+	top:15px !important;
+}
+html[os="iOS"] iframe#pluginFrame{
+	padding-top:52px !important;
+}
 
 /* iFrame */
 /* Plugin iFrame */
