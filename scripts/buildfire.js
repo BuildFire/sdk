@@ -818,7 +818,7 @@ var buildfire = {
             else if (!options.width && options.height)
                 return root + "height/" + (options.height * ratio) + "/" + url;
             else if (options.width && options.height)
-                return root + "resizenp/" + (options.width * ratio) + "x" + (options.height * ratio) + "/" + url;
+                return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             else
                 return url;
         }
@@ -833,7 +833,7 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            return root + options.width + "x" + options.height + "/" + url;
+            return root + Math.floor(options.width) + "x" + Math.floor(options.height) + "/" + url;
 
         }
 
