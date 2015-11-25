@@ -538,13 +538,13 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	width:91.5%;
 	max-width:91.5%;
 }
-.draggable-list-view.dynamic-links-list .d-item .copy{
+.draggable-list-view.dynamic-link-list .d-item .copy{
 	max-width:81.5%;
 	width:81.5%;
 	margin-top:-8px;
 	top:4px;
 }
-.draggable-list-view.dynamic-links-list .d-item .copy .col-md-5{
+.draggable-list-view.dynamic-link-list .d-item .copy .col-md-5{
 	margin-top:2px;
 }
 .add-plugin .item .media.media-holder,
@@ -716,7 +716,9 @@ table.table span.sort-icon{
 .self-provisioning-wl .draggable-list-view.wide-list{
 	max-height:473px;
 }
-.side-menu .draggable-list-view.tab-order.wide-list{
+.side-menu .draggable-list-view.tab-order.wide-list,
+.draggable-list-view.tab-order.wide-list.no-scroll,
+.draggable-list-view.wide-list.no-scroll{
 	max-height:inherit;
 	overflow:inherit;
 }
@@ -1296,6 +1298,36 @@ html[buildfire] body{
 }
 #pluginControlHeader hr.none{
 	margin:4px 0;
+}
+
+/*  Override Intercom UI */
+#intercom-container .intercom-launcher-button, 
+#intercom-container .intercom-launcher-preview{
+	box-shadow:none !important;
+}
+#intercom-container .intercom-launcher-button{
+	background:#09a3ee !important;
+	position:relative;
+	border:none !important;
+}
+#intercom-container .intercom-launcher-button:before{
+	content: "\e607";
+	font-family: 'icomoon';
+	font-size:24px;
+	position:relative;
+	top:12px;
+	left:13px;
+	color:#fff;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 

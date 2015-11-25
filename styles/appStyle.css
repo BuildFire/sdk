@@ -295,10 +295,12 @@ nav.menu a.notifications .notification-circle span{
 .holder .bottom > .hidden-content{
 	background:#fff;
 }
-.holder .places-plugin .bottom{
+.holder .places-plugin .bottom,
+.holder .fixed-bottom.bottom{
 	bottom:-270px;
 }
-.holder .places-plugin .bottom.active{
+.holder .places-plugin .bottom.active,
+.holder .fixed-bottom.bottom.active{
 	bottom:0;
 }
 .holder .bottom .hidden-content .tabs .tab a,
@@ -494,6 +496,9 @@ nav.menu a.notifications .notification-circle span{
 	padding:10px 0;
 	opacity:0.85;
 	z-index:9;
+}
+.holder .info-bar{
+	background:rgba(0,0,0,0.8);
 }
 .holder .info-circle{
 	bottom:inherit;
@@ -1351,6 +1356,23 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	font-size:20px;
 }
 
+/* iOS Transparent Nav */
+/* Media Query */
+html[os='iOS'] #pluginNav{
+	padding-top:21px !important;
+}
+html[os="iOS"] #pluginNav a.back-btn-icon{
+	top:26px !important;
+} 
+html[os="iOS"] #pluginNav a.menu-btn-icon{
+	top:22px !important;
+}
+html[os="iOS"] #menuToggle{
+	top:15px !important;
+}
+html[os="iOS"] iframe#pluginFrame{
+	padding-top:52px !important;
+}
 
 /* iFrame */
 /* Plugin iFrame */
@@ -1375,6 +1397,16 @@ html[buildfire] body{
 	width:100% !important;
 	overflow-y:auto !important;
 	-webkit-overflow-scrolling:touch !important;
+}
+html[buildfire] body.no-scroll{
+	overflow:hidden !important;
+	-webkit-overflow-scrolling:inherit !important;
+}
+html[buildfire] body.no-scroll .scrollable{
+	overflow-y:auto !important;
+	-webkit-overflow-scrolling:touch !important;
+	height:100% !important;
+	width:100% !important;
 }
 
 /* 767px Screen */
