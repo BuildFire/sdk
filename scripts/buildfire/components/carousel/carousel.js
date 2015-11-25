@@ -373,6 +373,7 @@ buildfire.components.carousel.view.prototype = {
     },
     // remove all nodes from the slider
     _removeAll: function () {
+        if(!this.$slider)return;
         var slider = this.$slider.get(0);
         var fc = slider.firstChild;
         while (fc) {
