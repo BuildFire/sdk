@@ -76,7 +76,7 @@ textarea{
 	left:auto;
 	right:10px;
 	font-size:21px;
-	top:14px;
+	top:15px;
 }
 #pluginNav h4,
 #pluginNav h5{
@@ -110,9 +110,9 @@ textarea{
 #menuToggle{
 	border-radius:5px 0 0 5px;
 	font-size:21px;
-	padding:6px 10px;
+	padding:4px 10px;
 	position:fixed;
-	top:9px;
+	top:11px;
 	right:0;
 	z-index:9999999;
 	background:#09a3ee;
@@ -435,9 +435,6 @@ nav.menu a.notifications .notification-circle span{
 	padding-top:4px;
 	text-align:left !important;
 	color:#fff;
-}
-.people-plugin.layout3 .people-banner{
-	background:#fff;
 }
 .people-plugin.layout3 .people-banner .people-bg{
 	padding:0 !important;
@@ -1095,11 +1092,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder .disabled{
 	opacity:0.6;
 }
-.events-plugin .event-calendar-holder .btn.active,
 .events-plugin .event-calendar-holder .btn.btn-info{
 	position:relative;
 }
-.events-plugin .event-calendar-holder .btn.active:after,
 .events-plugin .event-calendar-holder .btn.btn-info:after{
 	content:'';
 	display:inline-block;
@@ -1357,21 +1352,35 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* iOS Transparent Nav */
-/* Media Query */
-html[os='iOS'] #pluginNav{
-	padding-top:21px !important;
+html[ios="true"] #pluginNav{
+	padding-top:22px !important;
+	height:53px !important;
 }
-html[os="iOS"] #pluginNav a.back-btn-icon{
-	top:26px !important;
+html[ios="true"] #pluginNav a.back-btn-icon{
+	top:27px !important;
+	padding-bottom:13px !important;
 } 
-html[os="iOS"] #pluginNav a.menu-btn-icon{
+html[ios="true"] #pluginNav a.menu-btn-icon{
 	top:22px !important;
 }
-html[os="iOS"] #menuToggle{
-	top:15px !important;
+html[ios="true"] #pluginNav h4, 
+html[ios="true"] #pluginNav h5{
+	padding-bottom:8px !important;
 }
-html[os="iOS"] iframe#pluginFrame{
-	padding-top:52px !important;
+html[ios="true"] #menuToggle{
+	top:18px !important;
+}
+html[ios="true"] iframe#pluginFrame{
+	padding-top:53px !important;
+}
+html[ios="true"] .login-holder .cancel-link{
+	top:22px !important;
+}
+html[ios="true"] nav.menu a.username{
+	padding-top:21px !important;
+}
+html[ios="true"] nav.menu span.menu-close{
+	top:25px !important;
 }
 
 /* iFrame */
