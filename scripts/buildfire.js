@@ -1034,7 +1034,7 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
 };
 
 
-//added by rami to test custom event
+//IE and old Android Custom Event Fix
 if(typeof(CustomEvent) != "function"){
     function CustomEvent(event, params) {
         params = params || {bubbles: false, cancelable: false, detail: undefined};
