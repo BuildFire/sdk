@@ -307,7 +307,7 @@ buildfire.components.carousel.view = function (selector, items, layout) {
     this._initDimensions(layout);
     this._loadItems(items, false);
     this.init(selector);
-	window.dispatchEvent(new Event('resize'));
+	window.dispatchEvent(new CustomEvent('resize'));
 };
 
 // Carousel view methods

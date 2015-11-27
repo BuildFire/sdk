@@ -1035,7 +1035,7 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
 
 
 //added by rami to test custom event
-(function () {
+if(typeof(CustomEvent) != "function"){
     function CustomEvent(event, params) {
         params = params || {bubbles: false, cancelable: false, detail: undefined};
         var evt = document.createEvent('CustomEvent');
@@ -1045,7 +1045,6 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
 
     CustomEvent.prototype = window.Event.prototype;
     window.CustomEvent = CustomEvent;
-    window.Event = CustomEvent;
-})();
+}
 
 
