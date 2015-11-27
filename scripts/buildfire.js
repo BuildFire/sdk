@@ -1004,3 +1004,19 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
         , ' Column: ' + column, ' StackTrace: ' + errorObj);
 };
 
+
+//added by rami to test custom event
+(function () {
+    function CustomEvent(event, params) {
+        params = params || {bubbles: false, cancelable: false, detail: undefined};
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    };
+
+    CustomEvent.prototype = window.Event.prototype;
+    window.CustomEvent = CustomEvent;
+    window.Event = CustomEvent;
+})();
+
+
