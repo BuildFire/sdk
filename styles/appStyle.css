@@ -3,7 +3,7 @@
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	font-family:Helvetica, Sans-Serif;
+	font-family:Helvetica, Sans-Serif, Arial;
 
 	/* Prevent user selection */
 	-webkit-tap-highlight-color: transparent !important;
@@ -16,8 +16,7 @@ body{
 	color:#5f5f5f;
     margin:0px;
 	height:100%;
-	overflow-x:hidden !important;
-	overflow-y:hidden;
+	overflow:hidden !important;
 }
 html:not([buildfire]){
 	overflow:hidden !important;
@@ -210,12 +209,10 @@ nav.menu a .media img{
 	height:auto;
 	width:auto;
 	border-radius:2px;
-	border-radius:50px;
-	border-radius:100%;
 }
 nav.menu a .media .main-icon{
 	vertical-align:middle;
-	font-size:16px;
+	font-size:18px;
 }
 nav.menu a p{
 	margin:3px 0 0;
@@ -246,11 +243,6 @@ nav.menu a.notifications .notification-circle span{
 .plugin-slide,
 .contact-maps{
 	max-height:380px;
-	background:#eef0f0;
-	background:#32373a;
-}
-.contact-maps{
-	background:#32373a;
 }
 .plugin-slide.show-map{
 	height:320px;
@@ -303,10 +295,12 @@ nav.menu a.notifications .notification-circle span{
 .holder .bottom > .hidden-content{
 	background:#fff;
 }
-.holder .places-plugin .bottom{
+.holder .places-plugin .bottom,
+.holder .fixed-bottom.bottom{
 	bottom:-270px;
 }
-.holder .places-plugin .bottom.active{
+.holder .places-plugin .bottom.active,
+.holder .fixed-bottom.bottom.active{
 	bottom:0;
 }
 .holder .bottom .hidden-content .tabs .tab a,
@@ -361,7 +355,9 @@ nav.menu a.notifications .notification-circle span{
 	border:1px solid #09a3ee;
 }
 .holder .bottom .hidden-content .toggle-btns a{
-	padding:9px 8px 7px;
+	padding:6px 8px 4px;
+	font-size:12px;
+	vertical-align:top;
 }
 .holder .bottom .hidden-content .toggle-btns a.active{
 	color:#fff;
@@ -500,7 +496,9 @@ nav.menu a.notifications .notification-circle span{
 	padding:10px 0;
 	opacity:0.85;
 	z-index:9;
-	background:#efefef;
+}
+.holder .info-bar{
+	background:rgba(0,0,0,0.8);
 }
 .holder .info-circle{
 	bottom:inherit;
@@ -511,6 +509,7 @@ nav.menu a.notifications .notification-circle span{
 	height:150px;
 	text-align:center;
 	border-radius:100%;
+	background:#efefef;
 }
 .holder .info-circle.bg-white{
 	background:rgba(255, 255, 255, 0.8);	
@@ -974,17 +973,31 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* Dynamic Links */
-.dynamic-links a{
+.dynamic-links a,
+.dynamic-links p{
 	display:block;
 	width:100%;
 	border-top:1px solid #ddd;
 	padding:10px 0;
+	margin:0;
 }
-.dynamic-links a .icon{
+.dynamic-links p:hover{
+	cursor:pointer;
+}
+.dynamic-links a img,
+.dynamic-links p img{
+	width:17px;
+	height:auto;
+	position:relative;
+	top:1px;
+	border-radius:2px;
+}
+.dynamic-links a .icon,
+.dynamic-links p .icon{
 	font-size:17px;
 	margin-right:5px;
 	position:relative;
-	top:2px;
+	top:3px;
 }
 
 /* Places */
@@ -1203,94 +1216,6 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	color:#5f5f5f;
 }
 
-
-/* Launcher Plugin */
-.launcher-plugin .main-logo{
-	text-align:center;
-	height:180px;
-	width:100%;
-}
-.launcher-plugin .main-logo .logo-holder{
-	width:100%;
-	height:180px;
-}
-.launcher-plugin .main-logo .logo-holder table{
-	border:none;
-}
-.launcher-plugin .main-logo .logo-holder .logo-media{
-	width:100%;
-	width:100vw;
-	max-width:400px;
-	padding:15px;
-}
-.launcher-plugin .main-logo .logo-holder img{
-	max-width:100%;
-	max-height:150px;
-}
-.launcher-plugin .launcher-icons{
-	padding:40px 15px 0;
-	float:left;
-	width:100%;
-}
-.launcher-plugin .launcher-icons .launcher-icon{
-	float:left;
-	margin-bottom:18px;
-	height:61px;
-	overflow:hidden;
-}
-.launcher-plugin .launcher-icons.four-row .launcher-icon{
-	width:25%;
-	padding:0 3px;
-}
-.launcher-plugin .launcher-icons.three-row .launcher-icon{
-	width:33.333%;
-}
-.launcher-plugin .launcher-icons .launcher-icon span.icon{
-	font-size:22px;
-}
-.launcher-plugin .launcher-icons .launcher-icon img,
-.launcher-plugin.layout7 .menu-links .menu-item img{
-	max-width:22px;
-	height:auto;
-}
-.launcher-plugin .launcher-icons .launcher-icon .text-holder p{
-	margin:6px 0 0;
-	font-size:12px;
-	line-height:16px;
-}
-.launcher-plugin .launcher-slider{
-	background:none;
-}
-.launcher-plugin.layout2 .launcher-slider .launcher-icons,
-.launcher-plugin.layout4 .launcher-slider .launcher-icons{
-	padding-top:120px;
-}
-.launcher-plugin.layout7 .menu-links .menu-item{
-	display:block;
-	padding:15px 11px 15px 15px;
-}
-.launcher-plugin.layout7 .menu-links .menu-item + .menu-item{
-	border-top:1px solid #ddd;
-}
-.launcher-plugin.layout7 .menu-links .menu-item span.main-icon{
-	font-size:20px;
-}
-.launcher-plugin.layout7 .menu-links .menu-item span.text{
-	margin-left:15px;
-}
-.launcher-plugin.layout7 .menu-links .menu-item p{
-	margin-bottom:0;
-	position:relative;
-	top:1px;
-	max-width:70%;
-}
-.launcher-plugin.layout7 .menu-links .menu-item span.right-arrow{
-	color:#444;
-	float:right;
-	position:relative;
-	top:4px;
-}
-
 /* Push Notifications */
 .push-notifications .push-item{
 	display:block;
@@ -1431,6 +1356,23 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	font-size:20px;
 }
 
+/* iOS Transparent Nav */
+/* Media Query */
+html[os='iOS'] #pluginNav{
+	padding-top:21px !important;
+}
+html[os="iOS"] #pluginNav a.back-btn-icon{
+	top:26px !important;
+} 
+html[os="iOS"] #pluginNav a.menu-btn-icon{
+	top:22px !important;
+}
+html[os="iOS"] #menuToggle{
+	top:15px !important;
+}
+html[os="iOS"] iframe#pluginFrame{
+	padding-top:52px !important;
+}
 
 /* iFrame */
 /* Plugin iFrame */
@@ -1448,15 +1390,23 @@ html[buildfire]{
 	max-width:100%;
 	height:100%;
 	background:none;
-	overflow-x:hidden !important;
-	overflow-y:hidden;
+	overflow:hidden !important;
 }
 html[buildfire] body{
 	height:100% !important;
 	width:100% !important;
 	overflow-y:auto !important;
-	overflow-y:scroll !important;
 	-webkit-overflow-scrolling:touch !important;
+}
+html[buildfire] body.no-scroll{
+	overflow:hidden !important;
+	-webkit-overflow-scrolling:inherit !important;
+}
+html[buildfire] body.no-scroll .scrollable{
+	overflow-y:auto !important;
+	-webkit-overflow-scrolling:touch !important;
+	height:100% !important;
+	width:100% !important;
 }
 
 /* 767px Screen */
@@ -1500,14 +1450,6 @@ html[buildfire] body{
 	.map-layout1 .places-plugin .location-map .map-holder,
 	.map-layout2 .places-plugin .location-map .map-holder{
 		padding-top:200px;
-	}
-	.launcher-plugin .main-logo,
-	.launcher-plugin .main-logo .logo-holder{
-		height:120px;
-	}
-	.launcher-plugin .main-logo .logo-holder img{
-		max-height:90px;
-		width:auto;
 	}
 	.login-holder .login.content{
 		padding-top:60px !important;

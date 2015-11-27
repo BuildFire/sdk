@@ -3135,6 +3135,7 @@ fieldset[disabled] .btn {
 .open > .dropdown-toggle.btn-default {
   background-color: #e6e6e6;
   border-color: #dddddd;
+  color:#5f5f5f;
 }
 .btn-default:active,
 .btn-default.active,
@@ -5207,7 +5208,7 @@ a.thumbnail.active {
 	max-width:350px;
 	padding:7px 10px;
 	opacity:0;
-	top:14px;
+	top:13px;
 	height:38px;
 	overflow:hidden;
 	text-transform:capitalize;
@@ -8315,67 +8316,124 @@ Variations
 
 
 /* Override Bootstrap Columns for CP */
-:not([buildfire='widget']) .col-xs-1, 
-:not([buildfire='widget']) .col-sm-1, 
-:not([buildfire='widget']) .col-md-1{
+html[buildfire='control'] .col-xs-1,
+html:not([buildfire]) .col-xs-1,
+html[buildfire='control'] .col-sm-1,
+html:not([buildfire]) .col-sm-1,
+html[buildfire='control'] .col-md-1,
+html:not([buildfire]) .col-md-1{
   width: 8.33333333%;	
 }
-:not([buildfire='widget']) .col-xs-2, 
-:not([buildfire='widget']) .col-sm-2, 
-:not([buildfire='widget']) .col-md-2{
+html[buildfire='control'] .col-xs-2,
+html:not([buildfire]) .col-xs-2,
+html[buildfire='control'] .col-sm-2,
+html:not([buildfire]) .col-sm-2,
+html[buildfire='control'] .col-md-2,
+html:not([buildfire]) .col-md-2{
   width: 16.66666667%;
 }
-:not([buildfire='widget']) .col-xs-3, 
-:not([buildfire='widget']) .col-sm-3, 
-:not([buildfire='widget']) .col-md-3{
-  width: 25%;		
+html[buildfire='control'] .col-xs-3,
+html:not([buildfire]) .col-xs-3,
+html[buildfire='control'] .col-sm-3,
+html:not([buildfire]) .col-sm-3,
+html[buildfire='control'] .col-md-3,
+html:not([buildfire]) .col-md-3{
+  width:25%;	
 }
-:not([buildfire='widget']) .col-xs-4, 
-:not([buildfire='widget']) .col-sm-4, 
-:not([buildfire='widget']) .col-md-4{
+html[buildfire='control'] .col-xs-4,
+html:not([buildfire]) .col-xs-4,
+html[buildfire='control'] .col-sm-4,
+html:not([buildfire]) .col-sm-4,
+html[buildfire='control'] .col-md-4,
+html:not([buildfire]) .col-md-4{
   width: 33.33333333%;		
 }
-:not([buildfire='widget']) .col-xs-5, 
-:not([buildfire='widget']) .col-sm-5, 
-:not([buildfire='widget']) .col-md-5{
+html[buildfire='control'] .col-xs-5,
+html:not([buildfire]) .col-xs-5,
+html[buildfire='control'] .col-sm-5,
+html:not([buildfire]) .col-sm-5,
+html[buildfire='control'] .col-md-5,
+html:not([buildfire]) .col-md-5{
   width: 41.66666667%;	
 }
-:not([buildfire='widget']) .col-xs-6, 
-:not([buildfire='widget']) .col-sm-6, 
-:not([buildfire='widget']) .col-md-6{
-	width: 50%;	
+html[buildfire='control'] .col-xs-6,
+html:not([buildfire]) .col-xs-6,
+html[buildfire='control'] .col-sm-6,
+html:not([buildfire]) .col-sm-6,
+html[buildfire='control'] .col-md-6,
+html:not([buildfire]) .col-md-6{
+  width: 50%;	
 }
-:not([buildfire='widget']) .col-xs-7, 
-:not([buildfire='widget']) .col-sm-7, 
-:not([buildfire='widget']) .col-md-7{
-	width: 58.33333333%;	
+html[buildfire='control'] .col-xs-7,
+html:not([buildfire]) .col-xs-7,
+html[buildfire='control'] .col-sm-7,
+html:not([buildfire]) .col-sm-7,
+html[buildfire='control'] .col-md-7,
+html:not([buildfire]) .col-md-7{
+  width: 58.33333333%;	
 }
-:not([buildfire='widget']) .col-xs-8, 
-:not([buildfire='widget']) .col-sm-8, 
-:not([buildfire='widget']) .col-md-8{
+html[buildfire='control'] .col-xs-8,
+html:not([buildfire]) .col-xs-8,
+html[buildfire='control'] .col-sm-8,
+html:not([buildfire]) .col-sm-8,
+html[buildfire='control'] .col-md-8,
+html:not([buildfire]) .col-md-8{
 	width: 66.66666667%;	
 }
-:not([buildfire='widget']) .col-xs-9, 
-:not([buildfire='widget']) .col-sm-9, 
-:not([buildfire='widget']) .col-md-9{
+html[buildfire='control'] .col-xs-9,
+html:not([buildfire]) .col-xs-9,
+html[buildfire='control'] .col-sm-9,
+html:not([buildfire]) .col-sm-9,
+html[buildfire='control'] .col-md-9,
+html:not([buildfire]) .col-md-9{
   width: 75%;		
 }
-:not([buildfire='widget']) .col-xs-10, 
-:not([buildfire='widget']) .col-sm-10, 
-:not([buildfire='widget']) .col-md-10{
+html[buildfire='control'] .col-xs-10,
+html:not([buildfire]) .col-xs-10,
+html[buildfire='control'] .col-sm-10,
+html:not([buildfire]) .col-sm-10,
+html[buildfire='control'] .col-md-10,
+html:not([buildfire]) .col-md-10{
   width: 83.33333333%;	
 }
-:not([buildfire='widget']) .col-xs-11, 
-:not([buildfire='widget']) .col-sm-11, 
-:not([buildfire='widget']) .col-md-11{
+html[buildfire='control'] .col-xs-11,
+html:not([buildfire]) .col-xs-11,
+html[buildfire='control'] .col-sm-11,
+html:not([buildfire]) .col-sm-11,
+html[buildfire='control'] .col-md-11,
+html:not([buildfire]) .col-md-11{
   width: 91.66666667%;		
 }
-:not([buildfire='widget']) .col-xs-12, 
-:not([buildfire='widget']) .col-sm-12, 
-:not([buildfire='widget']) .col-md-12{
+html[buildfire='control'] .col-xs-12,
+html:not([buildfire]) .col-xs-12,
+html[buildfire='control'] .col-sm-12,
+html:not([buildfire]) .col-sm-12,
+html[buildfire='control'] .col-md-12,
+html:not([buildfire]) .col-md-12{
   width: 100%;	
 }
 
+/* White and Black Theme */
+.whiteTheme,
+.whiteTheme:hover,
+.whiteTheme:focus{
+	color:#fff !important;
+}
+.whiteBackgroundTheme,
+.whiteBackgroundTheme:hover,
+.whiteBackgroundTheme:focus{
+	background:#fff !important;
+}
+.blackTheme,
+.blackTheme:hover,
+.blackTheme:focus{
+	color:#000 !important;
+}
+.blackBackgroundTheme,
+.blackBackgroundTheme:hover,
+.blackBackgroundTheme:focus{
+	background:#000 !important;
+}
 
 
 /* Modal for Plugins */

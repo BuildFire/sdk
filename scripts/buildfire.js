@@ -288,7 +288,10 @@ var buildfire = {
         , "logger.showHistory"
         , "logger.attachRemoteLogger"]
     , _postMessageHandler: function (e) {
-        if (e.source === window) return;//e.origin != "null"
+        if (e.source === window) {
+            console.log(' >>>> IGNORE MESSAGE <<<< ');
+            return;
+        }//e.origin != "null"
         console.info('buildfire.js received << ' + e.data, window.location.href);
         var packet = JSON.parse(e.data);
 
@@ -316,6 +319,7 @@ var buildfire = {
             //alert('parent sent: ' + packet.data);
         }
     }
+    , _resendAttempts:0
     , _sendPacket: function (packet, callback) {
         if (typeof (callback) != "function")// handels better on response
             callback = function (err, result) {
@@ -324,9 +328,16 @@ var buildfire = {
 
         var timeout = setTimeout(function () {
             console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
-        }, 5000);
+            if(packet.cmd.indexOf('datastore') == 0 && buildfire._resendAttempts < 15){
+                console.warn("calling" + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
+                buildfire._sendPacket(packet,function(e,d){
+                    buildfire._resendAttempts--;
+                    callback(e,d);
+                });
+                buildfire._resendAttempts++;
+            }
+        }, 1000);
         var wrapper = function (err, data) {
-
             clearTimeout(timeout);
             callback(err, data);
         };
@@ -569,7 +580,7 @@ var buildfire = {
             buildfire.appearance._resizedTo = height;
         }
         , setHeaderVisibility: function (value) {
-            var p = new Packet(null, "appearanceAPI.setHeaderVisibility", value);
+            var p = new Packet(null, "appearance.setHeaderVisibility", value);
             buildfire._sendPacket(p);
         }
     }
@@ -807,7 +818,7 @@ var buildfire = {
             else if (!options.width && options.height)
                 return root + "height/" + (options.height * ratio) + "/" + url;
             else if (options.width && options.height)
-                return root + "resizenp/" + (options.width * ratio) + "x" + (options.height * ratio) + "/" + url;
+                return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             else
                 return url;
         }
@@ -822,7 +833,7 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            return root + options.width + "x" + options.height + "/" + url;
+            return root + Math.floor(options.width) + "x" + Math.floor(options.height) + "/" + url;
 
         }
 
@@ -887,8 +898,13 @@ var buildfire = {
         triggerOnPop: function (obj) {
             buildfire.eventManager.trigger('historyOnPop', obj);
         },
-        pop: function () {
-            // add to allow user to popup history items
+        pop: function (callback) {
+            var p = new Packet(null, 'history.pop');
+            buildfire._sendPacket(p, callback);
+        },
+        get: function (options, callback) {
+            var p = new Packet(null, 'history.get', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Messaging-to-sync-your-Control-to-Widget
@@ -985,6 +1001,19 @@ var buildfire = {
             }
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
+    , geo : {
+        getCurrentPosition:function(options, callback){
+            buildfire._sendPacket(new Packet(null,"geo.getCurrentPosition",options),callback);
+        }
+        ,watchPosition:function(options, callback){
+            buildfire._sendPacket(new Packet(null,"geo.watchPosition",options),callback);
+        }
+        ,clearWatch:function(watchId, callback){
+            buildfire._sendPacket(new Packet(null,"geo.clearWatch",watchId),callback);
+        }
+    }
+
 };
 buildfire.init();
 

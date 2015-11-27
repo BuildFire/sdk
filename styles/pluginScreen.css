@@ -1,4 +1,7 @@
 @media(max-width: 600px){
+	html[buildfire] body{
+		font-size:13px;
+	}
 	html[buildfire] .item .labels span{
 		font-size:13px;
 	}
@@ -121,5 +124,9 @@
 	}
 	html[buildfire] .draggable-list-view.no-sort-icon .d-item .copy span.title{
 		width:76%;
+	}
+	html[buildfire] .draggable-list-view.dynamic-link-list .d-item .copy{
+		max-width:75.5%;
+		width:75.5%;
 	}
 }

@@ -169,7 +169,7 @@ buildfire.components.carousel.editor.prototype = {
                     me.onItemChange(actionItem, itemIndex);
                     parentElement.querySelector("img").src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
                     parentElement.querySelector(".title").innerHTML = actionItem.title;
-                    currentTarget.innerHTML = actionItem.action ? "Edit Action" : "Add Action";
+                    currentTarget.innerHTML = actionItem.action && actionItem.action != "noAction" ? "Edit Action" : "Add Action";
                 });
             });
 
@@ -373,6 +373,7 @@ buildfire.components.carousel.view.prototype = {
     },
     // remove all nodes from the slider
     _removeAll: function () {
+        if(!this.$slider)return;
         var slider = this.$slider.get(0);
         var fc = slider.firstChild;
         while (fc) {
@@ -427,6 +428,7 @@ buildfire.components.carousel.view.prototype = {
     },
     // destroy the slider if it's already in the DOM
     _destroySlider: function () {
+        if(!this.$slider || !this.$slider.data) return;
         var sliderData = this.$slider.data('owlCarousel');
         if (sliderData) {
             this.$slider.trigger('autoplay.stop.owl');

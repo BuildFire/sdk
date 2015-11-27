@@ -88,7 +88,8 @@ header{
 header .contain{
 	max-width:1400px;
 	position:relative;
-	min-height:64px;
+	height:64px;
+	max-height:64px;
 }
 header a.logo{
 	display:inline-block;
@@ -537,7 +538,15 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	width:91.5%;
 	max-width:91.5%;
 }
-
+.draggable-list-view.dynamic-link-list .d-item .copy{
+	max-width:81.5%;
+	width:81.5%;
+	margin-top:-8px;
+	top:4px;
+}
+.draggable-list-view.dynamic-link-list .d-item .copy .col-md-5{
+	margin-top:2px;
+}
 .add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,
@@ -659,6 +668,39 @@ table.table span.sort-icon{
 	border-radius:4px;
 }
 
+/* Social Plugin */
+.social-plugin .social-item .padded{
+	padding:15px;
+}
+.social-plugin .social-item + .social-item{
+	margin-top:15px;
+}
+.social-plugin .social-item .head .media-holder{
+	width:40px;
+	height:40px;
+	overflow:hidden;
+	border-radius:100%;
+}
+.social-plugin .social-item .head .media-holder img{
+	width:100%;
+	height:auto;
+	border-radius:100%;
+}
+.social-plugin .social-item .social-icon .icon{
+	font-size:18px;
+	position:relative;
+	top:3px;
+}
+.social-plugin .social-item .head-btn a{
+	display:block;
+}
+.social-plugin .social-item .comments-list .social-comment{
+	padding-left:60px;
+}
+.social-plugin .social-item .comments-list .social-comment + .social-comment{
+	border-top:1px solid #ddd;
+}
+
 /* Side Menu/Associate Plugin Page */
 .draggable-list-view.tab-order.wide-list,
 .draggable-list-view.wide-list{
@@ -674,7 +716,9 @@ table.table span.sort-icon{
 .self-provisioning-wl .draggable-list-view.wide-list{
 	max-height:473px;
 }
-.side-menu .draggable-list-view.tab-order.wide-list{
+.side-menu .draggable-list-view.tab-order.wide-list,
+.draggable-list-view.tab-order.wide-list.no-scroll,
+.draggable-list-view.wide-list.no-scroll{
 	max-height:inherit;
 	overflow:inherit;
 }
@@ -957,12 +1001,15 @@ table.table span.sort-icon{
 	position:absolute;
 	left:50%;
 	margin-left:-10px;
+	z-index:0;
 }
 .screens .screen a img{
 	max-width:100%;
 	max-height:100%;
 	vertical-align:middle;
 	border-radius:2px;
+	position:relative;
+	z-index:1;
 }
 .screens .screen label{
 	font-size:12px;
@@ -985,6 +1032,7 @@ table.table span.sort-icon{
 	top:5px;
 	right:5px;
 	opacity:0;
+	z-index:2;
 }
 .screens .screen.mostdevices span.icon,
 .screens .screen.ipads span.icon,
@@ -1250,6 +1298,36 @@ html[buildfire] body{
 }
 #pluginControlHeader hr.none{
 	margin:4px 0;
+}
+
+/*  Override Intercom UI */
+#intercom-container .intercom-launcher-button, 
+#intercom-container .intercom-launcher-preview{
+	box-shadow:none !important;
+}
+#intercom-container .intercom-launcher-button{
+	background:#09a3ee !important;
+	position:relative;
+	border:none !important;
+}
+#intercom-container .intercom-launcher-button:before{
+	content: "\e607";
+	font-family: 'icomoon';
+	font-size:24px;
+	position:relative;
+	top:12px;
+	left:13px;
+	color:#fff;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 
