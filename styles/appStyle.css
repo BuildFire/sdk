@@ -330,7 +330,8 @@ nav.menu a.notifications .notification-circle span{
 .holder .bottom .hidden-content .tab-content .tab{
 	display:none;
 	height:229px;
-	overflow:auto;
+	overflow-y:auto !important;
+	-webkit-overflow-scrolling:touch !important;
 }
 .notification-plugin .tabs .tab a{
 	padding:10px 8px 8px;
@@ -480,9 +481,9 @@ nav.menu a.notifications .notification-circle span{
 .thumbnail-slider .thumbnail-slide img{
 	max-width:100%;
 }
-
 .holder .plugin-banner{
 	position:relative;
+	border-bottom:none !important;
 }
 .holder .info-bar,
 .holder .info-circle{
@@ -1352,34 +1353,34 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 }
 
 /* iOS Transparent Nav */
-html[ios="true"] #pluginNav{
+html[ios="true"][view="app"] #pluginNav{
 	padding-top:22px !important;
 	height:53px !important;
 }
-html[ios="true"] #pluginNav a.back-btn-icon{
+html[ios="true"][view="app"] #pluginNav a.back-btn-icon{
 	top:27px !important;
 	padding-bottom:13px !important;
 } 
-html[ios="true"] #pluginNav a.menu-btn-icon{
+html[ios="true"][view="app"] #pluginNav a.menu-btn-icon{
 	top:22px !important;
 }
-html[ios="true"] #pluginNav h4, 
-html[ios="true"] #pluginNav h5{
+html[ios="true"][view="app"] #pluginNav h4, 
+html[ios="true"][view="app"] #pluginNav h5{
 	padding-bottom:8px !important;
 }
-html[ios="true"] #menuToggle{
+html[ios="true"][view="app"] #menuToggle{
 	top:18px !important;
 }
-html[ios="true"] iframe#pluginFrame{
+html[ios="true"][view="app"] iframe#pluginFrame{
 	padding-top:53px !important;
 }
-html[ios="true"] .login-holder .cancel-link{
+html[ios="true"][view="app"] .login-holder .cancel-link{
 	top:22px !important;
 }
-html[ios="true"] nav.menu a.username{
+html[ios="true"][view="app"] nav.menu a.username{
 	padding-top:21px !important;
 }
-html[ios="true"] nav.menu span.menu-close{
+html[ios="true"][view="app"] nav.menu span.menu-close{
 	top:25px !important;
 }
 

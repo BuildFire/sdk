@@ -3604,6 +3604,7 @@ a.btn-danger .chevron{
 }
 .modal-content .dropdown-menu{
 	max-height:162px;
+	max-height:180px;
 }
 .dropdown-menu.pull-right {
   right: 0;
