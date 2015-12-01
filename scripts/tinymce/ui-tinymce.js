@@ -109,6 +109,7 @@ angular.module('ui.tinymce', [])
                 // element to be present in DOM before instantiating editor when
                 // re-rendering directive
                 $timeout(function() {
+                    options.  plugins= "code";
                     tinymce.init(options);
                     toggleDisable(scope.$eval(attrs.ngDisabled));
                 });
