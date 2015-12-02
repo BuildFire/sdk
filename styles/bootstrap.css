@@ -1610,6 +1610,7 @@ pre {
   background-color: #eef0f0;
   border: 1px solid #dddddd;
   border-radius: 4px;
+  overflow:hidden;
 }
 .paginate pre{
   padding:5.5px 10px;
@@ -3603,6 +3604,7 @@ a.btn-danger .chevron{
 }
 .modal-content .dropdown-menu{
 	max-height:162px;
+	max-height:180px;
 }
 .dropdown-menu.pull-right {
   right: 0;

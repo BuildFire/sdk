@@ -76,7 +76,7 @@ textarea{
 	left:auto;
 	right:10px;
 	font-size:21px;
-	top:14px;
+	top:15px;
 }
 #pluginNav h4,
 #pluginNav h5{
@@ -110,9 +110,9 @@ textarea{
 #menuToggle{
 	border-radius:5px 0 0 5px;
 	font-size:21px;
-	padding:6px 10px;
+	padding:4px 10px;
 	position:fixed;
-	top:9px;
+	top:11px;
 	right:0;
 	z-index:9999999;
 	background:#09a3ee;
@@ -295,10 +295,12 @@ nav.menu a.notifications .notification-circle span{
 .holder .bottom > .hidden-content{
 	background:#fff;
 }
-.holder .places-plugin .bottom{
+.holder .places-plugin .bottom,
+.holder .fixed-bottom.bottom{
 	bottom:-270px;
 }
-.holder .places-plugin .bottom.active{
+.holder .places-plugin .bottom.active,
+.holder .fixed-bottom.bottom.active{
 	bottom:0;
 }
 .holder .bottom .hidden-content .tabs .tab a,
@@ -328,7 +330,8 @@ nav.menu a.notifications .notification-circle span{
 .holder .bottom .hidden-content .tab-content .tab{
 	display:none;
 	height:229px;
-	overflow:auto;
+	overflow-y:auto !important;
+	-webkit-overflow-scrolling:touch !important;
 }
 .notification-plugin .tabs .tab a{
 	padding:10px 8px 8px;
@@ -434,9 +437,6 @@ nav.menu a.notifications .notification-circle span{
 	text-align:left !important;
 	color:#fff;
 }
-.people-plugin.layout3 .people-banner{
-	background:#fff;
-}
 .people-plugin.layout3 .people-banner .people-bg{
 	padding:0 !important;
 	position:relative;
@@ -481,9 +481,9 @@ nav.menu a.notifications .notification-circle span{
 .thumbnail-slider .thumbnail-slide img{
 	max-width:100%;
 }
-
 .holder .plugin-banner{
 	position:relative;
+	border-bottom:none !important;
 }
 .holder .info-bar,
 .holder .info-circle{
@@ -494,6 +494,9 @@ nav.menu a.notifications .notification-circle span{
 	padding:10px 0;
 	opacity:0.85;
 	z-index:9;
+}
+.holder .info-bar{
+	background:rgba(0,0,0,0.8);
 }
 .holder .info-circle{
 	bottom:inherit;
@@ -1090,11 +1093,9 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 .events-plugin .event-calendar-holder .disabled{
 	opacity:0.6;
 }
-.events-plugin .event-calendar-holder .btn.active,
 .events-plugin .event-calendar-holder .btn.btn-info{
 	position:relative;
 }
-.events-plugin .event-calendar-holder .btn.active:after,
 .events-plugin .event-calendar-holder .btn.btn-info:after{
 	content:'';
 	display:inline-block;
@@ -1351,6 +1352,37 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	font-size:20px;
 }
 
+/* iOS Transparent Nav */
+html[ios="true"][view="app"] #pluginNav{
+	padding-top:22px !important;
+	height:53px !important;
+}
+html[ios="true"][view="app"] #pluginNav a.back-btn-icon{
+	top:27px !important;
+	padding-bottom:13px !important;
+} 
+html[ios="true"][view="app"] #pluginNav a.menu-btn-icon{
+	top:22px !important;
+}
+html[ios="true"][view="app"] #pluginNav h4, 
+html[ios="true"][view="app"] #pluginNav h5{
+	padding-bottom:8px !important;
+}
+html[ios="true"][view="app"] #menuToggle{
+	top:18px !important;
+}
+html[ios="true"][view="app"] iframe#pluginFrame{
+	padding-top:53px !important;
+}
+html[ios="true"][view="app"] .login-holder .cancel-link{
+	top:22px !important;
+}
+html[ios="true"][view="app"] nav.menu a.username{
+	padding-top:21px !important;
+}
+html[ios="true"][view="app"] nav.menu span.menu-close{
+	top:25px !important;
+}
 
 /* iFrame */
 /* Plugin iFrame */
@@ -1375,6 +1407,16 @@ html[buildfire] body{
 	width:100% !important;
 	overflow-y:auto !important;
 	-webkit-overflow-scrolling:touch !important;
+}
+html[buildfire] body.no-scroll{
+	overflow:hidden !important;
+	-webkit-overflow-scrolling:inherit !important;
+}
+html[buildfire] body.no-scroll .scrollable{
+	overflow-y:auto !important;
+	-webkit-overflow-scrolling:touch !important;
+	height:100% !important;
+	width:100% !important;
 }
 
 /* 767px Screen */

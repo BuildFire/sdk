@@ -818,7 +818,7 @@ var buildfire = {
             else if (!options.width && options.height)
                 return root + "height/" + (options.height * ratio) + "/" + url;
             else if (options.width && options.height)
-                return root + "resizenp/" + (options.width * ratio) + "x" + (options.height * ratio) + "/" + url;
+                return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             else
                 return url;
         }
@@ -833,7 +833,7 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            return root + options.width + "x" + options.height + "/" + url;
+            return root + Math.floor(options.width) + "x" + Math.floor(options.height) + "/" + url;
 
         }
 
@@ -898,9 +898,13 @@ var buildfire = {
         triggerOnPop: function (obj) {
             buildfire.eventManager.trigger('historyOnPop', obj);
         },
-        pop: function () {
+        pop: function (callback) {
             var p = new Packet(null, 'history.pop');
-            buildfire._sendPacket(p);
+            buildfire._sendPacket(p, callback);
+        },
+        get: function (options, callback) {
+            var p = new Packet(null, 'history.get', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Messaging-to-sync-your-Control-to-Widget
@@ -1028,4 +1032,19 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
     console.error('Error: ' + errorMsg, ' Script: ' + url, ' Line: ' + lineNumber
         , ' Column: ' + column, ' StackTrace: ' + errorObj);
 };
+
+
+//IE and old Android Custom Event Fix
+if(typeof(CustomEvent) != "function"){
+    function CustomEvent(event, params) {
+        params = params || {bubbles: false, cancelable: false, detail: undefined};
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    };
+
+    CustomEvent.prototype = window.Event.prototype;
+    window.CustomEvent = CustomEvent;
+}
+
 
