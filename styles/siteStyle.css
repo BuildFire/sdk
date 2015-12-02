@@ -1334,6 +1334,11 @@ html[buildfire] body{
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.shell-sdk #login .login-holder{
+	position:absolute;
+	border:1px solid #ddd;
+}
+
 
 /* Phase 2 */
 
