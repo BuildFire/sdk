@@ -973,7 +973,7 @@ var buildfire = {
             buildfire._sendPacket(p);
         },
         getCurrentUser: function (callback) {
-            var p = new Packet(null, 'auth.getCurrentUser', options);
+            var p = new Packet(null, 'auth.getCurrentUser');
             buildfire._sendPacket(p, callback);
         },
         onLogin: function (callback, allowMultipleHandlers) {
