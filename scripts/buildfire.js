@@ -990,7 +990,7 @@ var buildfire = {
             return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
         }
         , triggerOnLogout: function (data) {
-            return buildfire.eventManager.add('authOnLogout', data);
+            return buildfire.eventManager.trigger('authOnLogout', data);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
