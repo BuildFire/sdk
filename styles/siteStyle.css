@@ -782,8 +782,12 @@ table.table span.sort-icon{
 .media-container .icons-set a.icon-holder.selected{
 	box-shadow:0 0 0 2px #09a3ee;
 }
-.media-container .files-set .file-holder:nth-child(6n){
+.media-container .files-set .file-holder:nth-child(5n),
+.modal-dialog .media-container .files-set .file-holder:nth-child(6n){
 	margin-right:0;
+}
+.modal-dialog .media-container .files-set .file-holder:nth-child(5n){
+	margin-right:10px;
 }
 .media-container .files-set .file-holder img{
 	max-width:100%;
