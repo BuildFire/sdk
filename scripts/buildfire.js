@@ -1048,16 +1048,14 @@ if(typeof(CustomEvent) != "function"){
 }
 
 document.onclick = function (e) {
-    debugger;
     e = e ||  window.event;
     var element = e.target || e.srcElement;
 
     if (element.tagName == 'A') {
         debugger;
         e.preventDefault();
-        var $this = $(this);
         var target = element.getAttribute('inAppBrowser') || '_blank';
-        window.open($this.attr('href'), target, 'location=yes');
+        window.open(element.getAttribute('href'), target, 'location=yes');
     }
 };
 
