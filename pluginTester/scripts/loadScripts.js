@@ -18,6 +18,8 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/deviceAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/pluginAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/geoAPI.js"
+        , this.domain + "app/pages/controllers/authCtrl.js"
+        , this.domain + "app/scripts/framework/pluginAPI/authAPI.js"
         , this.domain + "scripts/framework/openDialogCtrl.js"
     ];
 }
