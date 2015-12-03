@@ -4100,6 +4100,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-tabs > li:last-child > a{
 	border-radius:0 4px 4px 0;
 }
+.nav-tabs > li:only-child > a{
+	border-radius:4px !important;
+}
 .nav-tabs > li > a {
   color:#888;
   margin-right: 2px;
@@ -6004,7 +6007,7 @@ button.close {
 }
 .modal-open .modal {
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: auto !important;
 }
 .modal-dialog {
   position: relative;
