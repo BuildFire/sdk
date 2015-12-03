@@ -990,7 +990,7 @@ var buildfire = {
             buildfire._sendPacket(p);
         },
         getCurrentUser: function (callback) {
-            var p = new Packet(null, 'auth.getCurrentUser', options);
+            var p = new Packet(null, 'auth.getCurrentUser');
             buildfire._sendPacket(p, callback);
         },
         onLogin: function (callback, allowMultipleHandlers) {
@@ -1003,7 +1003,7 @@ var buildfire = {
             return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
         }
         , triggerOnLogout: function (data) {
-            return buildfire.eventManager.add('authOnLogout', data);
+            return buildfire.eventManager.trigger('authOnLogout', data);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features

@@ -1,10 +1,12 @@
 window.siteConfig = {
-    appId : 202
-    , endPoints : {
-        datastoreHost: 'http://int2.ds.buildfire.com:88',
-        appHost: 'http://int2.myapp.buildfire.com'
-    }
-    ,keys: {
-        datastoreKey:'123-ASD-TEST'
-    }
+	appId: 202
+	, endPoints: {
+		datastoreHost: 'http://int2.ds.buildfire.com:88',
+		appHost: 'http://int2.myapp.buildfire.com',
+		auth: "int.auth.buildfire.com",
+		authHost: "http://int.auth.buildfire.com"
+	}
+	, keys: {
+		datastoreKey: '123-ASD-TEST'
+	}
 };
