@@ -23,6 +23,7 @@
 .mce-btn,
 .mce-menubtn{
 	border-radius:4px;
+	overflow:hidden;
 	background:#fff;
 	border:1px solid #ddd;
 	-moz-transition: background-color 0.35s;
@@ -95,10 +96,16 @@
 	-webkit-transform:rotate(-180deg);
 }
 .mce-window .mce-menubtn.mce-active .mce-caret,
-.mce-window .mce-menubtn.mce-active:hover .mce-caret{
+.mce-window .mce-menubtn.mce-active:hover .mce-caret,
+.mce-menubtn.mce-splitbtn.mce-active .mce-caret{
 	transform:rotate(0deg);
 	-ms-transform:rotate(0deg); 
 	-webkit-transform:rotate(0deg);
+}
+.mce-open.mce-active .mce-caret{
+	transform:rotate(-180deg) !important;
+	-ms-transform:rotate(-180deg) !important; 
+	-webkit-transform:rotate(-180deg) !important;
 }
 .mce-btn-group:not(:first-child){
 	border-left:none;
