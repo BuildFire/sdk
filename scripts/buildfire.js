@@ -95,7 +95,7 @@ var buildfire = {
                     option.value = toggleClass;
                     select.appendChild(option);
                 }
-                
+
                 createFilterOption('Show all','');
                 createFilterOption('Info logs only','bflog-info');
                 createFilterOption('Logs only','bflog-log');
@@ -413,17 +413,30 @@ var buildfire = {
         , goBack: function () {
             buildfire.navigation.onBackButtonClick();
         }
+        , makeSafeLinks: function (element) {
+            var t = this;
+            if (typeof(element) != "object")
+                element = document.getElementById(element);
+
+            var anchors = element.querySelectorAll('a[href^=http], a[href^=https],a[href^=www]');
+            for (var i = 0; i < anchors.length; i++) {
+                anchors[i].addEventListener("click", function (evt) {
+                    evt.preventDefault();
+                    t.openWindow(this.href, this.target, null);
+                }, false);
+            }
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
-         insertHTMLAttributes: function () {
+        insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
-		
-			if(window.location.href.indexOf('widget') > 0){
-				html.setAttribute('buildfire', 'widget');          
-			}else{
-	            html.setAttribute('buildfire', 'control');				
-			}
+
+            if(window.location.href.indexOf('widget') > 0){
+                html.setAttribute('buildfire', 'widget');
+            }else{
+                html.setAttribute('buildfire', 'control');
+            }
 
             var nVer = navigator.appVersion;
             var nAgt = navigator.userAgent;
