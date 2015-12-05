@@ -334,7 +334,7 @@ nav.menu a.notifications .notification-circle span{
 	-webkit-overflow-scrolling:touch !important;
 }
 .notification-plugin .tabs .tab a{
-	padding:10px 8px 8px;
+	padding:14px 8px 10px;
 	display:block;
 }
 .notification-plugin .tab-content .tab{
@@ -708,17 +708,14 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 	width:70px;
 	line-height:68px;
 }
-.shopping-cart .list-layout .list-item-copy{
-	
-}
 .shopping-cart .list-layout .list-item-copy p + p{
 	font-size:13px;
-	margin-top:-2px !important;
+	margin:7px 0px !important;
 }
 .shopping-cart .list-layout .list-item-copy a{
 	font-size:13px;
 	position:relative;
-	top:-2px;
+	top:1px;
 }
 .shopping-cart .bottom div{
 	padding:6px 10px !important;
