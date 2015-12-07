@@ -286,7 +286,8 @@ var buildfire = {
         , "auth.triggerOnLogin"
         , "auth.triggerOnLogout"
         , "logger.showHistory"
-        , "logger.attachRemoteLogger"]
+        , "logger.attachRemoteLogger"
+        , "appearance.triggerOnUpdate"]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
             console.log(' >>>> IGNORE MESSAGE <<<< ');
@@ -573,9 +574,11 @@ var buildfire = {
         }
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
             var linkElement = document.createElement("link");
+            buildfire.appearance.CSSBusterCounter = 0;
             linkElement.setAttribute("rel", "stylesheet");
             linkElement.setAttribute("type", "text/css");
-            linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode);
+            linkElement.setAttribute("id", "appThemeCSS");
+            linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
             document.getElementsByTagName('head')[0].appendChild(linkElement);
         }
         , _resizedTo: 0
@@ -595,6 +598,12 @@ var buildfire = {
         , setHeaderVisibility: function (value) {
             var p = new Packet(null, "appearance.setHeaderVisibility", value);
             buildfire._sendPacket(p);
+        }
+        , triggerOnUpdate: function () {
+            var appThemeCSSElement = document.getElementById("appThemeCSS");
+            if(appThemeCSSElement) {
+                appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
+            }
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
