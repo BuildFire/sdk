@@ -368,8 +368,9 @@ nav.menu a.notifications .notification-circle span{
 	top:-45px;
 	left:10px;
 	border-radius:100%;
-	font-size:23px;
-	padding:5px 7px;
+	font-size:21px;
+	padding:7px;
+	text-align:center;
 	height:35px;
 	width:35px;
 	color:#fff;

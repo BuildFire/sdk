@@ -95,7 +95,7 @@ var buildfire = {
                     option.value = toggleClass;
                     select.appendChild(option);
                 }
-                
+
                 createFilterOption('Show all','');
                 createFilterOption('Info logs only','bflog-info');
                 createFilterOption('Logs only','bflog-log');
@@ -286,7 +286,8 @@ var buildfire = {
         , "auth.triggerOnLogin"
         , "auth.triggerOnLogout"
         , "logger.showHistory"
-        , "logger.attachRemoteLogger"]
+        , "logger.attachRemoteLogger"
+        , "appearance.triggerOnUpdate"]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
             console.log(' >>>> IGNORE MESSAGE <<<< ');
@@ -413,17 +414,31 @@ var buildfire = {
         , goBack: function () {
             buildfire.navigation.onBackButtonClick();
         }
+        , makeSafeLinks: function (element) {
+            var t = this;
+            if (typeof(element) != "object")
+                element = document.getElementById(element);
+
+            var anchors = element.querySelectorAll('a[href^=http], a[href^=https],a[href^=www]');
+            for (var i = 0; i < anchors.length; i++) {
+                anchors[i].setAttribute("inAppBrowser",true);
+                anchors[i].addEventListener("click", function (evt) {
+                    evt.preventDefault();
+                    t.openWindow(this.href, this.target, null);
+                }, false);
+            }
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
-         insertHTMLAttributes: function () {
+        insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
-		
-			if(window.location.href.indexOf('widget') > 0){
-				html.setAttribute('buildfire', 'widget');          
-			}else{
-	            html.setAttribute('buildfire', 'control');				
-			}
+
+            if(window.location.href.indexOf('widget') > 0){
+                html.setAttribute('buildfire', 'widget');
+            }else{
+                html.setAttribute('buildfire', 'control');
+            }
 
             var nVer = navigator.appVersion;
             var nAgt = navigator.userAgent;
@@ -560,9 +575,11 @@ var buildfire = {
         }
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
             var linkElement = document.createElement("link");
+            buildfire.appearance.CSSBusterCounter = 0;
             linkElement.setAttribute("rel", "stylesheet");
             linkElement.setAttribute("type", "text/css");
-            linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode);
+            linkElement.setAttribute("id", "appThemeCSS");
+            linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
             document.getElementsByTagName('head')[0].appendChild(linkElement);
         }
         , _resizedTo: 0
@@ -582,6 +599,12 @@ var buildfire = {
         , setHeaderVisibility: function (value) {
             var p = new Packet(null, "appearance.setHeaderVisibility", value);
             buildfire._sendPacket(p);
+        }
+        , triggerOnUpdate: function () {
+            var appThemeCSSElement = document.getElementById("appThemeCSS");
+            if(appThemeCSSElement) {
+                appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
+            }
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
@@ -977,7 +1000,7 @@ var buildfire = {
             buildfire._sendPacket(p);
         },
         getCurrentUser: function (callback) {
-            var p = new Packet(null, 'auth.getCurrentUser', options);
+            var p = new Packet(null, 'auth.getCurrentUser');
             buildfire._sendPacket(p, callback);
         },
         onLogin: function (callback, allowMultipleHandlers) {
@@ -990,7 +1013,7 @@ var buildfire = {
             return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
         }
         , triggerOnLogout: function (data) {
-            return buildfire.eventManager.add('authOnLogout', data);
+            return buildfire.eventManager.trigger('authOnLogout', data);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -1023,6 +1046,37 @@ document.addEventListener("DOMContentLoaded", function (event) {
     console.info('DOMContentLoaded');
     if(window.location.href.indexOf('/widget/'))
         buildfire.appearance.attachFastClick();
+
+    var metaTags = null;
+    var buildfireMetaTags = document.head.querySelector("meta[name=buildfire]");
+    if(buildfireMetaTags)
+        metaTags = buildfireMetaTags.split(",");
+    var overwriteOnClick = true;
+    if(metaTags != null) {
+        for(var i = 0 ; i < metaTags.length ; i++){
+            if(buildfireMetaTags[i] == 'disableExternalLinkOverride')
+                overwriteOnClick= false;
+        }
+    }
+
+
+    if(overwriteOnClick) {
+        document.onclick = function (e) {
+            e = e ||  window.event;
+            var element = e.target || e.srcElement;
+            var href = element.getAttribute('href');
+            var inAppBrowser  = element.getAttribute("inAppBrowser");
+            if(element.tagName == 'A' && href != null && href != '' && inAppBrowser == null){
+                var regexp = new RegExp('^(http:\/|https:\/|http:\/\/|https:\/\/|www.)[a-z0-9]');
+                if (element.tagName == 'A' && regexp.test(href)) {
+                    e.preventDefault();
+                    var target = element.getAttribute('inAppBrowser') || '_blank';
+                    buildfire.navigation.openWindow(href, target, null);
+                }
+            }
+        };
+    }
+
 });
 document.addEventListener("resize", function (event) {
     buildfire.appearance.autosizeContainer();
