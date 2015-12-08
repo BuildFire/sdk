@@ -421,6 +421,7 @@ var buildfire = {
 
             var anchors = element.querySelectorAll('a[href^=http], a[href^=https],a[href^=www]');
             for (var i = 0; i < anchors.length; i++) {
+                anchors[i].setAttribute("inAppBrowser",true);
                 anchors[i].addEventListener("click", function (evt) {
                     evt.preventDefault();
                     t.openWindow(this.href, this.target, null);
@@ -1045,6 +1046,37 @@ document.addEventListener("DOMContentLoaded", function (event) {
     console.info('DOMContentLoaded');
     if(window.location.href.indexOf('/widget/'))
         buildfire.appearance.attachFastClick();
+
+    var metaTags = null;
+    var buildfireMetaTags = document.head.querySelector("meta[name=buildfire]");
+    if(buildfireMetaTags)
+        metaTags = buildfireMetaTags.split(",");
+    var overwriteOnClick = true;
+    if(metaTags != null) {
+        for(var i = 0 ; i < metaTags.length ; i++){
+            if(buildfireMetaTags[i] == 'disableExternalLinkOverride')
+                overwriteOnClick= false;
+        }
+    }
+
+
+    if(overwriteOnClick) {
+        document.onclick = function (e) {
+            e = e ||  window.event;
+            var element = e.target || e.srcElement;
+            var href = element.getAttribute('href');
+            var inAppBrowser  = element.getAttribute("inAppBrowser");
+            if(element.tagName == 'A' && href != null && href != '' && inAppBrowser == null){
+                var regexp = new RegExp('^(http:\/|https:\/|http:\/\/|https:\/\/|www.)[a-z0-9]');
+                if (element.tagName == 'A' && regexp.test(href)) {
+                    e.preventDefault();
+                    var target = element.getAttribute('inAppBrowser') || '_blank';
+                    buildfire.navigation.openWindow(href, target, null);
+                }
+            }
+        };
+    }
+
 });
 document.addEventListener("resize", function (event) {
     buildfire.appearance.autosizeContainer();
