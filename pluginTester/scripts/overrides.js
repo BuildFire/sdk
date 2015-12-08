@@ -67,6 +67,19 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 		alert('default back behaviour');
 	};
 
+	///override the authAPI.getCurrentUser to return CP loggedIn user
+	var oldFN = authAPI.getCurrentUser;
+	authAPI.secondaryUserLookup = function () {
+		return window.currentUser;
+	};
+	authAPI.getCurrentUser = function (data, callback) {
+		if (window.currentUser) {
+			authAPI.logout();
+		}
+		return oldFN(data, callback);
+	};
+	///
+
 //override the imageLibTemplate url
 	imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
 	postMaster.controlPluginAPI.actionItems.templateUrl = 'http://int2.myapp.buildfire.com/pages/templates/actionBuilder.html';

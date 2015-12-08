@@ -10,7 +10,7 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
         $scope.link = {
             deeplinkData: ""
         };
-
+        $scope.currentUser = window.currentUser;
 
         $scope.loadFrames = function (pluginFolder, config) {
             var root = '../plugins/';
