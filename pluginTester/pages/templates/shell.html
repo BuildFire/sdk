@@ -2,6 +2,8 @@
     <div class="header clearfix">
         <h4 class="margin-zero">Plugin</h4>
         <input class="plugin-input margin-left-fifteen border-none border-radius-four" type="text" ng-cloak ng-model="navToValue" ng-keypress="navTo($event);" placeholder="Plugin Name">
+        <a href="#/login" ng-hide="currentUser" class="pull-right">Login</a>
+        <a href="#/logout" ng-show="currentUser" class="pull-right">Logout</a>
     </div>
     <div class="layout padded clearfix">
         <ul class="nav nav-tabs nav-justified">
