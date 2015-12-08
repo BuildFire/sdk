@@ -109,8 +109,20 @@ angular.module('ui.tinymce', [])
                 // element to be present in DOM before instantiating editor when
                 // re-rendering directive
                 $timeout(function() {
-                    options.  plugins= "code";
-                    tinymce.init(options);
+
+                    tinymce.init({
+                        selector: 'textarea',  // change this value according to your HTML
+                        plugins: "image,code,media,link",
+                        toolbar: ['  styleselect  | insertfile undo redo  | bold italic | alignleft aligncenter alignright alignjustify  | bullist  numlist | outdent indent ',
+                            ' link image | media  | code'
+                        ],
+
+                        menu: {
+                            edit: {title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall'},
+                            insert: {title: 'Insert', items: 'link image | media  | code'},
+                            view   : {title : 'View'  , items : 'visualaid'},
+                            format : {title : 'Format', items : 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
+                        }});
                     toggleDisable(scope.$eval(attrs.ngDisabled));
                 });
 
