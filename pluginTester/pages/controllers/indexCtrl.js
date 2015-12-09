@@ -18,7 +18,7 @@ $app.controller('indexCtrl', ['$scope', function ($scope) {
     $scope.recentPlugins = recentPlugins;
 
 
-    $scope.dataTracer = "http://int2.myapp.buildfire.com:89/#/dataTracer/" + window.appContext.currentApp.appId
+    $scope.dataTracer = "http://beta.app.buildfire.com:89/#/dataTracer/" + window.appContext.currentApp.appId
         + "/" + window.appContext.currentPlugin.pluginPath
         + "/" + window.appContext.currentPlugin.instanceId
         + "/" + window.appContext.currentApp.keys.datastoreKey;
