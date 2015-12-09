@@ -1,0 +1,61 @@
+﻿<style type="text/css" media="screen">
+
+    .login h1,
+    .login h2 {
+        color: #555;
+        font-weight: 100;
+        margin-bottom: 20px;
+    }
+
+    .login .well {
+        padding: 25px 30px 30px;
+        background: rgba(255, 255, 255, 0.9);
+        background: #fff;
+        box-shadow: none;
+    }
+
+    .login .form-control {
+        box-shadow: none;
+    }
+
+    .login .alert {
+        padding: 6px;
+        font-size: 12px;
+        margin-bottom: -5px;
+    }
+
+    .login .bottom a.access {
+        margin-top: 22px;
+        display: block;
+    }
+
+    #emulator{
+        display: none;
+    }
+</style>
+
+<div class="login text-center" ng-controller="loginCtrl">
+    <form class="well border-grey" name="frmLogin">
+        <div class="alert alert-danger margin-bottom-ten" ng-show="errors.serverError">{{errors.serverError}}</div>
+        <div class="margin-bottom-fifteen">
+            <input type="email" name="txtUsername" placeholder="Email" class="form-control border-grey" autofocus
+                   maxlength="100" ng-model="username">
+
+            <div class="alert alert-danger margin-top-ten" ng-show="errors.email">Invalid Email</div>
+        </div>
+        <div class="margin-bottom-fifteen">
+            <input type="password" name="txtPassword" placeholder="Password" class="form-control border-grey"
+                   maxlength="40" ng-model="password">
+
+            <div class="alert alert-danger margin-top-ten" ng-show="errors.password">Invalid Password</div>
+        </div>
+        <div>
+            <button ladda="loggingIn" type="submit" class="btn btn-primary form-control transition-half"
+                    ng-click="submit()">Log In
+            </button>
+        </div>
+        <div class="bottom">
+            <a href="http://app.buildfire.com/pages/forgotPassword.html" class="access">I can't access my account.</a>
+        </div>
+    </form>
+</div>

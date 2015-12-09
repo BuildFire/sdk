@@ -4,9 +4,6 @@
  */
 //logger = console;
 
-var controlIFrame=document.getElementById('iframeControl');
-var widgetIFrame = document.getElementById('widget');
-
 postMaster.widgetPluginAPI = new PluginAPI('widget', window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
 postMaster.widgetPluginAPI.tag = 'shell';
@@ -23,19 +20,19 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 	*/
 	var onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj);
-		postMaster.widgetPluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
+		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
 	postMaster.controlPluginAPI.datastore.onUpdate =onUpdate;
 
 
 	postMaster.widgetPluginAPI.messaging.onNewWidgetMessage(function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
-		postMaster.widgetPluginAPI.sendMessage(widgetIFrame.contentWindow, packet);
+		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	});
 
 	postMaster.controlPluginAPI.messaging.onNewControlMessage(function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
-		postMaster.controlPluginAPI.sendMessage(controlIFrame.contentWindow, packet);
+		postMaster.controlPluginAPI.sendMessage(null, packet);
 	});
 
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
@@ -66,6 +63,19 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 	postMaster.widgetPluginAPI.navigation.navigateBack = function(){
 		alert('default back behaviour');
 	};
+
+	///override the authAPI.getCurrentUser to return CP loggedIn user
+	var oldFN = authAPI.getCurrentUser;
+	authAPI.secondaryUserLookup = function () {
+		return window.currentUser;
+	};
+	authAPI.getCurrentUser = function (data, callback) {
+		if (window.currentUser) {
+			authAPI.logout();
+		}
+		return oldFN(data, callback);
+	};
+	///
 
 //override the imageLibTemplate url
 	imageLibCurrentApp.imageLibTemplate = 'http://int2.myapp.buildfire.com/pages/templates/imageLib.html';
