@@ -83,7 +83,7 @@ buildfire.components.pluginInstance.sortableList = function (selector, items, di
     this.loadAllSelector = "#" + this.checkId;
     this.hideLoadButton = hideLoadButton;
     this._loadAllItems = loadAllItems ? true : false;
-    this.dialogOptions = typeof (dialogOptions) == "object" && dialogOptions != null ? dialogOptions : { showIcon: true };
+    this.dialogOptions = typeof (dialogOptions) == "object" && dialogOptions != null ? dialogOptions : { showIcon: true, confirmDeleteItem: true };
     this.init(selector);
     this.loadItems(items);
 };
@@ -224,24 +224,30 @@ buildfire.components.pluginInstance.sortableList.prototype = {
 
             deleteButton.addEventListener("click", function (e) {
                 e.preventDefault();
-
-                buildfire.notifications.confirm({
-                    title: "Remove Plugin Instance",
-                    message: '<p>Are you sure you want to do this?</p>\
-				<p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
-                    buttonLabels: ["Delete", "Cancel"],
-                    target: e.currentTarget
-                }, function (e) {
-                    var itemIndex = me._getItemIndex(item);
-                    var itemId = me.items[itemIndex].instanceId,
-                        parent = this.parentNode.parentNode.parentNode;
-                    if (itemIndex != -1) {
-                        me.items.splice(itemIndex, 1);
-                        me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
-                        parent.parentNode.removeChild(parent);
-                        me.onDeleteItem(item, itemIndex);
-                    }
-                }.bind(this));
+		var deleteItem = function() {
+			var itemIndex = me._getItemIndex(item);
+			var itemId = me.items[itemIndex].instanceId;
+			var	parent = deleteButton.parentNode.parentNode.parentNode;
+			if (itemIndex != -1) {
+				me.items.splice(itemIndex, 1);
+				me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
+				parent.parentNode.removeChild(parent);
+				me.onDeleteItem(item, itemIndex);
+			}
+		};
+		if(me.dialogOptions.confirmDeleteItem) {
+			buildfire.notifications.confirm({
+				title: "Remove Plugin Instance",
+				message: '<p>Are you sure you want to do this?</p>\
+			<p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
+				buttonLabels: ["Delete", "Cancel"],
+				target: e.currentTarget
+			}, function (e) {
+				deleteItem();
+			}.bind(this));
+		} else {
+			deleteItem();
+		}
             });
         })(item);
     },
