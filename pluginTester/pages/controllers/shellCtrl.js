@@ -30,8 +30,9 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
                 $scope.currentControl = $scope.contentSrc = root + pluginFolder + '/control/content/index.html';
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
-
-            $scope.$apply();
+			
+			if (!$scope.$$phase)
+            	$scope.$apply();
         };
 
         $scope.loadIFrame = function (section, e) {
@@ -87,7 +88,8 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
                     config = JSON.parse(xmlhttp.responseText);
                     $scope.loadFrames(pluginFolder, config);
                     $scope.navToValue=$scope.pluginFolder = pluginFolder;
-                    $scope.$apply();
+                    if (!$scope.$$phase)
+		            	$scope.$apply();
                     keepTrackOfRecentPlugins(pluginFolder);
 
                 }

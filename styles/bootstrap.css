@@ -5120,6 +5120,7 @@ a.thumbnail.active {
   border-radius: 4px;
   font-size:13px;
 
+  text-align:center;
   padding: 6px;
   font-size:12px;
 }
@@ -8319,6 +8320,13 @@ Variations
   background: #d9534f;
 }
 
+.required-field:after{
+	content:'*';
+	position:relative;
+	left:2px;
+	color:#d9534f;
+	
+}
 
 /* Override Bootstrap Columns for CP */
 html[buildfire='control'] .col-xs-1,

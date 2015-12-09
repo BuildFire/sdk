@@ -5,13 +5,13 @@
     </div>
     <div class="layout padded clearfix">
         <ul class="nav nav-tabs nav-justified">
-            <li ng-show="contentSrc">
+            <li ng-if="contentSrc">
                 <a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)">Content</a>
             </li>
-            <li ng-show="designSrc">
+            <li ng-if="designSrc">
                 <a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
             </li>
-            <li ng-show="settingsSrc">
+            <li ng-if="settingsSrc">
                 <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
             </li>
         </ul>
