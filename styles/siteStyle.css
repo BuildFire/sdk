@@ -1291,6 +1291,9 @@ html[buildfire] body{
 	background:none;
 	overflow-x:hidden;
 }
+html[buildfire='control'] body{
+	height:100%;
+}
 
 /* Plugin Control Header */
 #pluginControlHeader .screens .screen{
