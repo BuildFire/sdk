@@ -252,7 +252,14 @@ var buildfire = {
                 }
         }
     }
-    , context: null
+    , _context: null
+    , get context() {
+        console.warn('buildfire.context is obsolete and will be removed soon');
+        return buildfire._context;
+    }
+    , set context(obj) {
+        buildfire._context = obj;
+    }
     , init: function () {
         // Listen to message from child window
         window.removeEventListener('message', buildfire._postMessageHandler, false);
@@ -265,7 +272,6 @@ var buildfire = {
                 console.error(err);
             }
             else {
-                buildfire.context = context;
                 if(context.debugTag)
                     buildfire.logger.attachRemoteLogger(context.debugTag);
                 if (window.location.pathname.indexOf('/widget/') > 0) {
@@ -356,8 +362,16 @@ var buildfire = {
         if (parent)parent.postMessage(p, "*");
     }
     , getContext: function (callback) {
-        var p = new Packet(null, 'getContext');
-        buildfire._sendPacket(p, callback);
+        if (buildfire._context)
+            callback(null, buildfire._context);
+        else {
+            var p = new Packet(null, 'getContext');
+            buildfire._sendPacket(p, function (err, data) {
+                if (data)
+                    buildfire._context = data;
+                callback(err, data);
+            });
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
     , navigation: {
@@ -973,7 +987,7 @@ var buildfire = {
             callback(qs.dld); /// dld: Deep Link Data
         }
         , createLink: function (obj) {
-            var root = "app" + buildfire.context.appId + "://plugin";
+            var root = "app" + buildfire._context.appId + "://plugin";
             if (!obj)
                 return root;
             else
@@ -1014,6 +1028,10 @@ var buildfire = {
         }
         , triggerOnLogout: function (data) {
             return buildfire.eventManager.trigger('authOnLogout', data);
+        },
+        openProfile: function (userId) {
+            var p = new Packet(null, 'auth.openProfile', userId);
+            buildfire._sendPacket(p);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
