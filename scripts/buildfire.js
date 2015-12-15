@@ -1028,6 +1028,10 @@ var buildfire = {
         }
         , triggerOnLogout: function (data) {
             return buildfire.eventManager.trigger('authOnLogout', data);
+        },
+        openProfile: function (userId) {
+            var p = new Packet(null, 'auth.openProfile', userId);
+            buildfire._sendPacket(p);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
