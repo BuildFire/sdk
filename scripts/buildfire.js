@@ -400,6 +400,10 @@ var buildfire = {
             var p = new Packet(null, 'navigation.navigateHome');
             buildfire._sendPacket(p);
         }
+        , scrollTop: function(callback){
+            var p = new Packet(null, 'navigation.scrollTop');
+            buildfire._sendPacket(p,callback);
+        }
         , openWindow: function (url, target, callback) {
             if (!target) target = '_blank';
             if (!callback) callback = function () {
