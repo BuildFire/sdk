@@ -865,6 +865,8 @@ var buildfire = {
         }
         , cropImage: function (url, options) {
             var root = "http://s7obnu.cloudimage.io/s/crop/";
+            var ratio = options.disablePixelRation?1:window.devicePixelRatio;
+
             if (typeof(options) != "object")
                 throw ("options not an object");
 
@@ -874,7 +876,7 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            return root + Math.floor(options.width) + "x" + Math.floor(options.height) + "/" + url;
+            return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
 
         }
 
