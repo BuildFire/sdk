@@ -403,8 +403,9 @@ buildfire.components.carousel.view.prototype = {
     },
     // initialize the slider
     _applySlider: function () {
-        this.$slider = $(this.selector);
-        if (this.items.length > 1) {
+        var me = this;
+        me.$slider = $(me.selector);
+        if (me.items.length > 1) {
 
             var sliderOptions = {
                 navigation: false,
@@ -421,8 +422,7 @@ buildfire.components.carousel.view.prototype = {
             sliderOptions.autoplay = 3000;
             sliderOptions.autoplaySpeed = 800;
             sliderOptions.loop = true;
-
-            this.$slider.owlCarousel(sliderOptions);
+            setTimeout(function(){me.$slider.owlCarousel(sliderOptions);}, 50);
         }
 
     },
