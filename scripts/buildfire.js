@@ -1046,6 +1046,9 @@ var buildfire = {
             addEvent: function(event,callback){
                 buildfire._sendPacket(new Packet(null,'device.calendar.addEvent',event),callback);
             }
+        },
+        share: function(messageObj, callback){
+            buildfire._sendPacket(new Packet(null,'device.share',messageObj),callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
