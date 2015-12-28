@@ -114,7 +114,7 @@ textarea{
 	position:fixed;
 	top:11px;
 	right:0;
-	z-index:9999999;
+	z-index:1040;
 	background:#09a3ee;
 	cursor:pointer;
 }
@@ -1352,34 +1352,34 @@ html[browser="Firefox"] .layout3 .list-layout .list-item-media .list-media-holde
 
 /* iOS Transparent Nav */
 html[ios="true"][view="app"] #pluginNav{
-	padding-top:22px !important;
-	height:53px !important;
+	padding-top:27px !important;
+	height:61px !important;
 }
 html[ios="true"][view="app"] #pluginNav a.back-btn-icon{
-	top:27px !important;
+	top:32px !important;
 	padding-bottom:13px !important;
 } 
 html[ios="true"][view="app"] #pluginNav a.menu-btn-icon{
-	top:22px !important;
+	top:27px !important;
 }
 html[ios="true"][view="app"] #pluginNav h4, 
 html[ios="true"][view="app"] #pluginNav h5{
 	padding-bottom:8px !important;
 }
 html[ios="true"][view="app"] #menuToggle{
-	top:18px !important;
+	top:23px !important;
 }
 html[ios="true"][view="app"] iframe#pluginFrame{
-	padding-top:53px !important;
+	padding-top:61px !important;
 }
 html[ios="true"][view="app"] .login-holder .cancel-link{
-	top:22px !important;
+	top:27px !important;
 }
 html[ios="true"][view="app"] nav.menu a.username{
-	padding-top:21px !important;
+	padding-top:26px !important;
 }
 html[ios="true"][view="app"] nav.menu span.menu-close{
-	top:25px !important;
+	top:30px !important;
 }
 
 /* iFrame */
@@ -1459,9 +1459,6 @@ html[buildfire] body.no-scroll .scrollable{
 	.map-layout2 .places-plugin .location-map .map-holder{
 		padding-top:200px;
 	}
-	.login-holder .login.content{
-		padding-top:60px !important;
-	}
 	.login-holder .moreoptions{
 		margin-top:0 !important;
 	}
@@ -1475,5 +1472,8 @@ html[buildfire] body.no-scroll .scrollable{
 	}
 	.holder.now-playing .media-holder{
 		display:none;
+	}
+	.login-holder .login.content.padded{
+		padding-top:60px !important;
 	}
 }
