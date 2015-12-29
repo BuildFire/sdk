@@ -122,6 +122,9 @@
 .mce-stack-layout-item + .mce-stack-layout-item{
 	padding-top:0;
 }
+.mce-toolbar-grp .mce-stack-layout-item + .mce-stack-layout-item{
+	padding-top:4px;
+}
 .mce-container #tinymce-26{
 	display:none;
 }

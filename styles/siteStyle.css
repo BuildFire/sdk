@@ -1291,9 +1291,6 @@ html[buildfire] body{
 	background:none;
 	overflow-x:hidden;
 }
-html[buildfire='control'] body{
-	height:100%;
-}
 
 /* Plugin Control Header */
 #pluginControlHeader .screens .screen{
@@ -1345,7 +1342,8 @@ html[buildfire='control'] body{
 
 /* Phase 2 */
 
-/* Hide Help Button on top of each page */
-.header .pull-right .btn:first-child{
+/* Hide Help and Publish Button on top of each page */
+.header .pull-right .btn:first-child,
+.header .pull-right .btn{
 	display:none;
 }
