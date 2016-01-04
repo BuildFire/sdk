@@ -18,13 +18,19 @@
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.3.0",
+    "jasmine-core": "^2.3.4",
     "karma": "^0.13.10",
     "karma-chai": "^0.1.0",
+    "karma-jasmine": "^0.3.6",
+    "karma-coverage": "^0.5.1",
+    "karma-junit-reporter": "^0.3.3",
     "karma-chrome-launcher": "^0.2.1",
     "karma-firefox-launcher": "^0.1.6",
     "karma-ie-launcher": "^0.2.0",
-    "karma-mocha": "^0.2.0",
     "karma-safari-launcher": "^0.1.1",
-    "mocha": "^2.3.3"
+    "karma-phantomjs-launcher": "^0.2.1",
+    "mocha": "^2.2.5",
+    "karma-mocha": "^0.2.0",
+    "phantomjs": "^1.9.17"
   }
 }
