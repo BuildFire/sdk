@@ -25,15 +25,15 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 	postMaster.controlPluginAPI.datastore.onUpdate =onUpdate;
 
 
-	postMaster.widgetPluginAPI.messaging.onNewWidgetMessage(function (message) {
+	PluginAPI.prototype.messaging.triggerOnNewWidgetMessage = function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
-	});
+	};
 
-	postMaster.controlPluginAPI.messaging.onNewControlMessage(function (message) {
+	PluginAPI.prototype.messaging.triggerOnNewControlMessage =function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
 		postMaster.controlPluginAPI.sendMessage(null, packet);
-	});
+	};
 
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
 	    console.warn("supress navigation in shell");
