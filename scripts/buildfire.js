@@ -350,7 +350,6 @@ var buildfire = {
         };
 
         buildfire._callbacks[packet.id] = wrapper;
-
         packet.fid= buildfire.fid;
         var p;
         if (typeof(angular) != "undefined")
@@ -358,8 +357,12 @@ var buildfire = {
         else
             p = JSON.stringify(packet);
 
+
         console.info("BuildFire.js Send >> " + p, window.location.href);
-        if (parent)parent.postMessage(p, "*");
+        buildfire._parentPost(p,callback);  //if (parent)parent.postMessage(p, "*");
+    }
+    ,_parentPost: function (packet) {
+        if (parent)parent.postMessage(packet, "*");
     }
     , getContext: function (callback) {
         if (buildfire._context)
