@@ -409,7 +409,7 @@ buildfire.components.carousel.view.prototype = {
 
             var sliderOptions = {
                 navigation: false,
-                dots: true,
+                dots: false,
                 slideSpeed: 800,
                 paginationSpeed: 800,
                 singleItem: true,
@@ -422,7 +422,7 @@ buildfire.components.carousel.view.prototype = {
             sliderOptions.autoplay = 3000;
             sliderOptions.autoplaySpeed = 800;
             sliderOptions.loop = true;
-            setTimeout(function(){me.$slider.owlCarousel(sliderOptions);}, 50);
+            setTimeout(function(){me.$slider.owlCarousel(sliderOptions);}, 300);
         }
 
     },

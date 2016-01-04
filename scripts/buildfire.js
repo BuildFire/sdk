@@ -446,6 +446,9 @@ var buildfire = {
                 }, false);
             }
         }
+        , navigateEmulator: function(){
+            buildfire._sendPacket(new Packet(null, 'navigation.navigateEmulator'));
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
