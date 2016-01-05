@@ -422,7 +422,7 @@ buildfire.components.carousel.view.prototype = {
             sliderOptions.autoplay = 3000;
             sliderOptions.autoplaySpeed = 800;
             sliderOptions.loop = true;
-            setTimeout(function(){me.$slider.owlCarousel(sliderOptions);}, 300);
+            me.$slider.owlCarousel(sliderOptions);
         }
 
     },
