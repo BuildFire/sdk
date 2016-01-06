@@ -444,7 +444,7 @@ buildfire.components.carousel.view.prototype = {
         me.selector.style.left = "0px";
         //me.selector.style.width = this.cssWidth;
         //me.selector.style.height = this.cssHeight;
-        me.selector.className = this.selector.className + " plugin-slider text-center";
+        me.selector.className = "plugin-slider text-center";
     },
     // loop and append the images to the DOM
     _loadImages: function () {
