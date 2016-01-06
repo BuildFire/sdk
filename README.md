@@ -3,7 +3,7 @@ This repository provides the framework needed to create a BuildFire Plugin.
 Plugins are components that are added to a BuildFire app (http://buildfire.com) to add additional functionality to the platform. 
 
 ##Dev Environment
-If you havent setup your environment just yet click ![here](https://github.com/BuildFire/sdk/wiki/How-to-setup-your-development-environment) to get started
+If you havent setup your environment just yet click here https://github.com/BuildFire/sdk/wiki/How-to-setup-your-development-environment to get started
 
 ## Plugins
 Plugins are written in HTML and JavaScript with a few restrictions:
