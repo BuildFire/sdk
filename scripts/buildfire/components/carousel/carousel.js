@@ -424,7 +424,7 @@ buildfire.components.carousel.view.prototype = {
             sliderOptions.loop = true;
             me.$slider.owlCarousel(sliderOptions);
         }
-
+		$('.plugin-slide').show();
     },
     // destroy the slider if it's already in the DOM
     _destroySlider: function () {
@@ -452,14 +452,18 @@ buildfire.components.carousel.view.prototype = {
         var itemsLength = items.length;
 
         for (var i = 0; i < itemsLength; i++) {
-            this._appendItem(items[i]);
+            this._appendItem(items[i], i);
         }
     },
     // add new slider to the DOM
-    _appendItem: function (item) {
+    _appendItem: function (item, index) {
         var slider = document.createElement("div");
         slider.className = "plugin-slide";
-
+		
+		if(0 != index) {
+			slider.style.display = "none";
+		}
+		
         slider.addEventListener("click", function () {
             buildfire.actionItems.execute(item, function (err, result) {
                 if (err) {
@@ -469,7 +473,7 @@ buildfire.components.carousel.view.prototype = {
         });
 
         var image = document.createElement("img");
-
+		
         image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
         //image.style.width = this.'cssWidth';
         //image.style.height = this.cssHeight;
