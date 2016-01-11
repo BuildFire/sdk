@@ -8,7 +8,8 @@ https://www.youtube.com/playlist?list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I
 
 ##Dev Environment
 If you havent setup your environment just yet click here https://github.com/BuildFire/sdk/wiki/How-to-setup-your-development-environment to get started
-video: https://www.youtube.com/watch?v=IZcvBZT-zjY&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=1
+
+**video:** https://www.youtube.com/watch?v=IZcvBZT-zjY&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=1
 
 
 ## Plugins
@@ -56,7 +57,7 @@ The Resources is the default images which will be used for your widget .
 
 * **Note** :This folder is only meant for plugin configuration resource like default widget icon and widget hero image.** You can replace those two files if you need by overriding the default hero image and default icon image. **Don't add any other files in this folder, any dependencies in this folder WILL NOT be carried over to the app.**
 
-video:
+**video:**
 https://www.youtube.com/watch?v=4qh4S-BwLJM&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=2
 
 ### for full documentation on how to develop a plugin [click here to see the wiki](https://github.com/BuildFire/sdk/wiki)
