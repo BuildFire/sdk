@@ -1,6 +1,17 @@
 # BuildFire Plugin SDK ![](https://api.travis-ci.org/BuildFire/sdk.svg)
 This repository provides the framework needed to create a BuildFire Plugin.
 Plugins are components that are added to a BuildFire app (http://buildfire.com) to add additional functionality to the platform. 
+
+## Video Tutorials
+Here is a playlist on how to develop on the plugins using buildfire.js
+https://www.youtube.com/playlist?list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I
+
+##Dev Environment
+If you havent setup your environment just yet click here https://github.com/BuildFire/sdk/wiki/How-to-setup-your-development-environment to get started
+
+[Video Tutorial Here](https://www.youtube.com/watch?v=IZcvBZT-zjY&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=1)
+
+
 ## Plugins
 Plugins are written in HTML and JavaScript with a few restrictions:
 * Plugin files must be written within the __required folder structure__, so that the system can identify and import it correctly
@@ -45,5 +56,7 @@ The Resources is the default images which will be used for your widget .
 * icon.png : this image file will be used as a default icon for your widget which will appear as an icon for the widget on the emulator and the actual device .
 
 * **Note** :This folder is only meant for plugin configuration resource like default widget icon and widget hero image.** You can replace those two files if you need by overriding the default hero image and default icon image. **Don't add any other files in this folder, any dependencies in this folder WILL NOT be carried over to the app.**
+
+[Video Tutorial Here](https://www.youtube.com/watch?v=4qh4S-BwLJM&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=2)
 
 ### for full documentation on how to develop a plugin [click here to see the wiki](https://github.com/BuildFire/sdk/wiki)
