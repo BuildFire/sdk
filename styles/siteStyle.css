@@ -96,13 +96,13 @@ header a.logo{
 	width:200px;
 	padding:16px 15px;
 	height:64px;
-	line-height:28px;
+	line-height:38px;
 }
 header a.logo img{
 	max-width:100%;
 	position:relative;
-	top:1px;
-	max-height:32px;
+	top:-5px;
+	max-height:42px;
 	vertical-align:middle;
 }
 header .usermenus{
@@ -782,12 +782,9 @@ table.table span.sort-icon{
 .media-container .icons-set a.icon-holder.selected{
 	box-shadow:0 0 0 2px #09a3ee;
 }
-.media-container .files-set .file-holder:nth-child(5n),
+#pageContent .media-container .files-set .file-holder:nth-child(5n),
 .modal-dialog .media-container .files-set .file-holder:nth-child(6n){
 	margin-right:0;
-}
-.modal-dialog .media-container .files-set .file-holder:nth-child(5n){
-	margin-right:10px;
 }
 .media-container .files-set .file-holder img{
 	max-width:100%;
@@ -991,7 +988,7 @@ table.table span.sort-icon{
 }
 .screens .screen.widelogoicon,
 .screens .screen.widelogoicon a{
-	width:375px;
+	width:358px;
 	max-width:inherit;
 }
 .screens .screen a span.add-icon{
@@ -1290,6 +1287,9 @@ html[buildfire] body{
 	max-width:100%;
 	background:none;
 	overflow-x:hidden;
+}
+html[buildfire='control'] body{
+	height:100%;
 }
 
 /* Plugin Control Header */
