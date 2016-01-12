@@ -233,7 +233,13 @@
 	top:1px;
 	left:2px;
 }
-
+.mce-window .mce-btn button .mce-caret{
+	margin-left:20px;
+}
+.mce-menu .mce-menu-item.mce-active:hover{
+	background:#2d8ac7 !important;
+	color:#fff !important;
+}
 
 
 
