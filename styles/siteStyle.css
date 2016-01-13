@@ -547,6 +547,17 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 .draggable-list-view.dynamic-link-list .d-item .copy .col-md-5{
 	margin-top:2px;
 }
+.draggable-list-view.no-media .d-item{
+	min-height:56px;
+}
+.draggable-list-view.no-media .d-item .copy{
+	max-width:94%;
+	width:94%;
+	top:8px;
+}
+.draggable-list-view.no-media .d-item .copy span.btn-icon{
+	top:2px;
+}
 .add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,

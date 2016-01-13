@@ -61,6 +61,10 @@
 		width:90%;
 		max-width:90%;
 	}
+	html[buildfire] .draggable-list-view.no-media .d-item .copy{
+		width:92%;
+		max-width:92%;
+	}
 	html[buildfire] .item span.tip{
 		margin-left:2px;
 	}
