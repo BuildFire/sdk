@@ -1358,3 +1358,7 @@ html[buildfire='control'] body{
 .header .pull-right .btn{
 	display:none;
 }
+/* Hide deep link url icons in list views */
+.draggable-list-view .d-item .copy span.btn-link-icon{
+	display:none !important;
+}
