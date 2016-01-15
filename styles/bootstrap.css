@@ -4783,8 +4783,8 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   margin-right:0px;
   color: #cccccc;
 }
-.breadcrumb li span.ellipsis{
-  max-width:250px; 
+.breadcrumb li .ellipsis{
+  max-width:160px; 
   display:inline-block; 
   vertical-align:bottom;
 }
