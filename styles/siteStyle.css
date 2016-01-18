@@ -735,12 +735,9 @@ table.table span.sort-icon{
 }
 
 /* Media Gallery */
-.media-gallery.holder span.upload-info{
+.media-gallery.holder .upload-info{
 	font-size:13px; 
-	line-height:18px;
-	display:inline-block; 
-	position:relative;
-	top:12px; 
+	line-height:20px;
 }
 .media-container{
 	min-height:400px;
