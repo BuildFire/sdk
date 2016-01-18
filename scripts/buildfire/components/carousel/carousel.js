@@ -140,7 +140,7 @@ buildfire.components.carousel.editor.prototype = {
 
         image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
         title.innerHTML = item.title;
-        editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action" : "Add Action";
+        editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action/Link" : "Add Action/Link";
 
         // Append elements to the DOM
         wrapper.appendChild(moveHandle);

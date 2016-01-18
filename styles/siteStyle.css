@@ -464,8 +464,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	top:4px;
 }
 .draggable-list-view.carousel-items .d-item span.title{
-	width:62%;
-	max-width:62%;
+	width:60%;
+	max-width:60%;
 	margin-right:0;
 }
 .draggable-list-view .d-item .copy span.content{
@@ -551,12 +551,12 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	min-height:56px;
 }
 .draggable-list-view.no-media .d-item .copy{
-	max-width:94%;
-	width:94%;
+	max-width:92%;
+	width:92%;
 	top:8px;
 }
 .draggable-list-view.no-media .d-item .copy span.btn-icon{
-	top:2px;
+	top:3px;
 }
 .add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
@@ -735,9 +735,12 @@ table.table span.sort-icon{
 }
 
 /* Media Gallery */
-.media-gallery.holder .upload-info{
+.media-gallery.holder span.upload-info{
 	font-size:13px; 
-	line-height:20px;
+	line-height:18px;
+	display:inline-block; 
+	position:relative;
+	top:12px; 
 }
 .media-container{
 	min-height:400px;
@@ -1354,8 +1357,4 @@ html[buildfire='control'] body{
 .header .pull-right .btn:first-child,
 .header .pull-right .btn{
 	display:none;
-}
-/* Hide deep link url icons in list views */
-.draggable-list-view .d-item .copy span.btn-link-icon{
-	display:none !important;
 }
