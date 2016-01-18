@@ -140,7 +140,7 @@ buildfire.components.carousel.editor.prototype = {
 
         image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
         title.innerHTML = item.title;
-        editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action" : "Add Action";
+        editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action/Link" : "Add Action/Link";
 
         // Append elements to the DOM
         wrapper.appendChild(moveHandle);
@@ -196,7 +196,7 @@ buildfire.components.carousel.editor.prototype = {
 
         componentContainer.className = "item clearfix row";
         componentName.className = "labels col-md-3 padding-right-zero pull-left";
-        componentName.innerHTML = "Image Carousel";
+        componentName.innerHTML = "Image Carousel <span class='tip btn-info-icon btn-primary transition-third' tooltip='Choose any image from your media library and we'll automatically scale and crop it to fit your selected layout.' tooltip-placement='right'></span>";
         contentContainer.className = "main col-md-9 pull-right";
         buttonContainer.className = "clearfix";
         button.className = "btn btn-success pull-left add-new-carousel";
