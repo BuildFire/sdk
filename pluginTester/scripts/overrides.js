@@ -60,9 +60,6 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 		console.log('analytics mock track view [' + viewName + ']', metadata);
 	};
 
-	postMaster.widgetPluginAPI.navigation.navigateBack = function(){
-		alert('default back behaviour');
-	};
 
 	///override the authAPI.getCurrentUser to return CP loggedIn user
 	var oldFN = authAPI.getCurrentUser;
