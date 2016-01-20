@@ -12,6 +12,35 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
         };
         $scope.currentUser = window.currentUser;
 
+        if(postMaster.widgetPluginAPI.history.historyItems.length == 0) {
+            postMaster.widgetPluginAPI.history.historyItems.push({ label: 'Plugin', source: 'control' });
+            if(!$scope.$$phase) $scope.$apply();
+        }
+        postMaster.widgetPluginAPI.history.onUpdate(function(data){
+            if(data.historyItems) {
+                for(var i = 0; i < data.historyItems.length; i++) {
+                    data.historyItems[i].title = decodeURIComponent(data.historyItems[i].title);
+                }
+                $scope.breadcrumbs = data.historyItems.slice(0);
+            }
+            else {
+                $scope.breadcrumbs = [];
+            }
+            if(!$scope.$$phase) $scope.$apply();
+        });
+        postMaster.widgetPluginAPI.history.onPop(function(data) {
+            if(data.popTriggered) {
+                return;
+            }
+            var packet = new Packet(null, "history.triggerOnPop", JSON.parse(angular.toJson(data.poppedItem)));
+            postMaster.controlPluginAPI.sendMessage(null, packet);
+            data.popTriggered = true;
+        });
+        $scope.popHistoryItem = function (event, breadcrumb) {
+            postMaster.widgetPluginAPI.history.pop(breadcrumb);
+        };
+
+
         $scope.loadFrames = function (pluginFolder, config) {
             var root = '../plugins/';
             $scope.widgetSrc = root + pluginFolder + '/widget/index.html';
