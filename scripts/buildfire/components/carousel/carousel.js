@@ -428,10 +428,11 @@ buildfire.components.carousel.view.prototype = {
             me.$slider.owlCarousel(sliderOptions);
         }
 
-        if(speed)
-        $('.my-slide').show();
+
+        if(typeof speed === 'undefined')
+            $('.plugin-slide').show();
         else
-		$('.plugin-slide').show();
+            $('.my-slide').show();
     },
     // destroy the slider if it's already in the DOM
     _destroySlider: function () {
@@ -466,10 +467,10 @@ buildfire.components.carousel.view.prototype = {
     _appendItem: function (item, index,speed) {
         var slider = document.createElement("div");
 
-        if(speed)
-            slider.className = "my-slide";
-        else
+        if(typeof speed === 'undefined')
             slider.className = "plugin-slide";
+        else
+            slider.className = "my-slide";
 		
 		if(0 != index) {
 			slider.style.display = "none";
