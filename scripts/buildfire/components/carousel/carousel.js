@@ -298,7 +298,7 @@ buildfire.components.carousel.editor.prototype = {
 };
 
 // This is the class that will be used in the mobile
-buildfire.components.carousel.view = function (selector, items, layout) {
+buildfire.components.carousel.view = function (selector, items, layout,speed) {
 	if (typeof($.fn) != "object" || !($.fn && $.fn.owlCarousel)) {
         throw ("please add owlCarousel.js first to use carousel component");
     }
@@ -306,25 +306,25 @@ buildfire.components.carousel.view = function (selector, items, layout) {
     this.items = [];
     this._initDimensions(layout);
     this._loadItems(items, false);
-    this.init(selector);
+    this.init(selector,speed);
 	window.dispatchEvent(new CustomEvent('resize'));
 };
 
 // Carousel view methods
 buildfire.components.carousel.view.prototype = {
     // will be called to initialize the setting in the constructor
-    init: function (selector) {
+    init: function (selector,speed) {
         this.selector = buildfire.components.carousel._getDomSelector(selector);
         this._renderSlider();
         this._loadImages();
         if (this.items.length) {
-            this._applySlider();
+            this._applySlider(speed?speed:0);
         } else {
             this._hideSlider();
         }
     },
     // this method allows you to append or replace slider images
-    loadItems: function (items, appendItems, layout) {
+    loadItems: function (items, appendItems, layout,speed) {
         if (this.$slider) {
             this._destroySlider();
             this._removeAll();
@@ -334,7 +334,7 @@ buildfire.components.carousel.view.prototype = {
         this._renderSlider();
 
         this._loadItems(items, appendItems);
-        this._loadImages();
+        this._loadImages(speed);
 
         if (!this.items.length) {
             this._hideSlider();
@@ -346,7 +346,7 @@ buildfire.components.carousel.view.prototype = {
         if (items instanceof Array && !items.length && !appendItems) {
             return;
         }
-        this._applySlider();        
+        this._applySlider(speed);
     },
     // allows you to append a single item or an array of items
     append: function(items){
@@ -361,11 +361,14 @@ buildfire.components.carousel.view.prototype = {
         this.width = window.innerWidth;
         layout = layout || "WideScreen";
         if (layout == "WideScreen") {
-            this.height = Math.ceil(9 * this.width / 16);
+          this.height = Math.ceil(9 * this.width / 16);
         } else if (layout == "Square") {
             this.height = this.width;
         } else if (layout == "Cinema") {
             this.height = Math.ceil(1 * this.width / 2.39);
+        }else if(layout == "MobileScreen"){
+            this.height=(window.innerHeight/this.width)*this.width;
+            this.width=this.width;
         }
 
         this.cssWidth = this.width + "px";
@@ -402,7 +405,7 @@ buildfire.components.carousel.view.prototype = {
         this.selector.style.display = "block";
     },
     // initialize the slider
-    _applySlider: function () {
+    _applySlider: function (speed) {
         var me = this;
         me.$slider = $(me.selector);
         if (me.items.length > 1) {
@@ -419,11 +422,15 @@ buildfire.components.carousel.view.prototype = {
                 autoHeight: false
             };
 
-            sliderOptions.autoplay = 3000;
-            sliderOptions.autoplaySpeed = 800;
+            sliderOptions.autoplay =(speed==0)? 0:3000;
+            sliderOptions.autoplaySpeed =speed?speed: 800;
             sliderOptions.loop = true;
             me.$slider.owlCarousel(sliderOptions);
         }
+
+        if(speed)
+        $('.my-slide').show();
+        else
 		$('.plugin-slide').show();
     },
     // destroy the slider if it's already in the DOM
@@ -447,18 +454,22 @@ buildfire.components.carousel.view.prototype = {
         me.selector.className = "plugin-slider text-center";
     },
     // loop and append the images to the DOM
-    _loadImages: function () {
+    _loadImages: function (speed) {
         var items = this.items;
         var itemsLength = items.length;
 
         for (var i = 0; i < itemsLength; i++) {
-            this._appendItem(items[i], i);
+            this._appendItem(items[i], i,speed);
         }
     },
     // add new slider to the DOM
-    _appendItem: function (item, index) {
+    _appendItem: function (item, index,speed) {
         var slider = document.createElement("div");
-        slider.className = "plugin-slide";
+
+        if(speed)
+            slider.className = "my-slide";
+        else
+            slider.className = "plugin-slide";
 		
 		if(0 != index) {
 			slider.style.display = "none";
