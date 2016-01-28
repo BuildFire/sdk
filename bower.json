@@ -1,0 +1,14 @@
+{
+  "name": "BuildFireSDK",
+  "version": "1.0.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "ftest"
+  ],
+  "dependencies": {
+    "WebConsole": "*"
+  }
+}
