@@ -318,7 +318,10 @@ buildfire.components.carousel.view.prototype = {
         this._renderSlider();
         this._loadImages();
         if (this.items.length) {
-            this._applySlider(speed?speed:0);
+            if(typeof speed === 'undefined')
+                this._applySlider();
+            else
+                this._applySlider(speed);
         } else {
             this._hideSlider();
         }
