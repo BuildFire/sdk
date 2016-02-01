@@ -293,7 +293,11 @@ var buildfire = {
         , "auth.triggerOnLogout"
         , "logger.showHistory"
         , "logger.attachRemoteLogger"
-        , "appearance.triggerOnUpdate"]
+        , "appearance.triggerOnUpdate"
+        , "services.bluetooth.ble.onConnect"
+        , "services.bluetooth.ble.onDisconnect"
+        , "services.bluetooth.ble._onSubscribeData"
+    ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
             console.log(' >>>> IGNORE MESSAGE <<<< ');
