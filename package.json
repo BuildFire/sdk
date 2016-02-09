@@ -9,7 +9,7 @@
     "test": ".\\node_modules\\.bin\\karma start karma.conf.js"
   },
   "dependencies": {
-    "bower": "^1.5.3"
+    "bower": "^1.7.6"
   },
   "repository": {
     "type": "git",
