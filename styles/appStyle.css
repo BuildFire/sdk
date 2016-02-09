@@ -256,6 +256,10 @@ nav.menu a.notifications .notification-circle span{
 .no-background .plugin-slide{
 	background:none;
 }
+/***** Used to not make images pop in and fix scroll issue, temp. fix *****/
+.plugin-slider{
+	min-height:180px !important;
+}
 
 
 /* Bottom */
