@@ -861,9 +861,9 @@ var buildfire = {
             if (options.height == 'full') options.height = window.innerHeight;
 
             if (options.width && !options.height)
-                return root + "width/" + (options.width * ratio) + "/" + url;
+                return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
             else if (!options.width && options.height)
-                return root + "height/" + (options.height * ratio) + "/" + url;
+                return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
             else if (options.width && options.height)
                 return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             else
