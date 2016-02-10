@@ -421,8 +421,8 @@ buildfire.components.carousel.view.prototype = {
                 singleItem: true,
                 pagination: false,
                 items: 1,
-				lazyLoad: true,
                 itemsMobile: true,
+				//lazyLoad:true,
                 autoHeight: false
             };
 
@@ -492,12 +492,15 @@ buildfire.components.carousel.view.prototype = {
             });
         });
 
-        var image = document.createElement("img");
-		image.setAttribute('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
-        //image.style.width = this.'cssWidth';
+        var image = document.createElement("img");       
+ 		image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
+        // Add data-src attr for lazyLoad
+		//image.src('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
+		//image.className = "owl-lazy";
+
+		//image.style.width = this.'cssWidth';
         //image.style.height = this.cssHeight;
         image.style.transform = "translateZ(0)";
-		image.className = "owl-lazy";
         slider.appendChild(image);
         this.selector.appendChild(slider);
     }
