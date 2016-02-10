@@ -564,6 +564,7 @@ var buildfire = {
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
         }
+        , disableFastClickOnLoad:false
         , attachFastClick: function(){
 
             var path;
@@ -865,9 +866,9 @@ var buildfire = {
             if (options.height == 'full') options.height = window.innerHeight;
 
             if (options.width && !options.height)
-                return root + "width/" + (options.width * ratio) + "/" + url;
+                return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
             else if (!options.width && options.height)
-                return root + "height/" + (options.height * ratio) + "/" + url;
+                return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
             else if (options.width && options.height)
                 return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             else
@@ -1081,7 +1082,7 @@ buildfire.init();
 document.addEventListener("DOMContentLoaded", function (event) {
     buildfire.appearance.autosizeContainer();
     console.info('DOMContentLoaded');
-    if(window.location.href.indexOf('/widget/'))
+    if(window.location.href.indexOf('/widget/') && !buildfire.appearance.disableFastClickOnLoad)
         buildfire.appearance.attachFastClick();
 
     var metaTags = null;
@@ -1132,7 +1133,7 @@ if(typeof(CustomEvent) != "function"){
         var evt = document.createEvent('CustomEvent');
         evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
         return evt;
-    };
+    }
 
     CustomEvent.prototype = window.Event.prototype;
     window.CustomEvent = CustomEvent;
