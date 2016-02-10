@@ -421,6 +421,7 @@ buildfire.components.carousel.view.prototype = {
                 singleItem: true,
                 pagination: false,
                 items: 1,
+				lazyLoad: true,
                 itemsMobile: true,
                 autoHeight: false
             };
@@ -453,6 +454,10 @@ buildfire.components.carousel.view.prototype = {
         me.selector.style.position = "relative";
         me.selector.style.top = "0px";
         me.selector.style.left = "0px";
+
+		// Temporary fix for -webkit-overflow-scroll bug and prevent carousel from pushing content down.
+		me.selector.style['min-height'] = "180px";
+		
         //me.selector.style.width = this.cssWidth;
         //me.selector.style.height = this.cssHeight;
         me.selector.className = "plugin-slider text-center";
@@ -488,11 +493,11 @@ buildfire.components.carousel.view.prototype = {
         });
 
         var image = document.createElement("img");
-		
-        image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
+		image.setAttribute('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
         //image.style.width = this.'cssWidth';
         //image.style.height = this.cssHeight;
         image.style.transform = "translateZ(0)";
+		image.className = "owl-lazy";
         slider.appendChild(image);
         this.selector.appendChild(slider);
     }
