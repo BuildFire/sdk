@@ -495,7 +495,7 @@ buildfire.components.carousel.view.prototype = {
         var image = document.createElement("img");       
  		image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
         // Add data-src attr for lazyLoad
-		//image.src('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
+		//image.setAttribute('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
 		//image.className = "owl-lazy";
 
 		//image.style.width = this.'cssWidth';
