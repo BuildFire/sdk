@@ -613,13 +613,17 @@ var buildfire = {
         }
         , _resizedTo: 0
         , autosizeContainer: function () {
-            var height = Math.max(
-                document.documentElement.clientHeight,
-                document.body.scrollHeight,
-                document.documentElement.scrollHeight,
-                document.body.offsetHeight,
-                document.documentElement.offsetHeight
-            );
+            var height;
+            try {
+                height = Math.max(
+                    document.documentElement.clientHeight,
+                    document.body.scrollHeight,
+                    document.documentElement.scrollHeight,
+                    document.body.offsetHeight,
+                    document.documentElement.offsetHeight
+                );
+            }
+            catch(e){}
             if (!height || buildfire.appearance._resizedTo == height || height < 100) return;
             var p = new Packet(null, 'appearance.autosizeContainer', {height: height});
             buildfire._sendPacket(p);
@@ -1080,7 +1084,7 @@ buildfire.init();
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    buildfire.appearance.autosizeContainer();
+    //buildfire.appearance.autosizeContainer();
     console.info('DOMContentLoaded');
     if(window.location.href.indexOf('/widget/') && !buildfire.appearance.disableFastClickOnLoad)
         buildfire.appearance.attachFastClick();
