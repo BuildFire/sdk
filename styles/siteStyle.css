@@ -195,6 +195,9 @@ nav ul.menu li.datatracer .parent span.icon{
 nav ul.menu li.help .parent span.icon{
 	top:21px;
 }
+nav ul.menu li.licenses .parent span.icon{
+	top:21px;
+}
 nav ul.menu li.selfprovisioning .parent span.icon{
 	font-size:18px;
 	top:19px;
@@ -1349,6 +1352,8 @@ html[buildfire='control'] body{
 
 
 /* Phase 2 */
+
+
 /* Hide deep link url icons in list views */
 .draggable-list-view .d-item .copy span.btn-link-icon{
 	display:none !important;
