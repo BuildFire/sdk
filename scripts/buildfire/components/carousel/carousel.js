@@ -360,6 +360,7 @@ buildfire.components.carousel.view.prototype = {
 
         this.loadItems(items,true);
     },
+
     _initDimensions: function (layout) {
         this.width = window.innerWidth;
         layout = layout || "WideScreen";
@@ -376,6 +377,10 @@ buildfire.components.carousel.view.prototype = {
 
         this.cssWidth = this.width + "px";
         this.cssHeight = this.height + "px";
+
+		// Set Min height on carousel so doesn't push content down on load.
+		this._minHeight = '180px';
+		this._minHeight = this.cssHeight;
     },
     // remove all nodes from the slider
     _removeAll: function () {
@@ -456,7 +461,7 @@ buildfire.components.carousel.view.prototype = {
         me.selector.style.left = "0px";
 
 		// Temporary fix for -webkit-overflow-scroll bug and prevent carousel from pushing content down.
-		me.selector.style['min-height'] = "180px";
+		me.selector.style['min-height'] = me._minHeight;
 		
         //me.selector.style.width = this.cssWidth;
         //me.selector.style.height = this.cssHeight;
