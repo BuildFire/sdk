@@ -140,7 +140,7 @@ buildfire.components.carousel.editor.prototype = {
 
         image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
         title.innerHTML = item.title;
-        editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action" : "Add Action";
+        editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action/Link" : "Add Action/Link";
 
         // Append elements to the DOM
         wrapper.appendChild(moveHandle);
@@ -422,11 +422,14 @@ buildfire.components.carousel.view.prototype = {
                 pagination: false,
                 items: 1,
                 itemsMobile: true,
-                autoHeight: false
+				//lazyLoad:true,
+                autoHeight: false,
+                autoplay: true,
+                autoplaySpeed:800
             };
 
             sliderOptions.autoplay =(speed==0)? 0:3000;
-            sliderOptions.autoplaySpeed =speed?speed: 800;
+            sliderOptions.autoplayTimeout =speed? speed:5000;
             sliderOptions.loop = true;
             me.$slider.owlCarousel(sliderOptions);
         }
@@ -453,6 +456,10 @@ buildfire.components.carousel.view.prototype = {
         me.selector.style.position = "relative";
         me.selector.style.top = "0px";
         me.selector.style.left = "0px";
+
+		// Temporary fix for -webkit-overflow-scroll bug and prevent carousel from pushing content down.
+		me.selector.style['min-height'] = "180px";
+		
         //me.selector.style.width = this.cssWidth;
         //me.selector.style.height = this.cssHeight;
         me.selector.className = "plugin-slider text-center";
@@ -487,10 +494,13 @@ buildfire.components.carousel.view.prototype = {
             });
         });
 
-        var image = document.createElement("img");
-		
-        image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
-        //image.style.width = this.'cssWidth';
+        var image = document.createElement("img");       
+ 		image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
+        // Add data-src attr for lazyLoad
+		//image.src('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
+		//image.className = "owl-lazy";
+
+		//image.style.width = this.'cssWidth';
         //image.style.height = this.cssHeight;
         image.style.transform = "translateZ(0)";
         slider.appendChild(image);
