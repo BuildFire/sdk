@@ -195,6 +195,9 @@ nav ul.menu li.datatracer .parent span.icon{
 nav ul.menu li.help .parent span.icon{
 	top:21px;
 }
+nav ul.menu li.licenses .parent span.icon{
+	top:21px;
+}
 nav ul.menu li.selfprovisioning .parent span.icon{
 	font-size:18px;
 	top:19px;
@@ -464,8 +467,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	top:4px;
 }
 .draggable-list-view.carousel-items .d-item span.title{
-	width:62%;
-	max-width:62%;
+	width:60%;
+	max-width:60%;
 	margin-right:0;
 }
 .draggable-list-view .d-item .copy span.content{
@@ -1350,11 +1353,7 @@ html[buildfire='control'] body{
 
 /* Phase 2 */
 
-/* Hide Help and Publish Button on top of each page */
-.header .pull-right .btn:first-child,
-.header .pull-right .btn{
-	display:none;
-}
+
 /* Hide deep link url icons in list views */
 .draggable-list-view .d-item .copy span.btn-link-icon{
 	display:none !important;

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+	<!-- Load helper.css to use our helper classes.
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	-->
+	
+	<!-- JS -->
+	<script src="../../../../scripts/buildfire.js"></script>
+   
+ 	<!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    -->
+</head>
+<body>
+    <div id="mocha"></div>
+
+    <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
+    <script src="../../../../node_modules/chai/chai.js"></script>
+    <script src="../../../../node_modules/mocha/mocha.js"></script>
+    <script src="../../../../test/ftest/assets/bower_components/WebConsole/WebConsole.js"></script>
+
+    <script>mocha.setup({ui:'bdd', reporter:WebConsole})</script>
+
+    <script src="../../../../test/ftest/actionItems.spec.js"></script>
+    <script src="../../../../test/ftest/deeplink.spec.js"></script>
+    <script src="../../../../test/ftest/device.spec.js"></script>
+    <script src="../../../../test/ftest/geo.spec.js"></script>
+    <script src="../../../../test/ftest/history.spec.js"></script>
+    <script src="../../../../test/ftest/imageLib.spec.js"></script>
+    <script src="../../../../test/ftest/messaging.spec.js"></script>
+    <script src="../../../../test/ftest/navigation.spec.js"></script>
+    <script src="../../../../test/ftest/pluginInstance.spec.js"></script>
+    <script src="../../../../test/ftest/datastore.spec.js"></script>
+
+    <style>
+        body {
+            overflow: auto !important;
+        }
+    </style>
+
+    <script>
+        mocha.checkLeaks();
+        mocha.globals(['jQuery', 'FastClick']);
+        mocha.run();
+    </script>
+</body>
+</html>

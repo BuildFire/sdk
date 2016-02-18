@@ -16,8 +16,8 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       './scripts/buildfire.js',
-        './tests/parentPost.js',
-      ,'./tests/*.spec.js'
+      './test/parentPost.js',
+      './test/*.spec.js'
     ],
 
 
@@ -40,7 +40,7 @@ module.exports = function(config) {
 
     coverageReporter: {
       type: 'html',
-      dir: 'tests/coverage/',
+      dir: 'test/coverage/',
       check: {
         global: {
           statements: 40
@@ -67,7 +67,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [ 'PhantomJS'], // ,'Chrome', 'Safari', 'IE'
+    browsers: ['PhantomJS'], // ,'Chrome', 'Safari', 'IE'
 
 
     // Continuous Integration mode

@@ -4,7 +4,12 @@
   "description": "This SDK helps in building BuildFire Plugins",
   "main": "index.js",
   "scripts": {
+    "postinstall": "./node_modules/.bin/bower install",
+    "fnTest": "node test/server.js",
     "test": ".\\node_modules\\.bin\\karma start karma.conf.js"
+  },
+  "dependencies": {
+    "bower": "^1.7.6"
   },
   "repository": {
     "type": "git",
@@ -31,6 +36,9 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.2.5",
     "karma-mocha": "^0.2.0",
-    "phantomjs": "^1.9.17"
+    "phantomjs": "^1.9.17",
+    "express": "4.0.0",
+    "body-parser": "1.11.0",
+    "phantom": "0.8.4"
   }
 }

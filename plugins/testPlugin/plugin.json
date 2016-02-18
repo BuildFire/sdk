@@ -1,8 +1,8 @@
 {
   "author":"Daniel Hindi"
-,"pluginName":"Hello World"
-,"pluginDescription":"Light weight doent use even datastore"
-,"supportEmail":"[Your support Email]"
+,"pluginName":"test"
+,"pluginDescription":""
+,"supportEmail":""
 ,"control":{
   "content":{
     "enabled":true

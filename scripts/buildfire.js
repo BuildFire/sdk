@@ -293,7 +293,11 @@ var buildfire = {
         , "auth.triggerOnLogout"
         , "logger.showHistory"
         , "logger.attachRemoteLogger"
-        , "appearance.triggerOnUpdate"]
+        , "appearance.triggerOnUpdate"
+        , "services.bluetooth.ble.onConnect"
+        , "services.bluetooth.ble.onDisconnect"
+        , "services.bluetooth.ble._onSubscribeData"
+    ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
             console.log(' >>>> IGNORE MESSAGE <<<< ');
@@ -560,6 +564,7 @@ var buildfire = {
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
         }
+        , disableFastClickOnLoad:false
         , attachFastClick: function(){
 
             var path;
@@ -608,13 +613,17 @@ var buildfire = {
         }
         , _resizedTo: 0
         , autosizeContainer: function () {
-            var height = Math.max(
-                document.documentElement.clientHeight,
-                document.body.scrollHeight,
-                document.documentElement.scrollHeight,
-                document.body.offsetHeight,
-                document.documentElement.offsetHeight
-            );
+            var height;
+            try {
+                height = Math.max(
+                    document.documentElement.clientHeight,
+                    document.body.scrollHeight,
+                    document.documentElement.scrollHeight,
+                    document.body.offsetHeight,
+                    document.documentElement.offsetHeight
+                );
+            }
+            catch(e){}
             if (!height || buildfire.appearance._resizedTo == height || height < 100) return;
             var p = new Packet(null, 'appearance.autosizeContainer', {height: height});
             buildfire._sendPacket(p);
@@ -861,9 +870,9 @@ var buildfire = {
             if (options.height == 'full') options.height = window.innerHeight;
 
             if (options.width && !options.height)
-                return root + "width/" + (options.width * ratio) + "/" + url;
+                return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
             else if (!options.width && options.height)
-                return root + "height/" + (options.height * ratio) + "/" + url;
+                return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
             else if (options.width && options.height)
                 return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             else
@@ -1075,9 +1084,9 @@ buildfire.init();
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    buildfire.appearance.autosizeContainer();
+    //buildfire.appearance.autosizeContainer();
     console.info('DOMContentLoaded');
-    if(window.location.href.indexOf('/widget/'))
+    if(window.location.href.indexOf('/widget/') && !buildfire.appearance.disableFastClickOnLoad)
         buildfire.appearance.attachFastClick();
 
     var metaTags = null;
@@ -1128,7 +1137,7 @@ if(typeof(CustomEvent) != "function"){
         var evt = document.createEvent('CustomEvent');
         evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
         return evt;
-    };
+    }
 
     CustomEvent.prototype = window.Event.prototype;
     window.CustomEvent = CustomEvent;
