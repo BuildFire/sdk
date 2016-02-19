@@ -267,18 +267,7 @@ var buildfire = {
 
         buildfire.logger.init();
         //buildfire.logger.showHistory();
-        buildfire.getContext(function (err, context) {
-            if (err) {
-                console.error(err);
-            }
-            else {
-                if(context.debugTag)
-                    buildfire.logger.attachRemoteLogger(context.debugTag);
-                if (window.location.pathname.indexOf('/widget/') > 0) {
-                    buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
-                }
-            }
-        });
+
 
         buildfire.appearance.insertHTMLAttributes();
         buildfire.appearance.attachCSSFiles();
@@ -1086,6 +1075,21 @@ buildfire.init();
 document.addEventListener("DOMContentLoaded", function (event) {
     //buildfire.appearance.autosizeContainer();
     console.info('DOMContentLoaded');
+
+    buildfire.getContext(function (err, context) {
+        console.log("tracer: got getContext");
+        if (err) {
+            console.error(err);
+        }
+        else {
+            if (context.debugTag)
+                buildfire.logger.attachRemoteLogger(context.debugTag);
+            if (window.location.pathname.indexOf('/widget/') > 0) {
+                buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+            }
+        }
+    });
+
     if(window.location.href.indexOf('/widget/') && !buildfire.appearance.disableFastClickOnLoad)
         buildfire.appearance.attachFastClick();
 
