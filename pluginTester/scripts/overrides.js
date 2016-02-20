@@ -12,6 +12,13 @@ postMaster.controlPluginAPI = new PluginAPI('iframeControl', window.appContext.c
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey);
 postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 
+postMaster.servicePluginAPIs = {
+	service:new PluginAPI('service', window.appContext.currentApp.appId
+		, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0)
+};
+postMaster.servicePluginAPIs.service.tag = 'service';
+
+
 (function() {
 
 

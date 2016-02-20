@@ -1,0 +1,22 @@
+{
+  "author":"Daniel Hindi"
+,"pluginName":"Hello World"
+,"pluginDescription":"Light weight doent use even datastore"
+,"supportEmail":"[Your support Email]"
+,"control":{
+  "content":{
+    "enabled":true
+  }
+, "design":{
+    "enabled":false
+  }
+, "settings":{
+    "enabled":false
+  }
+}
+,"widget":{
+  "service":"service.html"
+},
+  "features" : [],
+  "languages" : ["en"]
+}
