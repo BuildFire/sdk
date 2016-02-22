@@ -1,0 +1,22 @@
+{
+  "author":"Daniel Hindi"
+,"pluginName":"Simple Search with Bulk Insert"
+,"pluginDescription":"Explains how to do a quick bulk insert with a search filter"
+,"supportEmail":"support@buildfire.com"
+,"control":{
+  "content":{
+    "enabled":true
+  }
+, "design":{
+    "enabled":false
+  }
+, "settings":{
+    "enabled":false
+  }
+}
+,"widget":{
+
+},
+  "features" : [],
+  "languages" : ["en"]
+}
