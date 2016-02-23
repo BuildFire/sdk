@@ -144,8 +144,9 @@ nav{
 }
 nav ul.menu{
     padding-top:65px;
-	border-bottom:1px solid #26282b;
 	color:#a6abba;
+	height:100%;
+	overflow:auto;
 }
 nav ul.menu li{
     position:relative;
@@ -166,6 +167,9 @@ nav ul.menu li.dark.divider{
 nav ul.menu li.dark a{
 	padding:10px 25px;
 	font-size:14px;
+}
+nav ul.menu li:last-child{
+	border-bottom:1px solid #26282b;
 }
 nav ul.menu li .parent{
 	color:#a6abba;
@@ -193,9 +197,6 @@ nav ul.menu li.datatracer .parent span.icon{
 	top:21px;
 }
 nav ul.menu li.help .parent span.icon{
-	top:21px;
-}
-nav ul.menu li.licenses .parent span.icon{
 	top:21px;
 }
 nav ul.menu li.selfprovisioning .parent span.icon{

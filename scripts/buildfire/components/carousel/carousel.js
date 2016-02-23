@@ -360,6 +360,7 @@ buildfire.components.carousel.view.prototype = {
 
         this.loadItems(items,true);
     },
+
     _initDimensions: function (layout) {
         this.width = window.innerWidth;
         layout = layout || "WideScreen";
@@ -376,6 +377,10 @@ buildfire.components.carousel.view.prototype = {
 
         this.cssWidth = this.width + "px";
         this.cssHeight = this.height + "px";
+
+		// Set Min height on carousel so doesn't push content down on load.
+		this._minHeight = '180px';
+		this._minHeight = this.cssHeight;
     },
     // remove all nodes from the slider
     _removeAll: function () {
@@ -422,7 +427,7 @@ buildfire.components.carousel.view.prototype = {
                 pagination: false,
                 items: 1,
                 itemsMobile: true,
-				//lazyLoad:true,
+				lazyLoad:true,
                 autoHeight: false,
                 autoplay: true,
                 autoplaySpeed:800
@@ -453,12 +458,12 @@ buildfire.components.carousel.view.prototype = {
     // render the slider wrapper HTML
     _renderSlider: function () {
         var me = this;
+
+		// Add min-height to carousel to prevent it from pushing content down.
+		me.selector.style['min-height'] = me._minHeight;
         me.selector.style.position = "relative";
         me.selector.style.top = "0px";
         me.selector.style.left = "0px";
-
-		// Temporary fix for -webkit-overflow-scroll bug and prevent carousel from pushing content down.
-		me.selector.style['min-height'] = "180px";
 		
         //me.selector.style.width = this.cssWidth;
         //me.selector.style.height = this.cssHeight;
@@ -494,11 +499,18 @@ buildfire.components.carousel.view.prototype = {
             });
         });
 
+		// Images
+		var me = this;
         var image = document.createElement("img");       
- 		image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
-        // Add data-src attr for lazyLoad
-		//image.setAttribute('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
-		//image.className = "owl-lazy";
+        me.$slider = $(me.selector);
+        if (me.items.length > 1) {
+	        // Add data-src attr for lazyLoad
+			image.setAttribute('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
+			image.className = "owl-lazy";
+		}else{
+			// Add src since it will be static
+	 		image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
+		}
 
 		//image.style.width = this.'cssWidth';
         //image.style.height = this.cssHeight;
