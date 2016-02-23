@@ -5,11 +5,11 @@
 //logger = console;
 
 postMaster.widgetPluginAPI = new PluginAPI('widget', window.appContext.currentApp.appId
-	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
+	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,null,'app');
 postMaster.widgetPluginAPI.tag = 'shell';
 
 postMaster.controlPluginAPI = new PluginAPI('iframeControl', window.appContext.currentApp.appId
-	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey);
+	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey,'control');
 postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 
 (function() {

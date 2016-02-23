@@ -36,6 +36,7 @@
             <br />
 
             <button ng-click="save()">Send</button>
+            <button ng-click="delete()">Close</button>
             <br />
             <label>App Owner Response:</label>
             <br />
@@ -55,6 +56,14 @@
                     else
                         $scope.laodName();
                 });
+            }
+            $scope.delete = function () {
+                if ($scope.complain)
+                    buildfire.userData.delete($scope.complain.id, 'Complains', $scope.complain.userToken, function (e) {
+                        if (e) alert(JSON.stringify(e));
+                        else
+                            $scope.laodName();
+                    });
             }
             $scope.laodName = function () {
                 buildfire.userData.get('Complains', function (err, results) {
