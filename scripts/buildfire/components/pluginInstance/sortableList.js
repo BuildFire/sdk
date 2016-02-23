@@ -203,7 +203,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                 media.className = "main-icon " + item.iconClassName;
                 mediaHolder.appendChild(media);
             }
-           
+
             wrapper.appendChild(mediaHolder);
         }
 
@@ -337,7 +337,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                 me._toggleAddButton("disable");
 
                 // remove all selected plugins from this.items and from the DOM
-                me._removeAll();
+                // me._removeAll(); //Commented this method to Implement the feature of pivital ticket #113777595
 
                 me.onLoadAll();
 
