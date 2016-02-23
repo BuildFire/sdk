@@ -459,6 +459,16 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
+		_forceCSSRender: function(){
+			// WebKit Rendering Reset on Plugins
+			if(window.location.href.indexOf('widget') > 0){
+				var html = document.getElementsByTagName('html')[0];
+				var style = document.createElement('style');
+				style.type = 'text/css';
+				style.innerHTML = 'body{position:relative !important; z-index:1 !important;}';
+				html.appendChild(style);
+			}
+		},
         insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
 
@@ -1118,6 +1128,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
             }
         };
     }
+	setTimeout(function(){
+		buildfire.appearance._forceCSSRender();
+	}, 1750);
 
 });
 document.addEventListener("resize", function (event) {
