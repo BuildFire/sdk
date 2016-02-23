@@ -423,11 +423,13 @@ buildfire.components.carousel.view.prototype = {
                 items: 1,
                 itemsMobile: true,
 				//lazyLoad:true,
-                autoHeight: false
+                autoHeight: false,
+                autoplay: true,
+                autoplaySpeed:800
             };
 
             sliderOptions.autoplay =(speed==0)? 0:3000;
-            sliderOptions.autoplaySpeed =speed?speed: 800;
+            sliderOptions.autoplayTimeout =speed? speed:5000;
             sliderOptions.loop = true;
             me.$slider.owlCarousel(sliderOptions);
         }
@@ -495,7 +497,7 @@ buildfire.components.carousel.view.prototype = {
         var image = document.createElement("img");       
  		image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
         // Add data-src attr for lazyLoad
-		//image.src('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
+		//image.setAttribute('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
 		//image.className = "owl-lazy";
 
 		//image.style.width = this.'cssWidth';
