@@ -851,7 +851,7 @@ var buildfire = {
         // disablePixelRation: bool
         // }
         , resizeImage: function (url, options) {
-            var root = "http://s7obnu.cloudimage.io/s/";
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
             if (!options)
                 options = {width: window.innerWidth};
@@ -861,17 +861,33 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            if (options.width && !options.height)
-                return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
-            else if (!options.width && options.height)
-                return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
-            else if (options.width && options.height)
-                return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
-            else
-                return url;
+
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
+                var root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
+
+                if (options.width && !options.height)
+                    return root + "?w=" + Math.floor(options.width * ratio) ;
+                else if (!options.width && options.height)
+                    return root + "?h=" + Math.floor(options.height * ratio) ;
+                else if (options.width && options.height)
+                    return root + "?w" + Math.floor(options.width * ratio) + "&h=" + Math.floor(options.height * ratio) ;
+                else
+                    return url;
+            }
+            else{
+                var root = "http://s7obnu.cloudimage.io/s/";
+                if (options.width && !options.height)
+                    return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
+                else if (!options.width && options.height)
+                    return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
+                else if (options.width && options.height)
+                    return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
+                else
+                    return url;
+            }
         }
         , cropImage: function (url, options) {
-            var root = "http://s7obnu.cloudimage.io/s/crop/";
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
             if (typeof(options) != "object")
@@ -883,7 +899,22 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
+            if(!options.width || !options.height){
+                console.warn('cropImage doenst have width or height please fix. returning original url');
+                return url;
+            }
+
+
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
+                var root = "http://buildfire.imgix.net" + url.substring(40); // length of root host
+                return root + "?fit=crop"
+                    + (options.width? "&w=" + Math.floor(options.width * ratio):"")
+                    + (options.height ? "&h=" + Math.floor(options.height * ratio) : "") ;
+            }
+            else {
+                var root = "http://s7obnu.cloudimage.io/s/crop/";
+                return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
+            }
 
         }
 
