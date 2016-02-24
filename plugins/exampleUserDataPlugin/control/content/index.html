@@ -47,22 +47,24 @@
         textPluginApp.controller('pluginCtrl', ['$scope', '$http', function ($scope, $http) {
             $scope.save = function (complain) {
                 buildfire.userData.save(complain.data, 'Complains', complain.userToken, function (e) {
-                    if (e) alert(JSON.stringify(e));
+                    if (e) console.error(JSON.stringify(e));
                     else
                         $scope.laodName();
                 });
             }
             $scope.delete = function (complain) {
                 buildfire.userData.delete(complain.id, 'Complains', complain.userToken, function (e) {
-                    if (e) alert(JSON.stringify(e));
+                    if (e) console.error(JSON.stringify(e));
                     else
                         $scope.laodName();
                 });
             }
-
+            buildfire.datastore.onUpdate(function (e) {
+                laodName(e.obj);
+            });
             $scope.laodName = function () {
                 buildfire.userData.search({}, 'Complains', function (err, results) {
-                    if (err) alert(JSON.stringify(err));
+                    if (err) console.error(JSON.stringify(err));
                     else {
                         $scope.complains = results;
                         $scope.$apply();

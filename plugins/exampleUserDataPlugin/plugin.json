@@ -1,7 +1,7 @@
 {
   "author":"Daniel Hindi"
-,"pluginName":"Simple Search with Bulk Insert"
-,"pluginDescription":"Explains how to do a quick bulk insert with a search filter"
+,"pluginName":"Simple Save and Serach app user data"
+,"pluginDescription":"Explains how to use dataUser"
 ,"supportEmail":"support@buildfire.com"
 ,"control":{
   "content":{
