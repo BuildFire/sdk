@@ -329,19 +329,31 @@ var buildfire = {
 
         // Commented the code to prevent the multiple insert hits
 
-        /*var timeout = setTimeout(function () {
+        var timeout = setTimeout(function () {
             console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
-            if(packet.cmd.indexOf('datastore') == 0 && buildfire._resendAttempts < 15){
-                console.warn("calling" + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
-                buildfire._sendPacket(packet,function(e,d){
-                    buildfire._resendAttempts--;
-                    callback(e,d);
-                });
-                buildfire._resendAttempts++;
+            if(buildfire._resendAttempts < 15) {
+                var rerun ;
+
+                if (packet.cmd.indexOf('datastore') == 0
+                    && packet.cmd.indexOf('datastore.insert') != 0
+                )
+                    rerun=true;
+                else if (packet.cmd.indexOf('getContext') == 0 )
+                    rerun=true;
+
+                if(rerun)
+                {
+                    console.warn("calling" + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
+                    buildfire._sendPacket(packet, function (e, d) {
+                        buildfire._resendAttempts--;
+                        callback(e, d);
+                    });
+                    buildfire._resendAttempts++;
+                }
             }
-        }, 1000);*/
+        }, 1000);
         var wrapper = function (err, data) {
-           // clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
+            clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
             callback(err, data);
         };
 
