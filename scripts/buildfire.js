@@ -351,7 +351,8 @@ var buildfire = {
                     buildfire._resendAttempts++;
                 }
             }
-        }, 1000);
+        }, packet.cmd.indexOf('getContext') == 0? 250 : 1000);
+
         var wrapper = function (err, data) {
             clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
             callback(err, data);
