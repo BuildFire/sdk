@@ -267,18 +267,7 @@ var buildfire = {
 
         buildfire.logger.init();
         //buildfire.logger.showHistory();
-        buildfire.getContext(function (err, context) {
-            if (err) {
-                console.error(err);
-            }
-            else {
-                if(context.debugTag)
-                    buildfire.logger.attachRemoteLogger(context.debugTag);
-                if (window.location.pathname.indexOf('/widget/') > 0) {
-                    buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
-                }
-            }
-        });
+
 
         buildfire.appearance.insertHTMLAttributes();
         buildfire.appearance.attachCSSFiles();
@@ -339,19 +328,36 @@ var buildfire = {
                 console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
             };
 
+
+        // Commented the code to prevent the multiple insert hits
+
         var timeout = setTimeout(function () {
             console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
-            if(packet.cmd.indexOf('datastore') == 0 && buildfire._resendAttempts < 15){
-                console.warn("calling" + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
-                buildfire._sendPacket(packet,function(e,d){
-                    buildfire._resendAttempts--;
-                    callback(e,d);
-                });
-                buildfire._resendAttempts++;
+            if(buildfire._resendAttempts < 15) {
+                var rerun ;
+
+                if (packet.cmd.indexOf('datastore') == 0
+                    && packet.cmd.indexOf('datastore.insert') != 0
+                    && packet.cmd.indexOf('datastore.disableRefresh') != 0
+                )
+                    rerun=true;
+                else if (packet.cmd.indexOf('getContext') == 0 )
+                    rerun=true;
+
+                if(rerun)
+                {
+                    console.warn("calling" + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
+                    buildfire._sendPacket(packet, function (e, d) {
+                        buildfire._resendAttempts--;
+                        callback(e, d);
+                    });
+                    buildfire._resendAttempts++;
+                }
             }
-        }, 1000);
+        }, packet.cmd.indexOf('getContext') == 0? 250 : 1000);
+
         var wrapper = function (err, data) {
-            clearTimeout(timeout);
+            clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
             callback(err, data);
         };
 
@@ -461,6 +467,16 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
+		_forceCSSRender: function(){
+			// WebKit Rendering Reset on Plugins
+			if(window.location.href.indexOf('widget') > 0){
+				var html = document.getElementsByTagName('html')[0];
+				var style = document.createElement('style');
+				style.type = 'text/css';
+				style.innerHTML = 'body{position:relative !important; z-index:1 !important;}';
+				html.appendChild(style);
+			}
+		},
         insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
 
@@ -1078,7 +1094,7 @@ var buildfire = {
         // disablePixelRation: bool
         // }
         , resizeImage: function (url, options) {
-            var root = "http://s7obnu.cloudimage.io/s/";
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
             if (!options)
                 options = {width: window.innerWidth};
@@ -1088,17 +1104,33 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            if (options.width && !options.height)
-                return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
-            else if (!options.width && options.height)
-                return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
-            else if (options.width && options.height)
-                return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
-            else
-                return url;
+
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
+                var root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
+
+                if (options.width && !options.height)
+                    return root + "?w=" + Math.floor(options.width * ratio) ;
+                else if (!options.width && options.height)
+                    return root + "?h=" + Math.floor(options.height * ratio) ;
+                else if (options.width && options.height)
+                    return root + "?w" + Math.floor(options.width * ratio) + "&h=" + Math.floor(options.height * ratio) ;
+                else
+                    return url;
+            }
+            else{
+                var root = "http://s7obnu.cloudimage.io/s/";
+                if (options.width && !options.height)
+                    return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
+                else if (!options.width && options.height)
+                    return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
+                else if (options.width && options.height)
+                    return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
+                else
+                    return url;
+            }
         }
         , cropImage: function (url, options) {
-            var root = "http://s7obnu.cloudimage.io/s/crop/";
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
             if (typeof(options) != "object")
@@ -1110,7 +1142,22 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
-            return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
+            if(!options.width || !options.height){
+                console.warn('cropImage doenst have width or height please fix. returning original url');
+                return url;
+            }
+
+
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
+                var root = "http://buildfire.imgix.net" + url.substring(40); // length of root host
+                return root + "?fit=crop"
+                    + (options.width? "&w=" + Math.floor(options.width * ratio):"")
+                    + (options.height ? "&h=" + Math.floor(options.height * ratio) : "") ;
+            }
+            else {
+                var root = "http://s7obnu.cloudimage.io/s/crop/";
+                return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
+            }
 
         }
 
@@ -1305,6 +1352,21 @@ buildfire.init();
 document.addEventListener("DOMContentLoaded", function (event) {
     //buildfire.appearance.autosizeContainer();
     console.info('DOMContentLoaded');
+
+    buildfire.getContext(function (err, context) {
+        console.log("tracer: got getContext");
+        if (err) {
+            console.error(err);
+        }
+        else {
+            if (context.debugTag)
+                buildfire.logger.attachRemoteLogger(context.debugTag);
+            if (window.location.pathname.indexOf('/widget/') > 0) {
+                buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+            }
+        }
+    });
+
     if(window.location.href.indexOf('/widget/') && !buildfire.appearance.disableFastClickOnLoad)
         buildfire.appearance.attachFastClick();
 
@@ -1337,6 +1399,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
             }
         };
     }
+	setTimeout(function(){
+		buildfire.appearance._forceCSSRender();
+	}, 1750);
 
 });
 document.addEventListener("resize", function (event) {
