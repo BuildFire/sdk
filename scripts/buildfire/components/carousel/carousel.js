@@ -376,7 +376,11 @@ buildfire.components.carousel.view.prototype = {
         }
 
         this.cssWidth = this.width + "px";
-        this.cssHeight = this.height + "px";
+		if(this.height > 380){
+			this.cssHeight = '380px';
+		}else{
+			this.cssHeight = this.height + "px";			
+		}
 
 		// Set Min height on carousel so doesn't push content down on load.
 		this._minHeight = '180px';
