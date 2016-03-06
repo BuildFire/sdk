@@ -274,8 +274,8 @@ var buildfire = {
     }
     , _whitelistedCommands: ["datastore.triggerOnUpdate"
         , "datastore.triggerOnRefresh"
-         ,"userdata.triggerOnUpdate"
-        , "userdata.triggerOnRefresh"
+         ,"userData.triggerOnUpdate"
+        , "userData.triggerOnRefresh"
         , "messaging.onReceivedMessage"
         , "history.triggerOnPop"
         , "navigation.onBackButtonClick"
@@ -921,7 +921,7 @@ var buildfire = {
             
             var p = new Packet(null, 'userData.save', { tag: tag,userToken: userToken, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-                if (result) buildfire.userData.triggerOnUpdate(result);
+                
                 if (callback) callback(err, result);
             });
         }
@@ -960,7 +960,7 @@ var buildfire = {
             
             var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
             buildfire._sendPacket(p, function (err, result) {
-                if (result) buildfire.userData.triggerOnUpdate(result);
+               
                 callback(err, result);
             });
         }
@@ -989,7 +989,7 @@ var buildfire = {
             
             var p = new Packet(null, 'userData.bulkInsert', { tag: tag, userToken: userToken, obj: arrayObj });
             buildfire._sendPacket(p, function (err, result) {
-                if (result) buildfire.userData.triggerOnUpdate(result);
+               
                 callback(err, result);
             });
         }
@@ -1013,7 +1013,7 @@ var buildfire = {
             
             var p = new Packet(null, 'userData.update', { tag: tag, userToken: userToken, id: id, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-                if (result) buildfire.userData.triggerOnUpdate(result);
+             
                 if (callback) callback(err, result);
             });
         }
@@ -1037,7 +1037,7 @@ var buildfire = {
             
             var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
             buildfire._sendPacket(p, function (err, result) {
-                if (result) buildfire.userData.triggerOnUpdate(result);
+                
                 if (callback) callback(err, result);
             });
         }

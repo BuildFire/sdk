@@ -80,8 +80,9 @@
                             $scope.laodName();
                     });
             }
-            buildfire.datastore.onUpdate(function (e) {
-                laodName(e.obj);
+            buildfire.userData.onUpdate(function (e) {
+                $scope.complain = e;
+                $scope.$apply();
             });
             $scope.laodName = function () {
                 buildfire.userData.get('Complains', function (err, results) {

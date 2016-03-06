@@ -22,8 +22,18 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
-	postMaster.controlPluginAPI.datastore.onUpdate =onUpdate;
-
+    postMaster.controlPluginAPI.datastore.onUpdate = onUpdate;
+    
+    postMaster.controlPluginAPI.userData.onUpdate = function (updateObj) {
+        var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
+        postMaster.widgetPluginAPI.sendMessage(null, packet);
+    };
+    
+    postMaster.widgetPluginAPI.userData.onUpdate = function (updateObj) {
+        var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
+        postMaster.controlPluginAPI.sendMessage(null, packet);
+    };
+    
 
 	PluginAPI.prototype.messaging.triggerOnNewWidgetMessage = function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
