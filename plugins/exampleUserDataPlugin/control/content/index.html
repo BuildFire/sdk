@@ -60,12 +60,7 @@
                 });
             }
             buildfire.userData.onUpdate(function (e) {
-
-                for(var index in $scope.complains)
-                    if ($scope.complains[index]._id == e._id) {
-                        $scope.complains[index] = e;
-                        $scope.$apply();
-                    }
+                $scope.laodName();
             });
             $scope.laodName = function () {
                 buildfire.userData.search({}, 'Complains', function (err, results) {
