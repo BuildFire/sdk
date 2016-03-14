@@ -1047,6 +1047,15 @@ var buildfire = {
             var p = new Packet(null, 'pluginInstances.search', options);
             buildfire._sendPacket(p, callback);
         }
+        , showCreatePluginInstancesDialog: function (options, callback) {
+            if(typeOf(options) == 'function' && !callback){
+                callback = options;
+                options = {skipPluginInstances : true};
+            }else if(options){
+                options.skipPluginInstances = true;
+            }
+            buildfire.pluginInstance.showDialog({options : options},callback);
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
     , deeplink: {
