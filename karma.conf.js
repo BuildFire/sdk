@@ -43,7 +43,7 @@ module.exports = function(config) {
       dir: 'test/coverage/',
       check: {
         global: {
-          statements: 40
+          statements: 33
         }
       }
     },
