@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html ng-app="plugin">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- JS -->
+    <script src="../../../scripts/buildfire.js"></script>
+    <script src="../../../scripts/angular/angular.min.js"></script>
+
+
+</head>
+<body ng-controller="pluginCtrl">
+   
+    <div ng-show="isLoggedIn">
+        <h1>Complain</h1>
+        <div class="item clearfix row ">
+            <div class="main col-md-1">
+                <label>Name:</label>
+                <br />
+                <input type="text" placeholder="name" ng-model="complain.data.name" />
+                <br />
+                <br />
+                <label>Email:</label>
+                <br />
+                <input type="text" placeholder="email" ng-model="complain.data.email" />
+                <br />
+                <br />
+                <label>phone:</label>
+                <br />
+                <input type="text" placeholder="phone" ng-model="complain.data.phone" />
+                <br />
+                <br />
+                <label>Complain:</label>
+                <br />
+                <textarea ng-model="complain.data.complain"></textarea>
+                <br />
+                <br />
+
+                <button ng-click="save()">Send</button>
+                <button ng-click="delete()">Close</button>
+                <br />
+                <label>App Owner Response:</label>
+                <br />
+                <textarea readonly="readonly" ng-model="complain.data.response"></textarea>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        var textPluginApp = angular.module('plugin', []);
+
+        textPluginApp.controller('pluginCtrl', ['$scope', function ($scope) {
+            $scope.isLoggedIn = false;
+            buildfire.auth.getCurrentUser(function (e, result) {
+                if (result) {
+                    $scope.isLoggedIn = true;
+                } else {
+                    buildfire.auth.login(null, function (e, result) {
+                        $scope.isLoggedIn = true;
+
+                        $scope.$apply();
+                        $scope.laodName();
+                    });
+                }
+                  
+            });
+            $scope.save = function () {
+                $scope.complain.data.response = "";
+                buildfire.userData.save($scope.complain.data, 'Complains', $scope.complain.userToken, function (e) {
+                    if (e) console.error(JSON.stringify(e));
+                    else
+                        $scope.laodName();
+                });
+            }
+            $scope.delete = function () {
+                if ($scope.complain)
+                    buildfire.userData.delete($scope.complain.id, 'Complains', $scope.complain.userToken, function (e) {
+                        if (e) console.error(JSON.stringify(e));
+                        else
+                            $scope.laodName();
+                    });
+            }
+            buildfire.userData.onUpdate(function (e) {
+                $scope.complain = e;
+                $scope.$apply();
+            });
+            $scope.laodName = function () {
+                buildfire.userData.get('Complains', function (err, results) {
+                    if (err) console.error(JSON.stringify(err));
+                    else {
+                        if (results ) {
+                            $scope.complain = results;
+                            $scope.$apply();
+                        }
+                    }
+                });
+            }
+            $scope.laodName();
+        }]);
+
+
+    </script>
+</body>
+</html>

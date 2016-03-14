@@ -5,11 +5,11 @@
 //logger = console;
 
 postMaster.widgetPluginAPI = new PluginAPI('widget', window.appContext.currentApp.appId
-	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0);
+	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,null,'app');
 postMaster.widgetPluginAPI.tag = 'shell';
 
 postMaster.controlPluginAPI = new PluginAPI('iframeControl', window.appContext.currentApp.appId
-	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey);
+	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey,'control');
 postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 
 (function() {
@@ -22,8 +22,18 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
-	postMaster.controlPluginAPI.datastore.onUpdate =onUpdate;
-
+    postMaster.controlPluginAPI.datastore.onUpdate = onUpdate;
+    
+    postMaster.controlPluginAPI.userData.onUpdate = function (updateObj) {
+        var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
+        postMaster.widgetPluginAPI.sendMessage(null, packet);
+    };
+    
+    postMaster.widgetPluginAPI.userData.onUpdate = function (updateObj) {
+        var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
+        postMaster.controlPluginAPI.sendMessage(null, packet);
+    };
+    
 
 	PluginAPI.prototype.messaging.triggerOnNewWidgetMessage = function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
