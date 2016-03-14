@@ -1099,7 +1099,7 @@ var buildfire = {
 
 			// Don't pass any value under 1
 			if(ratio < 1){
-				var ratio = '1';
+				var ratio = 1;
 			}
 			
             if (!options)
