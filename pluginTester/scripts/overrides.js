@@ -81,3 +81,19 @@ postMaster.controlPluginAPI.tag = 'controlPluginAPI';
 	postMaster.controlPluginAPI.pluginInstances.templateUrl = "http://app.buildfire.com/pages/templates/pluginInstanceDialog.html";
 	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
 })();
+
+
+/**
+ * Created by Rami Hadi.
+ * description : this is a Dummy secition just used to mock things to work like in the CP
+ */
+$app.service('$analytics', [ function () {
+
+	var analytics = {
+		eventTrack : function(dummy1,dummy2) {}
+	};
+
+
+	return analytics;
+}]);
+
