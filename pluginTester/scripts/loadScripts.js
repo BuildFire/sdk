@@ -7,6 +7,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/lib/hammer.2.0.4.js"// pull down to refresh
         , this.domain + "app/scripts/lib/wptr.1.1.js"// pull down to refresh
         , this.domain + "app/scripts/framework/pluginAPI/datastoreAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/userDatastoreAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/analyticsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/appearanceAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/mediaAPI.js"

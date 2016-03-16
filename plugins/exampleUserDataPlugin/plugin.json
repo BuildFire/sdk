@@ -1,0 +1,22 @@
+{
+  "author":"Alaa Aldahabi"
+,"pluginName":"Simple Save and Serach app user data"
+,"pluginDescription":"Explains how to use dataUser"
+,"supportEmail":"support@buildfire.com"
+,"control":{
+  "content":{
+    "enabled":true
+  }
+, "design":{
+    "enabled":false
+  }
+, "settings":{
+    "enabled":false
+  }
+}
+,"widget":{
+
+},
+  "features" : [],
+  "languages" : ["en"]
+}
