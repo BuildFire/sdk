@@ -1096,6 +1096,12 @@ var buildfire = {
         , resizeImage: function (url, options) {
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
+
+			// Don't pass any value under 1
+			if(ratio < 1){
+				var ratio = 1;
+			}
+			
             if (!options)
                 options = {width: window.innerWidth};
             else if (typeof(options) != "object")
@@ -1385,13 +1391,13 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , showCreatePluginInstancesDialog: function (options, callback) {
-            if(typeOf(options) == 'function' && !callback){
+            if(typeof(options) == 'function' && !callback){
                 callback = options;
                 options = {skipPluginInstances : true};
             }else if(options){
                 options.skipPluginInstances = true;
             }
-            buildfire.pluginInstance.showDialog({options : options},callback);
+            buildfire.pluginInstance.showDialog(options,callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
