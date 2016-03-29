@@ -1129,6 +1129,7 @@ var buildfire = {
                     return url;
             }
         }
+
         , cropImage: function (url, options) {
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
@@ -1160,6 +1161,123 @@ var buildfire = {
             }
 
         }
+        ,local: {
+            _parser: document.createElement('a')
+            , localImageLibPath: window.location.href.split('pluginTemplate/')[0] + "imageLib/"
+            , parseFileFromUrl: function (url) {
+                buildfire.imageLib.local._parser.href = url;
+                var sections = buildfire.imageLib.local._parser.pathname.split("/");
+                if (sections.length == 0)
+                    return null;
+                else
+                    return sections[sections.length - 1];
+            }
+            , toLocalPath: function (url) {
+                if (url.toLowerCase().indexOf("/imageserver") > 0) {
+                    var localURL = this.localImageLibPath + this.parseFileFromUrl(url); // length of root host
+                    //localURL = localURL.substring(localURL.indexOf('/'));
+                    return localURL;
+                }
+                else
+                    return null;
+            }
+            , resizeImage: function (url, options, callback) {
+
+                //var ratio = options.disablePixelRation ? 1 : window.devicePixelRatio;
+                if (!options)
+                    options = {width: window.innerWidth};
+                else if (typeof(options) != "object")
+                    throw ("options not an object");
+
+                if (options.width == 'full') options.width = window.innerWidth;
+                if (options.height == 'full') options.height = window.innerHeight;
+
+                var localURL = buildfire.imageLib.local.toLocalPath(url);
+                if (localURL) {
+                    var img = new Image();
+                    img.src = localURL;
+                    img.onload = function () {
+
+                        if (options.width && !options.height)
+                            options.height = (img.height * options.width) / img.width;
+                        else if (!options.width && options.height)
+                            options.width = (img.width * options.height) / img.width;
+
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        canvas.width = options.width;
+                        canvas.height = options.height;
+
+
+                        ctx.drawImage(img, 0, 0, options.width, options.height);
+
+                        callback(null, canvas.toDataURL());
+                    };
+                    img.onerror = function () {
+                        callback(null, buildfire.imageLib.resizeImage(url, options));
+                    }
+                }
+                else
+                    callback(null, buildfire.imageLib.resizeImage(url, options));
+
+
+            }
+            , cropImage: function (url, options, callback) {
+
+                //var ratio = options.disablePixelRation ? 1 : window.devicePixelRatio;
+                if (!options)
+                    options = {width: window.innerWidth};
+                else if (typeof(options) != "object")
+                    throw ("options not an object");
+
+                if (options.width == 'full') options.width = window.innerWidth;
+                if (options.height == 'full') options.height = window.innerHeight;
+
+
+                var t = this;
+                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
+
+
+                    var localURL = buildfire.imageLib.local.toLocalPath(url);
+                    if (localURL) {
+                        var img = new Image();
+                        img.src = localURL;
+                        img.onload = function () {
+
+                            if (options.width && !options.height)
+                                options.height = (img.height * options.width) / img.width;
+                            else if (!options.width && options.height)
+                                options.width = (img.width * options.height) / img.width;
+
+                            var canvas = document.createElement('canvas');
+                            var ctx = canvas.getContext('2d');
+                            canvas.width = options.width;
+                            canvas.height = options.height;
+
+                            SmartCrop.crop(img, options, function(result){
+                                
+                                var sug = result.topCrop;
+                                ctx.drawImage(img, sug.x, sug.y, sug.width, sug.height,0,0,options.width, options.height);
+
+                                callback(null, canvas.toDataURL());
+
+                            });
+
+                        };
+                        img.onerror = function () {
+                            callback(null, buildfire.imageLib.cropImage(url, options));
+                        }
+                    }
+                    else
+                        callback(null, buildfire.imageLib.cropImage(url, options));
+                }
+                else
+                    callback(null, buildfire.imageLib.cropImage(url, options));
+
+
+            }
+        }
+
 
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
