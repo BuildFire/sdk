@@ -656,6 +656,15 @@ var buildfire = {
             if(appThemeCSSElement) {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
+        }, titlebar: {
+            show: function() {
+                var p = new Packet(null, "appearance.titlebar.show");
+                buildfire._sendPacket(p);
+            },
+            hide: function() {
+                var p = new Packet(null, "appearance.titlebar.hide");
+                buildfire._sendPacket(p);
+            }
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
