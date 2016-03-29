@@ -1240,12 +1240,14 @@ var buildfire = {
                 if (options.height == 'full') options.height = window.innerHeight;
 
 
-                var t = this;
+                if(typeof(SmartCrop) == "undefined")
+                    console.warn("smartcrop.js isnt imported");
+                    
                 if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
 
 
                     var localURL = buildfire.imageLib.local.toLocalPath(url);
-                    if (localURL) {
+                    if (localURL && typeof(SmartCrop) != "undefined") {
                         var img = new Image();
                         img.src = localURL;
                         img.onload = function () {
