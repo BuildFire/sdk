@@ -274,6 +274,8 @@ var buildfire = {
     }
     , _whitelistedCommands: ["datastore.triggerOnUpdate"
         , "datastore.triggerOnRefresh"
+         ,"userData.triggerOnUpdate"
+        , "userData.triggerOnRefresh"
         , "messaging.onReceivedMessage"
         , "history.triggerOnPop"
         , "navigation.onBackButtonClick"
@@ -871,6 +873,223 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
     }
+    ,userData: {
+        /// ref:
+        get: function (tag, callback) {
+            
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            var obj = { tag: tag };
+            var p = new Packet(null, 'userData.get', obj);
+            buildfire._sendPacket(p, callback);
+
+        },
+        /// ref:
+         getById: function (id, tag, callback) {
+            
+            var idType = typeof (id);
+            if (idType == "function" && typeof (callback) == "undefined") {
+                callback = id;
+                id = '';
+            }
+            
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            var obj = { tag: tag, id: id };
+            var p = new Packet(null, 'userData.get', obj);
+            buildfire._sendPacket(p, callback);
+
+        }
+        /// ref:
+        , save: function (obj, tag,userToken, callback) {
+            
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            var userTokenType = typeof (userToken);
+            if (userTokenType == "undefined")
+                userToken = '';
+            else if (userTokenType == "function" && typeof (callback) == "undefined") {
+                callback = userToken;
+                userToken = '';
+            }
+            
+            var p = new Packet(null, 'userData.save', { tag: tag,userToken: userToken, obj: obj });
+            buildfire._sendPacket(p, function (err, result) {
+                
+                if (callback) callback(err, result);
+            });
+        }
+        /// ref: 
+        , insert: function (obj, tag, userToken, checkDuplicate, callback) {
+            
+            var userTokenType = typeof (userToken);
+            if (userTokenType == "undefined")
+                userToken = '';
+            else if (userTokenType == "function" && typeof (callback) == "undefined") {
+                callback = userToken;
+                userToken = '';
+            }
+            var checkDuplicateType = typeof (checkDuplicate);
+            if (checkDuplicateType == "undefined")
+                checkDuplicate = false;
+            else if (checkDuplicateType == "function" && typeof (callback) == "undefined") {
+                callback = checkDuplicate;
+                checkDuplicate = false;
+            }
+            var userTokenType = typeof (userToken);
+            if (userTokenType == "undefined")
+                userToken = '';
+            else if (userTokenType == "function" && typeof (callback) == "undefined") {
+                callback = userToken;
+                userToken = '';
+            }
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            
+            var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
+            buildfire._sendPacket(p, function (err, result) {
+               
+                callback(err, result);
+            });
+        }
+        /// ref: 
+        , bulkInsert: function (arrayObj, tag, userToken, callback) {
+            
+            if (arrayObj.constructor !== Array) {
+                
+                callback({ "code": "error", "message": "the data should be an array" }, null);
+                return;
+            }
+            var userTokenType = typeof (userToken);
+            if (userTokenType == "undefined")
+                userToken = '';
+            else if (userTokenType == "function" && typeof (callback) == "undefined") {
+                callback = userToken;
+                userToken = '';
+            }
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            
+            var p = new Packet(null, 'userData.bulkInsert', { tag: tag, userToken: userToken, obj: arrayObj });
+            buildfire._sendPacket(p, function (err, result) {
+               
+                callback(err, result);
+            });
+        }
+        ///  
+        , update: function (id, obj, tag, userToken, callback) {
+            var userTokenType = typeof (userToken);
+            if (userTokenType == "undefined")
+                userToken = '';
+            else if (userTokenType == "function" && typeof (callback) == "undefined") {
+                callback = userToken;
+                userToken = '';
+            }
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            
+            var p = new Packet(null, 'userData.update', { tag: tag, userToken: userToken, id: id, obj: obj });
+            buildfire._sendPacket(p, function (err, result) {
+             
+                if (callback) callback(err, result);
+            });
+        }
+        /// ref 
+        , delete: function (id, tag, userToken, callback) {
+            
+            var userTokenType = typeof (userToken);
+            if (userTokenType == "undefined")
+                userToken = '';
+            else if (userTokenType == "function" && typeof (callback) == "undefined") {
+                callback = userToken;
+                userToken = '';
+            }
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            
+            var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
+            buildfire._sendPacket(p, function (err, result) {
+                
+                if (callback) callback(err, result);
+            });
+        }
+        /// 
+        , search: function (options, tag, callback) {
+            
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            
+            //auto correct empty string filter
+            if (typeof (options) == "undefined") options = { filter: {} };
+            if (!options.filter) options.filter = {};
+            
+            var p = new Packet(null, 'userData.search', { tag: tag, obj: options });
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
+        /// ref: 
+        , onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('userDataOnUpdate', callback, allowMultipleHandlers);
+        }
+        , triggerOnUpdate: function (obj) {
+            buildfire.eventManager.trigger('userDataOnUpdate', obj);
+        }
+        /// ref:  
+        , onRefresh: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('userDataOnRefresh', callback, allowMultipleHandlers);
+        }
+        , triggerOnRefresh: function (obj) {
+            buildfire.eventManager.trigger('userDataOnRefresh', obj);
+        }
+        /// ref:  
+        , disableRefresh: function () {
+            var p = new Packet(null, "userData.disableRefresh");
+            buildfire._sendPacket(p);
+        }
+    }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
     , imageLib: {
         /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib#buildfireimagelibshowdialogoptions-callback
@@ -886,6 +1105,12 @@ var buildfire = {
         , resizeImage: function (url, options) {
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
+
+			// Don't pass any value under 1
+			if(ratio < 1){
+				var ratio = 1;
+			}
+			
             if (!options)
                 options = {width: window.innerWidth};
             else if (typeof(options) != "object")
@@ -919,6 +1144,7 @@ var buildfire = {
                     return url;
             }
         }
+
         , cropImage: function (url, options) {
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
@@ -950,6 +1176,125 @@ var buildfire = {
             }
 
         }
+        ,local: {
+            _parser: document.createElement('a')
+            , localImageLibPath: window.location.href.split('pluginTemplate/')[0] + "imageLib/"
+            , parseFileFromUrl: function (url) {
+                buildfire.imageLib.local._parser.href = url;
+                var sections = buildfire.imageLib.local._parser.pathname.split("/");
+                if (sections.length == 0)
+                    return null;
+                else
+                    return sections[sections.length - 1];
+            }
+            , toLocalPath: function (url) {
+                if (url.toLowerCase().indexOf("/imageserver") > 0) {
+                    var localURL = this.localImageLibPath + this.parseFileFromUrl(url); // length of root host
+                    //localURL = localURL.substring(localURL.indexOf('/'));
+                    return localURL;
+                }
+                else
+                    return null;
+            }
+            , resizeImage: function (url, options, callback) {
+
+                //var ratio = options.disablePixelRation ? 1 : window.devicePixelRatio;
+                if (!options)
+                    options = {width: window.innerWidth};
+                else if (typeof(options) != "object")
+                    throw ("options not an object");
+
+                if (options.width == 'full') options.width = window.innerWidth;
+                if (options.height == 'full') options.height = window.innerHeight;
+
+                var localURL = buildfire.imageLib.local.toLocalPath(url);
+                if (localURL) {
+                    var img = new Image();
+                    img.src = localURL;
+                    img.onload = function () {
+
+                        if (options.width && !options.height)
+                            options.height = (img.height * options.width) / img.width;
+                        else if (!options.width && options.height)
+                            options.width = (img.width * options.height) / img.width;
+
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        canvas.width = options.width;
+                        canvas.height = options.height;
+
+
+                        ctx.drawImage(img, 0, 0, options.width, options.height);
+
+                        callback(null, canvas.toDataURL());
+                    };
+                    img.onerror = function () {
+                        callback(null, buildfire.imageLib.resizeImage(url, options));
+                    }
+                }
+                else
+                    callback(null, buildfire.imageLib.resizeImage(url, options));
+
+
+            }
+            , cropImage: function (url, options, callback) {
+
+                //var ratio = options.disablePixelRation ? 1 : window.devicePixelRatio;
+                if (!options)
+                    options = {width: window.innerWidth};
+                else if (typeof(options) != "object")
+                    throw ("options not an object");
+
+                if (options.width == 'full') options.width = window.innerWidth;
+                if (options.height == 'full') options.height = window.innerHeight;
+
+
+                if(typeof(SmartCrop) == "undefined")
+                    console.warn("smartcrop.js isnt imported");
+                    
+                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
+
+
+                    var localURL = buildfire.imageLib.local.toLocalPath(url);
+                    if (localURL && typeof(SmartCrop) != "undefined") {
+                        var img = new Image();
+                        img.src = localURL;
+                        img.onload = function () {
+
+                            if (options.width && !options.height)
+                                options.height = (img.height * options.width) / img.width;
+                            else if (!options.width && options.height)
+                                options.width = (img.width * options.height) / img.width;
+
+                            var canvas = document.createElement('canvas');
+                            var ctx = canvas.getContext('2d');
+                            canvas.width = options.width;
+                            canvas.height = options.height;
+
+                            SmartCrop.crop(img, options, function(result){
+                                
+                                var sug = result.topCrop;
+                                ctx.drawImage(img, sug.x, sug.y, sug.width, sug.height,0,0,options.width, options.height);
+
+                                callback(null, canvas.toDataURL());
+
+                            });
+
+                        };
+                        img.onerror = function () {
+                            callback(null, buildfire.imageLib.cropImage(url, options));
+                        }
+                    }
+                    else
+                        callback(null, buildfire.imageLib.cropImage(url, options));
+                }
+                else
+                    callback(null, buildfire.imageLib.cropImage(url, options));
+
+
+            }
+        }
+
 
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
@@ -1055,6 +1400,15 @@ var buildfire = {
         , search: function (options, callback) {
             var p = new Packet(null, 'pluginInstances.search', options);
             buildfire._sendPacket(p, callback);
+        }
+        , showCreatePluginInstancesDialog: function (options, callback) {
+            if(typeof(options) == 'function' && !callback){
+                callback = options;
+                options = {skipPluginInstances : true};
+            }else if(options){
+                options.skipPluginInstances = true;
+            }
+            buildfire.pluginInstance.showDialog(options,callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links

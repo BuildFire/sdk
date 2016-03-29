@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html ng-app="plugin">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load helper.css to use our helper classes.
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    -->
+    <!-- JS -->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+
+</head>
+<body ng-controller="pluginCtrl">
+    <h1>App users complains</h1>
+    <button ng-click="laodName()">Refresh</button>
+    <br />
+    <table>
+        <thead>
+            <tr>
+                <td width="20%">Name</td>
+                <td width="20%">Email</td>
+                <td width="20%">Phone</td>
+                <td width="30%">complain</td>
+                <td>response</td>
+                <td></td>
+               
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="complain in complains">
+                <td>{{complain.data.name}}</td> 
+                <td>{{complain.data.email}}</td>
+                <td>{{complain.data.phone}}</td>
+                <td>{{complain.data.complain}}</td>
+                <td><textarea ng-model="complain.data.response"></textarea></td>
+                <td><button   ng-click="save(complain)">Response</button><br />
+                <button ng-click="delete(complain)">Close</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+
+        var textPluginApp = angular.module('plugin', []);
+
+        textPluginApp.controller('pluginCtrl', ['$scope', '$http', function ($scope, $http) {
+            $scope.save = function (complain) {
+                buildfire.userData.save(complain.data, 'Complains', complain.userToken, function (e) {
+                    if (e) console.error(JSON.stringify(e));
+                    else
+                        $scope.laodName();
+                });
+            }
+            $scope.delete = function (complain) {
+                buildfire.userData.delete(complain.id, 'Complains', complain.userToken, function (e) {
+                    if (e) console.error(JSON.stringify(e));
+                    else
+                        $scope.laodName();
+                });
+            }
+            buildfire.userData.onUpdate(function (e) {
+                $scope.laodName();
+            });
+            $scope.laodName = function () {
+                buildfire.userData.search({}, 'Complains', function (err, results) {
+                    if (err) console.error(JSON.stringify(err));
+                    else {
+                        $scope.complains = results;
+                        $scope.$apply();
+                    }
+                });
+            }
+            $scope.laodName();
+        }]);
+
+
+    </script>
+</body>
+</html>
