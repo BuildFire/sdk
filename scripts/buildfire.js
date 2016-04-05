@@ -1119,9 +1119,15 @@ var buildfire = {
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
+            var root;
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
-                var root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
+                root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
+            else if (url.indexOf("Kaleo.DevBucket/") > 0 )
+                root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
+
+            if(root){
+
 
                 if (options.width && !options.height)
                     return root + "?w=" + Math.floor(options.width * ratio) ;
@@ -1133,7 +1139,7 @@ var buildfire = {
                     return url;
             }
             else{
-                var root = "http://s7obnu.cloudimage.io/s/";
+                root = "http://s7obnu.cloudimage.io/s/";
                 if (options.width && !options.height)
                     return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
                 else if (!options.width && options.height)
@@ -1164,14 +1170,20 @@ var buildfire = {
             }
 
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
-                var root = "http://buildfire.imgix.net" + url.substring(40); // length of root host
+            var root;
+
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
+                root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
+            else if (url.indexOf("Kaleo.DevBucket/") > 0 )
+                root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
+
+            if(root) {
                 return root + "?fit=crop"
                     + (options.width? "&w=" + Math.floor(options.width * ratio):"")
                     + (options.height ? "&h=" + Math.floor(options.height * ratio) : "") ;
             }
             else {
-                var root = "http://s7obnu.cloudimage.io/s/crop/";
+                root = "http://s7obnu.cloudimage.io/s/crop/";
                 return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             }
 
