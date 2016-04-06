@@ -473,7 +473,7 @@ var buildfire = {
 				var html = document.getElementsByTagName('html')[0];
 				var style = document.createElement('style');
 				style.type = 'text/css';
-				style.innerHTML = 'body{position:relative !important; z-index:1 !important;}';
+				style.innerHTML = 'body{position:relative !important; z-index:1 !important;} .plugin-slide{position:relative !important;} .plugin-slide, .plugin-slide img{transform: translateZ(0) !important;';
 				html.appendChild(style);
 			}
 		},
