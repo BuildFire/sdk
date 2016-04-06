@@ -1557,10 +1557,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }
 	setTimeout(function(){
 		buildfire.appearance._forceCSSRender();
-		setTimeout(function(){
-			buildfire.appearance._forceCSSRender();
-		}, 1200);
-	}, 1800);
+	}, 1750);
 
 });
 document.addEventListener("resize", function (event) {
