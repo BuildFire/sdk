@@ -140,21 +140,26 @@ nav{
 	z-index:1028;
     position:fixed;
     background:#32373a;
+	background:#2e3541;
 	border-right:1px solid #26282b;
+	border-right:1px solid #242a36;
 }
 nav ul.menu{
     padding-top:65px;
-	border-bottom:1px solid #26282b;
 	color:#a6abba;
+	height:100%;
+	overflow:auto;
 }
 nav ul.menu li{
     position:relative;
 }
 nav ul.menu li + li{
 	border-top:1px solid #26282b;
+	border-top:1px solid #242a36;
 }
 nav ul.menu li.dark{
 	background:#26282b;
+	background:#242a36;
 }
 nav ul.menu li.divider,
 nav ul.menu li.dark a{
@@ -166,6 +171,10 @@ nav ul.menu li.dark.divider{
 nav ul.menu li.dark a{
 	padding:10px 25px;
 	font-size:14px;
+}
+nav ul.menu li:last-child{
+	border-bottom:1px solid #26282b;
+	border-bottom:1px solid #242a36;
 }
 nav ul.menu li .parent{
 	color:#a6abba;
@@ -193,6 +202,9 @@ nav ul.menu li.datatracer .parent span.icon{
 	top:21px;
 }
 nav ul.menu li.help .parent span.icon{
+	top:21px;
+}
+nav ul.menu li.licenses .parent span.icon{
 	top:21px;
 }
 nav ul.menu li.selfprovisioning .parent span.icon{
@@ -227,6 +239,7 @@ nav ul.menu li .parent:hover,
 nav ul.menu li .parent.active{
 	padding-left:50px;
 	background:#26282b;
+	background:#242a36;
 }
 nav ul.menu li.dark .parent:hover, 
 nav ul.menu li.dark .parent.active{
@@ -243,6 +256,7 @@ nav ul.menu li span.badge{
 	line-height:9px;
 	font-weight:300;
 	background:#26282b;
+	background:#242a36;
 	color:#a6abba;
 }
 nav ul.menu li span.badge{
@@ -296,6 +310,7 @@ nav ul.menu li .parent ul.child-menu li span.badge{
 	left:0;
 	right:inherit;
 	background:#32373a;
+	background:#2e3541;
 }
 nav ul.menu li .parent.has-children li a p.text{
 	max-width:100%;
@@ -329,6 +344,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 #main-content .header,
 html[buildfire] .item .header{
 	background:#32373a;
+	background:#2e3541;
 	padding:15px 250px 15px 20px;
 	color:#a6abba;
 	font-size:15px;
@@ -464,8 +480,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	top:4px;
 }
 .draggable-list-view.carousel-items .d-item span.title{
-	width:62%;
-	max-width:62%;
+	width:60%;
+	max-width:60%;
 	margin-right:0;
 }
 .draggable-list-view .d-item .copy span.content{
@@ -967,7 +983,7 @@ table.table span.sort-icon{
 }
 .screens .layoutgrid{
 	padding:12px 12px 0px;
-	max-height:278px;
+	max-height:225px;
 	overflow:auto;
 }
 .screens .layoutgrid .layouticon{
@@ -1347,15 +1363,93 @@ html[buildfire='control'] body{
 	border:1px solid #ddd;
 }
 
+/* Override Google Language Dropdown UI */
+.goog-te-gadget{
+  	font-family:'Muli', sans-serif !important;
+	color:#5f5f5f !important;
+}
+.goog-te-gadget-simple{
+	color: #5f5f5f !important;
+  	background-color: #eef0f0 !important;
+  	border: 1px solid #ddd !important;
+	display:inline-block !important;
+	margin-bottom: 0 !important;
+ 	font-weight: normal;
+	text-align: center;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	background-image: none;
+	white-space: nowrap;
+	padding: 5px 12px !important;
+	font-size: 13px !important;
+	line-height: 21px !important;
+	font-weight: 300 !important;
+	border-radius: 4px !important;
+  	-moz-transition: all 0.35s;
+  	-o-transition: all 0.35s;
+  	-webkit-transition: all 0.35s;
+  	transition: all 0.35s;
+}
+.goog-te-gadget-simple:hover{
+	background:#fff !important;
+}
+.goog-te-menu-value img{
+	display:none !important;
+}
+.goog-te-gadget-simple .goog-te-menu-value,
+.goog-te-gadget-simple .goog-te-menu-value span{
+	color: #5f5f5f !important;
+}
+.goog-te-gadget-simple .goog-te-menu-value img + span{
+	display:none;
+}
+.goog-te-gadget-simple .goog-te-menu-value:after{
+	content:'\e60f';
+	font-family: 'icomoon';		
+	display:inline-block;
+	font-size:11px;
+	font-weight:400 !important;
+	margin-left:11px;
+	position:relative;
+	top:1px;
+	color:#5f5f5f;
+	-webkit-text-stroke: 0;
+	-moz-transition: all 0.35s;
+	-o-transition: all 0.35s;
+	-webkit-transition: all 0.35s;
+	transition: all 0.35s;
+}
+iframe.goog-te-menu-frame{
+	top:64px !important;
+	box-shadow:none;
+}
+iframe.goog-te-menu-frame .goog-te-menu2{
+	border:1px solid #ccc !important;
+	background:red !important;
+}
+iframe.goog-te-banner-frame{
+	display:none;
+}
+html.translated-ltr body{
+	top:0 !important;
+}
+
 
 /* Phase 2 */
 
-/* Hide Help and Publish Button on top of each page */
-.header .pull-right .btn:first-child,
-.header .pull-right .btn{
-	display:none;
-}
+
 /* Hide deep link url icons in list views */
 .draggable-list-view .d-item .copy span.btn-link-icon{
 	display:none !important;
+}
+
+.form-group .validationMessage {
+	display: none;
+	color: #a94442;
+}
+
+.form-group.has-error .validationMessage {
+	display: block;
 }

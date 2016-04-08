@@ -124,11 +124,16 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         this._toggleAddButton("disable");
     },
     // this method allows you to replace the slider image or append to then if appendItems = true
-    loadItems: function (items, appendItems) {
+    loadItems: function (items, appendItems, showPlugin) {
         if (items && items instanceof Array) {
             if (!appendItems && this.items.length !== 0) {
                 // here we want to remove any existing items since the user of the component don't want to append items
                 this._removeAll();
+            }
+            if(appendItems=='loadAll' || showPlugin=='loadAll'){
+                this._loadAllItems = true;
+                this.selector.querySelector(this.loadAllSelector).setAttribute("checked", true);
+                this._toggleAddButton("disable");
             }
 
             for (var i = 0; i < items.length; i++) {
@@ -203,7 +208,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                 media.className = "main-icon " + item.iconClassName;
                 mediaHolder.appendChild(media);
             }
-           
+
             wrapper.appendChild(mediaHolder);
         }
 
@@ -337,7 +342,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                 me._toggleAddButton("disable");
 
                 // remove all selected plugins from this.items and from the DOM
-                me._removeAll();
+                // me._removeAll(); //Commented this method to Implement the feature of pivital ticket #113777595
 
                 me.onLoadAll();
 
