@@ -18,6 +18,34 @@
     -->
 </head>
 <body>
-    <span>Content - Hello world!</span>
+    <span>Enter url to pop up</span>
+    <input id="url" type="url" placeholder="http://google.com">
+
+    <p style="font-style: italic">
+        note: this url will pop up even if the app didnt open this plugin
+    </p>
+
+    pop up after <input id="seconds" type="number" min="2" max="999" placeholder="sec">
+
+    <br/>
+    <button onclick="save()">Save</button>
+
+<script>
+    function save(){
+
+        buildfire.datastore.save({
+            url :document.getElementById("url").value
+            ,seconds :document.getElementById("seconds").value
+        });
+    }
+
+    buildfire.datastore.get(function(err,obj){
+        if(obj) {
+
+            document.getElementById("url").value = obj.data.url;
+            document.getElementById("seconds").value = obj.data.seconds;
+        }
+    });
+</script>
 </body>
 </html>

@@ -18,11 +18,12 @@
    -->
 </head>
 <body>
-	<span id="h">Widget - Hello, world!</span>
+	<span id="h">XX</span>
+
 	<script>
 		var h = document.getElementById("h");
 		setInterval(function(){
-			h.innerHTML = localStorage.getItem("counter");
+			h.innerHTML = localStorage.getItem("counter") + " seconds";
 		});
 	</script>
 </body>

@@ -14,10 +14,21 @@
 
     <script>
         var counter=0;
+        var options={};
         setInterval(function(){
             counter++;
             localStorage.setItem("counter",counter);
+
+            if(counter == options.seconds )
+                    buildfire.navigation.openWindow(options.url,"_blank");
         },1000);
+
+
+        buildfire.datastore.get(function(err,obj){
+            if(obj)
+                options = obj.data;
+        });
+
     </script>
 
 </head>
