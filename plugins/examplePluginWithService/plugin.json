@@ -1,7 +1,7 @@
 {
   "author":"Daniel Hindi"
-,"pluginName":"Hello World"
-,"pluginDescription":"Light weight doent use even datastore"
+,"pluginName":"service example"
+,"pluginDescription":"Light weight service that accesses the datastore and pops up a url after a few seconds"
 ,"supportEmail":"[Your support Email]"
 ,"control":{
   "content":{

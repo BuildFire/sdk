@@ -13,21 +13,30 @@
    -->
 
     <script>
-        var counter=0;
-        var options={};
-        setInterval(function(){
-            counter++;
-            localStorage.setItem("counter",counter);
+        var options,counter;
+        function init() {
+            counter = 0;
+            var tmr = setInterval(function () {
+                counter++;
+                localStorage.setItem("counter", counter);
 
-            if(counter == options.seconds )
-                    buildfire.navigation.openWindow(options.url,"_blank");
-        },1000);
-
+                if (counter == options.seconds) {
+                    buildfire.navigation.openWindow(options.url, "_blank");
+                    clearInterval(tmr);
+                }
+            }, 1000);
+        }
 
         buildfire.datastore.get(function(err,obj){
-            if(obj)
+            if(obj){
                 options = obj.data;
+                init();
+            }
         });
+
+        buildfire.datastore.onUpdate(function(){
+            init();
+        })
 
     </script>
 

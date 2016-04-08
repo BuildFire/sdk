@@ -28,6 +28,8 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	var onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'datastore.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
+		if(postMaster.servicePluginAPIs && postMaster.servicePluginAPIs.service)
+			postMaster.servicePluginAPIs.service.sendMessage(null, packet);
 	};
     postMaster.controlPluginAPI.datastore.onUpdate = onUpdate;
     
