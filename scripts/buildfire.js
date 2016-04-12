@@ -1137,11 +1137,14 @@ var buildfire = {
             if (options.height == 'full') options.height = window.innerHeight;
 
             var root;
-            url = url.replace(/^https:\/\//i, 'http://');
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
+
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+                url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 )
+            }
+            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
                 root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
+            }
 
             if(root){
 
@@ -1188,11 +1191,15 @@ var buildfire = {
 
 
             var root;
-            url = url.replace(/^https:\/\//i, 'http://');
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
+
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0||url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+                url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 )
+            }
+            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
                 root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
+            }
+
 
             if(root) {
                 return root + "?fit=crop"
@@ -1281,10 +1288,10 @@ var buildfire = {
                 if(typeof(SmartCrop) == "undefined")
                     console.warn("smartcrop.js isnt imported");
 
-                url = url.replace(/^https:\/\//i, 'http://');
-                    
-                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
 
+                    
+                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0) {
+                    url = url.replace(/^https:\/\//i, 'http://');
 
                     var localURL = buildfire.imageLib.local.toLocalPath(url);
                     if (localURL && typeof(SmartCrop) != "undefined") {
