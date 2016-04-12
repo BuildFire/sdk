@@ -1280,6 +1280,8 @@ var buildfire = {
 
                 if(typeof(SmartCrop) == "undefined")
                     console.warn("smartcrop.js isnt imported");
+
+                url = url.replace(/^https:\/\//i, 'http://');
                     
                 if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
 
