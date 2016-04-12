@@ -3,7 +3,7 @@
  */
 
 
-$app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function ($scope, $routeParams,$sce, $http) {
+$app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', function ($scope, $routeParams, $sce, $http) {
         window.$http = $http;
         var config = null;
         var widgetIframe = document.getElementById('widget');
@@ -12,13 +12,13 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
         };
         $scope.currentUser = window.currentUser;
 
-        if(postMaster.widgetPluginAPI.history.historyItems.length == 0) {
-            postMaster.widgetPluginAPI.history.historyItems.push({ label: 'Plugin', source: 'control' });
-            if(!$scope.$$phase) $scope.$apply();
+        if (postMaster.widgetPluginAPI.history.historyItems.length == 0) {
+            postMaster.widgetPluginAPI.history.historyItems.push({label: 'Plugin', source: 'control'});
+            if (!$scope.$$phase) $scope.$apply();
         }
-        postMaster.widgetPluginAPI.history.onUpdate(function(data){
-            if(data.historyItems) {
-                for(var i = 0; i < data.historyItems.length; i++) {
+        postMaster.widgetPluginAPI.history.onUpdate(function (data) {
+            if (data.historyItems) {
+                for (var i = 0; i < data.historyItems.length; i++) {
                     data.historyItems[i].title = decodeURIComponent(data.historyItems[i].title);
                 }
                 $scope.breadcrumbs = data.historyItems.slice(0);
@@ -26,10 +26,10 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
             else {
                 $scope.breadcrumbs = [];
             }
-            if(!$scope.$$phase) $scope.$apply();
+            if (!$scope.$$phase) $scope.$apply();
         });
-        postMaster.widgetPluginAPI.history.onPop(function(data) {
-            if(data.popTriggered) {
+        postMaster.widgetPluginAPI.history.onPop(function (data) {
+            if (data.popTriggered) {
                 return;
             }
             var packet = new Packet(null, "history.triggerOnPop", JSON.parse(angular.toJson(data.poppedItem)));
@@ -41,9 +41,19 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
         };
 
 
+        window.serviceFrame;
         $scope.loadFrames = function (pluginFolder, config) {
             var root = '../plugins/';
             $scope.widgetSrc = root + pluginFolder + '/widget/index.html';
+
+            if (config.widget && config.widget.service) {
+                serviceFrame = document.createElement('iframe');
+                serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
+                serviceFrame.id='service';
+                serviceFrame.style.display='none';
+                serviceFrame.src = root + pluginFolder + '/widget/' + config.widget.service;
+                document.body.appendChild(serviceFrame);
+            }
 
             if (config.control.settings.enabled) {
                 $scope.currentControl = $scope.settingsSrc = root + pluginFolder + '/control/settings/index.html';
@@ -59,9 +69,9 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
                 $scope.currentControl = $scope.contentSrc = root + pluginFolder + '/control/content/index.html';
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
-			
-			if (!$scope.$$phase)
-            	$scope.$apply();
+
+            if (!$scope.$$phase)
+                $scope.$apply();
         };
 
         $scope.loadIFrame = function (section, e) {
@@ -79,7 +89,7 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
         /****************keep track of recent plugins *****/
         function keepTrackOfRecentPlugins(pluginFolder) {
 
-            window.localStorage.setItem('lastPlugin',pluginFolder);
+            window.localStorage.setItem('lastPlugin', pluginFolder);
             var recentPlugins = localStorage.getItem('__recentPlugins');
             if (recentPlugins) {
                 try {
@@ -116,9 +126,9 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     config = JSON.parse(xmlhttp.responseText);
                     $scope.loadFrames(pluginFolder, config);
-                    $scope.navToValue=$scope.pluginFolder = pluginFolder;
+                    $scope.navToValue = $scope.pluginFolder = pluginFolder;
                     if (!$scope.$$phase)
-		            	$scope.$apply();
+                        $scope.$apply();
                     keepTrackOfRecentPlugins(pluginFolder);
 
                 }
@@ -157,10 +167,10 @@ $app.controller('shellCtrl', ['$scope', '$routeParams','$sce', '$http', function
             widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.link.deeplinkData;
         };
 
-        $scope.navTo= function($event){
+        $scope.navTo = function ($event) {
 
-            if($event.keyCode == 13)
-                window.location.hash='/plugin/' + $scope.navToValue;
+            if ($event.keyCode == 13)
+                window.location.hash = '/plugin/' + $scope.navToValue;
         };
 
         if (postMaster.widgetPluginAPI && postMaster.controlPluginAPI) {

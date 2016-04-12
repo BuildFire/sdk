@@ -1,0 +1,22 @@
+{
+  "author":"Daniel Hindi"
+,"pluginName":"service example"
+,"pluginDescription":"Light weight service that accesses the datastore and pops up a url after a few seconds"
+,"supportEmail":"[Your support Email]"
+,"control":{
+  "content":{
+    "enabled":true
+  }
+, "design":{
+    "enabled":false
+  }
+, "settings":{
+    "enabled":false
+  }
+}
+,"widget":{
+  "service":"service.html"
+},
+  "features" : [],
+  "languages" : ["en"]
+}

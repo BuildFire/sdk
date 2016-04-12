@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+	<!-- Load helper.css to use our helper classes.
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	-->
+	
+	<!-- JS -->
+	<script src="../../../../scripts/buildfire.js"></script>
+   
+ 	<!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    -->
+</head>
+<body>
+    <span>Enter url to pop up</span>
+    <input id="url" type="url" placeholder="http://google.com">
+
+    <p style="font-style: italic">
+        note: this url will pop up even if the app didnt open this plugin
+    </p>
+
+    pop up after <input id="seconds" type="number" min="2" max="999" placeholder="sec">
+
+    <br/>
+    <button onclick="save()">Save</button>
+
+<script>
+    function save(){
+
+        buildfire.datastore.save({
+            url :document.getElementById("url").value
+            ,seconds :document.getElementById("seconds").value
+        });
+    }
+
+    buildfire.datastore.get(function(err,obj){
+        if(obj) {
+
+            document.getElementById("url").value = obj.data.url;
+            document.getElementById("seconds").value = obj.data.seconds;
+        }
+    });
+</script>
+</body>
+</html>

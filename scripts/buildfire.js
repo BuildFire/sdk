@@ -215,6 +215,20 @@ var buildfire = {
         }
         return obj;
     }
+    , options:{}
+    , parseMetaOptions: function(){
+        var options = {};
+        var tags = document.head.querySelector("meta[name=buildfire]");
+        if(tags && tags.content) {
+            var sections = tags.content.split(",");
+            sections.forEach(function(section){
+               var s = section.split("=");
+                options[s[0]] = s.length>1?s[1]:true;
+            });
+        }
+
+        return options;
+    }
     ///custom events are super thus this implementation
     , eventManager: {
         events: {}
@@ -265,12 +279,15 @@ var buildfire = {
         window.removeEventListener('message', buildfire._postMessageHandler, false);
         window.addEventListener('message', buildfire._postMessageHandler, false);
 
+        buildfire.options = buildfire.parseMetaOptions();
+
         buildfire.logger.init();
         //buildfire.logger.showHistory();
 
 
         buildfire.appearance.insertHTMLAttributes();
-        buildfire.appearance.attachCSSFiles();
+        if(!buildfire.options.disableTheme)
+            buildfire.appearance.attachCSSFiles();
     }
     , _whitelistedCommands: ["datastore.triggerOnUpdate"
         , "datastore.triggerOnRefresh"
@@ -1121,10 +1138,13 @@ var buildfire = {
 
             var root;
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+                url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 )
+            }
+            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
                 root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
+            }
 
             if(root){
 
@@ -1172,10 +1192,14 @@ var buildfire = {
 
             var root;
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
+            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0||url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+                url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 )
+            }
+            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
                 root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
+            }
+
 
             if(root) {
                 return root + "?fit=crop"
@@ -1263,9 +1287,11 @@ var buildfire = {
 
                 if(typeof(SmartCrop) == "undefined")
                     console.warn("smartcrop.js isnt imported");
-                    
-                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0) {
 
+
+                    
+                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0) {
+                    url = url.replace(/^https:\/\//i, 'http://');
 
                     var localURL = buildfire.imageLib.local.toLocalPath(url);
                     if (localURL && typeof(SmartCrop) != "undefined") {
@@ -1523,23 +1549,14 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     });
 
-    if(window.location.href.indexOf('/widget/') && !buildfire.appearance.disableFastClickOnLoad)
+    if(window.location.href.indexOf('/widget/')
+        && !buildfire.appearance.disableFastClickOnLoad
+        && !buildfire.options.disableFastClick
+    )
         buildfire.appearance.attachFastClick();
 
-    var metaTags = null;
-    var buildfireMetaTags = document.head.querySelector("meta[name=buildfire]");
-    if(buildfireMetaTags)
-        metaTags = buildfireMetaTags.split(",");
-    var overwriteOnClick = true;
-    if(metaTags != null) {
-        for(var i = 0 ; i < metaTags.length ; i++){
-            if(buildfireMetaTags[i] == 'disableExternalLinkOverride')
-                overwriteOnClick= false;
-        }
-    }
 
-
-    if(overwriteOnClick) {
+    if(!buildfire.options.disableExternalLinkOverride) {
         document.onclick = function (e) {
             e = e ||  window.event;
             var element = e.target || e.srcElement;
