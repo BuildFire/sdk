@@ -123,7 +123,7 @@ header .usermenus .button{
 	margin-left:15px;
 }
 header .usermenus .button{
-	width:100px;
+	min-width:100px;
 }
 header .usermenus .dropdown .dropdown-menu{
 	border-radius:0 0 4px 4px;
@@ -332,7 +332,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
     margin-top:84px;
     background-color:#fff;
 	width:765px;
-	min-height:723px;
+	min-height:729px;
 	margin-bottom:138px;
 	position:relative;
 	position:absolute;
@@ -636,6 +636,14 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	max-width:110%;
 	max-height:110%;
 	z-index:0;
+}
+.add-plugin .item .main h4{
+	color:#5f5f5f;
+	margin-top:19px;
+}
+.add-plugin .item .main .col-md-3.pull-right{
+	position:relative;
+	top:8px;
 }
 table.table span.sort-icon{
 	position:relative;
@@ -990,6 +998,22 @@ table.table span.sort-icon{
 	margin:0 2% 2% 0;
 	position:relative;
 }
+/*.screens .layoutgrid .layouticon:after{
+	content:attr(data-number);
+	display:inline-block;
+	position:absolute;
+	top:5px;
+	left:5px;
+	width:20px;
+	height:20px;
+	z-index:2;
+	color:#fff;
+	background:rgba(0,0,0,0.6);
+	font-size:11px;
+	line-height:15px;
+	border-radius:100%;
+	padding:2px 0;
+}*/
 .screens .layoutgrid .layouticon:nth-child(4n){
 	margin-right:0;
 }
@@ -1081,8 +1105,19 @@ table.table span.sort-icon{
 p.info{
 	font-size:12px;
 	line-height:18px;
-	padding:0 2px;
 	color:#777;
+}
+p.info:before{
+	content:'!';
+	color:#555;
+	background:#eef0f0;
+	padding:1px 8px;
+	border-radius:100%;
+	margin-right:8px;
+	display:inline-block;
+}
+p.info.no-icon:before{
+	display:none;
 }
 .screens .layoutgrid{
 	width:80%;
@@ -1128,14 +1163,17 @@ p.info{
 }
 .colorgrid .coloritem label{
 	position:relative;
-	top:-7px;
+	top:3px;
 	font-size:13px;
 	line-height:18px;
 	margin-left:8px;
 	font-weight:300;
+	max-width:185px;
+	display:inline-block;
 }
 .colorgrid.themegrid .coloritem label{
-	top:-18px;
+	top:-8px;
+	max-width:175px;
 }
 .colorgrid.themegrid .coloritem a.img-thumbnail{
 	height:44px;
@@ -1269,13 +1307,13 @@ body.rtl .pagination > li + li{
 
 /* SDK */
 .shell-sdk .plugin-input{
-	color:#fff;
-	background: #5e5e5e; 
+	color:#5f5f5f;
+	background: #fff; 
 	padding:4px 8px;
 	font-size:13px;
 	line-height:20px;
 	margin:-5px 0;
-	width:250px;
+	width:210px;
 }
 .shell-sdk #emulatorContainer .showTools-links{
 	position:absolute;
