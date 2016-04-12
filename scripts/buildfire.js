@@ -1137,7 +1137,7 @@ var buildfire = {
             if (options.height == 'full') options.height = window.innerHeight;
 
             var root;
-
+            url = url.replace(/^https:\/\//i, 'http://');
             if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             else if (url.indexOf("Kaleo.DevBucket/") > 0 )
@@ -1188,7 +1188,7 @@ var buildfire = {
 
 
             var root;
-
+            url = url.replace(/^https:\/\//i, 'http://');
             if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0)
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             else if (url.indexOf("Kaleo.DevBucket/") > 0 )
