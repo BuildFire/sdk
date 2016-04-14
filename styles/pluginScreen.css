@@ -26,7 +26,7 @@
 		margin-right:0;
 	}
 	html[buildfire] .screens .layoutgrid{
-		max-height:282px;
+		max-height:222px;
 	}
 	html[buildfire] .screens .screen + .screen{
 		margin-left:14px;

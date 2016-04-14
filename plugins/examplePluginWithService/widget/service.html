@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta name="buildfire" content="disableTheme,disableFastClick">
+
+   <!-- JS -->
+
+   <script src="../../../scripts/buildfire.js"></script>
+<!--
+    <script src="../../../scripts/angular/angular.min.js"></script>
+   <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+   -->
+
+    <script>
+        var options,counter;
+        function init() {
+            counter = 0;
+            var tmr = setInterval(function () {
+                counter++;
+                localStorage.setItem("counter", counter);
+
+                if (counter == options.seconds) {
+                    buildfire.navigation.openWindow(options.url, "_blank");
+                    clearInterval(tmr);
+                }
+            }, 1000);
+        }
+
+        buildfire.datastore.get(function(err,obj){
+            if(obj){
+                options = obj.data;
+                init();
+            }
+        });
+
+        buildfire.datastore.onUpdate(function(){
+            init();
+        })
+
+    </script>
+
+</head>
+
+</html>
