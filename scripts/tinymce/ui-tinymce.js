@@ -57,8 +57,8 @@ angular.module('ui.tinymce', [])
 
                 options = {
                     selector: 'textarea',  // change this value according to your HTML
-                    toolbar: ['  styleselect  | insertfile  | forecolor | backcolor | bold italic | alignleft aligncenter alignright alignjustify  | bullist  numlist | outdent indent ',
-                        ' link image | media  | code  '
+                    toolbar: ['  styleselect  | insertfile undo redo  | bold italic | alignleft aligncenter alignright alignjustify  | bullist  numlist | outdent indent ',
+                        ' link image | media  | code'
                     ],
 
                     menu: {
@@ -121,8 +121,7 @@ angular.module('ui.tinymce', [])
                 // element to be present in DOM before instantiating editor when
                 // re-rendering directive
                 $timeout(function () {
-                    options.plugins = "preview , image,code,media,link , textcolor colorpicker";
-                    // options.toolbar= "preview ,image,code,media,link , forecolor "
+                    options.plugins = "preview , image,code,media,link";
                     tinymce.init(options);
                     toggleDisable(scope.$eval(attrs.ngDisabled));
                 });
