@@ -10,6 +10,10 @@
 	}
 	html[buildfire] .colorgrid .coloritem label{
 		font-size:12px;
+		max-width:145px;
+	}
+	html[buildfire] .colorgrid.themegrid .coloritem label{
+		max-width:120px;
 	}
 	html[buildfire] .screens .screen a{
 		max-width:90px;
@@ -33,6 +37,17 @@
 	}
 	html[buildfire] .screens .layoutgrid{
 		width:75.6%;
+	}
+	html[buildire] .add-plugin .item .main h4{
+		margin-top:14px;
+	}
+	html[buildire] .add-plugin .item .main a.stretch{
+		margin-top:8px !important;
+	}
+	html[buildire] .add-plugin .item .main .col-md-3.pull-right{
+		position:relative;
+		top:1px;
+		margin-top:-4px;
 	}
 	html[buildfire] .draggable-list-view .d-item .copy{
 		width:71%;
