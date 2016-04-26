@@ -1520,8 +1520,8 @@ var buildfire = {
         onResumed: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('deviceOnResumed', callback, allowMultipleHandlers);
         },
-        triggerOnPaused: function (user) {
-            return buildfire.eventManager.trigger('deviceOnPaused', user);
+        triggerOnPaused: function (data) {
+            return buildfire.eventManager.trigger('deviceOnPaused', data);
         }
         , triggerOnResumed: function (data) {
             return buildfire.eventManager.trigger('deviceOnResumed', data);
