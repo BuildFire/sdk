@@ -1506,13 +1506,25 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
     , device: {
-        calendar:{
-            addEvent: function(event,callback){
-                buildfire._sendPacket(new Packet(null,'device.calendar.addEvent',event),callback);
+        calendar: {
+            addEvent: function (event, callback) {
+                buildfire._sendPacket(new Packet(null, 'device.calendar.addEvent', event), callback);
             }
         },
-        share: function(messageObj, callback){
-            buildfire._sendPacket(new Packet(null,'device.share',messageObj),callback);
+        share: function (messageObj, callback) {
+            buildfire._sendPacket(new Packet(null, 'device.share', messageObj), callback);
+        },
+        onPaused: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('deviceOnPaused', callback, allowMultipleHandlers);
+        },
+        onResumed: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('deviceOnResumed', callback, allowMultipleHandlers);
+        },
+        triggerOnPaused: function (user) {
+            return buildfire.eventManager.trigger('deviceOnPaused', user);
+        }
+        , triggerOnResumed: function (data) {
+            return buildfire.eventManager.trigger('deviceOnResumed', data);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
