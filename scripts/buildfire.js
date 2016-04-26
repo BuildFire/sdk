@@ -305,6 +305,8 @@ var buildfire = {
         , "services.bluetooth.ble.onConnect"
         , "services.bluetooth.ble.onDisconnect"
         , "services.bluetooth.ble._onSubscribeData"
+        , "device.triggerOnAppBackgrounded"
+        , "device.triggerOnAppResumed"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -1514,17 +1516,17 @@ var buildfire = {
         share: function (messageObj, callback) {
             buildfire._sendPacket(new Packet(null, 'device.share', messageObj), callback);
         },
-        onPaused: function (callback, allowMultipleHandlers) {
-            return buildfire.eventManager.add('deviceOnPaused', callback, allowMultipleHandlers);
+        onAppBackgrounded: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('deviceAppBackgrounded', callback, allowMultipleHandlers);
         },
-        onResumed: function (callback, allowMultipleHandlers) {
-            return buildfire.eventManager.add('deviceOnResumed', callback, allowMultipleHandlers);
+        onAppResumed: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('deviceAppResumed', callback, allowMultipleHandlers);
         },
-        triggerOnPaused: function (data) {
-            return buildfire.eventManager.trigger('deviceOnPaused', data);
-        }
-        , triggerOnResumed: function (data) {
-            return buildfire.eventManager.trigger('deviceOnResumed', data);
+        triggerOnAppBackgrounded: function (data) {
+            return buildfire.eventManager.trigger('deviceAppBackgrounded', data);
+        },
+        triggerOnAppResumed: function (data) {
+            return buildfire.eventManager.trigger('deviceAppResumed', data);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
