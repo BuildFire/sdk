@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?t2p80m');
-    src:    url('fonts/icomoon.eot?t2p80m#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.woff2?t2p80m') format('woff2'),
-        url('fonts/icomoon.ttf?t2p80m') format('truetype'),
-        url('fonts/icomoon.woff?t2p80m') format('woff'),
-        url('fonts/icomoon.svg?t2p80m#icomoon') format('svg');
+    src:url('../fonticons/icomoon.eot?a8x8t2');
+    src:url('../fonticons/icomoon.eot?a8x8t2#iefix') format('embedded-opentype'),
+        url('../fonticons/icomoon.woff2?a8x8t2') format('woff2'),
+        url('../fonticons/icomoon.ttf?a8x8t2') format('truetype'),
+        url('../fonticons/icomoon.woff?a8x8t2') format('woff'),
+        url('../fonticons/icomoon.svg?a8x8t2#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -109,9 +109,6 @@
 .icon-pie-chart:before {
     content: "\e608";
 }
-.icon-graph:before {
-    content: "\e908";
-}
 .icon-puzzle:before {
     content: "\e609";
 }
@@ -175,4 +172,3 @@
 .icon-ellipsis:before {
     content: "\e620";
 }
-
