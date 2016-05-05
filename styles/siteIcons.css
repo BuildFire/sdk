@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'icomoon';
-    src: url('../fonticons/icomoon.eot?t2p80m');
-    src: url('../fonticons/icomoon.eot?t2p80m#iefix') format('embedded-opentype'),
-        url('../fonticons/icomoon.woff2?t2p80m') format('woff2'),
-        url('../fonticons/icomoon.ttf?t2p80m') format('truetype'),
-        url('../fonticons/icomoon.woff?t2p80m') format('woff'),
-        url('../fonticons/icomoon.svg?t2p80m#icomoon') format('svg');
+    src:    url('../fonticons/icomoon.eot?jknga3');
+    src:    url('../fonticons/icomoon.eot?jknga3#iefix') format('embedded-opentype'),
+        url('../fonticons/icomoon.woff2?jknga3') format('woff2'),
+        url('../fonticons/icomoon.ttf?jknga3') format('truetype'),
+        url('../fonticons/icomoon.woff?jknga3') format('woff'),
+        url('../fonticons/icomoon.svg?jknga3#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -30,6 +30,9 @@
 }
 .icon-pencil3:before {
     content: "\e618";
+}
+.icon-pencil5:before {
+    content: "\e90b";
 }
 .icon-brush2:before {
     content: "\e601";
@@ -66,6 +69,9 @@
 }
 .icon-camera2:before {
     content: "\e903";
+}
+.icon-bookmark2:before {
+    content: "\e90a";
 }
 .icon-profile:before {
     content: "\e605";
@@ -175,3 +181,4 @@
 .icon-ellipsis:before {
     content: "\e620";
 }
+
