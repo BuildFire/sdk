@@ -8474,12 +8474,19 @@ html[buildfire] .modal-backdrop.in{
 	width:160px;
 	z-index:101;
 }
-.simple-popup .content span.icon{
-	font-weight:800;
-	font-size:28px;
-	padding:11px;
+.simple-popup .content span.main-icon{
+	font-weight:100;
+	font-size:26px;
+	padding:13px;
 	border-radius:100%;
-	border:2px solid #fff;
+	border:5px solid #fff;
 	display:inline-block;
 	margin-top:10px;
+}
+.simple-popup .content span.main-icon:after{
+	content: "\e013";
+	
+	/* Switch Icons by using content and font-family
+	font-family:'ico-moon'; 
+	content: "\e602"; */
 }
