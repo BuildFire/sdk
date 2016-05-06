@@ -8461,3 +8461,25 @@ html[buildfire] .modal-backdrop {
 html[buildfire] .modal-backdrop.in{
   opacity:0.9;
 }
+
+/* Confirmation Popups */
+.simple-popup .content{
+	padding:20px;
+	background:rgba(0,0,0,0.8);
+	position:fixed;
+	top:50%;
+	transform:translateY(-50%);
+	left:50%;
+	margin-left:-80px;
+	width:160px;
+	z-index:101;
+}
+.simple-popup .content span.main-icon{
+	font-weight:100;
+	font-size:26px;
+	padding:13px;
+	border-radius:100%;
+	border:5px solid #fff;
+	display:inline-block;
+	margin-top:10px;
+}

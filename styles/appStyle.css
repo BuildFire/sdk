@@ -556,6 +556,7 @@ html[buildfire] body.no-scroll{
 }
 html[buildfire] body.no-scroll .scrollable{
 	overflow-y:auto !important;
+	overflow-x:hidden !important;
 	-webkit-overflow-scrolling:touch !important;
 	height:100% !important;
 	width:100% !important;
