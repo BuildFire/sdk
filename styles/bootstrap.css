@@ -8483,10 +8483,3 @@ html[buildfire] .modal-backdrop.in{
 	display:inline-block;
 	margin-top:10px;
 }
-.simple-popup .content span.main-icon:after{
-	content: "\e013";
-	
-	/* Switch Icons by using content and font-family
-	font-family:'ico-moon'; 
-	content: "\e602"; */
-}
