@@ -4153,6 +4153,16 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
     margin-bottom: 0;
   }
 }
+
+/* Fix for plugin tabs */
+html[buildfire='control'] .nav-tabs.nav-justified > li {
+    display: table-cell;
+    width: 1%;
+  }
+html[buildfire='control'] .nav-tabs.nav-justified > li > a {
+    margin-bottom: 0;
+}
+
 .nav-tabs.nav-justified > li > a {
   margin-right: 0;
 }
@@ -8460,6 +8470,20 @@ html[buildfire] .modal-backdrop {
 
 html[buildfire] .modal-backdrop.in{
   opacity:0.9;
+}
+
+/* Vertically center widget modals */
+html[buildfire='widget'] .modal{
+	height:100%;
+	background:rgba(0,0,0,0.8);
+}
+html[buildfire='widget'] .modal .modal-dialog{
+	position:relative;
+	top:50%;
+	transform:translateY(-50%) !important;
+	margin:0 15px !important;
+	max-height:90%;
+	overflow-y:auto;
 }
 
 /* Confirmation Popups */
