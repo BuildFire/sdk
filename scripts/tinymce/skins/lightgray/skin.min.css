@@ -240,7 +240,44 @@
 	background:#2d8ac7 !important;
 	color:#fff !important;
 }
-
+.mce-colorbutton .mce-preview{
+	margin-left:-20px;
+}
+.mce-colorbutton .mce-ico:before{
+	top:-1px;
+}
+.mce-colorbutton .mce-open,
+.mce-colorbutton:hover .mce-open{
+	border:none;
+}
+.mce-colorbutton .mce-custom-color-btn .mce-btn-flat:hover{
+	border:1px solid #ddd;
+}
+.mce-floatpanel .mce-custom-color-btn .mce-btn-flat{
+	margin:2px 0;
+}
+.mce-floatpanel .mce-custom-color-btn .mce-btn-flat button{
+	font-size:12px;
+	padding-top:2px !important;
+	padding-bottom:2px !important;
+}
+.mce-floatpanel.mce-popover{
+	border:1px solid #ddd;
+	border-radius:4px;
+}
+.mce-floatpanel .mce-arrow, 
+.mce-floatpanel .mce-arrow::after{
+	display:none;
+}
+.mce-floatpanel.mce-popover.mce-bottom.mce-start{
+	margin-left:-28px;
+}
+.mce-floatpanel.mce-popover.mce-bottom{
+	margin-top:4px;
+}
+.mce-grid td.mce-grid-cell div{
+	border-radius:3px;
+}
 
 
 

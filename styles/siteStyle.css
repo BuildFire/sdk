@@ -31,6 +31,7 @@ body{
     overflow:auto;
 	min-width:1024px;
 	max-width:1400px;
+	top:0 !important;
 }
 img,
 iframe, 
@@ -392,6 +393,9 @@ html[buildfire] .item .header .pull-right .btn{
 #main-content #dynamicContentContainer{
 	padding:0;
 }
+#pluginControlHeader{
+	margin:-20px 0 -18px;
+}
 .btn.dropdown-toggle{
 	width:100%;
 }
@@ -574,6 +578,26 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 .draggable-list-view.no-media .d-item .copy span.btn-icon{
 	top:2px;
 }
+.tabs .draggable-list-view.no-media{
+	border:none;
+	border-radius:0;
+}
+.tabs .draggable-list-view.no-media .d-item{
+	padding:12px 14px 15px;
+	border:none;
+	border-bottom:1px solid #ddd;
+	transition:0.3s all ease-in-out;
+}
+.tabs .draggable-list-view.no-media .d-item.active,
+.tabs .draggable-list-view.no-media .d-item:hover{
+	background:#eef0f0;
+	cursor:pointer;
+}
+.tabs .draggable-list-view.no-media .d-item .copy{
+	top:0;
+	width:100%;
+	max-width:100%;
+}
 .add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,
@@ -590,6 +614,11 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	width:81px;
 	height:81px;
 	line-height:76px;
+}
+#divAddPlugin .add-plugin .item .media.media-holder{
+	width:61px;
+	height:61px;
+	line-height:57px;
 }
 .add-plugin .item .media.media-holder img,
 .update-plugin .item .media.media-holder img,
@@ -641,6 +670,9 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	color:#5f5f5f;
 	margin-top:19px;
 }
+#divAddPlugin .add-plugin .item .main h4{
+	margin-top:0;
+}
 .add-plugin .item .main .col-md-3.pull-right{
 	position:relative;
 	top:8px;
@@ -657,6 +689,80 @@ table.table span.sort-icon{
 .well.no-plugins{
 	padding-top:60px;
 	padding-bottom:60px;
+}
+
+/* Plugin Info Card */
+#divAddPlugin .add-plugin .items-holder{
+	margin-top:-15px;
+}
+.add-plugin .item-holder{
+	position:relative;
+}
+.add-plugin .item-holder .card{
+	position:absolute;
+	background:#fff;
+	top:0%;
+	left:589px;
+	width:544px;
+	padding:8px 13px;
+	z-index:4;
+	display:none;
+	transition:0.3s all ease-in-out;
+}
+.add-plugin .item-holder:hover > .card{
+	display:block;
+	border:1px solid #09a3ee;
+}
+.add-plugin .item-holder:hover > .item{
+	background:#fff !important;
+}
+.add-plugin .item-holder .item{
+	transition:0.3s all ease-in-out;
+}
+.add-plugin .item-holder:hover > .item{
+	border:1px solid #09a3ee;
+}
+.add-plugin .item-holder:nth-child(even) .card{
+	left:inherit;
+	right:589px;
+}
+.add-plugin .item-holder:nth-child(5) .card,
+.add-plugin .item-holder:nth-child(6) .card{
+	top:50%;
+	transform:translateY(-50%);
+}
+.add-plugin .item-holder:nth-child(7) .card,
+.add-plugin .item-holder:nth-child(8) .card,
+.add-plugin .item-holder:nth-child(9) .card,
+.add-plugin .item-holder:nth-child(10) .card{
+	top:inherit;
+	bottom:0;
+}
+.add-plugin .item-holder .card .media img{
+	max-width:100%;
+}
+#divAddPlugin .add-plugin .item-holder:nth-child(even){
+	padding-left:7.5px !important;
+}
+#divAddPlugin .add-plugin .item-holder:nth-child(odd){
+	padding-right:7.5px !important;
+}
+#divAddPlugin .add-plugin .item-holder .card{
+	left:454px;
+	width:425px;
+}
+#divAddPlugin .add-plugin .item-holder:nth-child(2n) .card{
+	left:inherit;
+	right:454px;
+}
+
+/* Hide Card for Now */
+.add-plugin .item-holder:hover > .item{
+	border:1px solid #ddd !important;
+	background:#eef0f0 !important;
+}
+.add-plugin .item-holder .card{
+	display:none !important;
 }
 
 
@@ -1474,6 +1580,12 @@ html.translated-ltr body{
 	top:0 !important;
 }
 
+.table div.fixed-height {
+	max-height: 190px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	width: 100%;
+}
 
 /* Phase 2 */
 
