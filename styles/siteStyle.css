@@ -574,6 +574,26 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 .draggable-list-view.no-media .d-item .copy span.btn-icon{
 	top:2px;
 }
+.tabs .draggable-list-view.no-media{
+	border:none;
+	border-radius:0;
+}
+.tabs .draggable-list-view.no-media .d-item{
+	padding:12px 14px 15px;
+	border:none;
+	border-bottom:1px solid #ddd;
+	transition:0.3s all ease-in-out;
+}
+.tabs .draggable-list-view.no-media .d-item.active,
+.tabs .draggable-list-view.no-media .d-item:hover{
+	background:#eef0f0;
+	cursor:pointer;
+}
+.tabs .draggable-list-view.no-media .d-item .copy{
+	top:0;
+	width:100%;
+	max-width:100%;
+}
 .add-plugin .item .media.media-holder,
 .update-plugin .item .media.media-holder,
 .plugin-workspace .item .media.media-holder,
