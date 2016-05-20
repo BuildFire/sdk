@@ -1,0 +1,22 @@
+{
+  "author":"BuildFire"
+,"pluginName":"Offline Images Example"
+,"pluginDescription":"Offline Images Example"
+,"supportEmail":"[Your support Email]"
+,"control":{
+  "content":{
+    "enabled":true
+  }
+, "design":{
+    "enabled":false
+  }
+, "settings":{
+    "enabled":false
+  }
+}
+,"widget":{
+
+},
+  "features" : [],
+  "languages" : ["en"]
+}
