@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+	<!-- Load helper.css to use our helper classes.
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	-->
+	
+	<!-- JS -->
+	<script src="../../../scripts/buildfire.js"></script>
+	<!--IMPORTANT, NEED TO ADD THIS TO CROP IMAGES OFFLINE-->
+	<script src="../../../scripts/smartcrop.js"></script>
+ 	<!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    -->
+</head>
+<img>
+	<img id="myImage"/>
+    <img id="localImage"/>
+    <script>
+		function loadData() {
+			buildfire.datastore.get(function(err, result) {
+				debugger;
+				document.getElementById('myImage').src = buildfire.imageLib.cropImage(result.data.image,{width:"full", height:300} ) ;
+				 buildfire.imageLib.local.cropImage(result.data.image,{width:"full", height:300}, function(err, result) {
+					 document.getElementById('localImage').src = result;
+				 });
+			});
+
+		}
+
+		loadData();
+
+		buildfire.datastore.onUpdate(function(newObj) {
+			document.getElementById('myImage').src = newObj.data.image;
+		});
+	</script>
+</body>
+</html>
