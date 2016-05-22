@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+	<!-- Load helper.css to use our helper classes.
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	-->
+	
+	<!-- JS -->
+	<script src="../../../../scripts/buildfire.js"></script>
+   
+ 	<!--
+    <script src="../../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+    -->
+</head>
+<body>
+    Please select an image: <input id="image" readonly />
+    <button onclick="selectImage()">Browse</button>
+
+    <script>
+        function selectImage() {
+            buildfire.imageLib.showDialog({showIcons: false, multiSelect: false}, function(err, result) {
+                if(result && result.selectedFiles.length) {
+                    saveData(result.selectedFiles[0]);
+                    document.getElementById('image').value = result.selectedFiles[0];
+                }
+            })
+        }
+        function loadData() {
+            buildfire.datastore.get(function(err, result) {
+                document.getElementById('image').value = result.data.image;
+            });
+
+        }
+
+        loadData();
+
+        function saveData(value) {
+            buildfire.datastore.save({"image": value}, function(err, result) {
+               if (err) {
+                   alert(err);
+               }
+            });
+        }
+    </script>
+</body>
+</html>
