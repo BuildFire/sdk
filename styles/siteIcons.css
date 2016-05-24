@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('../fonticons/icomoon.eot?jknga3');
-    src:    url('../fonticons/icomoon.eot?jknga3#iefix') format('embedded-opentype'),
-        url('../fonticons/icomoon.woff2?jknga3') format('woff2'),
-        url('../fonticons/icomoon.ttf?jknga3') format('truetype'),
-        url('../fonticons/icomoon.woff?jknga3') format('woff'),
-        url('../fonticons/icomoon.svg?jknga3#icomoon') format('svg');
+    src: url('../fonticons/icomoon.eot?dicabr');
+    src: url('../fonticons/icomoon.eot?dicabr#iefix') format('embedded-opentype'),
+        url('../fonticons/icomoon.woff2?dicabr') format('woff2'),
+        url('../fonticons/icomoon.ttf?dicabr') format('truetype'),
+        url('../fonticons/icomoon.woff?dicabr') format('woff'),
+        url('../fonticons/icomoon.svg?dicabr#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -51,6 +51,12 @@
 }
 .icon-heart:before {
     content: "\e902";
+}
+.icon-star:before {
+    content: "\e90c";
+}
+.icon-star-empty:before {
+    content: "\e90d";
 }
 .icon-files:before {
     content: "\e604";
