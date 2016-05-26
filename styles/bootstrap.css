@@ -2349,6 +2349,14 @@ th {
 .table .table {
   background-color: #ffffff;
 }
+.table td .media{
+	max-width:28px;
+	max-height:28px;
+	background:#efefef;
+	margin-top:-6px;
+	position:relative;
+	top:2px;
+}
 .table-condensed > thead > tr > th,
 .table-condensed > tbody > tr > th,
 .table-condensed > tfoot > tr > th,

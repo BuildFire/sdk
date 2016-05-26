@@ -1082,6 +1082,7 @@ html[ios="true"][view="app"] #pluginNav h5{
 html[ios="true"][view="app"] #menuToggle{
 	top:23px !important;
 }
+html[ios="true"][view="app"] iframe.pluginFrame,
 html[ios="true"][view="app"] iframe#pluginFrame{
 	padding-top:61px !important;
 }
@@ -1103,6 +1104,7 @@ section .pluginPage #pluginContentPanel,
 #iframeControl body,
 #controlIFrame,
 #controlIFrame body,
+.pluginFrame,
 #pluginFrame,
 #launcherPlugin,
 html[buildfire]{
