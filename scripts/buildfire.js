@@ -1457,13 +1457,19 @@ var buildfire = {
         getData: function (callback) {
             var qs = buildfire.parseQueryString();
             callback(qs.dld); /// dld: Deep Link Data
-        }
-        , createLink: function (obj) {
-            var root = "app" + buildfire._context.appId + "://plugin";
-            if (!obj)
-                return root;
-            else
-                return root + "?dld=" + JSON.stringify(obj);
+        },
+        template: {
+            get: function (callback) {
+                var p = new Packet(null, 'deepLink.getTemplate', {});
+                buildfire._sendPacket(p, callback);
+            }
+        },
+        setData: function (obj, options, callback) {
+            var p = new Packet(null, 'deepLink.setData', {data : obj, options: options});
+            buildfire._sendPacket(p, callback);
+
+            /*var p = new Packet(null, 'deepLink.addValues', {values : [{key:'rami',value:'test'},{key:'rami8',value:'test9'}] , options : {}});
+             buildfire._sendPacket(p, function(err,data){});*/
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
