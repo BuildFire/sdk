@@ -896,7 +896,7 @@ var buildfire = {
     ,userData: {
         /// ref:
         get: function (tag, callback) {
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -911,13 +911,13 @@ var buildfire = {
         },
         /// ref:
          getById: function (id, tag, callback) {
-            
+
             var idType = typeof (id);
             if (idType == "function" && typeof (callback) == "undefined") {
                 callback = id;
                 id = '';
             }
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -932,7 +932,7 @@ var buildfire = {
         }
         /// ref:
         , save: function (obj, tag,userToken, callback) {
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -947,16 +947,16 @@ var buildfire = {
                 callback = userToken;
                 userToken = '';
             }
-            
+
             var p = new Packet(null, 'userData.save', { tag: tag,userToken: userToken, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-                
+
                 if (callback) callback(err, result);
             });
         }
         /// ref: 
         , insert: function (obj, tag, userToken, checkDuplicate, callback) {
-            
+
             var userTokenType = typeof (userToken);
             if (userTokenType == "undefined")
                 userToken = '';
@@ -986,18 +986,18 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
             buildfire._sendPacket(p, function (err, result) {
-               
+
                 callback(err, result);
             });
         }
         /// ref: 
         , bulkInsert: function (arrayObj, tag, userToken, callback) {
-            
+
             if (arrayObj.constructor !== Array) {
-                
+
                 callback({ "code": "error", "message": "the data should be an array" }, null);
                 return;
             }
@@ -1015,10 +1015,10 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.bulkInsert', { tag: tag, userToken: userToken, obj: arrayObj });
             buildfire._sendPacket(p, function (err, result) {
-               
+
                 callback(err, result);
             });
         }
@@ -1039,16 +1039,16 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.update', { tag: tag, userToken: userToken, id: id, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-             
+
                 if (callback) callback(err, result);
             });
         }
         /// ref 
         , delete: function (id, tag, userToken, callback) {
-            
+
             var userTokenType = typeof (userToken);
             if (userTokenType == "undefined")
                 userToken = '';
@@ -1063,16 +1063,16 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
             buildfire._sendPacket(p, function (err, result) {
-                
+
                 if (callback) callback(err, result);
             });
         }
         /// 
         , search: function (options, tag, callback) {
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -1080,11 +1080,11 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             //auto correct empty string filter
             if (typeof (options) == "undefined") options = { filter: {} };
             if (!options.filter) options.filter = {};
-            
+
             var p = new Packet(null, 'userData.search', { tag: tag, obj: options });
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
@@ -1130,7 +1130,7 @@ var buildfire = {
 			if(ratio < 1){
 				var ratio = 1;
 			}
-			
+
             if (!options)
                 options = {width: window.innerWidth};
             else if (typeof(options) != "object")
@@ -1292,7 +1292,7 @@ var buildfire = {
                     console.warn("smartcrop.js isnt imported");
 
 
-                    
+
                 if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0) {
                     url = url.replace(/^https:\/\//i, 'http://');
 
@@ -1313,7 +1313,7 @@ var buildfire = {
                             canvas.height = options.height;
 
                             SmartCrop.crop(img, options, function(result){
-                                
+
                                 var sug = result.topCrop;
                                 ctx.drawImage(img, sug.x, sug.y, sug.width, sug.height,0,0,options.width, options.height);
 
@@ -1456,7 +1456,10 @@ var buildfire = {
     , deeplink: {
         getData: function (callback) {
             var qs = buildfire.parseQueryString();
-            callback(qs.dld); /// dld: Deep Link Data
+            if(qs.dld)
+                callback(JSON.parse(qs.dld)); /// dld: Deep Link Data
+            else
+                callback(null);
         },
         template: {
             get: function (callback) {
