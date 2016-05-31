@@ -1470,9 +1470,6 @@ var buildfire = {
         setData: function (obj, options, callback) {
             var p = new Packet(null, 'deepLink.setData', {data : obj, options: options});
             buildfire._sendPacket(p, callback);
-
-            /*var p = new Packet(null, 'deepLink.addValues', {values : [{key:'rami',value:'test'},{key:'rami8',value:'test9'}] , options : {}});
-             buildfire._sendPacket(p, function(err,data){});*/
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
