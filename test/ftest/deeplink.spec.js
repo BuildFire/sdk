@@ -10,9 +10,4 @@ describe('buildfire.deeplink', function () {
         });
     });
 
-    describe('deeplink createLink', function () {
-        it("deeplink createLink should exist and be a function", function () {
-            expect(buildfire.deeplink.createLink).to.a("function");
-        });
-    });
 });
