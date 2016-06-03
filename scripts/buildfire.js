@@ -351,7 +351,7 @@ var buildfire = {
         // Commented the code to prevent the multiple insert hits
 
         var timeout = setTimeout(function () {
-            console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
+            
             if(buildfire._resendAttempts < 15) {
                 var rerun ;
 
