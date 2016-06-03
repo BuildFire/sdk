@@ -12,69 +12,68 @@
 
 </head>
 <body ng-controller="pluginCtrl">
-    <h1>App users complains</h1>
-    <button ng-click="laodName()">Refresh</button>
-    <br />
-    <table>
-        <thead>
-            <tr>
-                <td width="20%">Name</td>
-                <td width="20%">Email</td>
-                <td width="20%">Phone</td>
-                <td width="30%">complain</td>
-                <td>response</td>
-                <td></td>
-               
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="complain in complains">
-                <td>{{complain.data.name}}</td> 
-                <td>{{complain.data.email}}</td>
-                <td>{{complain.data.phone}}</td>
-                <td>{{complain.data.complain}}</td>
-                <td><textarea ng-model="complain.data.response"></textarea></td>
-                <td><button   ng-click="save(complain)">Response</button><br />
-                <button ng-click="delete(complain)">Close</button></td>
-            </tr>
-        </tbody>
-    </table>
+<h1>App users complains</h1>
+<button ng-click="laodName()">Refresh</button>
+<br />
+<table>
+    <thead>
+    <tr>
+        <td>Title</td>
+        <td>Text</td>
+        <td>Repeat Every</td>
+        <td>First Run</td>
+        <td>Badge</td>
 
-    <script>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="complain in complains">
+        <td>{{complain.data.name}}</td>
+        <td>{{complain.data.email}}</td>
+        <td>{{complain.data.phone}}</td>
+        <td>{{complain.data.complain}}</td>
+        <td><textarea ng-model="complain.data.response"></textarea></td>
+        <td><button   ng-click="save(complain)">Response</button><br />
+            <button ng-click="delete(complain)">Close</button></td>
+    </tr>
+    </tbody>
+</table>
 
-        var textPluginApp = angular.module('plugin', []);
+<script>
 
-        textPluginApp.controller('pluginCtrl', ['$scope', '$http', function ($scope, $http) {
-            $scope.save = function (complain) {
-                buildfire.userData.save(complain.data, 'Complains', complain.userToken, function (e) {
-                    if (e) console.error(JSON.stringify(e));
-                    else
-                        $scope.laodName();
-                });
-            }
-            $scope.delete = function (complain) {
-                buildfire.userData.delete(complain.id, 'Complains', complain.userToken, function (e) {
-                    if (e) console.error(JSON.stringify(e));
-                    else
-                        $scope.laodName();
-                });
-            }
-            buildfire.userData.onUpdate(function (e) {
-                $scope.laodName();
+    var textPluginApp = angular.module('plugin', []);
+
+    textPluginApp.controller('pluginCtrl', ['$scope', '$http', function ($scope, $http) {
+        $scope.save = function (complain) {
+            buildfire.userData.save(complain.data, 'Complains', complain.userToken, function (e) {
+                if (e) console.error(JSON.stringify(e));
+                else
+                    $scope.laodName();
             });
-            $scope.laodName = function () {
-                buildfire.userData.search({}, 'Complains', function (err, results) {
-                    if (err) console.error(JSON.stringify(err));
-                    else {
-                        $scope.complains = results;
-                        $scope.$apply();
-                    }
-                });
-            }
+        }
+        $scope.delete = function (complain) {
+            buildfire.userData.delete(complain.id, 'Complains', complain.userToken, function (e) {
+                if (e) console.error(JSON.stringify(e));
+                else
+                    $scope.laodName();
+            });
+        }
+        buildfire.userData.onUpdate(function (e) {
             $scope.laodName();
-        }]);
+        });
+        $scope.laodName = function () {
+            buildfire.userData.search({}, 'Complains', function (err, results) {
+                if (err) console.error(JSON.stringify(err));
+                else {
+                    $scope.complains = results;
+                    $scope.$apply();
+                }
+            });
+        }
+        $scope.laodName();
+    }]);
 
 
-    </script>
+</script>
 </body>
 </html>

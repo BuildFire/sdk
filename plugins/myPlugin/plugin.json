@@ -1,7 +1,7 @@
 {
-  "author":"Daniel Hindi"
-,"pluginName":"Hello World"
-,"pluginDescription":"Light weight doent use even datastore"
+  "author":"Attila Buturla"
+,"pluginName":"Local notification DEBUG"
+,"pluginDescription":"This tests local notifications"
 ,"supportEmail":"[Your support Email]"
 ,"control":{
   "content":{
@@ -17,6 +17,6 @@
 ,"widget":{
 
 },
-  "features" : [],
+  "features" : [{"name": "localNotification"}],
   "languages" : ["en"]
 }

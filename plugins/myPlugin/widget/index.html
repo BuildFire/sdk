@@ -9,6 +9,7 @@
 	
 	<!-- JS -->
 	<script src="../../../scripts/buildfire.js"></script>
+	<script src="../../../scripts/buildfire/services/notifications/localNotifications.js"></script>
    
  	<!--
     <script src="../../../../scripts/angular/angular.min.js"></script>
@@ -18,6 +19,55 @@
     -->
 </head>
 <body>
-	<span>Widget - Hello, world!</span>
+	<br>
+	<div>Local Notification Test Widget</div>
+	<span id="status"></span>
+	<span id="result"></span>
+	<span id="counter"></span>
+	<button onclick="schedule()">Schedule</button>
 </body>
+<script type="text/javascript">
+	document.getElementById("status").innerHTML = "device not ready";
+
+	//document.addEventListener("deviceready", function() {
+	//setTimeout(function () {
+	/*
+	function schedule() {
+
+		document.getElementById("status").innerHTML = "device ready";
+
+		var counter = 0;
+
+		//This is just to show the passage of time
+		setInterval(function () {
+			document.getElementById("counter").innerHTML = counter.toString();
+			counter++;
+		}, 1000);
+
+
+		var sendTime = new Date();
+		sendTime.setSeconds(sendTime.getSeconds() + 10);
+
+		var options = {
+			id: 1,
+			title: "Hurry!",
+			text: "Time is running out for our exclusive offer!",
+			firstAt: sendTime
+		};
+
+		buildfire.notifications.localNotification.schedule(options, function (err, data) {
+			document.getElementById("status").innerHTML = "schedule done";
+			var result = (err) ? err : data;
+			console.log('result: ', result);
+			result = JSON.stringify(result);
+			document.getElementById("result").innerHTML = result;
+		});
+
+		document.getElementById("status").innerHTML = "send called";
+	}
+	*/
+	//}, 2000);
+	//});
+
+</script>
 </html>

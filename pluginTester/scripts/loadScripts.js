@@ -1,5 +1,11 @@
 function _ScriptLoader(){
     this.domain="http://app.buildfire.com/";
+    
+    
+    alert('Using local domain');
+
+    this.domain= "http://localhost:3000/";
+    
     this.scripts = [
         , this.domain + "app/scripts/framework/postMaster.js"
         , this.domain + "scripts/framework/pluginAPI/imageLibAPI.js"
@@ -24,6 +30,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/authAPI.js"
         , this.domain + "scripts/framework/openDialogCtrl.js"
         , this.domain + "pages/controllers/addPageDialogCtrl.js"
+        , this.domain + "app/scripts/framework/pluginAPI/localNotificationsAPI.js"
     ];
 }
 
