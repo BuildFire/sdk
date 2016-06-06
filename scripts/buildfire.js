@@ -307,6 +307,7 @@ var buildfire = {
         , "services.bluetooth.ble._onSubscribeData"
         , "device.triggerOnAppBackgrounded"
         , "device.triggerOnAppResumed"
+        ,"geo.onPositionChange"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -1541,7 +1542,12 @@ var buildfire = {
             buildfire._sendPacket(new Packet(null,"geo.getCurrentPosition",options),callback);
         }
         ,watchPosition:function(options, callback){
-            buildfire._sendPacket(new Packet(null,"geo.watchPosition",options),callback);
+            buildfire._sendPacket(new Packet(null,"geo.watchPosition",options));
+            this.onPositionChange = callback;
+        }
+        /// override this event handler for when you are watching for GPS Position Changes
+        ,onPositionChange: function(err,position){
+
         }
         ,clearWatch:function(watchId, callback){
             buildfire._sendPacket(new Packet(null,"geo.clearWatch",watchId),callback);
