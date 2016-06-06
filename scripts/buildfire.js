@@ -1471,6 +1471,15 @@ var buildfire = {
             var p = new Packet(null, 'deepLink.setData', {data : obj, options: options});
             buildfire._sendPacket(p, callback);
         }
+        ,
+        createLink: function (obj) {
+            console.log('this method is obsolete you have to call deeplink.template.get instead and it will return back the full deep link');
+            var root = "app" + buildfire._context.appId + "://plugin";
+            if (!obj)
+                return root;
+            else
+                return root + "?dld=" + JSON.stringify(obj);
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
