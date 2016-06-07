@@ -525,8 +525,6 @@ buildfire.components.carousel.view.prototype = {
             });
 
         } else {
-            // Add src since it will be static
-            // image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
             buildfire.imageLib.local.cropImage(item.iconUrl, {
                 width: this.width,
                 height: this.height
@@ -540,13 +538,6 @@ buildfire.components.carousel.view.prototype = {
                 else
                     console.log('Error occurred while cropping image: ', err);
             });
-
         }
-
-        //image.style.width = this.'cssWidth';
-        //image.style.height = this.cssHeight;
-        /*  image.style.transform = "translateZ(0)";
-         slider.appendChild(image);
-         this.selector.appendChild(slider);*/
     }
 };
