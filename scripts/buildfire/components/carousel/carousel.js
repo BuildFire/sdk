@@ -503,23 +503,50 @@ buildfire.components.carousel.view.prototype = {
             });
         });
 
-		// Images
-		var me = this;
-        var image = document.createElement("img");       
+        // Images
+        var me = this;
+        var image = document.createElement("img");
         me.$slider = $(me.selector);
         if (me.items.length > 1) {
-	        // Add data-src attr for lazyLoad
-			image.setAttribute('data-src', buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height }));
-			image.className = "owl-lazy";
-		}else{
-			// Add src since it will be static
-	 		image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
-		}
+            // Add data-src attr for lazyLoad
+            buildfire.imageLib.local.cropImage(item.iconUrl, {
+                width: this.width,
+                height: this.height
+            }, function (err, result) {
+                if (!err) {
+                    image.setAttribute('data-src', result);
+                    image.className = "owl-lazy";
+                    image.style.transform = "translateZ(0)";
+                    slider.appendChild(image);
+                    me.selector.appendChild(slider);
+                }
+                else
+                    console.log('Error occurred while cropping image: ', err);
+            });
 
-		//image.style.width = this.'cssWidth';
+        } else {
+            // Add src since it will be static
+            // image.src = buildfire.components.carousel._cropImage(item.iconUrl, { width: this.width, height: this.height });
+            buildfire.imageLib.local.cropImage(item.iconUrl, {
+                width: this.width,
+                height: this.height
+            }, function (err, result) {
+                if (!err) {
+                    image.src = result;
+                    image.style.transform = "translateZ(0)";
+                    slider.appendChild(image);
+                    me.selector.appendChild(slider);
+                }
+                else
+                    console.log('Error occurred while cropping image: ', err);
+            });
+
+        }
+
+        //image.style.width = this.'cssWidth';
         //image.style.height = this.cssHeight;
-        image.style.transform = "translateZ(0)";
-        slider.appendChild(image);
-        this.selector.appendChild(slider);
+        /*  image.style.transform = "translateZ(0)";
+         slider.appendChild(image);
+         this.selector.appendChild(slider);*/
     }
 };
