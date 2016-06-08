@@ -307,6 +307,7 @@ var buildfire = {
         , "services.bluetooth.ble._onSubscribeData"
         , "device.triggerOnAppBackgrounded"
         , "device.triggerOnAppResumed"
+        ,"geo.onPositionChange"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -351,7 +352,7 @@ var buildfire = {
         // Commented the code to prevent the multiple insert hits
 
         var timeout = setTimeout(function () {
-            console.warn('plugin never received a callback ' + packet.cmd, packet, window.location.href);
+            
             if(buildfire._resendAttempts < 15) {
                 var rerun ;
 
@@ -896,7 +897,7 @@ var buildfire = {
     ,userData: {
         /// ref:
         get: function (tag, callback) {
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -911,13 +912,13 @@ var buildfire = {
         },
         /// ref:
          getById: function (id, tag, callback) {
-            
+
             var idType = typeof (id);
             if (idType == "function" && typeof (callback) == "undefined") {
                 callback = id;
                 id = '';
             }
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -932,7 +933,7 @@ var buildfire = {
         }
         /// ref:
         , save: function (obj, tag,userToken, callback) {
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -947,16 +948,16 @@ var buildfire = {
                 callback = userToken;
                 userToken = '';
             }
-            
+
             var p = new Packet(null, 'userData.save', { tag: tag,userToken: userToken, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-                
+
                 if (callback) callback(err, result);
             });
         }
         /// ref: 
         , insert: function (obj, tag, userToken, checkDuplicate, callback) {
-            
+
             var userTokenType = typeof (userToken);
             if (userTokenType == "undefined")
                 userToken = '';
@@ -986,18 +987,18 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
             buildfire._sendPacket(p, function (err, result) {
-               
+
                 callback(err, result);
             });
         }
         /// ref: 
         , bulkInsert: function (arrayObj, tag, userToken, callback) {
-            
+
             if (arrayObj.constructor !== Array) {
-                
+
                 callback({ "code": "error", "message": "the data should be an array" }, null);
                 return;
             }
@@ -1015,10 +1016,10 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.bulkInsert', { tag: tag, userToken: userToken, obj: arrayObj });
             buildfire._sendPacket(p, function (err, result) {
-               
+
                 callback(err, result);
             });
         }
@@ -1039,16 +1040,16 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.update', { tag: tag, userToken: userToken, id: id, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-             
+
                 if (callback) callback(err, result);
             });
         }
         /// ref 
         , delete: function (id, tag, userToken, callback) {
-            
+
             var userTokenType = typeof (userToken);
             if (userTokenType == "undefined")
                 userToken = '';
@@ -1063,16 +1064,16 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
             buildfire._sendPacket(p, function (err, result) {
-                
+
                 if (callback) callback(err, result);
             });
         }
         /// 
         , search: function (options, tag, callback) {
-            
+
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -1080,11 +1081,11 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-            
+
             //auto correct empty string filter
             if (typeof (options) == "undefined") options = { filter: {} };
             if (!options.filter) options.filter = {};
-            
+
             var p = new Packet(null, 'userData.search', { tag: tag, obj: options });
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
@@ -1130,7 +1131,7 @@ var buildfire = {
 			if(ratio < 1){
 				var ratio = 1;
 			}
-			
+
             if (!options)
                 options = {width: window.innerWidth};
             else if (typeof(options) != "object")
@@ -1292,7 +1293,7 @@ var buildfire = {
                     console.warn("smartcrop.js isnt imported");
 
 
-                    
+
                 if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0) {
                     url = url.replace(/^https:\/\//i, 'http://');
 
@@ -1313,7 +1314,7 @@ var buildfire = {
                             canvas.height = options.height;
 
                             SmartCrop.crop(img, options, function(result){
-                                
+
                                 var sug = result.topCrop;
                                 ctx.drawImage(img, sug.x, sug.y, sug.width, sug.height,0,0,options.width, options.height);
 
@@ -1456,9 +1457,24 @@ var buildfire = {
     , deeplink: {
         getData: function (callback) {
             var qs = buildfire.parseQueryString();
-            callback(qs.dld); /// dld: Deep Link Data
+            if(qs.dld)
+                callback(JSON.parse(qs.dld)); /// dld: Deep Link Data
+            else
+                callback(null);
+        },
+        template: {
+            get: function (callback) {
+                var p = new Packet(null, 'deepLink.getTemplate', {});
+                buildfire._sendPacket(p, callback);
+            }
+        },
+        setData: function (obj, options, callback) {
+            var p = new Packet(null, 'deepLink.setData', {data : obj, options: options});
+            buildfire._sendPacket(p, callback);
         }
-        , createLink: function (obj) {
+        ,
+        createLink: function (obj) {
+            console.log('this method is obsolete you have to call deeplink.template.get instead and it will return back the full deep link');
             var root = "app" + buildfire._context.appId + "://plugin";
             if (!obj)
                 return root;
@@ -1535,7 +1551,12 @@ var buildfire = {
             buildfire._sendPacket(new Packet(null,"geo.getCurrentPosition",options),callback);
         }
         ,watchPosition:function(options, callback){
-            buildfire._sendPacket(new Packet(null,"geo.watchPosition",options),callback);
+            buildfire._sendPacket(new Packet(null,"geo.watchPosition",options));
+            this.onPositionChange = callback;
+        }
+        /// override this event handler for when you are watching for GPS Position Changes
+        ,onPositionChange: function(err,position){
+
         }
         ,clearWatch:function(watchId, callback){
             buildfire._sendPacket(new Packet(null,"geo.clearWatch",watchId),callback);
