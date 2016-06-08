@@ -4,8 +4,6 @@
 
 if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use BuildFire services");
 
-console.log('*** localNotifications.js 2 ***');
-
 buildfire.notifications.localNotification = {
     send: function (options, callback) {
         var packetId = null;
@@ -29,5 +27,9 @@ buildfire.notifications.localNotification = {
     , hasPermission: function (options, callback) {
     }
     , cancel: function (options, callback) {
+    }
+    , onClick: function(options, callback){
+        alert('Back');
+        debugger;
     }
 };

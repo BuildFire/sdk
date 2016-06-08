@@ -36,13 +36,17 @@
 <script type="text/javascript">
 	document.getElementById("status").innerHTML = "device not ready";
 
+	var intervalId = 0;
+
 	function run(){
 		document.getElementById("status").innerHTML = "device ready";
 
 		var counter = 0;
 
+		clearInterval(intervalId);
+
 		//This is just to show the passage of time
-		setInterval(function () {
+		timerId = setInterval(function () {
 			document.getElementById("counter").innerHTML = counter.toString();
 			counter++;
 		}, 1000);
@@ -53,11 +57,11 @@
 		sendTime.setSeconds(sendTime.getSeconds() + secondsToWait);
 
 		var options = {
-			id: 1,
 			title: "Hurry",
 			text: "Time is running out",
 			data: { secret: "foo" },
-			at: sendTime
+			at: sendTime,
+			returnToPluginInstanceId: ''
 		};
 
 		buildfire.notifications.localNotification.schedule(options, function (err, data) {

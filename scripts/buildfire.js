@@ -307,6 +307,7 @@ var buildfire = {
         , "services.bluetooth.ble._onSubscribeData"
         , "device.triggerOnAppBackgrounded"
         , "device.triggerOnAppResumed"
+        , "notifications.localNotification.onClick"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
