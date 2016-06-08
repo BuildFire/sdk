@@ -8481,11 +8481,11 @@ html[buildfire] .modal-backdrop.in{
 }
 
 /* Vertically center widget modals */
-html[buildfire='widget'] .modal{
+html[type='app'] .modal{
 	height:100%;
-	background:rgba(0,0,0,0.8);
+	/*background:rgba(0,0,0,0.8);*/
 }
-html[buildfire='widget'] .modal .modal-dialog{
+html[type='app'] .modal .modal-dialog{
 	position:relative;
 	top:50%;
 	transform:translateY(-50%) !important;
