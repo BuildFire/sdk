@@ -5,31 +5,28 @@
 if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use BuildFire services");
 
 buildfire.notifications.localNotification = {
-    send: function (options, callback) {
-        var packetId = null;
-        var command = 'localNotifications.send';
-        var data = {
-            id: options.id,
-            title: options.title,
-            text: options.text
-        };
-
-        var packet = new Packet(packetId, command, options);
-        buildfire._sendPacket(packet, callback);
-    }
-    , schedule: function (options, callback) {
+    schedule: function (options, callback) {
         var packetId = null;
         var command = 'localNotifications.schedule';
 
         var packet = new Packet(packetId, command, options);
         buildfire._sendPacket(packet, callback);
     }
-    , hasPermission: function (options, callback) {
+    , hasPermission: function (callback) {
+        var packetId = null;
+        var command = 'localNotifications.hasPermission';
+
+        var packet = new Packet(packetId, command, options);
+        buildfire._sendPacket(packet, callback);
     }
-    , cancel: function (options, callback) {
+    , cancel: function (id, callback) {
+        var packetId = null;
+        var command = 'localNotifications.cancel';
+
+        var packet = new Packet(packetId, command, id);
+        buildfire._sendPacket(packet, callback);
     }
-    , onClick: function(options, callback){
-        alert('Back');
-        debugger;
+    , onClick: function(options){
+        console.warn('Unhandled local notification on click event.');
     }
 };

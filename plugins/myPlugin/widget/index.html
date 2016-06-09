@@ -27,10 +27,12 @@
 </head>
 <body>
 	<br>
-	<div>Local Notification Test Widget: 14</div><br>
+	<div>Local Notification Test Widget: 16</div><br>
 	<span id="status"></span><br>
 	<span id="result"></span><br>
 	<span id="counter"></span><br>
+	<span>cancel notification <input type="checkbox" id="cancel"></span><br>
+	<br>
 	<button onclick="run()">Schedule</button>
 </body>
 <script type="text/javascript">
@@ -64,13 +66,32 @@
 			returnToPluginInstanceId: ''
 		};
 
+		var notificationId;
+
 		buildfire.notifications.localNotification.schedule(options, function (err, data) {
 			document.getElementById("status").innerHTML = "schedule done";
 			var result = (err) ? err : data;
+			notificationId = (result.id) ? result.id : null;
 			console.log('result: ', result);
 			result = JSON.stringify(result);
 			document.getElementById("result").innerHTML = result;
+
+			//Check for a cancel
+			setTimeout(function(){
+				//Decide to cancel
+				if(document.getElementById("cancel").checked){
+					buildfire.notifications.localNotification.cancel(notificationId, function(){
+						console.log("notification canceled");
+					});
+				}
+			},
+			2000);
+
 		});
+
+		buildfire.notifications.localNotification.onClick = function(data){
+			alert(JSON.stringify(data));
+		};
 
 		document.getElementById("status").innerHTML = "Send called. Notification after " + secondsToWait + " seconds.";
 	}
