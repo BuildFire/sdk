@@ -16,7 +16,7 @@ buildfire.notifications.localNotification = {
         var packetId = null;
         var command = 'localNotifications.hasPermission';
 
-        var packet = new Packet(packetId, command, options);
+        var packet = new Packet(packetId, command);
         buildfire._sendPacket(packet, callback);
     }
     , cancel: function (id, callback) {

@@ -27,73 +27,95 @@
 </head>
 <body>
 	<br>
-	<div>Local Notification Test Widget: 16</div><br>
-	<span id="status"></span><br>
-	<span id="result"></span><br>
-	<span id="counter"></span><br>
-	<span>cancel notification <input type="checkbox" id="cancel"></span><br>
 	<br>
-	<button onclick="run()">Schedule</button>
+	<button onclick="requestPermissions()">Request Permissions</button><br>
+	<span id="outputPR"></span><br>
+
+	<button onclick="schedule()">Schedule</button><br>
+	<span id="countDown"></span> <span id="outputS"></span><br>
+
+	<button onclick="cancel()">Cancel</button><br>
+	<span id="outputC"></span><br>
+
+	<button onclick="cancelAll()">Cancel All</button><br>
+	<span id="outputA"></span><br>
+
+	<button onclick="getIds()">Get IDs</button><br>
+	<span id="outputI"></span><br>
 </body>
 <script type="text/javascript">
-	document.getElementById("status").innerHTML = "device not ready";
+	var intervalId, notificationId, countDown;
 
-	var intervalId = 0;
+	//Handle notification onClick event
+	buildfire.notifications.localNotification.onClick = function(data){
+		alert(JSON.stringify(data));
+	};
 
-	function run(){
-		document.getElementById("status").innerHTML = "device ready";
+	function requestPermissions(){
+		buildfire.notifications.localNotification.hasPermission(function(err, permissionsGranted){
+			var message = (permissionsGranted) ? "permissions granted" : "permissions rejected";
 
-		var counter = 0;
+			document.getElementById("outputPR").innerHTML = message;
+		});
+	}
 
-		clearInterval(intervalId);
-
-		//This is just to show the passage of time
-		timerId = setInterval(function () {
-			document.getElementById("counter").innerHTML = counter.toString();
-			counter++;
-		}, 1000);
-
+	function schedule(){
 		var secondsToWait = 10;
+		countDown = secondsToWait;
 
 		var sendTime = new Date();
 		sendTime.setSeconds(sendTime.getSeconds() + secondsToWait);
 
 		var options = {
-			title: "Hurry",
-			text: "Time is running out",
+			title: "Title Sample",
+			text: "Text sample",
 			data: { secret: "foo" },
 			at: sendTime,
-			returnToPluginInstanceId: ''
+			returnToPluginInstanceId: '' //optional
 		};
-
-		var notificationId;
 
 		buildfire.notifications.localNotification.schedule(options, function (err, data) {
-			document.getElementById("status").innerHTML = "schedule done";
-			var result = (err) ? err : data;
-			notificationId = (result.id) ? result.id : null;
-			console.log('result: ', result);
-			result = JSON.stringify(result);
-			document.getElementById("result").innerHTML = result;
-
-			//Check for a cancel
-			setTimeout(function(){
-				//Decide to cancel
-				if(document.getElementById("cancel").checked){
-					buildfire.notifications.localNotification.cancel(notificationId, function(){
-						console.log("notification canceled");
-					});
-				}
-			},
-			2000);
-
+			notificationId = (data.id) ? data.id : null;
+			document.getElementById("outputS").innerHTML = "Scheduled notification " + notificationId;
 		});
 
-		buildfire.notifications.localNotification.onClick = function(data){
-			alert(JSON.stringify(data));
-		};
+		document.getElementById("countDown").innerHTML = countDown;
+		countDown = countDown - 1;
 
-		document.getElementById("status").innerHTML = "Send called. Notification after " + secondsToWait + " seconds.";
+		intervalId = setInterval(function(){
+			document.getElementById("countDown").innerHTML = countDown;
+			countDown = countDown - 1;
+
+			if(countDown < 0){
+				clearInterval(intervalId);
+			}
+
+		}, 1000);
+	}
+
+	function getIds(){
+		//TODO: Implement in API (Requires app prefix)
+		cordova.plugins.notification.local.getIds(function(ids) {
+			var formattedIds = ids.map(function(id){
+				return id + '<br>';
+			});
+
+			document.getElementById("outputI").innerHTML = formattedIds;
+		}, cordova.plugins);
+
+	}
+
+	function cancel(){
+		buildfire.notifications.localNotification.cancel(notificationId, function(){
+			document.getElementById("outputC").innerHTML = "canceled notification  " + notificationId;
+		});
+	}
+
+	function cancelAll(){
+		//TODO: Implement in API (Requires app prefix)
+		cordova.plugins.notification.local.cancelAll(function() {
+			document.getElementById("outputA").innerHTML = "canceled all";
+		}, this);
 	}
 
 </script>

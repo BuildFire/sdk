@@ -1,6 +1,6 @@
 {
   "author":"Attila Buturla"
-,"pluginName":"Local notification DEBUG"
+,"pluginName":"Notification Debugger"
 ,"pluginDescription":"This tests local notifications"
 ,"supportEmail":"[Your support Email]"
 ,"control":{
