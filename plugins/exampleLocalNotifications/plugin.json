@@ -1,11 +1,11 @@
 {
-  "author":"Daniel Hindi"
-,"pluginName":"Hello World"
-,"pluginDescription":"Light weight doent use even datastore"
+  "author":"Attila Buturla"
+,"pluginName":"Notification Debugger"
+,"pluginDescription":"This tests local notifications"
 ,"supportEmail":"[Your support Email]"
 ,"control":{
   "content":{
-    "enabled":true
+    "enabled":false
   }
 , "design":{
     "enabled":false
@@ -17,6 +17,6 @@
 ,"widget":{
 
 },
-  "features" : [],
+  "features" : [{"name": "localNotification"}],
   "languages" : ["en"]
 }
