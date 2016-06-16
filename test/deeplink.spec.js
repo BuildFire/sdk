@@ -33,19 +33,4 @@ describe('buildfire.deeplink', function () {
         });
     });
 
-    describe('deeplink createLink', function () {
-        beforeEach( function () {
-            spyOn(buildfire.deeplink, 'createLink');
-
-            buildfire.deeplink.createLink('section:7');
-        });
-
-        it("deeplink createLink should exist and be a function", function () {
-            expect(typeof buildfire.deeplink.createLink).toEqual("function");
-        });
-
-        it("deeplink createLink", function () {
-            expect(buildfire.deeplink.createLink).toHaveBeenCalledWith('section:7');
-        });
-    });
 });
