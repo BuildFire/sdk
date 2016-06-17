@@ -48,7 +48,9 @@
 
 		buildfire.notifications.localNotification.schedule(options, function (err, data) {
 			notificationId = (data.id) ? data.id : null;
-			document.getElementById("outputS").innerHTML = "Scheduled notification " + notificationId;
+			var notificationIdDisplay = notificationId || "";
+
+			document.getElementById("outputS").innerHTML = "Scheduled notification " + notificationIdDisplay;
 		});
 
 		document.getElementById("countDown").innerHTML = countDown;
