@@ -1,8 +1,6 @@
 function _ScriptLoader(){
     this.domain="http://app.buildfire.com/";
-
-    this.domain = "http://localhost:3000/";
-
+    
     this.scripts = [
         , this.domain + "app/scripts/framework/postMaster.js"
         , this.domain + "scripts/framework/pluginAPI/imageLibAPI.js"
