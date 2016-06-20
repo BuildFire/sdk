@@ -24,7 +24,7 @@
 	var intervalId, notificationId, countDown;
 
 	function requestPermissions(){
-		buildfire.notifications.localNotification.hasPermission(function(err, permissionsGranted){
+		buildfire.notifications.localNotification.requestPermission(function(err, permissionsGranted){
 			var message = (permissionsGranted) ? "permissions granted" : "permissions rejected";
 
 			document.getElementById("outputPR").innerHTML = message;
@@ -48,6 +48,7 @@
 
 		buildfire.notifications.localNotification.schedule(options, function (err, data) {
 			notificationId = (data.id) ? data.id : null;
+
 			var notificationIdDisplay = notificationId || "";
 
 			document.getElementById("outputS").innerHTML = "Scheduled notification " + notificationIdDisplay;
