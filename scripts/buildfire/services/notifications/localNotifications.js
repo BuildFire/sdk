@@ -12,9 +12,15 @@ buildfire.notifications.localNotification = {
         var packet = new Packet(packetId, command, options);
         buildfire._sendPacket(packet, callback);
     }
-    , hasPermission: function (callback) {
+    , checkPermission: function (callback) {
         var packetId = null;
-        var command = 'localNotifications.hasPermission';
+        var command = 'localNotifications.checkPermission';
+
+        var packet = new Packet(packetId, command);
+        buildfire._sendPacket(packet, callback);
+    }, requestPermission: function (callback) {
+        var packetId = null;
+        var command = 'localNotifications.requestPermission';
 
         var packet = new Packet(packetId, command);
         buildfire._sendPacket(packet, callback);
