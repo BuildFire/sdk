@@ -5,7 +5,7 @@
 ,"supportEmail":"[Your support Email]"
 ,"control":{
   "content":{
-    "enabled":false
+    "enabled":true
   }
 , "design":{
     "enabled":false

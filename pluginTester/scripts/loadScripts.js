@@ -1,6 +1,7 @@
 function _ScriptLoader(){
     this.domain="http://app.buildfire.com/";
-
+    window._appRoot = 'app/';
+    
     this.scripts = [
         , this.domain + "app/scripts/framework/postMaster.js"
         , this.domain + "scripts/framework/pluginAPI/imageLibAPI.js"
