@@ -18,6 +18,40 @@
     -->
 </head>
 <body>
-    <span></span>
+    <div>Seconds until notification<input type="text" value="10" id="seconds"></div><br>
+    <div>Notification Body<br>
+        <textarea style="width: 300px; height: 150px;" id="bodyText"></textarea>
+    </div><br>
+    <span>Notification Action</span> <button onclick="selectAction()">...</button><br>
+    <br>
+    <div style="text-align: center;"><button onclick="save()">Save</button></div><br>
+
 </body>
+<script>
+    var _actionItem;
+
+    function selectAction(){
+        buildfire.actionItems.showDialog(_actionItem, {allowNoAction: false}, function(err, actionItem){
+            _actionItem = actionItem;
+        })
+    }
+
+    function save() {
+        var obj = {
+            actionItem: _actionItem,
+            bodyText: document.getElementById("bodyText").value,
+            secondsToWait: parseInt(document.getElementById("seconds").value)
+        };
+
+        buildfire.datastore.save(obj, function(){
+            console.log('saving data');
+        });
+    }
+
+    buildfire.datastore.get(function(err, obj){
+        document.getElementById("seconds").value = obj.data.secondsToWait;
+        document.getElementById("bodyText").value = obj.data.bodyText;
+        _actionItem = obj.data.actionItem;
+    })
+</script>
 </html>

@@ -21,6 +21,22 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 
 (function() {
 
+	LocalNotificationsAPI.notificationModal = function(notification){
+		var options = {
+			data: {
+				title: notification.title,
+				body: notification.text
+			}
+			, templateUrl: 'http://app.buildfire.com/app/pages/templates/modal.html'
+			, controller: 'modalCtrl'
+		};
+
+		window.openDialog(options, function(result){
+			if(result){
+				LocalNotificationsAPI.navToPlugin(notification);
+			}
+		});
+	};
 
 	/**************************************************
 	sync

@@ -21,7 +21,24 @@
 	<span id="outputC"></span><br>
 </body>
 <script type="text/javascript">
-	var intervalId, notificationId, countDown;
+	var intervalId, notificationId, countDown, actionItem, bodyText, secondsToWait;
+
+	buildfire.datastore.onUpdate(function(obj){
+		parseData(obj.data);
+	});
+
+
+	function parseData(data){
+		if(!data) return;
+
+		bodyText = (data.bodyText) ? data.bodyText : 'sample body text';
+		actionItem = (data.actionItem) ? data.actionItem : {sampleData: 'foo'};
+		secondsToWait = (data.secondsToWait) ? data.secondsToWait : 10;
+	}
+
+	buildfire.datastore.get(function(err, obj){
+		parseData(obj.data);
+	});
 
 	function requestPermissions(){
 		buildfire.notifications.localNotification.requestPermission(function(err, permissionsGranted){
@@ -32,16 +49,15 @@
 	}
 
 	function schedule(){
-		var secondsToWait = 10;
 		countDown = secondsToWait;
 
 		var sendTime = new Date();
 		sendTime.setSeconds(sendTime.getSeconds() + secondsToWait);
 
 		var options = {
-			title: "Title Sample",
-			text: "Text sample",
-			data: { secret: "foo" },
+			title: (actionItem && actionItem.title ) ? actionItem.title : '',
+			text: bodyText,
+			data: actionItem,
 			at: sendTime,
 			returnToPluginInstanceId: '' //optional
 		};
