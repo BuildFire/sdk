@@ -1,7 +1,7 @@
 {
-  "author":"Daniel Hindi"
-,"pluginName":"Hello World"
-,"pluginDescription":"Light weight doent use even datastore"
+  "author":"Attila Buturla"
+,"pluginName":"Carousel Test"
+,"pluginDescription":"For debugging"
 ,"supportEmail":"[Your support Email]"
 ,"control":{
   "content":{

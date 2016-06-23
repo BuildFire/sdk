@@ -9,7 +9,10 @@ function Packet(id, cmd, data) {
 
 /// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
-    logger: {
+    isImageServer: function(url){
+        return (url.indexOf("s3.amazonaws.com") !== -1);
+    }
+    , logger: {
         _suppress: false
         ,attachRemoteLogger:function (tag){
 
@@ -1143,7 +1146,7 @@ var buildfire = {
 
             var root;
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+            if(buildfire.isImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1197,7 +1200,7 @@ var buildfire = {
 
             var root;
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0||url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+            if(buildfire.isImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1229,7 +1232,7 @@ var buildfire = {
                     return sections[sections.length - 1];
             }
             , toLocalPath: function (url) {
-                if (url.toLowerCase().indexOf("/imageserver") > 0) {
+                if (buildfire.isImageServer(url)) {
                     var localURL = this.localImageLibPath + this.parseFileFromUrl(url); // length of root host
                     //localURL = localURL.substring(localURL.indexOf('/'));
                     return localURL;
@@ -1279,7 +1282,6 @@ var buildfire = {
 
             }
             , cropImage: function (url, options, callback) {
-
                 //var ratio = options.disablePixelRation ? 1 : window.devicePixelRatio;
                 if (!options)
                     options = {width: window.innerWidth};
@@ -1289,21 +1291,30 @@ var buildfire = {
                 if (options.width == 'full') options.width = window.innerWidth;
                 if (options.height == 'full') options.height = window.innerHeight;
 
+                //If SmartCrop isn't included, use the BuildFire imageLib cropping
+                if(typeof(SmartCrop) == "undefined"){
+                    console.warn("SmartCrop.js isnt imported");
+                    callback(null, buildfire.imageLib.cropImage(url, options));
+                    return;
+                }
 
-                if(typeof(SmartCrop) == "undefined")
-                    console.warn("smartcrop.js isnt imported");
+                //If we are not in a web environment (i.e. Cordova), use the BuildFire imageLib cropping
+                if(window.location.protocol.indexOf("http") != -1){
+                    callback(null, buildfire.imageLib.cropImage(url, options));
+                    return;
+                }
 
-
-
-                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0) {
+                //If image is coming from S3, try to use SmartCrop
+                if (url.indexOf("s3.amazonaws.com") !== -1) {
                     url = url.replace(/^https:\/\//i, 'http://');
 
                     var localURL = buildfire.imageLib.local.toLocalPath(url);
+
                     if (localURL && typeof(SmartCrop) != "undefined") {
                         var img = new Image();
                         img.src = localURL;
+                        
                         img.onload = function () {
-
                             if (options.width && !options.height)
                                 options.height = (img.height * options.width) / img.width;
                             else if (!options.width && options.height)
@@ -1318,13 +1329,12 @@ var buildfire = {
 
                                 var sug = result.topCrop;
                                 ctx.drawImage(img, sug.x, sug.y, sug.width, sug.height,0,0,options.width, options.height);
-
                                 callback(null, canvas.toDataURL());
-
                             });
 
                         };
-                        img.onerror = function () {
+                        img.onerror = function (e) {
+                            console.warn(e.message);
                             callback(null, buildfire.imageLib.cropImage(url, options));
                         }
                     }
@@ -1333,7 +1343,6 @@ var buildfire = {
                 }
                 else
                     callback(null, buildfire.imageLib.cropImage(url, options));
-
 
             }
         }

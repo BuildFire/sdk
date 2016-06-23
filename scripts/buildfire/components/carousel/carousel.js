@@ -484,6 +484,8 @@ buildfire.components.carousel.view.prototype = {
     },
     // add new slider to the DOM
     _appendItem: function (item, index,speed) {
+        console.warn('in _appendItem');
+
         var slider = document.createElement("div");
 
         if(typeof speed === 'undefined')
@@ -507,37 +509,19 @@ buildfire.components.carousel.view.prototype = {
         var me = this;
         var image = document.createElement("img");
         me.$slider = $(me.selector);
-        if (me.items.length > 1) {
-            // Add data-src attr for lazyLoad
-            buildfire.imageLib.local.cropImage(item.iconUrl, {
-                width: this.width,
-                height: this.height
-            }, function (err, result) {
-                if (!err) {
-                    image.setAttribute('data-src', result);
-                    image.className = "owl-lazy";
-                    image.style.transform = "translateZ(0)";
-                    slider.appendChild(image);
-                    me.selector.appendChild(slider);
-                }
-                else
-                    console.log('Error occurred while cropping image: ', err);
-            });
 
-        } else {
-            buildfire.imageLib.local.cropImage(item.iconUrl, {
-                width: this.width,
-                height: this.height
-            }, function (err, result) {
-                if (!err) {
-                    image.src = result;
-                    image.style.transform = "translateZ(0)";
-                    slider.appendChild(image);
-                    me.selector.appendChild(slider);
-                }
-                else
-                    console.log('Error occurred while cropping image: ', err);
-            });
-        }
+        buildfire.imageLib.local.cropImage(item.iconUrl, {
+            width: this.width,
+            height: this.height
+        }, function (err, result) {
+            if (!err) {
+                image.src = result;
+                image.style.transform = "translateZ(0)";
+                slider.appendChild(image);
+                me.selector.appendChild(slider);
+            }
+            else
+                console.log('Error occurred while cropping image: ', err);
+        });
     }
 };

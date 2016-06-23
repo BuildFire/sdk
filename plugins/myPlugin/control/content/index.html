@@ -2,22 +2,62 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-	<!-- Load helper.css to use our helper classes.
-	<link href="../../../../styles/helper.css" rel="stylesheet">
-	-->
-	
-	<!-- JS -->
-	<script src="../../../../scripts/buildfire.js"></script>
-   
- 	<!--
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
 
+    <!-- Load helper.css to use our helper classes -->
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+
+    <!-- JS -->
     <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-    -->
+    <script src="../../../../scripts/buildfire.js"></script>
+    <script src="../../../../scripts/sortable.min.js"></script>
+    <script src="../../../../scripts/buildfire/components/carousel/carousel.js"></script>
 </head>
 <body>
-    <span>Content - Hello world!</span>
+    <div id="carousel"></div>
+<script>
+    /// create a new instance of the buildfire carousel editor
+    var editor = new buildfire.components.carousel.editor("#carousel");
+
+    /// handle the loading
+    function loadItems(carouselItems){
+        // create an instance and pass it the items if you don't have items yet just pass []
+        editor.loadItems(carouselItems);
+    }
+    /// call buildfire datastore to see if there are any previously saved items
+    buildfire.datastore.get(function(err,obj){
+        if(err)
+            alert('error');
+        else
+            loadItems(obj.data.carouselItems)
+    });
+    /// save any changes in items
+    function save(items){
+        console.log('saving...');
+        buildfire.datastore.save({carouselItems:items},function(e){
+            if(e)
+                alert("error");
+            else
+                console.log('saved.');
+        });
+    }
+
+    // this method will be called when a new item added to the list
+    editor.onAddItems = function (items) {
+        save(editor.items);
+    };
+    // this method will be called when an item deleted from the list
+    editor.onDeleteItem = function (item, index) {
+        save(editor.items);
+    };
+    // this method will be called when you edit item details
+    editor.onItemChange = function (item) {
+        save(editor.items);
+    };
+    // this method will be called when you change the order of items
+    editor.onOrderChange = function (item, oldIndex, newIndex) {
+        save(editor.items);
+    };
+</script>
 </body>
 </html>
