@@ -1,40 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<!-- CSS -->
-	<link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet" />
+	<!-- Load helper.css to use our helper classes.
+	<link href="../../../../styles/helper.css" rel="stylesheet">
+	-->
 
 	<!-- JS -->
 	<script src="../../../scripts/buildfire.js"></script>
-	<script src="../../../scripts/smartcrop.js"></script>
-	<script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript" src="../../../scripts/owlCarousel/owlCarousel.js"></script>
-	<script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
+
+	<!--
+   <script src="../../../../scripts/angular/angular.min.js"></script>
+   <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+
+   <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+   -->
 </head>
 <body>
-	<div id="carousel"></div>
-
-	<script>
-		///create new instance of buildfire carousel viewer
-		var view = new buildfire.components.carousel.view("#carousel", []);
-		/// load items
-		function loadItems(carouselItems){
-			// create an instance and pass it the items if you don't have items yet just pass []
-			view.loadItems(carouselItems);
-		}
-		/// load any previously saved items
-		buildfire.datastore.get(function(err,obj){
-			if(err)
-				alert('error');
-			else
-				loadItems(obj.data.carouselItems)
-		});
-		/// handle any updates by reloading
-		buildfire.datastore.onUpdate(function(e){
-			loadItems( e.obj.carouselItems);
-		})
-	</script>
+<span>Widget - Hello, world!</span>
 </body>
 </html>

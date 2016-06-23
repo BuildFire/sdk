@@ -484,8 +484,6 @@ buildfire.components.carousel.view.prototype = {
     },
     // add new slider to the DOM
     _appendItem: function (item, index,speed) {
-        console.warn('in _appendItem');
-
         var slider = document.createElement("div");
 
         if(typeof speed === 'undefined')

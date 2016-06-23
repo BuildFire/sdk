@@ -1,22 +1,22 @@
 {
-  "author":"Attila Buturla"
-,"pluginName":"Carousel Test"
-,"pluginDescription":"For debugging"
-,"supportEmail":"[Your support Email]"
-,"control":{
-  "content":{
-    "enabled":true
-  }
-, "design":{
-    "enabled":false
-  }
-, "settings":{
-    "enabled":false
-  }
-}
-,"widget":{
-
-},
-  "features" : [],
-  "languages" : ["en"]
+  author: "Daniel Hindi",
+  pluginName: "Hello World",
+  pluginDescription: "Light weight doent use even datastore",
+  supportEmail: "[Your support Email]",
+  control: {
+    content: {
+      enabled: true
+    },
+    design: {
+      enabled: false
+    },
+    settings: {
+      enabled: false
+    }
+  },
+  widget: { },
+  features: [ ],
+  languages: [
+    "en"
+  ]
 }
