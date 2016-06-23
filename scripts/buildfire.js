@@ -12,6 +12,10 @@ var buildfire = {
     isImageServer: function(url){
         return (url.indexOf("s3.amazonaws.com") !== -1);
     }
+    ,isProdImageServer: function(url){
+        return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
+            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+    }
     , logger: {
         _suppress: false
         ,attachRemoteLogger:function (tag){
@@ -1146,7 +1150,7 @@ var buildfire = {
 
             var root;
 
-            if(buildfire.isImageServer(url)){
+            if(buildfire.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1200,7 +1204,7 @@ var buildfire = {
 
             var root;
 
-            if(buildfire.isImageServer(url)){
+            if(buildfire.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
