@@ -1,0 +1,17 @@
+<div class="header clearfix border-bottom-grey">
+    <h4 class="margin-zero">{{ modal.title }}</h4>
+</div>
+<div class="padded clearfix">
+    <div class="content">
+        <p class="margin-zero">{{ modal.body }}</p>
+    </div>
+</div>
+
+<div class="bottom border-top-grey clearfix">
+    <div class="col-xs-6 pull-left text-center">
+        <a class="text-danger default-background-hover transition-third" ng-click="confirm()">{{ modal.okText }}</a>
+    </div>
+    <div class="col-xs-6 pull-right text-center border-left-grey">
+        <a class="text-success default-background-hover transition-third" ng-click="close()">{{ modal.cancelText }}</a>
+    </div>
+</div>

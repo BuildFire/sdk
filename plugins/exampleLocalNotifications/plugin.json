@@ -1,0 +1,22 @@
+{
+  "author":"Attila Buturla"
+,"pluginName":"Notification Debugger"
+,"pluginDescription":"This tests local notifications"
+,"supportEmail":"[Your support Email]"
+,"control":{
+  "content":{
+    "enabled":true
+  }
+, "design":{
+    "enabled":false
+  }
+, "settings":{
+    "enabled":false
+  }
+}
+,"widget":{
+
+},
+  "features" : [{"name": "localNotification"}],
+  "languages" : ["en"]
+}
