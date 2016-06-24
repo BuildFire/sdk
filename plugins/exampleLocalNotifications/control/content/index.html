@@ -2,10 +2,9 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-	<!-- Load helper.css to use our helper classes.
+	
+    <!-- CSS -->
 	<link href="../../../../styles/helper.css" rel="stylesheet">
-	-->
 	
 	<!-- JS -->
 	<script src="../../../../scripts/buildfire.js"></script>
@@ -18,14 +17,38 @@
     -->
 </head>
 <body>
-    <div>Seconds until notification<input type="text" value="10" id="seconds"></div><br>
-    <div>Notification Body<br>
-        <textarea style="width: 300px; height: 150px;" id="bodyText"></textarea>
-    </div><br>
-    <span>Notification Action</span> <button onclick="selectAction()">...</button><br>
-    <br>
-    <div style="text-align: center;"><button onclick="save()">Save</button></div><br>
-
+	<div class="item clearfix row">
+		<div class="col-xs-3 pull-left">
+			<span>Seconds Until Notification</span>
+		</div>
+		<div class="col-xs-9 pull-right">
+			<input type="text" value="10" id="seconds" class="form-control">
+		</div>
+	</div>
+	<hr class="none">
+	<div class="item clearfix row">
+		<div class="col-xs-3 pull-left">
+			<span>Notification Body</span>
+		</div>
+		<div class="col-xs-9 pull-right">
+			<textarea class="form-control" id="bodyText"></textarea>
+		</div>
+	</div>
+	<hr class="none">
+	<div class="item clearfix row">
+		<div class="col-xs-3 pull-left">
+			<span>Notification Action</span>
+		</div>
+		<div class="col-xs-9 pull-right">
+			<a class="btn btn-success padding-left-twenty padding-right-twenty" onclick="selectAction()">Add Action</a>
+		</div>
+	</div>
+	<hr class="none">
+	<div class="item clearfix row">
+		<div class="col-xs-3 pull-right">
+			<a class="btn btn-primary stretch" onclick="save()">Save</a>
+		</div>
+	</div>
 </body>
 <script>
     var _actionItem;
