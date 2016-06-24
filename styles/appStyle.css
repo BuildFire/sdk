@@ -4,14 +4,13 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	font-family:Helvetica, Sans-Serif, Arial;
-	
+}
+/* Prevent user selection on everything except input/textarea */
+*:not(input):not(textarea){
 	/* Prevent user selection */
 	-webkit-tap-highlight-color: transparent;
 	-webkit-tap-highlight-color:rgba(0,0,0,0);
 	-webkit-touch-callout: none;
-}
-/* Prevent user selection on everything except input/textarea */
-*:not(input):not(textarea){
 	-webkit-user-select: none;
 	-khtml-user-select: none;
  	-moz-user-select: none;
