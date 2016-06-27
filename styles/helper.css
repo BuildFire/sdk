@@ -370,7 +370,8 @@ and targeted by Bootstrap like classes */
 .btn-link-icon:after{
 	content:'+';
 	position:absolute;
-	top:-1px;
+	top:50%;
+	transform:translateY(-50%);
 	left:0;
 	width:100%;
 	text-align:center;
@@ -379,9 +380,8 @@ and targeted by Bootstrap like classes */
 }
 .btn-minus-icon:after{
 	content:'-';
-	top:-2px;
-	top:-2.5px;
 	font-size:22px;
+	transform:translateY(-53%);
 }
 .btn-check-icon{
 	transform:rotate(45deg);
@@ -404,13 +404,12 @@ and targeted by Bootstrap like classes */
     height:2px;
     background-color:#fff;
     left:7px;
-    top:12px;
+    top:13px;
 }
 .btn-delete-icon:after{
 	content:'\00d7';
 	font-size:17px;
 	font-weight:600;
-	top:-1.5px;
 }
 .btn-exclamation-icon:after{
 	content:'!';
@@ -419,14 +418,12 @@ and targeted by Bootstrap like classes */
 .btn-question-icon:after{
 	content:'?';
 	font-size:13px;
-	top:0;
 }
 .btn-info-icon:after{
 	content:'i';
 	font-style:italic;
 	font-size:14px;
 	left:-1px;
-	top:-1px;
 	font-weight:400;
 }
 .btn-link-icon:after{
