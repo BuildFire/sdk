@@ -14,8 +14,11 @@
 	<button onclick="requestPermissions()">Request Permissions</button><br>
 	<span id="outputPR"></span><br>
 
+	<button onclick="send()">Send</button><br>
+	<span id="outputSend"></span><br>
+
 	<button onclick="schedule()">Schedule</button><br>
-	<span id="countDown"></span> <span id="outputS"></span><br>
+	<span id="countDown"></span> <span id="outputSchedule"></span><br>
 
 	<button onclick="cancel()">Cancel</button><br>
 	<span id="outputC"></span><br>
@@ -48,6 +51,23 @@
 		});
 	}
 
+	function send(){
+		var options = {
+			title: (actionItem && actionItem.title ) ? actionItem.title : '',
+			text: bodyText,
+			data: actionItem
+		};
+
+		buildfire.notifications.localNotification.schedule(options, function (err, data) {
+			notificationId = (data.id) ? data.id : null;
+
+			var notificationIdDisplay = notificationId || "";
+
+			document.getElementById("outputSend").innerHTML = "Sent notification " + notificationIdDisplay;
+		});
+	}
+
+
 	function schedule(){
 		countDown = secondsToWait;
 
@@ -67,7 +87,7 @@
 
 			var notificationIdDisplay = notificationId || "";
 
-			document.getElementById("outputS").innerHTML = "Scheduled notification " + notificationIdDisplay;
+			document.getElementById("outputSchedule").innerHTML = "Scheduled notification " + notificationIdDisplay;
 		});
 
 		document.getElementById("countDown").innerHTML = countDown;
