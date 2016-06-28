@@ -8466,6 +8466,23 @@ html:not([buildfire]) .col-md-12{
 	background:#000 !important;
 }
 
+/* Borders */
+.border-primary{
+	border:1px solid #09a3ee;
+}
+.border-success{
+	border:1px solid #14cb5d;
+}
+.border-info{
+	border:1px solid #32373a;
+}
+.border-warning{
+	border:1px solid #ffb23e;
+}
+.border-danger{
+	border:1px solid #ed4b4b;
+}
+
 
 /* Modal for Plugins */
 html[buildfire] .modal .modal-dialog{
@@ -8481,11 +8498,11 @@ html[buildfire] .modal-backdrop.in{
 }
 
 /* Vertically center widget modals */
-html[buildfire='widget'] .modal{
+html[type='app'] .modal{
 	height:100%;
-	background:rgba(0,0,0,0.8);
+	/*background:rgba(0,0,0,0.8);*/
 }
-html[buildfire='widget'] .modal .modal-dialog{
+html[type='app'] .modal .modal-dialog{
 	position:relative;
 	top:50%;
 	transform:translateY(-50%) !important;
