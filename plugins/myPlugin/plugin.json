@@ -1,22 +1,21 @@
 {
-  author: "Daniel Hindi",
-  pluginName: "Hello World",
-  pluginDescription: "Light weight doent use even datastore",
-  supportEmail: "[Your support Email]",
-  control: {
-    content: {
-      enabled: true
-    },
-    design: {
-      enabled: false
-    },
-    settings: {
-      enabled: false
-    }
-  },
-  widget: { },
-  features: [ ],
-  languages: [
-    "en"
-  ]
+  "author":"Daniel Hindi"
+,"pluginName":"Hello World"
+,"pluginDescription":"Bare bones plugin showing simple autonomy of a plugin"
+,"supportEmail":"devSupport@buildfire.com"
+,"control":{
+  "content":{
+    "enabled":true
+  }
+, "design":{
+    "enabled":false
+  }
+, "settings":{
+    "enabled":false
+  }
 }
+,"widget":{
+
+},
+  "features" : [],
+  "languages" : ["en"]
