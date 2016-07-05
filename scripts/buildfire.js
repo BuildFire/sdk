@@ -1303,7 +1303,7 @@ var buildfire = {
                 }
 
                 //If we are not in a web environment (i.e. Cordova), use the BuildFire imageLib cropping
-                if(window.location.protocol.indexOf("http") != -1){
+                if(window.location.protocol.indexOf("http") == -1){
                     callback(null, buildfire.imageLib.cropImage(url, options));
                     return;
                 }
