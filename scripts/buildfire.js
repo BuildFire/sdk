@@ -1187,7 +1187,7 @@ var buildfire = {
 
         , cropImage: function (url, options) {
 
-            var ratio = options.disablePixelRation?1:window.devicePixelRatio;
+            var ratio = options.disablePixelRatio ?1:window.devicePixelRatio;
 
             if (typeof(options) != "object")
                 throw ("options not an object");
@@ -1288,7 +1288,8 @@ var buildfire = {
 
             }
             , cropImage: function (url, options, callback) {
-                //var ratio = options.disablePixelRation ? 1 : window.devicePixelRatio;
+                var ratio = options.disablePixelRatio ? 1 : window.devicePixelRatio;
+
                 if (!options)
                     options = {width: window.innerWidth};
                 else if (typeof(options) != "object")
@@ -1321,6 +1322,12 @@ var buildfire = {
                         img.src = localURL;
                         
                         img.onload = function () {
+                            if(options.width)
+                                options.width = Math.floor(options.width * ratio);
+
+                            if(options.height)
+                                options.height = Math.floor(options.height * ratio);
+
                             if (options.width && !options.height)
                                 options.height = (img.height * options.width) / img.width;
                             else if (!options.width && options.height)
