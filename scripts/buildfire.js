@@ -9,14 +9,11 @@ function Packet(id, cmd, data) {
 
 /// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
-    isImageServer: function(url){
+    isFileServer: function(url){
         return (url.indexOf("s3.amazonaws.com") !== -1);
     }
-    ,isProdImageServer: function(url){
-        return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
-            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
-    }, isWeb: function(){
-        return (window.location.protocol.indexOf("http") != -1);
+    , isWeb: function(){
+        return (window.location.protocol.indexOf("http") == 0);
     }, logger: {
         _suppress: false
         ,attachRemoteLogger:function (tag){
@@ -1127,6 +1124,10 @@ var buildfire = {
             var p = new Packet(null, 'imageLib.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
+        ,isProdImageServer: function(url){
+            return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
+            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+        }
         //options:{
         // width: integer or 'full'
         // height: integer or 'full'
@@ -1151,7 +1152,7 @@ var buildfire = {
 
             var root;
 
-            if(buildfire.isProdImageServer(url)){
+            if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1205,7 +1206,7 @@ var buildfire = {
 
             var root;
 
-            if(buildfire.isProdImageServer(url)){
+            if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1237,7 +1238,7 @@ var buildfire = {
                     return sections[sections.length - 1];
             }
             , toLocalPath: function (url) {
-                if (buildfire.isImageServer(url)) {
+                if (buildfire.isFileServer(url)) {
                     var localURL = this.localImageLibPath + this.parseFileFromUrl(url); // length of root host
                     //localURL = localURL.substring(localURL.indexOf('/'));
                     return localURL;
@@ -1310,7 +1311,7 @@ var buildfire = {
                 }
 
                 //If image is coming from S3, and in an app, try to use SmartCrop
-                if (buildfire.isImageServer(url) ) {
+                if (buildfire.isFileServer(url) ) {
                     url = url.replace(/^https:\/\//i, 'http://');
 
                     var localURL = buildfire.imageLib.local.toLocalPath(url);
