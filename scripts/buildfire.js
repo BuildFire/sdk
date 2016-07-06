@@ -15,8 +15,9 @@ var buildfire = {
     ,isProdImageServer: function(url){
         return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
             || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
-    }
-    , logger: {
+    }, isWeb: function(){
+        return (window.location.protocol.indexOf("http") != -1);
+    }, logger: {
         _suppress: false
         ,attachRemoteLogger:function (tag){
 
@@ -1295,21 +1296,21 @@ var buildfire = {
                 if (options.width == 'full') options.width = window.innerWidth;
                 if (options.height == 'full') options.height = window.innerHeight;
 
-                //If SmartCrop isn't included, use the BuildFire imageLib cropping
+                //If SmartCrop isn't included, use buildfire.imageLib.cropImage
                 if(typeof(SmartCrop) == "undefined"){
                     console.warn("SmartCrop.js isnt imported");
                     callback(null, buildfire.imageLib.cropImage(url, options));
                     return;
                 }
 
-                //If we are not in a web environment (i.e. Cordova), use the BuildFire imageLib cropping
-                if(window.location.protocol.indexOf("http") == -1){
+                //If we are in a web environment, use buildfire.imageLib.cropImage
+                if(buildfire.isWeb()){
                     callback(null, buildfire.imageLib.cropImage(url, options));
                     return;
                 }
 
-                //If image is coming from S3, try to use SmartCrop
-                if (url.indexOf("s3.amazonaws.com") !== -1) {
+                //If image is coming from S3, and in an app, try to use SmartCrop
+                if (buildfire.isImageServer(url) ) {
                     url = url.replace(/^https:\/\//i, 'http://');
 
                     var localURL = buildfire.imageLib.local.toLocalPath(url);
