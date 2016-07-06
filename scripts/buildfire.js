@@ -1536,6 +1536,10 @@ var buildfire = {
         openProfile: function (userId) {
             var p = new Packet(null, 'auth.openProfile', userId);
             buildfire._sendPacket(p);
+        },
+        getUserProfile: function (options, callback) {
+            var p = new Packet(null, 'auth.getUserProfile', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
