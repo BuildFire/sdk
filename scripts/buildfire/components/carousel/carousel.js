@@ -320,7 +320,7 @@ buildfire.components.carousel.view.prototype = {
         var that = this;
 
         this._loadImages(speed, function(){
-            if (this.items.length) {
+            if (that.items.length) {
                 if(typeof speed === 'undefined')
                     that._applySlider();
                 else
@@ -486,6 +486,10 @@ buildfire.components.carousel.view.prototype = {
         var itemsLength = items.length;
 
         var pending =  itemsLength;
+
+        if(itemsLength == 0){
+            callback();
+        }
 
         for (var i = 0; i < itemsLength; i++) {
             this._appendItem(items[i], i,speed, function(){
