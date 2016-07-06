@@ -316,15 +316,19 @@ buildfire.components.carousel.view.prototype = {
     init: function (selector,speed) {
         this.selector = buildfire.components.carousel._getDomSelector(selector);
         this._renderSlider();
-        this._loadImages();
-        if (this.items.length) {
-            if(typeof speed === 'undefined')
-                this._applySlider();
-            else
-                this._applySlider(speed);
-        } else {
-            this._hideSlider();
-        }
+
+        var that = this;
+
+        this._loadImages(speed, function(){
+            if (this.items.length) {
+                if(typeof speed === 'undefined')
+                    that._applySlider();
+                else
+                    that._applySlider(speed);
+            } else {
+                that._hideSlider();
+            }
+        });
     },
     // this method allows you to append or replace slider images
     loadItems: function (items, appendItems, layout,speed) {
@@ -337,19 +341,22 @@ buildfire.components.carousel.view.prototype = {
         this._renderSlider();
 
         this._loadItems(items, appendItems);
-        this._loadImages(speed);
 
-        if (!this.items.length) {
-            this._hideSlider();
-        } else {
-            this._showSlider();
-        }
+        var that = this;
 
-        // if items.length == 0 and appendItems == undefined no need to init the slider it will break if we do so
-        if (items instanceof Array && !items.length && !appendItems) {
-            return;
-        }
-        this._applySlider(speed);
+        this._loadImages(speed, function(){
+            if (!that.items.length) {
+                that._hideSlider();
+            } else {
+                that._showSlider();
+            }
+
+            // if items.length == 0 and appendItems == undefined no need to init the slider it will break if we do so
+            if (items instanceof Array && !items.length && !appendItems) {
+                return;
+            }
+            that._applySlider(speed);
+        });
     },
     // allows you to append a single item or an array of items
     append: function(items){
@@ -474,16 +481,24 @@ buildfire.components.carousel.view.prototype = {
         me.selector.className = "plugin-slider text-center";
     },
     // loop and append the images to the DOM
-    _loadImages: function (speed) {
+    _loadImages: function (speed, callback) {
         var items = this.items;
         var itemsLength = items.length;
 
+        var pending =  itemsLength;
+
         for (var i = 0; i < itemsLength; i++) {
-            this._appendItem(items[i], i,speed);
+            this._appendItem(items[i], i,speed, function(){
+                pending--;
+
+                if(pending == 0){
+                    callback();
+                }
+            });
         }
     },
     // add new slider to the DOM
-    _appendItem: function (item, index,speed) {
+    _appendItem: function (item, index, speed, callback) {
         var slider = document.createElement("div");
 
         if(typeof speed === 'undefined')
@@ -520,6 +535,8 @@ buildfire.components.carousel.view.prototype = {
             }
             else
                 console.log('Error occurred while cropping image: ', err);
+
+            callback();
         });
     }
 };
