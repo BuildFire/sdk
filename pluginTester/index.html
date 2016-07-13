@@ -46,13 +46,19 @@
     <nav>
         <ul class="menu">
             <li>
+                <a href="http://github.com/buildfire/sdk/wiki" target="_blank" class="parent primary-color-hover transition-third">
+                    <p class="text margin-zero ellipsis transition-third">API Docs</p>
+                    <span class="icon icon-bubble-question transition-third"></span>
+                </a>
+            </li>
+            <li>
                 <a href="#/" class="parent primary-color-hover transition-third">
                     <p class="text margin-zero ellipsis transition-third">Tester</p>
                     <span class="icon icon-home transition-third"></span>
                 </a>
             </li>
             <li>
-                <a href="https://twitter.com/BuildfireDev" target="_blank"
+                <a href="https://twitter.com/BuildfireJS" target="_blank"
                    class="parent primary-color-hover transition-third" >
                     <p class="text margin-zero ellipsis transition-third">BuildFire News</p>
                     <span class="icon icon-bullhorn transition-third"></span>
@@ -122,6 +128,7 @@
                                 <a class="back-btn-icon icon icon-chevron-left pull-left" ng-click="back()"></a>
                                 <span ng-click="titleClick()">Title</span>
                             </div>
+                            {{errorMessage}}
                             <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px; padding-top:49px;" class="border-grey" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
                             <div id="login" ng-include="'http://app.buildfire.com/app/fragments/auth/auth.html'"></div>
                         </div>

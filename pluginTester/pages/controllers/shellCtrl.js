@@ -127,14 +127,13 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
                     config = JSON.parse(xmlhttp.responseText);
                     $scope.loadFrames(pluginFolder, config);
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
-                    if (!$scope.$$phase)
-                        $scope.$apply();
                     keepTrackOfRecentPlugins(pluginFolder);
 
                 }
                 else if (xmlhttp.status >= 300)
-                    alert('Error loading plugin');
+                    $scope.errorMessage = 'Error loading plugin';
 
+                if (!$scope.$$phase)    $scope.$apply();
             };
 
             xmlhttp.open("GET", url, true);
