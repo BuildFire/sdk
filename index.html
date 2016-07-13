@@ -21,6 +21,15 @@
 		font-size:14px;
 		line-height:22px;
 	}
+
+	.logo{
+		width:100%;
+		max-height:256px;
+	}
+
+	.frameworks{
+		width:256px;
+	}
 	.main{
 		background:#fff;
 		width:100%;
@@ -40,36 +49,37 @@
 <body>
 	<div class="main border-grey border-radius-four">
 		<div class="intro">
-			<h2 class="margin-top-zero">BuildFire Plugins SDK</h2>
-			<p>Here you will find the help you need to start building your plugin.</p>
+			<img src="https://s3-us-west-2.amazonaws.com/pluginserver/docResources/devFullLogo.png" class="logo">
 		</div>
 		<hr>
 		<div>
 	    	<h3>Getting Started</h3>
 	    	<ul class="margin-top-fifteen">
-		        <li>1. To get started, sign up for the developer program at <a href="http://dev.buildfire.com" class="text-primary" target="_blank">http://dev.buildfire.com</a>.</li>
-		        <li>2. Once you have done so, you should be issued an App ID that can be used test your plugin.</li>
-		        <li>3. Open scripts/appContext.js and change the appId in window.appContext.currentApp.</li>
-		        <li>4. Now you can begin developing your plugin in plugins/myPlugin.</li>
-				<hr class="none">
-		        <li class="text-danger">If you choose to change the folder name, make sure to change it in the scripts/appContext.js file as well.</li>
-		        <li class="text-danger">Make sure you run your local environment as a web application environment and not as static files from the file system.</li>
+		        <li>1. To get started, sign up for the FREE developer program at <a href="http://dev.buildfire.com" class="text-primary" target="_blank">http://dev.buildfire.com</a>.</li>
+		        <li>2. Now you can begin developing your plugin. Plugins are located in the [plugins] folder. [myPlugin] is a simple "Hello World" starter kit.</li>
+
+
 			</ul>
-	    	<hr class="none">
-			<a class="btn btn-primary" href="https://github.com/BuildFire/pluginTemplate/wiki">Learn More</a>
+
+			<a class="btn btn-success" href="pluginTester/index.html#myPlugin" >Start Developing</a>
+			<br/><br/>
+			<li class="text-danger">Make sure you run your local environment as a web application environment and not as static files from the file system.</li>
+
+			<br/>
+			<a class="btn btn-primary" href="https://github.com/BuildFire/sdk/wiki" target="_blank">API Documentation</a>
+			<a class="btn btn-primary" href="https://www.youtube.com/playlist?list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I" target="_blank">Tutorials</a>
+			<a class="btn btn-primary" href="https://github.com/BuildFire/simpleBuildFireJSExamples" target="_blank">Example Plugins</a>
+			<a class="btn btn-primary" href="https://github.com/BuildFire/?utf8=%E2%9C%93&query=plugin" target="_blank">Open Source Plugins</a>
 		</div>
-		<hr>
+
+		<hr/>
 		<div>
-	    	<h3>Examples</h3>
-	    	<ul class="margin-top-fifteen">
-		        <li><a href="pluginTester/#plugin/examplePlugin" class="text-primary">examplePlugin - Illustrates how to save and retrieve simple data structures.</a></li>
-			</ul>
-		</div>
-		<hr>
-		<div>
-	    	<h3>Testing Locally</h3>
-			<p>Once you have developed your plugin, click below to test it locally.</p>
-			<a class="btn btn-primary" href="pluginTester/">Test Plugin</a>
+	    	<h3>Use your favorite framework</h3>
+			<p>With BuildFireJS you can develop using any client-side javascript framework. like...</p>
+			<img src="https://s3-us-west-2.amazonaws.com/pluginserver/docResources/AngularJSEmberJSReact.jpg" class="frameworks">
+			<br/><br/>
+			<p>Here are some we put together for you:</p>
+			<a class="btn btn-primary" href="https://github.com/BuildFire/?utf8=%E2%9C%93&query=StarterKit" target="_blank">Starter Kits</a>
 		</div>
 	</div>
 </body>
