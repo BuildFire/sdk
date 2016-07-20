@@ -1298,65 +1298,56 @@ var buildfire = {
                 if (options.width == 'full') options.width = window.innerWidth;
                 if (options.height == 'full') options.height = window.innerHeight;
 
-                //If SmartCrop isn't included, use buildfire.imageLib.cropImage
-                if(typeof(SmartCrop) == "undefined"){
-                    console.warn("SmartCrop.js isnt imported");
-                    callback(null, buildfire.imageLib.cropImage(url, options));
-                    return;
-                }
 
-                //If we are in a web environment, use buildfire.imageLib.cropImage
-                if(buildfire.isWeb()){
-                    callback(null, buildfire.imageLib.cropImage(url, options));
-                    return;
-                }
-
-                //If image is coming from S3, and in an app, try to use SmartCrop
-                if (buildfire.isFileServer(url) ) {
-                    url = url.replace(/^https:\/\//i, 'http://');
-
-                    var localURL = buildfire.imageLib.local.toLocalPath(url);
-
-                    if (localURL && typeof(SmartCrop) != "undefined") {
-                        var img = new Image();
-                        img.src = localURL;
-                        
-                        img.onload = function () {
-                            if(options.width)
-                                options.width = Math.floor(options.width * ratio);
-
-                            if(options.height)
-                                options.height = Math.floor(options.height * ratio);
-
-                            if (options.width && !options.height)
-                                options.height = (img.height * options.width) / img.width;
-                            else if (!options.width && options.height)
-                                options.width = (img.width * options.height) / img.width;
-
-                            var canvas = document.createElement('canvas');
-                            var ctx = canvas.getContext('2d');
-                            canvas.width = options.width;
-                            canvas.height = options.height;
-
-                            SmartCrop.crop(img, options, function(result){
-
-                                var sug = result.topCrop;
-                                ctx.drawImage(img, sug.x, sug.y, sug.width, sug.height,0,0,options.width, options.height);
-                                callback(null, canvas.toDataURL());
-                            });
-
-                        };
-                        img.onerror = function (e) {
-                            console.warn(e.message);
-                            callback(null, buildfire.imageLib.cropImage(url, options));
+                var localURL = buildfire.imageLib.local.toLocalPath(url);
+                if (localURL) {
+                    var img = new Image();
+                    img.src = localURL;
+                    img.onload = function () {
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        var dim = {
+                            width:0,
+                            height:0
                         }
+                        var offset = {
+                            x:0,
+                            y:0
+                        }
+                        if (options.width !== options.height) {
+                            if (options.width > options.height) {
+                                dim.width = options.width;
+                                dim.height = (img.height * options.width) / img.width;
+                                offset.y = (options.height-dim.height)/2;
+                            } else {
+                                dim.width = (img.width * options.height) / img.height;
+                                dim.height = options.height;
+                                offset.x = (options.width-dim.width)/2;
+                            }
+                        } else {
+                            if (img.width < img.height) {
+                                dim.width = options.width;
+                                dim.height = (img.height * options.width) / img.width;
+                                offset.y = (options.height-dim.height)/2;
+                            } else {
+                                dim.width = (img.width * options.height) / img.height;
+                                dim.height = options.height;
+                                offset.x = (options.width-dim.width)/2;
+                            }
+                        }
+                        canvas.width = options.width;
+                        canvas.height = options.height;
+                        ctx.drawImage(img, offset.x, offset.y, dim.width, dim.height);
+                        callback(null, canvas.toDataURL());
+                    };
+                    img.onerror = function () {
+                        //callback(null, buildfire.imageLib.resizeImage(url, options));
+                        console.log("Image Error");
                     }
-                    else
-                        callback(null, buildfire.imageLib.cropImage(url, options));
+                } else {
+                    //callback(null, buildfire.imageLib.resizeImage(url, options));
+                    console.log("No localURL");
                 }
-                else
-                    callback(null, buildfire.imageLib.cropImage(url, options));
-
             }
         }
 
