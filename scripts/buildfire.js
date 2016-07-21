@@ -1288,6 +1288,13 @@ var buildfire = {
 
             }
             , cropImage: function (url, options, callback) {
+
+                //If we are online, use the normal crop image.
+                if (window.navigator.onLine) {
+                    callback(null, buildfire.imageLib.cropImage(url, options));
+                    return;
+                }
+
                 var ratio = options.disablePixelRatio ? 1 : window.devicePixelRatio;
 
                 if (!options)
@@ -1297,8 +1304,7 @@ var buildfire = {
 
                 if (options.width == 'full') options.width = window.innerWidth;
                 if (options.height == 'full') options.height = window.innerHeight;
-
-
+                
                 var localURL = buildfire.imageLib.local.toLocalPath(url);
                 if (localURL) {
                     var img = new Image();
@@ -1335,18 +1341,21 @@ var buildfire = {
                                 offset.x = (options.width-dim.width)/2;
                             }
                         }
+                        dim.width      *= ratio;
+                        dim.height     *= ratio;
+                        options.width  *= ratio;
+                        options.height *= ratio;
+                        
                         canvas.width = options.width;
                         canvas.height = options.height;
                         ctx.drawImage(img, offset.x, offset.y, dim.width, dim.height);
                         callback(null, canvas.toDataURL());
                     };
                     img.onerror = function () {
-                        //callback(null, buildfire.imageLib.resizeImage(url, options));
-                        console.log("Image Error");
+                        callback(null, buildfire.imageLib.resizeImage(url, options));
                     }
                 } else {
-                    //callback(null, buildfire.imageLib.resizeImage(url, options));
-                    console.log("No localURL");
+                    callback(null, buildfire.imageLib.resizeImage(url, options));
                 }
             }
         }
