@@ -1,7 +1,7 @@
 {
   "author":"Daniel Hindi"
-,"pluginName":"test"
-,"pluginDescription":""
+,"pluginName":"testPlugin"
+,"pluginDescription":"This plugin is used for Unit testing. If you are not testing you may remove this from your local copy of the SDK"
 ,"supportEmail":""
 ,"control":{
   "content":{
