@@ -509,6 +509,7 @@ var buildfire = {
 
             if(window.location.href.indexOf('widget') > 0){
                 html.setAttribute('buildfire', 'widget');
+				html.setAttribute('type', 'app');
             }else{
                 html.setAttribute('buildfire', 'control');
             }
