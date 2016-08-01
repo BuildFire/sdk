@@ -223,6 +223,7 @@ var buildfire = {
     , options:{}
     , parseMetaOptions: function(){
         var options = {};
+
         var tags = document.head.querySelector("meta[name=buildfire]");
         if(tags && tags.content) {
             var sections = tags.content.split(",");
@@ -291,6 +292,7 @@ var buildfire = {
 
 
         buildfire.appearance.insertHTMLAttributes();
+
         if(!buildfire.options.disableTheme)
             buildfire.appearance.attachCSSFiles();
     }
@@ -1637,7 +1639,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
         };
     }
 	setTimeout(function(){
-		buildfire.appearance._forceCSSRender();
+        if(!buildfire.options.disableTheme)
+		    buildfire.appearance._forceCSSRender();
 	}, 1750);
 
 });
