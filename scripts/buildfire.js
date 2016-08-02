@@ -9,7 +9,12 @@ function Packet(id, cmd, data) {
 
 /// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
-    logger: {
+    isFileServer: function(url){
+        return (url.indexOf("s3.amazonaws.com") !== -1);
+    }
+    , isWeb: function(){
+        return (window.location.protocol.indexOf("http") == 0);
+    }, logger: {
         _suppress: false
         ,attachRemoteLogger:function (tag){
 
@@ -218,6 +223,7 @@ var buildfire = {
     , options:{}
     , parseMetaOptions: function(){
         var options = {};
+
         var tags = document.head.querySelector("meta[name=buildfire]");
         if(tags && tags.content) {
             var sections = tags.content.split(",");
@@ -286,6 +292,7 @@ var buildfire = {
 
 
         buildfire.appearance.insertHTMLAttributes();
+
         if(!buildfire.options.disableTheme)
             buildfire.appearance.attachCSSFiles();
     }
@@ -504,6 +511,7 @@ var buildfire = {
 
             if(window.location.href.indexOf('widget') > 0){
                 html.setAttribute('buildfire', 'widget');
+				html.setAttribute('type', 'app');
             }else{
                 html.setAttribute('buildfire', 'control');
             }
@@ -1119,6 +1127,10 @@ var buildfire = {
             var p = new Packet(null, 'imageLib.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
+        ,isProdImageServer: function(url){
+            return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
+            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+        }
         //options:{
         // width: integer or 'full'
         // height: integer or 'full'
@@ -1143,7 +1155,7 @@ var buildfire = {
 
             var root;
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+            if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1178,7 +1190,7 @@ var buildfire = {
 
         , cropImage: function (url, options) {
 
-            var ratio = options.disablePixelRation?1:window.devicePixelRatio;
+            var ratio = options.disablePixelRatio ?1:window.devicePixelRatio;
 
             if (typeof(options) != "object")
                 throw ("options not an object");
@@ -1197,7 +1209,7 @@ var buildfire = {
 
             var root;
 
-            if(url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0||url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0){
+            if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1229,7 +1241,7 @@ var buildfire = {
                     return sections[sections.length - 1];
             }
             , toLocalPath: function (url) {
-                if (url.toLowerCase().indexOf("/imageserver") > 0) {
+                if (buildfire.isFileServer(url)) {
                     var localURL = this.localImageLibPath + this.parseFileFromUrl(url); // length of root host
                     //localURL = localURL.substring(localURL.indexOf('/'));
                     return localURL;
@@ -1280,7 +1292,14 @@ var buildfire = {
             }
             , cropImage: function (url, options, callback) {
 
-                //var ratio = options.disablePixelRation ? 1 : window.devicePixelRatio;
+                //If we are online, use the normal crop image.
+                if (window.navigator.onLine) {
+                    callback(null, buildfire.imageLib.cropImage(url, options));
+                    return;
+                }
+
+                var ratio = options.disablePixelRatio ? 1 : window.devicePixelRatio;
+
                 if (!options)
                     options = {width: window.innerWidth};
                 else if (typeof(options) != "object")
@@ -1288,53 +1307,59 @@ var buildfire = {
 
                 if (options.width == 'full') options.width = window.innerWidth;
                 if (options.height == 'full') options.height = window.innerHeight;
-
-
-                if(typeof(SmartCrop) == "undefined")
-                    console.warn("smartcrop.js isnt imported");
-
-
-
-                if (url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0 || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0) {
-                    url = url.replace(/^https:\/\//i, 'http://');
-
-                    var localURL = buildfire.imageLib.local.toLocalPath(url);
-                    if (localURL && typeof(SmartCrop) != "undefined") {
-                        var img = new Image();
-                        img.src = localURL;
-                        img.onload = function () {
-
-                            if (options.width && !options.height)
-                                options.height = (img.height * options.width) / img.width;
-                            else if (!options.width && options.height)
-                                options.width = (img.width * options.height) / img.width;
-
-                            var canvas = document.createElement('canvas');
-                            var ctx = canvas.getContext('2d');
-                            canvas.width = options.width;
-                            canvas.height = options.height;
-
-                            SmartCrop.crop(img, options, function(result){
-
-                                var sug = result.topCrop;
-                                ctx.drawImage(img, sug.x, sug.y, sug.width, sug.height,0,0,options.width, options.height);
-
-                                callback(null, canvas.toDataURL());
-
-                            });
-
-                        };
-                        img.onerror = function () {
-                            callback(null, buildfire.imageLib.cropImage(url, options));
+                
+                var localURL = buildfire.imageLib.local.toLocalPath(url);
+                if (localURL) {
+                    var img = new Image();
+                    img.src = localURL;
+                    img.onload = function () {
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        var dim = {
+                            width:0,
+                            height:0
                         }
+                        var offset = {
+                            x:0,
+                            y:0
+                        }
+                        if (options.width !== options.height) {
+                            if (options.width > options.height) {
+                                dim.width = options.width;
+                                dim.height = (img.height * options.width) / img.width;
+                                offset.y = (options.height-dim.height)/2;
+                            } else {
+                                dim.width = (img.width * options.height) / img.height;
+                                dim.height = options.height;
+                                offset.x = (options.width-dim.width)/2;
+                            }
+                        } else {
+                            if (img.width < img.height) {
+                                dim.width = options.width;
+                                dim.height = (img.height * options.width) / img.width;
+                                offset.y = (options.height-dim.height)/2;
+                            } else {
+                                dim.width = (img.width * options.height) / img.height;
+                                dim.height = options.height;
+                                offset.x = (options.width-dim.width)/2;
+                            }
+                        }
+                        dim.width      *= ratio;
+                        dim.height     *= ratio;
+                        options.width  *= ratio;
+                        options.height *= ratio;
+                        
+                        canvas.width = options.width;
+                        canvas.height = options.height;
+                        ctx.drawImage(img, offset.x, offset.y, dim.width, dim.height);
+                        callback(null, canvas.toDataURL());
+                    };
+                    img.onerror = function () {
+                        callback(null, buildfire.imageLib.resizeImage(url, options));
                     }
-                    else
-                        callback(null, buildfire.imageLib.cropImage(url, options));
+                } else {
+                    callback(null, buildfire.imageLib.resizeImage(url, options));
                 }
-                else
-                    callback(null, buildfire.imageLib.cropImage(url, options));
-
-
             }
         }
 
@@ -1521,6 +1546,10 @@ var buildfire = {
         openProfile: function (userId) {
             var p = new Packet(null, 'auth.openProfile', userId);
             buildfire._sendPacket(p);
+        },
+        getUserProfile: function (options, callback) {
+            var p = new Packet(null, 'auth.getUserProfile', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -1610,7 +1639,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
         };
     }
 	setTimeout(function(){
-		buildfire.appearance._forceCSSRender();
+        if(!buildfire.options.disableTheme)
+		    buildfire.appearance._forceCSSRender();
 	}, 1750);
 
 });
