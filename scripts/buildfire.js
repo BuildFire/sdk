@@ -1355,10 +1355,10 @@ var buildfire = {
                         callback(null, canvas.toDataURL());
                     };
                     img.onerror = function () {
-                        callback(null, buildfire.imageLib.resizeImage(url, options));
+                        callback(null, buildfire.imageLib.cropImage(url, options));
                     }
                 } else {
-                    callback(null, buildfire.imageLib.resizeImage(url, options));
+                    callback(null, buildfire.imageLib.cropImage(url, options));
                 }
             }
         }
