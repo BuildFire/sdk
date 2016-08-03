@@ -1610,7 +1610,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
             if (context.debugTag)
                 buildfire.logger.attachRemoteLogger(context.debugTag);
             if (window.location.pathname.indexOf('/widget/') > 0) {
-                buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+                var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
+
+                if(!disableTheme)
+                    buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
             }
         }
     });
