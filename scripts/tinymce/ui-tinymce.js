@@ -86,7 +86,7 @@ angular.module('ui.tinymce', [])
                         });
 
                         // Update model on change
-                        ed.on('change', function (e) {
+                        ed.on('change NodeChange', function (e) {
                             ed.save();
                             updateView(ed);
                         });
