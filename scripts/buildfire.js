@@ -1163,7 +1163,7 @@ var buildfire = {
                 root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
             }
 
-            if(root){
+            if(false && root){
 
 
                 if (options.width && !options.height)
@@ -1218,7 +1218,7 @@ var buildfire = {
             }
 
 
-            if(root) {
+            if(false && root) {
                 return root + "?fit=crop"
                     + (options.width? "&w=" + Math.floor(options.width * ratio):"")
                     + (options.height ? "&h=" + Math.floor(options.height * ratio) : "") ;
