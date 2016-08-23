@@ -1176,7 +1176,7 @@ var buildfire = {
                     return url;
             }
             else{
-                root = "http://s7obnu.cloudimage.io/s/";
+                root = "http://czi3m2qn.cloudimg.io/s/";
                 if (options.width && !options.height)
                     return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
                 else if (!options.width && options.height)
@@ -1224,7 +1224,7 @@ var buildfire = {
                     + (options.height ? "&h=" + Math.floor(options.height * ratio) : "") ;
             }
             else {
-                root = "http://s7obnu.cloudimage.io/s/crop/";
+                root = "http://czi3m2qn.cloudimg.io/s/crop/";
                 return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
             }
 
