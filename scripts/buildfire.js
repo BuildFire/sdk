@@ -493,6 +493,12 @@ var buildfire = {
         , navigateEmulator: function(){
             buildfire._sendPacket(new Packet(null, 'navigation.navigateEmulator'));
         }
+    },
+    //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
+    // else it returns "controlIFrame"
+    getFrameType: function () {
+        return buildfire.fid;
+
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
