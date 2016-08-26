@@ -497,7 +497,23 @@ var buildfire = {
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
     // else it returns "controlIFrame"
     getFrameType: function () {
-        return buildfire.fid;
+        var PLUGIN_STRING_ENUM={
+            LAUNCHER_PLUGIN : "launcherPluginv",
+            CONTROL_FRAME : "controlIFrame"
+        }
+
+        var PLUGIN_TYPE_ENUM={
+            LAUNCHER_PLUGIN : "LAUNCHER_PLUGIN",
+            CONTROL_FRAME : "CONTROL_FRAME",
+            UNKNOWN : "UNKNOWN"
+        }
+        var fid= buildfire.fid;
+        if (fid == PLUGIN_STRING_ENUM.LAUNCHER_PLUGIN)
+            return PLUGIN_TYPE_ENUM.LAUNCHER_PLUGIN;
+        else if (fid == PLUGIN_STRING_ENUM.CONTROL_FRAME)
+            return  PLUGIN_TYPE_ENUM.CONTROL_FRAME;
+        else
+            return PLUGIN_TYPE_ENUM.UNKNOWN;
 
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
