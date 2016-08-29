@@ -22,13 +22,13 @@ buildfire.components.pluginInstance.getAllPlugins = function (options, callback)
         callback = options;
         options = {
             pageIndex: 0 ,
-            pageSize: 20
+            pageSize: 50
         };
     }
     else if(typeof(options) == "number"){
         options = {
             pageIndex: options ,
-            pageSize: 20
+            pageSize: 50
         };
     }
 
