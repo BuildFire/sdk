@@ -14,8 +14,9 @@ var buildfire = {
     }
     , isWeb: function(){
         return (window.location.protocol.indexOf("http") == 0);
-    }, logger: {
-        _suppress: false
+    }
+    , logger: {
+        _suppress: window.location.href.indexOf('localhost') > 0 || window.location.href.indexOf('127.0.0.1') > 0
         ,attachRemoteLogger:function (tag){
 
             // dont attach twice
@@ -1612,6 +1613,24 @@ var buildfire = {
         }
         ,clearWatch:function(watchId, callback){
             buildfire._sendPacket(new Packet(null,"geo.clearWatch",watchId),callback);
+        }
+    }
+    , localStorage : {
+        setItem: function(key,value,callback) {
+            if(!callback)callback = function(){};
+
+            if(typeof(value) == "object" )
+                value = JSON.stringify(value);
+
+            buildfire._sendPacket(new Packet(null, 'localStorage.setItem', {key:key,value:value}), callback);
+        }
+        ,getItem: function(key,callback) {
+            if(!callback)throw "missing callback on buildfire.localStorage.getItem";
+            buildfire._sendPacket(new Packet(null, 'localStorage.getItem', key), callback);
+        }
+        ,removeItem: function(key,callback) {
+            if(!callback)throw "missing callback on buildfire.localStorage.removeItem";
+            buildfire._sendPacket(new Packet(null, 'localStorage.removeItem', key), callback);
         }
     }
 

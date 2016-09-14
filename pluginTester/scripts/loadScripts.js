@@ -29,6 +29,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/modalCtrl.js"
         , this.domain + "pages/controllers/addPageDialogCtrl.js"
         , this.domain + "app/scripts/framework/pluginAPI/localNotificationsAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/localStorageAPI.js"
     ];
 }
 
