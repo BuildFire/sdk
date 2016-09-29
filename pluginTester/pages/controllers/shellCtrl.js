@@ -13,7 +13,7 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
         $scope.currentUser = window.currentUser;
 
         if (postMaster.widgetPluginAPI.history.historyItems.length == 0) {
-            postMaster.widgetPluginAPI.history.historyItems.push({label: 'Plugin', source: 'control'});
+            postMaster.widgetPluginAPI.history.historyItems.push({label: 'Plugin', source: 'control',  options: { pluginData: undefined }});
             if (!$scope.$$phase) $scope.$apply();
         }
         postMaster.widgetPluginAPI.history.onUpdate(function (data) {
