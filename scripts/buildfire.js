@@ -635,7 +635,7 @@ var buildfire = {
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
         }
-        , disableFastClickOnLoad:false
+        /*, disableFastClickOnLoad:false
         , attachFastClick: function(){
 
             var path;
@@ -672,7 +672,7 @@ var buildfire = {
                 console.error('fastclick undefined');
             else
                 FastClick.attach(element);
-        }
+        }*/
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
             var linkElement = document.createElement("link");
             buildfire.appearance.CSSBusterCounter = 0;
@@ -1659,11 +1659,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     });
 
-    if(window.location.href.indexOf('/widget/')
+    /*if(window.location.href.indexOf('/widget/')
         && !buildfire.appearance.disableFastClickOnLoad
         && !buildfire.options.disableFastClick
+        && false
     )
-        buildfire.appearance.attachFastClick();
+        buildfire.appearance.attachFastClick();*/
 
 
     if(!buildfire.options.disableExternalLinkOverride) {
