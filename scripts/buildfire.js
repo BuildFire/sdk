@@ -297,11 +297,6 @@ var buildfire = {
         if(!buildfire.options.disableTheme)
             buildfire.appearance.attachCSSFiles();
 
-        if(!buildfire.options.disableSelect){
-            var mBody = document.getElementsByTagName('body');
-            mBody.addClass('noSelect');
-        }
-        
     }
     , _whitelistedCommands: ["datastore.triggerOnUpdate"
         , "datastore.triggerOnRefresh"
@@ -1647,6 +1642,10 @@ buildfire.init();
 document.addEventListener("DOMContentLoaded", function (event) {
     //buildfire.appearance.autosizeContainer();
     console.info('DOMContentLoaded');
+
+    if(!buildfire.options.disableSelect){
+        document.getElementsByTagName('body')[0].className += " noSelect";
+    }
 
     buildfire.getContext(function (err, context) {
         console.log("tracer: got getContext");
