@@ -6,11 +6,13 @@
 	font-family:Helvetica, Sans-Serif, Arial;
 }
 /* Prevent user selection on everything except input/textarea */
-*:not(input):not(textarea){
-	/* Prevent user selection */
+:not(input):not(textarea){
 	-webkit-tap-highlight-color: transparent;
 	-webkit-tap-highlight-color:rgba(0,0,0,0);
 	-webkit-touch-callout: none;
+}
+.noSelect{
+	/* Prevent user selection */
 	-webkit-user-select: none;
 	-khtml-user-select: none;
  	-moz-user-select: none;

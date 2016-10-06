@@ -296,6 +296,12 @@ var buildfire = {
 
         if(!buildfire.options.disableTheme)
             buildfire.appearance.attachCSSFiles();
+
+        if(!buildfire.options.disableSelect){
+            var mBody = document.getElementsByTagName('body');
+            mBody.addClass('noSelect');
+        }
+        
     }
     , _whitelistedCommands: ["datastore.triggerOnUpdate"
         , "datastore.triggerOnRefresh"
