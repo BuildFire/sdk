@@ -178,9 +178,8 @@ buildfire.components.pluginInstance.sortableList.prototype = {
             mediaHolder = null,
             media = null,
             details = document.createElement("div"),
-            title = document.createElement("span"),
+            title = this.widgetOptions.itemEditable ? document.createElement("a") : document.createElement("span"),
             buttonsWrapper = document.createElement("div"),
-            navigateButton = undefined,
             deleteButton = document.createElement("span");
 
         // Add the required classes to the elements
@@ -213,13 +212,6 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         }
 
         details.appendChild(title);
-
-        if (this.widgetOptions.itemEditable) {
-            navigateButton = document.createElement("span");
-            navigateButton.className = "btn-icon btn-link-icon btn-primary";
-            buttonsWrapper.appendChild(navigateButton);
-        }
-
         buttonsWrapper.appendChild(deleteButton);
         details.appendChild(buttonsWrapper);
         wrapper.appendChild(details);
@@ -227,9 +219,13 @@ buildfire.components.pluginInstance.sortableList.prototype = {
 
         // initialize the required events on the current item
         var navigationCallback = this.widgetOptions.navigationCallback || buildfire.navigation.navigateTo;
+		var itemEditable = this.widgetOptions.itemEditable;
         (function () {
-            if (navigateButton) {
-                navigateButton.addEventListener("click", function (e) {
+            if (itemEditable) {
+				var att = document.createAttribute("href");
+				att.value = "javascript:void(0);";
+				title.setAttributeNode(att);
+                title.addEventListener("click", function (e) {
                     e.preventDefault();
                     navigationCallback({ pluginId: item.pluginTypeId, instanceId: item.instanceId, folderName: item.folderName, title: item.title });
                 });
