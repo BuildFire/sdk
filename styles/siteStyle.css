@@ -1589,12 +1589,6 @@ html.translated-ltr body{
 
 /* Phase 2 */
 
-
-/* Hide deep link url icons in list views */
-.draggable-list-view .d-item .copy span.btn-link-icon{
-	display:none !important;
-}
-
 .form-group .validationMessage {
 	display: none;
 	color: #a94442;

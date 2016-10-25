@@ -17,17 +17,17 @@ if (typeof (buildfire.components.pluginInstance) == "undefined")
  }
 */
 buildfire.components.pluginInstance.getAllPlugins = function (options, callback) {
-  //  var me = this;
+    //  var me = this;
     if (typeof (options) == "function") {
         callback = options;
         options = {
-            pageIndex: 0 ,
+            pageIndex: 0,
             pageSize: 50
         };
     }
-    else if(typeof(options) == "number"){
+    else if (typeof (options) == "number") {
         options = {
-            pageIndex: options ,
+            pageIndex: options,
             pageSize: 50
         };
     }
@@ -73,7 +73,7 @@ buildfire.components.pluginInstance._mapFromSearch = function (data) {
 };
 
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.pluginInstance.sortableList = function (selector, items, dialogOptions, loadAllItems, hideLoadButton) {
+buildfire.components.pluginInstance.sortableList = function (selector, items, dialogOptions, loadAllItems, hideLoadButton, widgetOptions) {
     // sortableList requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use sortableList components");
     this.selector = selector;
@@ -84,6 +84,7 @@ buildfire.components.pluginInstance.sortableList = function (selector, items, di
     this.hideLoadButton = hideLoadButton;
     this._loadAllItems = loadAllItems ? true : false;
     this.dialogOptions = typeof (dialogOptions) == "object" && dialogOptions != null ? dialogOptions : { showIcon: true, confirmDeleteItem: true };
+    this.widgetOptions = widgetOptions;
     this.init(selector);
     this.loadItems(items);
 };
@@ -130,7 +131,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                 // here we want to remove any existing items since the user of the component don't want to append items
                 this._removeAll();
             }
-            if(appendItems=='loadAll' || showPlugin=='loadAll'){
+            if (appendItems == 'loadAll' || showPlugin == 'loadAll') {
                 this._loadAllItems = true;
                 this.selector.querySelector(this.loadAllSelector).setAttribute("checked", true);
                 this._toggleAddButton("disable");
@@ -177,9 +178,8 @@ buildfire.components.pluginInstance.sortableList.prototype = {
             mediaHolder = null,
             media = null,
             details = document.createElement("div"),
-            title = document.createElement("span"),
+            title = this.widgetOptions.itemEditable ? document.createElement("a") : document.createElement("span"),
             buttonsWrapper = document.createElement("div"),
-            navigateButton = document.createElement("span"),
             deleteButton = document.createElement("span");
 
         // Add the required classes to the elements
@@ -188,7 +188,6 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         details.className = "copy pull-right";
         title.className = "title ellipsis item-title";
         buttonsWrapper.className = "pull-right";
-        navigateButton.className = "btn-icon btn-link-icon btn-primary";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
         title.innerHTML = item.title;
@@ -213,46 +212,50 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         }
 
         details.appendChild(title);
-        buttonsWrapper.appendChild(navigateButton);
         buttonsWrapper.appendChild(deleteButton);
-
         details.appendChild(buttonsWrapper);
         wrapper.appendChild(details);
         me.itemsContainer.appendChild(wrapper);
 
         // initialize the required events on the current item
+        var navigationCallback = this.widgetOptions.navigationCallback || buildfire.navigation.navigateTo;
+		var itemEditable = this.widgetOptions.itemEditable;
         (function () {
-            navigateButton.addEventListener("click", function (e) {
-                e.preventDefault();
-                buildfire.navigation.navigateTo({pluginId : item.pluginTypeId ,  instanceId :  item.instanceId  , folderName : item.folderName , title : item.title });
-            });
+            if (itemEditable) {
+				var att = document.createAttribute("href");
+				att.value = "javascript:void(0);";
+				title.setAttributeNode(att);
+                title.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    navigationCallback({ pluginId: item.pluginTypeId, instanceId: item.instanceId, folderName: item.folderName, title: item.title });
+                });
+            }
 
             deleteButton.addEventListener("click", function (e) {
                 e.preventDefault();
-		var deleteItem = function() {
-			var itemIndex = me._getItemIndex(item);
-			var itemId = me.items[itemIndex].instanceId;
-			var	parent = deleteButton.parentNode.parentNode.parentNode;
-			if (itemIndex != -1) {
-				me.items.splice(itemIndex, 1);
-				me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
-				parent.parentNode.removeChild(parent);
-				me.onDeleteItem(item, itemIndex);
-			}
-		};
-		if(me.dialogOptions.confirmDeleteItem) {
-			buildfire.notifications.confirm({
-				title: "Remove Plugin Instance",
-				message: '<p>Are you sure you want to do this?</p>\
-			<p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
-				buttonLabels: ["Delete", "Cancel"],
-				target: e.currentTarget
-			}, function (e) {
-				deleteItem();
-			}.bind(this));
-		} else {
-			deleteItem();
-		}
+                var deleteItem = function () {
+                    var itemIndex = me._getItemIndex(item);
+                    var itemId = me.items[itemIndex].instanceId;
+                    var parent = deleteButton.parentNode.parentNode.parentNode;
+                    if (itemIndex != -1) {
+                        me.items.splice(itemIndex, 1);
+                        me.loadedInstances.splice(me.loadedInstances.indexOf(itemId), 1);
+                        parent.parentNode.removeChild(parent);
+                        me.onDeleteItem(item, itemIndex);
+                    }
+                };
+                if (me.dialogOptions.confirmDeleteItem) {
+                    buildfire.notifications.confirm({
+                        title: "Remove Plugin Instance",
+                        message: '<p>Are you sure you want to do this?</p><p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
+                        buttonLabels: ["Delete", "Cancel"],
+                        target: e.currentTarget
+                    }, function (e) {
+                        deleteItem();
+                    }.bind(this));
+                } else {
+                    deleteItem();
+                }
             });
         })(item);
     },
