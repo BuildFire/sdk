@@ -84,7 +84,7 @@ buildfire.components.pluginInstance.sortableList = function (selector, items, di
     this.hideLoadButton = hideLoadButton;
     this._loadAllItems = loadAllItems ? true : false;
     this.dialogOptions = typeof (dialogOptions) == "object" && dialogOptions != null ? dialogOptions : { showIcon: true, confirmDeleteItem: true };
-    this.widgetOptions = widgetOptions;
+    this.widgetOptions = widgetOptions || { itemEditable: false, navigationCallback : buildfire.navigation.navigateTo };
     this.init(selector);
     this.loadItems(items);
 };
@@ -178,7 +178,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
             mediaHolder = null,
             media = null,
             details = document.createElement("div"),
-            title = (this.widgetOptions && this.widgetOptions.itemEditable) ? document.createElement("a") : document.createElement("span"),
+            title = this.widgetOptions.itemEditable ? document.createElement("a") : document.createElement("span"),
             buttonsWrapper = document.createElement("div"),
             deleteButton = document.createElement("span");
 
@@ -218,8 +218,8 @@ buildfire.components.pluginInstance.sortableList.prototype = {
         me.itemsContainer.appendChild(wrapper);
 
         // initialize the required events on the current item
-        var navigationCallback = (this.widgetOptions && this.widgetOptions.navigationCallback) ? this.widgetOptions.navigationCallback : buildfire.navigation.navigateTo;
-		var itemEditable = (this.widgetOptions && this.widgetOptions.itemEditable) ? widgetOptions.itemEditable : false;
+        var navigationCallback = this.widgetOptions.navigationCallback;
+        var itemEditable = this.widgetOptions.itemEditable;
         (function () {
             if (itemEditable) {
 				var att = document.createAttribute("href");
