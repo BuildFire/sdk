@@ -24,8 +24,13 @@
             <li ng-if="settingsSrc">
                 <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
             </li>
+            <li ng-repeat="tab in customTabs">
+                <a ng-click="loadCustomTab(tab,$event)">{{tab.title}}</a>
+            </li>
         </ul>
-        <iframe id="iframeControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
+        <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
                 ng-src="{{currentControl}}"></iframe>
+        <iframe ng-hide="pluginControlIframeVisible" class="non-control-iframe" id="iframeNonControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
+                ng-src="{{currentNonControl}}"></iframe>
     </div>
 </div>

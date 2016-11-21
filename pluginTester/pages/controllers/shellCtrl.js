@@ -70,20 +70,57 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
 
+            $scope.pluginControlIframeVisible = true;
+
+            if(config.control.customTabs && config.control.customTabs.length) {
+                var pluginFolder = $routeParams.pluginFolder;
+                if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
+                for(var i = 0 ; i < config.control.customTabs.length; i++) {
+                    var tab = config.control.customTabs[i];
+                    if(tab && tab.url) {
+                        if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
+                            var root = '../plugins/' + pluginFolder + '/control/';
+                            // strip leading '/' if any
+                            var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
+                            tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
+                        } else {
+                            tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
+                        }
+                    }
+                }
+                $scope.customTabs = config.control.customTabs;
+            }
+
             if (!$scope.$$phase)
                 $scope.$apply();
         };
 
         $scope.loadIFrame = function (section, e) {
-
+            $scope.pluginControlIframeVisible = true;
             var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
             $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html';
             var element = document.querySelector('.active');
             if (element)element.className = '';
-            e.target.className = 'active'
+            e.target.className = 'active';
+        };
 
+        $scope.loadCustomTab = function (tab, e) {
+            if(tab.controlUrl) {
+                $scope.pluginControlIframeVisible = true;
+                $scope.currentControl = tab.controlUrl;
+            } else {
+                $scope.pluginControlIframeVisible = false;
+                $scope.currentNonControl = tab.secureUrl;
+            }
+
+            var element = document.querySelector('.active');
+            if (element)element.className = '';
+            e.target.className = 'active';
+
+            if (!$scope.$$phase)
+                $scope.$apply();
         };
 
         /****************keep track of recent plugins *****/
