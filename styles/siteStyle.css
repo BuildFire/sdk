@@ -1439,7 +1439,8 @@ body.rtl .pagination > li + li{
 
 /* Plugin iFrame */
 #iframeControl,
-#controlIFrame{
+#controlIFrame,
+.non-control-iframe{
 	width:100%;
 	min-width:100%;
 	max-width:100%;
