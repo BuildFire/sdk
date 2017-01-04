@@ -1200,7 +1200,8 @@ var buildfire = {
                     return url;
             }
             else{
-                root = "http://czi3m2qn.cloudimg.io/s/";
+                root = (window.location.protocol == "https:"?"https:":"http:") + "//czi3m2qn.cloudimg.io/s/";
+
                 if (options.width && !options.height)
                     return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
                 else if (!options.width && options.height)
@@ -1232,7 +1233,7 @@ var buildfire = {
 
 
             var root;
-
+/*
             if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
@@ -1247,10 +1248,15 @@ var buildfire = {
                     + (options.width? "&w=" + Math.floor(options.width * ratio):"")
                     + (options.height ? "&h=" + Math.floor(options.height * ratio) : "") ;
             }
-            else {
-                root = "http://czi3m2qn.cloudimg.io/s/crop/";
-                return root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
-            }
+             else {
+ */
+                root = (window.location.protocol == "https:"?"https:":"http:") + "//czi3m2qn.cloudimg.io/s/crop/";
+
+                root =  root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
+
+                //root = "http://czi3m2qn.cloudimg.io/width/"+ Math.floor(options.width * ratio) + "/tjpg.q40/" + root;
+                return root;
+ //           }
 
         }
         ,local: {
