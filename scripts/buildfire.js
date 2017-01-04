@@ -1403,11 +1403,11 @@ var buildfire = {
             var p = new Packet(null, 'notificationsAPI.prompt', options);
             buildfire._sendPacket(p, callback);
         }
-        , beep: function (options) {
+        , beep: function (options, callback) {
             var p = new Packet(null, 'notificationsAPI.beep', options);
             buildfire._sendPacket(p, callback);
         }
-        , vibrate: function (options) {
+        , vibrate: function (options, callback) {
             var p = new Packet(null, 'notificationsAPI.vibrate', options);
             buildfire._sendPacket(p, callback);
         }
