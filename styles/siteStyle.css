@@ -991,6 +991,15 @@ table.table span.sort-icon{
 .modal .modal-content .padded{
 	padding:30px 15px;
 }
+.modal-dialog .media-container .files-set .files-container{
+	height:247px;
+	overflow: auto;
+}
+.modal-dialog .media-container .files-set .file-holder{
+	width:123px;
+	margin-left:5px;
+	margin-top:5px;
+}
 .modal .modal-content .bottom,
 .section .bottom.border-top-grey{
 	height:39px;
