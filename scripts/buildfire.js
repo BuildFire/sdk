@@ -302,6 +302,8 @@ var buildfire = {
         , "datastore.triggerOnRefresh"
          ,"userData.triggerOnUpdate"
         , "userData.triggerOnRefresh"
+        ,"publicData.triggerOnUpdate"
+        , "publicData.triggerOnRefresh"
         , "messaging.onReceivedMessage"
         , "history.triggerOnPop"
         , "navigation.onBackButtonClick"
@@ -927,8 +929,8 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
     }
+    /// ref: https://github.com/BuildFire/sdk/wiki/User-Data:-Save-user-data-from-the-widget
     ,userData: {
-        /// ref:
         get: function (tag, callback) {
 
             var tagType = typeof (tag);
@@ -1141,6 +1143,181 @@ var buildfire = {
         /// ref:  
         , disableRefresh: function () {
             var p = new Packet(null, "userData.disableRefresh");
+            buildfire._sendPacket(p);
+        }
+    }
+    , publicData: {
+        /// ref:
+        get: function (tag, callback) {
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            var obj = {tag: tag};
+            var p = new Packet(null, 'publicData.get', obj);
+            buildfire._sendPacket(p, callback);
+
+        },
+        /// ref:
+        getById: function (id, tag, callback) {
+
+            var idType = typeof (id);
+            if (idType == "function" && typeof (callback) == "undefined") {
+                callback = id;
+                id = '';
+            }
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+            var obj = {tag: tag, id: id};
+            var p = new Packet(null, 'publicData.get', obj);
+            buildfire._sendPacket(p, callback);
+
+        }
+        /// ref:
+        , save: function (obj, tag, callback) {
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'publicData.save', {tag: tag, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+
+                if (callback) callback(err, result);
+            });
+        }
+        /// ref:
+        , insert: function (obj, tag, checkDuplicate, callback) {
+
+            var checkDuplicateType = typeof (checkDuplicate);
+            if (checkDuplicateType == "undefined")
+                checkDuplicate = false;
+            else if (checkDuplicateType == "function" && typeof (callback) == "undefined") {
+                callback = checkDuplicate;
+                checkDuplicate = false;
+            }
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'publicData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
+            buildfire._sendPacket(p, function (err, result) {
+
+                callback(err, result);
+            });
+        }
+        /// ref:
+        , bulkInsert: function (arrayObj, tag, callback) {
+
+            if (arrayObj.constructor !== Array) {
+
+                callback({"code": "error", "message": "the data should be an array"}, null);
+                return;
+            }
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'publicData.bulkInsert', {tag: tag, obj: arrayObj});
+            buildfire._sendPacket(p, function (err, result) {
+
+                callback(err, result);
+            });
+        }
+        ///
+        , update: function (id, obj, tag, callback) {
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'publicData.update', {tag: tag, id: id, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+
+                if (callback) callback(err, result);
+            });
+        }
+        /// ref
+        , delete: function (id, tag, callback) {
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'publicData.delete', {tag: tag, id: id});
+            buildfire._sendPacket(p, function (err, result) {
+
+                if (callback) callback(err, result);
+            });
+        }
+        ///
+        , search: function (options, tag, callback) {
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            //auto correct empty string filter
+            if (typeof (options) == "undefined") options = {filter: {}};
+            if (!options.filter) options.filter = {};
+
+            var p = new Packet(null, 'publicData.search', {tag: tag, obj: options});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
+        /// ref:
+        , onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('publicDataOnUpdate', callback, allowMultipleHandlers);
+        }
+        , triggerOnUpdate: function (obj) {
+            buildfire.eventManager.trigger('publicDataOnUpdate', obj);
+        }
+        /// ref:
+        , onRefresh: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('publicDataOnRefresh', callback, allowMultipleHandlers);
+        }
+        , triggerOnRefresh: function (obj) {
+            buildfire.eventManager.trigger('publicDataOnRefresh', obj);
+        }
+        /// ref:
+        , disableRefresh: function () {
+            var p = new Packet(null, "publicData.disableRefresh");
             buildfire._sendPacket(p);
         }
     }
