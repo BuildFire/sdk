@@ -403,7 +403,7 @@ var buildfire = {
             p = JSON.stringify(packet);
 
 
-        console.info("BuildFire.js Send >> " + p, window.location.href);
+        console.info("BuildFire.js Send >> " + packet.cmd, window.location.href);
         buildfire._parentPost(p,callback);  //if (parent)parent.postMessage(p, "*");
     }
     ,_parentPost: function (packet) {
@@ -504,13 +504,13 @@ var buildfire = {
         var PLUGIN_STRING_ENUM={
             LAUNCHER_PLUGIN : "launcherPluginv",
             CONTROL_FRAME : "controlIFrame"
-        }
+        };
 
         var PLUGIN_TYPE_ENUM={
             LAUNCHER_PLUGIN : "LAUNCHER_PLUGIN",
             CONTROL_FRAME : "CONTROL_FRAME",
             UNKNOWN : "UNKNOWN"
-        }
+        };
         var fid= buildfire.fid;
         if (fid == PLUGIN_STRING_ENUM.LAUNCHER_PLUGIN)
             return PLUGIN_TYPE_ENUM.LAUNCHER_PLUGIN;
@@ -1824,14 +1824,12 @@ buildfire.init();
 
 document.addEventListener("DOMContentLoaded", function (event) {
     //buildfire.appearance.autosizeContainer();
-    console.info('DOMContentLoaded');
 
     if(!buildfire.options.disableSelect){
         document.getElementsByTagName('body')[0].className += " noSelect";
     }
 
     buildfire.getContext(function (err, context) {
-        console.log("tracer: got getContext");
         if (err) {
             console.error(err);
         }
