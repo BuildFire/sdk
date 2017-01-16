@@ -8,7 +8,7 @@ buildfire._parentPost = function (p) {
     replyPacket.error = mockErr;
     buildfire._postMessageHandler({
         id: packet.id,
-        data: JSON.stringify(replyPacket),
+        data: replyPacket,
         source: null
     });
 }
