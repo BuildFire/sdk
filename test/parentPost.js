@@ -2,8 +2,7 @@
  * Created by zain on 12/28/15.
  */
 
-buildfire._parentPost = function (p) {
-    var packet = JSON.parse(p);
+buildfire._parentPost = function (packet) {
     var replyPacket = new Packet(packet.id, packet.cmd, mockResult);
     replyPacket.error = mockErr;
     buildfire._postMessageHandler({
@@ -11,4 +10,4 @@ buildfire._parentPost = function (p) {
         data: replyPacket,
         source: null
     });
-}
+};
