@@ -44,29 +44,29 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
         window.serviceFrame;
         $scope.loadFrames = function (pluginFolder, config) {
             var root = '../plugins/';
-            $scope.widgetSrc = root + pluginFolder + '/widget/index.html';
+            $scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget';
 
             if (config.widget && config.widget.service) {
                 serviceFrame = document.createElement('iframe');
                 serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
                 serviceFrame.id='service';
                 serviceFrame.style.display='none';
-                serviceFrame.src = root + pluginFolder + '/widget/' + config.widget.service;
+                serviceFrame.src = root + pluginFolder + '/widget/' + config.widget.service + "?fid=service";
                 document.body.appendChild(serviceFrame);
             }
 
             if (config.control.settings.enabled) {
-                $scope.currentControl = $scope.settingsSrc = root + pluginFolder + '/control/settings/index.html';
+                $scope.currentControl = $scope.settingsSrc = root + pluginFolder + '/control/settings/index.html?fid=controlSettings';
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
 
             if (config.control.design.enabled) {
-                $scope.currentControl = $scope.designSrc = root + pluginFolder + '/control/design/index.html';
+                $scope.currentControl = $scope.designSrc = root + pluginFolder + '/control/design/index.html?fid=controlDesign';
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
 
             if (config.control.content.enabled) {
-                $scope.currentControl = $scope.contentSrc = root + pluginFolder + '/control/content/index.html';
+                $scope.currentControl = $scope.contentSrc = root + pluginFolder + '/control/content/index.html?fid=controlContent';
                 $sce.trustAsResourceUrl($scope.currentControl);
             }
 
@@ -200,7 +200,7 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
         };
 
         $scope.sendDeeplinkData = function () {
-            widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?dld=" + $scope.link.deeplinkData;
+            widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?fid=widget&dld=" + $scope.link.deeplinkData;
         };
 
         $scope.navTo = function ($event) {
