@@ -16,8 +16,7 @@ var buildfire = {
         return (window.location.protocol.indexOf("http") == 0);
     }
     , logger: {
-        _suppress: window.location.href.indexOf('localhost') > 0 || window.location.href.indexOf('127.0.0.1') > 0
-        ,attachRemoteLogger:function (tag){
+        attachRemoteLogger:function (tag){
 
             // dont attach twice
             if(document.getElementById('BuildFireAppDebuggerScript')) {
@@ -36,178 +35,6 @@ var buildfire = {
             script.id = 'BuildFireAppDebuggerScript';
             header.appendChild(script);
 
-        }
-        , logMaxLength: 500
-        , clearHistory: function () {
-            buildfire.logger._getLogContainerDIV().innerHTML = '';
-        }
-        , _logContainerDIV: null
-        , _getLogContainerDIV: function () {
-            if (buildfire.logger._logContainerDIV)
-                return buildfire.logger._logContainerDIV;
-            else
-                return buildfire.logger._createLogContainerDIV();
-        }
-        , _createLogContainerDIV: function () {
-            var div = document.getElementById('__buildfireLog');
-            if (!div) {
-                div = document.createElement('div');
-                div.style.position = 'fixed';
-                div.style.left = div.style.top = 0;
-                div.style.width = '100%';
-                div.style.backgroundColor = 'black';
-                div.style.opacity = 0.9;
-                div.style.display = 'none';
-                div.style.zIndex = 9999;
-                buildfire.logger._logContainerDIV = div;
-
-
-
-                function filterOutLogs(className){
-                    var id= 'bf_style_filter';
-                    var styleBlock = document.querySelector('head #' + id );
-                    if(!styleBlock) {
-                        styleBlock = document.createElement('style');
-                        styleBlock.id = id;
-                        document.head.appendChild(styleBlock);
-                    }
-
-                    var logClassTypes=['.bflog-info','.bflog-log','.bflog-debug','.bflog-warn','.bflog-error'];
-                    var index = logClassTypes.indexOf('.' + className);
-                    if(index >=0) {
-                        logClassTypes.splice(index,1);
-                        styleBlock.innerHTML=logClassTypes.join(' , ') + ' { display:none;}';
-                    }
-                    else
-                        styleBlock.innerHTML='';
-
-                }
-
-                var select = document.createElement('select');
-                select.className = 'form-control';
-                select.onchange = function(){
-                    var value=select.options[select.selectedIndex].value;
-                    if(value=='close') {
-                        buildfire.logger.hideHistory();
-                        select.selectedIndex=0;
-                    }
-                    else
-                        filterOutLogs(value);
-                };
-                buildfire.logger.pushHistory(select);
-                function createFilterOption(text,toggleClass){
-                    var option = document.createElement('option');
-                    option.text = text;
-                    option.value = toggleClass;
-                    select.appendChild(option);
-                }
-
-                createFilterOption('Show all','');
-                createFilterOption('Info logs only','bflog-info');
-                createFilterOption('Logs only','bflog-log');
-                createFilterOption('Debug logs only','bflog-debug');
-                createFilterOption('Warning logs only','bflog-warn');
-                createFilterOption('Error logs only','bflog-error');
-                createFilterOption('<<< Close Debugger','close');
-
-            }
-            return div;
-        }
-        , showHistory: function () {
-            var div = buildfire.logger._getLogContainerDIV();
-            div.style.display = '';
-            if (!div.parentNode && document.body)
-                document.body.appendChild(div);
-        }
-        , hideHistory: function () {
-            var div = buildfire.logger._getLogContainerDIV();
-            div.style.display = 'none';
-        }
-        , pushHistory: function (element) {
-            if (typeof(element) == "string") {
-                var d = document.createElement('div');
-                d.innerHTML = element;
-                element = d;
-            }
-            var div = buildfire.logger._getLogContainerDIV();
-            div.appendChild(element);
-            if (div.childNodes.length > buildfire.logger.logMaxLength)
-                div.removeChild(div.childNodes[0]);
-        }
-        , init: function () {
-            //buildfire.logger._suppress = window.location.href.indexOf('http') >=0;
-
-            var qs = buildfire.parseQueryString();
-            buildfire.fid = qs.fid;
-
-            buildfire.logger._createLogContainerDIV();
-            ///hijack console
-            var l = console.log;
-            console.log = function (message) {
-                var dv = document.createElement('div');
-                dv.innerHTML = "l: " + message;
-                dv.className = 'bflog-log';
-                buildfire.logger.pushHistory(dv);
-                d.apply(console, arguments);
-            };
-
-            var d = console.debug;
-            console.debug = function (message) {
-                var dv = document.createElement('div');
-                dv.innerHTML = "d: " + message;
-                dv.className = 'bflog-debug bg-info';
-                buildfire.logger.pushHistory(dv);
-                d.apply(console, arguments);
-            };
-
-            var e = console.error;
-            console.error = function (message) {
-                var dv = document.createElement('div');
-                dv.innerHTML = "e: " + message;
-                dv.className = 'bflog-error bg-error';
-                buildfire.logger.pushHistory(dv);
-                e.apply(console, arguments);
-            };
-
-            var w = console.warn;
-            console.warn = function (message) {
-                var dv = document.createElement('div');
-                dv.innerHTML = "w: " + message;
-                dv.className = 'bflog-warn bg-warning';
-                buildfire.logger.pushHistory(dv);
-                w.apply(console, arguments);
-            };
-
-            var i = console.info;
-            console.info = function (message) {
-                var dv = document.createElement('div');
-                dv.innerHTML = "i: " + message;
-                dv.className = 'bflog-info bg-info';
-                buildfire.logger.pushHistory(dv);
-                i.apply(console, arguments);
-            };
-        }
-        , show: function () {
-            this._suppress = false;
-        }
-        , hide: function () {
-            this._suppress = true;
-        }
-        , error: function () {
-            if (!this._suppress)
-                console.error.apply(console, arguments);
-        }
-        , log: function () {
-            if (!this._suppress)
-                console.log.apply(console, arguments);
-        }
-        , warn: function () {
-            if (!this._suppress)
-                console.warn.apply(console, arguments);
-        }
-        , debug: function () {
-            if (!this._suppress)
-                console.debug.apply(console, arguments);
         }
     }
     , _callbacks: {}
@@ -288,9 +115,6 @@ var buildfire = {
 
         buildfire.options = buildfire.parseMetaOptions();
 
-        buildfire.logger.init();
-        //buildfire.logger.showHistory();
-
 
         buildfire.appearance.insertHTMLAttributes();
 
@@ -310,7 +134,6 @@ var buildfire = {
         , "services.media.audioPlayer.triggerOnEvent"
         , "auth.triggerOnLogin"
         , "auth.triggerOnLogout"
-        , "logger.showHistory"
         , "logger.attachRemoteLogger"
         , "appearance.triggerOnUpdate"
         , "services.bluetooth.ble.onConnect"
@@ -326,8 +149,12 @@ var buildfire = {
             console.log(' >>>> IGNORE MESSAGE <<<< ');
             return;
         }//e.origin != "null"
-        console.info('buildfire.js received << ' + e.data, window.location.href);
-        var packet = JSON.parse(e.data);
+
+        var packet;
+        if(typeof(e.data) == "object")
+            packet = e.data;
+        else
+            packet = JSON.parse(e.data);
 
         if (packet.id && buildfire._callbacks[packet.id]) {
             buildfire._callbacks[packet.id](packet.error, packet.data);
@@ -357,7 +184,7 @@ var buildfire = {
     , _sendPacket: function (packet, callback) {
         if (typeof (callback) != "function")// handels better on response
             callback = function (err, result) {
-                console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
+                //console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
             };
 
 
@@ -379,7 +206,7 @@ var buildfire = {
 
                 if(rerun)
                 {
-                    console.warn("calling" + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
+                    console.warn("calling " + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
                     buildfire._sendPacket(packet, function (e, d) {
                         buildfire._resendAttempts--;
                         callback(e, d);
@@ -387,7 +214,9 @@ var buildfire = {
                     buildfire._resendAttempts++;
                 }
             }
-        }, packet.cmd.indexOf('getContext') == 0? 250 : 1000);
+        },  250);
+
+        //packet.cmd.indexOf('getContext') == 0? 250 :
 
         var wrapper = function (err, data) {
             clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
@@ -396,18 +225,14 @@ var buildfire = {
 
         buildfire._callbacks[packet.id] = wrapper;
         packet.fid= buildfire.fid;
-        var p;
-        if (typeof(angular) != "undefined")
-            p = angular.toJson(packet);
-        else
-            p = JSON.stringify(packet);
 
 
-        console.info("BuildFire.js Send >> " + packet.cmd, window.location.href);
-        buildfire._parentPost(p,callback);  //if (parent)parent.postMessage(p, "*");
+        //console.info("BuildFire.js Send >> " , packet.cmd, buildfire.fid);
+        buildfire._parentPost(packet,callback);  //if (parent)parent.postMessage(p, "*");
     }
     ,_parentPost: function (packet) {
-        if (parent)parent.postMessage(packet, "*");
+        if (parent)
+            parent.postMessage(packet, "*");
     }
     , getContext: function (callback) {
         if (buildfire._context)
@@ -417,7 +242,7 @@ var buildfire = {
             buildfire._sendPacket(p, function (err, data) {
                 if (data)
                     buildfire._context = data;
-                callback(err, data);
+                if(callback)callback(err, data);
             });
         }
     }
@@ -1875,6 +1700,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
 	}, 1750);
 
 });
+
+buildfire.fid = buildfire.parseQueryString().fid;
+
+
 document.addEventListener("resize", function (event) {
     buildfire.appearance.autosizeContainer();
 });
