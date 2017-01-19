@@ -100,7 +100,7 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
             var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
-            $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html';
+            $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control';
             var element = document.querySelector('.active');
             if (element)element.className = '';
             e.target.className = 'active';

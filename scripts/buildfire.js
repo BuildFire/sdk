@@ -231,8 +231,21 @@ var buildfire = {
         buildfire._parentPost(packet,callback);  //if (parent)parent.postMessage(p, "*");
     }
     ,_parentPost: function (packet) {
-        if (parent)
+
+        function sanitize(data){
+            if(data)delete data.$$hashKey;
+            for(var p in data){
+                var obj = data[p];
+                if( typeof(obj) == "object")
+                    data[p] = sanitize (obj);
+            }
+            return data;
+        }
+
+        if (parent && packet) {
+            if(packet.data && typeof(angular) != "undefined") packet.data= sanitize(packet.data);
             parent.postMessage(packet, "*");
+        }
     }
     , getContext: function (callback) {
         if (buildfire._context)
