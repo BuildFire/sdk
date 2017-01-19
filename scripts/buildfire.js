@@ -1217,6 +1217,9 @@ var buildfire = {
 
         , cropImage: function (url, options) {
 
+            if(buildfire.imageLib.isProdImageServer(url))
+                url = url.replace(/^https:\/\//i, 'http://');
+
             var ratio = options.disablePixelRatio ?1:window.devicePixelRatio;
 
             if (typeof(options) != "object")

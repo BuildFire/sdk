@@ -11,6 +11,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/remoteDatastore.js"
         , this.domain + "app/scripts/framework/pluginAPI/datastoreAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/userDatastoreAPI.js"
+        , this.domain + "app/scripts/framework/pluginAPI/publicDatastoreAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/analyticsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/appearanceAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/mediaAPI.js"
