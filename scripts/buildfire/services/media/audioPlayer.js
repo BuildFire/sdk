@@ -90,7 +90,6 @@ buildfire.services.media.audioPlayer = {
     }
     , triggerOnEvent: function (e) {
         var event = new CustomEvent('audioPlayer.onEvent', {'detail': e});
-        buildfire.logger.log(e);
         document.dispatchEvent(event);
     }
     ,onEvent:function(callback){
