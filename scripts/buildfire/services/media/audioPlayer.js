@@ -40,6 +40,9 @@ buildfire.services.media.audioPlayer = {
     ,pause:function(){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.pause"));
     }
+    ,isPaused:function(callback){
+        buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.isPaused"),callback);
+    }
     ,skip:function(sec){
         buildfire._sendPacket(new Packet(null,"mediaAPI.audioPlayer.skip",sec));
     }
