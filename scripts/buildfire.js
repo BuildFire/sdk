@@ -196,6 +196,8 @@ var buildfire = {
                     && packet.cmd.indexOf('datastore.insert') != 0
                     && packet.cmd.indexOf('datastore.bulkInsert') != 0
                     && packet.cmd.indexOf('datastore.disableRefresh') != 0
+                    && packet.cmd.indexOf('datastore.searchAndUpdate') != 0
+                    && packet.cmd.indexOf('datastore.update') != 0
                 )
                     rerun=true;
                 else if (packet.cmd.indexOf('getContext') == 0 )
