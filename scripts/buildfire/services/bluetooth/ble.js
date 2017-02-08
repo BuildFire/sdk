@@ -52,3 +52,9 @@ buildfire.services.bluetooth.ble = {
         buildfire._sendPacket(new Packet(null,"bluetooth.isEnabled"),callback);
     }
 };
+
+if(buildfire._whitelistedCommands) {
+    buildfire._whitelistedCommands.push('services.bluetooth.ble.onConnect');
+    buildfire._whitelistedCommands.push('services.bluetooth.ble.onDisconnect');
+    buildfire._whitelistedCommands.push('services.bluetooth.ble._onSubscribeData');
+}
