@@ -224,6 +224,33 @@ describe('buildfire.publicData', function () {
 
     });
 
+    describe('publicData search and update', function () {
+
+        afterAll(function () {
+            mockErr = null;
+            mockResult = null;
+        });
+
+        it("buildfire.publicData.update should exist and be a function", function () {
+            expect(typeof buildfire.publicData.searchAndUpdate).toEqual("function");
+        });
+
+        it("buildfire.publicData.searchAndUpdate should search and update an object", function () {
+            mockErr = null;
+            mockResult = {
+                nModified: 1,
+                status: "updated"
+            };
+
+            var newData = {name: 'buildfire@2016'};
+            buildfire.publicData.searchAndUpdate({id: 1}, newData, 'info', function (err, status) {
+                expect(err).toBeNull();
+                expect(status).toEqual(jasmine.any(Object));
+                expect(status.status).toEqual('updated');
+            });
+        });
+    });
+
     describe('publicData delete', function () {
         afterAll(function () {
             mockErr = null;
