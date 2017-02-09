@@ -196,6 +196,8 @@ var buildfire = {
                     && packet.cmd.indexOf('datastore.insert') != 0
                     && packet.cmd.indexOf('datastore.bulkInsert') != 0
                     && packet.cmd.indexOf('datastore.disableRefresh') != 0
+                    && packet.cmd.indexOf('datastore.searchAndUpdate') != 0
+                    && packet.cmd.indexOf('datastore.update') != 0
                 )
                     rerun=true;
                 else if (packet.cmd.indexOf('getContext') == 0 )
@@ -708,6 +710,21 @@ var buildfire = {
                 if (callback)callback(err, result);
             });
         }
+        , searchAndUpdate: function (search, obj, tag, callback) {
+            var tagType = typeof(tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof(callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'datastore.searchAndUpdate', {tag: tag, search: search, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.datastore.triggerOnUpdate(result);
+                if (callback)callback(err, result);
+            });
+        }
         /// ref https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoredeleteidobj-tag-optional-callback
         , delete: function (id, tag, callback) {
             var tagType = typeof(tag);
@@ -917,6 +934,29 @@ var buildfire = {
                 if (callback) callback(err, result);
             });
         }
+        , searchAndUpdate: function (search, obj, tag, userToken, callback) {
+            var userTokenType = typeof (userToken);
+            if (userTokenType == "undefined")
+                userToken = '';
+            else if (userTokenType == "function" && typeof (callback) == "undefined") {
+                callback = userToken;
+                userToken = '';
+            }
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'userData.searchAndUpdate', { tag: tag, userToken: userToken, search: search, obj: obj });
+            buildfire._sendPacket(p, function (err, result) {
+
+                if (callback) callback(err, result);
+            });
+        }
         /// ref 
         , delete: function (id, tag, userToken, callback) {
 
@@ -1094,6 +1134,22 @@ var buildfire = {
             }
 
             var p = new Packet(null, 'publicData.update', {tag: tag, id: id, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+
+                if (callback) callback(err, result);
+            });
+        }
+        , searchAndUpdate: function (search, obj, tag, callback) {
+
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            var p = new Packet(null, 'publicData.searchAndUpdate', {tag: tag, search: search, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
 
                 if (callback) callback(err, result);
