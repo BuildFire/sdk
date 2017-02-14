@@ -158,6 +158,8 @@ section.showNav #plugin{
 	cursor:pointer;
 }
 #menuToggle span.icon{
+	padding: 1em !important; /* increase clickable area */
+	margin: -1em !important;/* increase clickable area */
 	font-size:21px;
 	vertical-align:top;
 	color:#fff;
