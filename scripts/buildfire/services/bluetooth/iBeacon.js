@@ -1,6 +1,9 @@
 /**
  * Created by danielhindi on 1/19/17.
+ * ref: https://github.com/BuildFire/sdk/wiki/iBeacon-Bluetooth-Services
  */
+
+
 
 if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use BuildFire services");
 

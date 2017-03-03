@@ -1,5 +1,6 @@
 /**
  * Created by danielhindi on 1/30/16.
+ * ref: https://github.com/BuildFire/sdk/wiki/Low-Energy-Bluetooth-Service
  */
 
 if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use BuildFire services");
