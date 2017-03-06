@@ -274,7 +274,8 @@ var buildfire = {
                     pluginId: pluginData.pluginId,
                     instanceId: pluginData.instanceId,
                     title: pluginData.title,
-                    folderName: pluginData.folderName
+                    folderName: pluginData.folderName,
+                    query: pluginData.query
                 });
                 buildfire._sendPacket(p);
             }
