@@ -262,7 +262,7 @@ var buildfire = {
     , navigation: {
         /**
          * Navigate To plugin
-         * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title }
+         * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title ,queryString: to pass to next plugin}
          */
         navigateTo: function (pluginData) {
 
@@ -275,7 +275,7 @@ var buildfire = {
                     instanceId: pluginData.instanceId,
                     title: pluginData.title,
                     folderName: pluginData.folderName,
-                    data: pluginData.data
+                    queryString: pluginData.queryString
                 });
                 buildfire._sendPacket(p);
             }
