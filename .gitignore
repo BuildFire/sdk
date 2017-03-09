@@ -30,3 +30,6 @@ node_modules
 /fonticons.zip
 /styles.zip
 /scripts.zip
+plugins
+!/plugins/myPlugin/
+!/plugins/testPlugin/

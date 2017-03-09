@@ -139,7 +139,9 @@ var buildfire = {
         , "device.triggerOnAppBackgrounded"
         , "device.triggerOnAppResumed"
         , "notifications.localNotification.onClick"
-        ,"geo.onPositionChange"
+        , "geo.onPositionChange"
+        , "navigation.triggerOnAppLauncherActive"
+        , "navigation.triggerOnAppLauncherInactive"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -334,6 +336,18 @@ var buildfire = {
         }
         , navigateEmulator: function(){
             buildfire._sendPacket(new Packet(null, 'navigation.navigateEmulator'));
+        }
+        , onAppLauncherActive: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appLauncherActive', callback, allowMultipleHandlers);
+        }
+        , onAppLauncherInactive: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appLauncherInactive', callback, allowMultipleHandlers);
+        }
+        , triggerOnAppLauncherActive: function (data) {
+            return buildfire.eventManager.trigger('appLauncherActive', data);
+        }
+        , triggerOnAppLauncherInactive: function (data) {
+            return buildfire.eventManager.trigger('appLauncherInactive', data);
         }
     },
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
