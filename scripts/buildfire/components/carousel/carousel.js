@@ -426,35 +426,51 @@ buildfire.components.carousel.view.prototype = {
     // initialize the slider
     _applySlider: function (speed) {
         var me = this;
-        me.$slider = $(me.selector);
-        if (me.items.length > 1) {
+        var renderOwlCarousel=function () {
+            me.$slider = $(me.selector);
+            if (me.items.length > 1) {
 
-            var sliderOptions = {
-                navigation: false,
-                dots: false,
-                slideSpeed: 800,
-                paginationSpeed: 800,
-                singleItem: true,
-                pagination: false,
-                items: 1,
-                itemsMobile: true,
-				lazyLoad:true,
-                autoHeight: false,
-                autoplay: true,
-                autoplaySpeed:800
-            };
+                var sliderOptions = {
+                    navigation: false,
+                    dots: false,
+                    slideSpeed: 800,
+                    paginationSpeed: 800,
+                    singleItem: true,
+                    pagination: false,
+                    items: 1,
+                    itemsMobile: true,
+                    lazyLoad: true,
+                    autoHeight: false,
+                    autoplay: true,
+                    autoplaySpeed: 800
+                };
 
-            sliderOptions.autoplay =(speed==0)? 0:3000;
-            sliderOptions.autoplayTimeout =speed? speed:5000;
-            sliderOptions.loop = true;
-            me.$slider.owlCarousel(sliderOptions);
-        }
+                sliderOptions.autoplay = (speed == 0) ? 0 : 3000;
+                sliderOptions.autoplayTimeout = speed ? speed : 5000;
+                sliderOptions.loop = true;
+                me.$slider.owlCarousel(sliderOptions);
+            }
+            if (typeof speed === 'undefined')
+                $('.plugin-slide').show();
+            else
+                $('.my-slide').show();
+        };
 
+        renderOwlCarousel();
 
-        if(typeof speed === 'undefined')
-            $('.plugin-slide').show();
-        else
-            $('.my-slide').show();
+        buildfire.getContext(function (err, result) {
+            if (result && result.device && result.device.platform && result.device.platform.toLowerCase() == 'ios') {
+                buildfire.navigation.onAppLauncherActive(function () {
+                    renderOwlCarousel();
+                }, true);
+                buildfire.navigation.onAppLauncherInactive(function () {
+                    setTimeout(function () {
+                        me.$slider.trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
+                        me.$slider.find('.owl-stage-outer').children().unwrap();
+                    }, 200);
+                }, true);
+            }
+        });
     },
     // destroy the slider if it's already in the DOM
     _destroySlider: function () {
