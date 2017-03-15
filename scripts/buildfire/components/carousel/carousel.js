@@ -464,10 +464,8 @@ buildfire.components.carousel.view.prototype = {
                     renderOwlCarousel();
                 }, true);
                 buildfire.navigation.onAppLauncherInactive(function () {
-                    setTimeout(function () {
-                        me.$slider.trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
-                        me.$slider.find('.owl-stage-outer').children().unwrap();
-                    }, 200);
+                    me.$slider.trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
+                    me.$slider.find('.owl-stage-outer').children().unwrap();
                 }, true);
             }
         });
