@@ -9,11 +9,8 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 
 if (typeof (buildfire.services.camera) == "undefined") buildfire.services.camera = {};
 
-
-buildfire.services.camera.core = {
-    getPicture: function (options, callback) {
-        if (!options)
-            options = {};
-        buildfire._sendPacket(new Packet(null, "camera.getPicture", options), callback);
-    }
+buildfire.services.camera.getPicture = function (options, callback) {
+    if (!options)
+        options = {};
+    buildfire._sendPacket(new Packet(null, "camera.getPicture", options), callback);
 };
