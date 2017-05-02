@@ -110,10 +110,10 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	///
 
 //override the imageLibTemplate url
-	imageLibCurrentApp.imageLibTemplate = 'http://app.buildfire.com/pages/templates/imageLib.html';
-	postMaster.controlPluginAPI.actionItems.templateUrl = 'http://app.buildfire.com/pages/templates/actionBuilder.html';
+	imageLibCurrentApp.imageLibTemplate = 'http://app.buildfire.com/pages/imageLib/imageLib.html';
+	postMaster.controlPluginAPI.actionItems.templateUrl = 'http://app.buildfire.com/pages/share/actionBuilder.html';
 	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'http://app.buildfire.com/app/pages/templates/actionItemsListDialog.html';
-	postMaster.controlPluginAPI.pluginInstances.templateUrl = "http://app.buildfire.com/pages/templates/pluginInstanceDialog.html";
+	postMaster.controlPluginAPI.pluginInstances.templateUrl = "http://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html";
 	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
 })();
 
