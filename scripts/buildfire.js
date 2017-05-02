@@ -1743,7 +1743,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             console.error(err);
         }
         else {
-            if (context.debugTag)
+            if (context && context.debugTag)
                 buildfire.logger.attachRemoteLogger(context.debugTag);
             if (window.location.pathname.indexOf('/widget/') > 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
