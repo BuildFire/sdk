@@ -169,7 +169,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                     $scope.loadFrames(pluginFolder, config);
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
                     keepTrackOfRecentPlugins(pluginFolder);
-                    var showEmulator = config.widget && config.widget.enabled && config.widget.enabled;
+                    var showEmulator = config.widget && config.widget.enabled;
                     displayEmulator(showEmulator);
                 }
                 else if (xmlhttp.status >= 300)
