@@ -3,7 +3,7 @@
  */
 
 
-$app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', function ($scope, $routeParams, $sce, $http) {
+$app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$http', function ($rootScope, $scope, $routeParams, $sce, $http) {
         window.$http = $http;
         var config = null;
         var widgetIframe = document.getElementById('widget');
@@ -152,6 +152,10 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
             localStorage.setItem('__recentPlugins', JSON.stringify(recentPlugins));
         }
 
+        var displayEmulator = function(value){
+            $rootScope.showEmulator = value;
+        };
+
         $scope.init = function () {
             var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
@@ -165,7 +169,8 @@ $app.controller('shellCtrl', ['$scope', '$routeParams', '$sce', '$http', functio
                     $scope.loadFrames(pluginFolder, config);
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
                     keepTrackOfRecentPlugins(pluginFolder);
-
+                    var showEmulator = config.widget && config.widget.enabled && config.widget.enabled;
+                    displayEmulator(showEmulator);
                 }
                 else if (xmlhttp.status >= 300)
                     $scope.errorMessage = 'Error loading plugin';
