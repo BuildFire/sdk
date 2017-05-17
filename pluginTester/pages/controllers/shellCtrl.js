@@ -153,7 +153,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         }
 
         var displayEmulator = function(value){
-            $rootScope.showEmulator = value;
+            $rootScope.hideEmulator = value;
         };
 
         $scope.init = function () {
@@ -169,8 +169,10 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                     $scope.loadFrames(pluginFolder, config);
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
                     keepTrackOfRecentPlugins(pluginFolder);
-                    var showEmulator = config.widget && config.widget.enabled;
-                    displayEmulator(showEmulator);
+                    
+                    var hideEmulator = (config.widget && typeof config.widget.enabled != 'undefined') ? !config.widget.enabled : false;
+
+                    displayEmulator(hideEmulator);
                 }
                 else if (xmlhttp.status >= 300)
                     $scope.errorMessage = 'Error loading plugin';
