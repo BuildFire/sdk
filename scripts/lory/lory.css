@@ -1,0 +1,30 @@
+
+.slider {
+}
+
+.frame {
+    position: relative;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.frame li {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+}
+
+.slides {
+    display: inline-block;
+}
+
+.percentage .slides {
+    display: block;
+    padding: 0px;
+}
+
+.percentage li {
+    width: 100%;
+}
