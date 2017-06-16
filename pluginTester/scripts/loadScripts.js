@@ -30,7 +30,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/authAPI.js"
         , this.domain + "scripts/framework/openDialogCtrl.js"
         , this.domain + "app/scripts/framework/modalCtrl.js"
-        , this.domain + "pages/plugins/addPlugin/addPageDialogCtrl.js"
+        , this.domain + "pages/plugins/addPlugin/modals/addPageCtrl.js"
         , this.domain + "app/scripts/framework/pluginAPI/localNotificationsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/localStorageAPI.js"
     ];
