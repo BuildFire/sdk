@@ -1666,6 +1666,10 @@ var buildfire = {
         getUserProfile: function (options, callback) {
             var p = new Packet(null, 'auth.getUserProfile', options);
             buildfire._sendPacket(p, callback);
+        },
+        getUsersByEmail: function (options, callback) {
+            var p = new Packet(null, 'auth.getUsersByEmail', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -1743,7 +1747,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             console.error(err);
         }
         else {
-            if (context.debugTag)
+            if (context && context.debugTag)
                 buildfire.logger.attachRemoteLogger(context.debugTag);
             if (window.location.pathname.indexOf('/widget/') > 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;

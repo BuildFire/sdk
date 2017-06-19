@@ -8,6 +8,8 @@ function _ScriptLoader(){
         , this.domain + "scripts/framework/pluginAPI/actionItemsAPI.js"
         , this.domain + "app/scripts/lib/hammer.2.0.4.js"// pull down to refresh
         , this.domain + "app/scripts/lib/wptr.1.1.js"// pull down to refresh
+        , this.domain + "app/scripts/framework/httpClient.js"
+        , this.domain + "app/scripts/framework/bfUtils.js"
         , this.domain + "app/scripts/framework/remoteDatastore.js"
         , this.domain + "app/scripts/framework/pluginAPI/datastoreAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/userDatastoreAPI.js"
@@ -28,7 +30,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/authAPI.js"
         , this.domain + "scripts/framework/openDialogCtrl.js"
         , this.domain + "app/scripts/framework/modalCtrl.js"
-        , this.domain + "pages/controllers/addPageDialogCtrl.js"
+        , this.domain + "pages/plugins/addPlugin/modals/addPageCtrl.js"
         , this.domain + "app/scripts/framework/pluginAPI/localNotificationsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/localStorageAPI.js"
     ];
