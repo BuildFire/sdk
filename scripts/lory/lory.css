@@ -1,8 +1,5 @@
 
-.slider {
-}
-
-.frame {
+.loryFrame {
     position: relative;
     font-size: 0;
     line-height: 0;
@@ -10,21 +7,21 @@
     white-space: nowrap;
 }
 
-.frame li {
+.loryFrame li {
     position: relative;
     display: inline-block;
     height: 100%;
 }
 
-.slides {
+.lorySlides {
     display: inline-block;
 }
 
-.percentage .slides {
+.loryPercentage .lorySlides {
     display: block;
     padding: 0px;
 }
 
-.percentage li {
+.loryPercentage li {
     width: 100%;
 }

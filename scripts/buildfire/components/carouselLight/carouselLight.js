@@ -118,17 +118,17 @@ buildfire.components.carousel.view.prototype = {
         }
 
         this.sliderFrame = document.createElement('div');
-        ['frame', 'js_frame'].forEach(function (cname) {
+        ['loryFrame', 'js_frame'].forEach(function (cname) {
             self.sliderFrame.classList.add(cname);
         });
 
         this.slideContainer = document.createElement('ul');
-        ['slides', 'js_slides'].forEach(function (cname) {
+        ['lorySlides', 'js_slides'].forEach(function (cname) {
             self.slideContainer.classList.add(cname);
         });
 
         this._loadImages(this.config.items, function () {
-            ['slider', 'js_percentage', 'percentage'].forEach(function (cname) {
+            ['slider', 'js_percentage', 'loryPercentage'].forEach(function (cname) {
                 self.selector.classList.add(cname);
             });
 
