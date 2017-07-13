@@ -34,6 +34,7 @@ function _ScriptLoader(){
         , this.domain + "pages/plugins/addPlugin/modals/addPageCtrl.js"
         , this.domain + "app/scripts/framework/pluginAPI/localNotificationsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/localStorageAPI.js"
+        , this.domain + "app/scripts/framework/validator.js"
     ];
 }
 
