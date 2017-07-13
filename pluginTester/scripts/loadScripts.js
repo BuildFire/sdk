@@ -10,7 +10,6 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/lib/wptr.1.1.js"// pull down to refresh
         , this.domain + "app/scripts/framework/httpClient.js"
         , this.domain + "app/scripts/framework/bfUtils.js"
-        , this.domain + "scripts/framework/validator.js"
         , this.domain + "app/scripts/framework/remoteDatastore.js"
         , this.domain + "app/scripts/framework/pluginAPI/datastoreAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/userDatastoreAPI.js"
