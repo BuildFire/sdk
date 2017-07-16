@@ -1,0 +1,27 @@
+
+.loryFrame {
+    position: relative;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.loryFrame li {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+}
+
+.lorySlides {
+    display: inline-block;
+}
+
+.loryPercentage .lorySlides {
+    display: block;
+    padding: 0px;
+}
+
+.loryPercentage li {
+    width: 100%;
+}
