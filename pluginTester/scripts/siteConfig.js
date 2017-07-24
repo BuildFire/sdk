@@ -1,7 +1,7 @@
 window.siteConfig = {
 	appId: 202
 	, endPoints: {
-		datastoreHost: 'http://services.buildfire.com:88',
+		datastoreHost: 'http://datastore.buildfire.com',
 		appHost: 'http://app.buildfire.com',
 		auth: "auth.buildfire.com",
 		authHost: "http://auth.buildfire.com",
