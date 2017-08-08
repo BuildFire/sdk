@@ -185,37 +185,38 @@ var buildfire = {
             callback = function (err, result) {
                 //console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
             };
+        
+        var retryInterval = 1000,
+            command = packet.cmd,
+            maxResendAttempts = 15,
+            resendAttempts = 0;
 
+        var isDataStoreRetry = (command.indexOf('datastore') == 0
+                && command.indexOf('datastore.insert') != 0
+                && command.indexOf('datastore.bulkInsert') != 0
+                && command.indexOf('datastore.disableRefresh') != 0
+                && command.indexOf('datastore.searchAndUpdate') != 0
+                && command.indexOf('datastore.update') != 0
+        );
 
-        // Commented the code to prevent the multiple insert hits
+        var isGetContextRetry = (command.indexOf('getContext') == 0);
 
-        var timeout = setTimeout(function () {
-            
-            if(buildfire._resendAttempts < 15) {
-                var rerun ;
+        var allowRetry = (isDataStoreRetry || isGetContextRetry);
 
-                if (packet.cmd.indexOf('datastore') == 0
-                    && packet.cmd.indexOf('datastore.insert') != 0
-                    && packet.cmd.indexOf('datastore.bulkInsert') != 0
-                    && packet.cmd.indexOf('datastore.disableRefresh') != 0
-                    && packet.cmd.indexOf('datastore.searchAndUpdate') != 0
-                    && packet.cmd.indexOf('datastore.update') != 0
-                )
-                    rerun=true;
-                else if (packet.cmd.indexOf('getContext') == 0 )
-                    rerun=true;
-
-                if(rerun)
-                {
-                    console.warn("calling " + packet.cmd + ' again! total overall resend attempts ' + buildfire._resendAttempts);
-                    buildfire._sendPacket(packet, function (e, d) {
-                        buildfire._resendAttempts--;
-                        callback(e, d);
-                    });
-                    buildfire._resendAttempts++;
-                }
+        var resend = function(){
+            if(resendAttempts < maxResendAttempts) {
+                console.log("calling " + packet.cmd + ' again. total overall resend attempts ' + resendAttempts);
+                buildfire._sendPacket(packet, function (e, d) {
+                    resendAttempts--;
+                    callback(e, d);
+                });
+                resendAttempts++;
             }
-        },  250);
+        };
+
+        if(allowRetry) {
+            var timeout = setTimeout(resend,  retryInterval);
+        }
 
         //packet.cmd.indexOf('getContext') == 0? 250 :
 
