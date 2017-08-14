@@ -3,7 +3,9 @@
  */
 
 $app.controller('indexCtrl', ['$scope', function ($scope) {
-
+    //show navigation bar by default
+    $scope.showNavigationBar = true;
+    
     var recentPlugins = localStorage.getItem('__recentPlugins');
     if (recentPlugins) {
         try {
