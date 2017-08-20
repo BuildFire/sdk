@@ -179,14 +179,14 @@ var buildfire = {
             //alert('parent sent: ' + packet.data);
         }
     }
-    , _resendAttempts:0
+    //, _resendAttempts:0
     , _sendPacket: function (packet, callback) {
         if (typeof (callback) != "function")// handels better on response
             callback = function (err, result) {
                 //console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
             };
         
-        var retryInterval = 1000,
+        var retryInterval = 1500,
             command = packet.cmd,
             maxResendAttempts = 15,
             resendAttempts = 0;
@@ -205,7 +205,7 @@ var buildfire = {
 
         var resend = function(){
             if(resendAttempts < maxResendAttempts) {
-                console.log("calling " + packet.cmd + ' again. total overall resend attempts ' + resendAttempts);
+                console.error("calling " + packet.cmd + ' again. total overall resend attempts ' + resendAttempts);
                 buildfire._sendPacket(packet, function (e, d) {
                     resendAttempts--;
                     callback(e, d);
@@ -268,6 +268,9 @@ var buildfire = {
          * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title ,queryString: to pass to next plugin}
          */
         navigateTo: function (pluginData) {
+
+            if(pluginData.pluginTypeId && !pluginData.pluginId)
+                pluginData.pluginId=pluginData.pluginTypeId;
 
             if (pluginData.pluginId
                 && pluginData.instanceId

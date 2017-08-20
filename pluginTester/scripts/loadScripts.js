@@ -1,5 +1,5 @@
 function _ScriptLoader(){
-    this.domain="http://app.buildfire.com/";
+    this.domain="https://app.buildfire.com/";
     window._appRoot = 'app/';
 
     this.scripts = [

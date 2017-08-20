@@ -7,7 +7,7 @@
 			if ($scope.validate()) {
 				$scope.loggingIn = true;
 
-				$http.post('http://app.buildfire.com/api/login/controlPanel/', {
+				$http.post('https://app.buildfire.com/api/login/controlPanel/', {
 					email: $scope.username,
 					password: $scope.password
 				}, {bypassInterceptorForStatus: 404})
