@@ -1305,7 +1305,8 @@ var buildfire = {
             if(buildfire.imageLib.isProdImageServer(url))
                 url = url.replace(/^https:\/\//i, 'http://');
 
-            var ratio = options.disablePixelRatio ?1:window.devicePixelRatio;
+
+            if(!options)options={};
 
             if (typeof(options) != "object")
                 throw ("options not an object");
@@ -1323,6 +1324,8 @@ var buildfire = {
 
 
             var root;
+            var ratio = window.devicePixelRatio;
+            if(options && options.disablePixelRatio)ratio = options.disablePixelRatio ;
 /*
             if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
