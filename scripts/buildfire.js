@@ -186,7 +186,7 @@ var buildfire = {
                 //console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
             };
         
-        var retryInterval = 1500,
+        var retryInterval = 3000,
             command = packet.cmd,
             maxResendAttempts = 15,
             resendAttempts = 0;
