@@ -552,7 +552,7 @@ buildfire.components.carousel.view.prototype = {
 
             callback();
         };
-        if (item.imageResizeTep && item.imageResizeTep == "resize"){
+        if (item.imageResizeType && item.imageResizeType == "resize"){
             buildfire.imageLib.local.resizeImage(item.iconUrl, {
                 width: this.width,
                 height: this.height
