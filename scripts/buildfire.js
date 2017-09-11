@@ -473,14 +473,15 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , attachCSSFiles: function () {
-            var files = ['styles/bootstrap.css'];
-            if (window.location.pathname.indexOf('/control/') > 0)
+            var files = ['styles/bootstrap.css'], base = '';
+            if (window.location.pathname.indexOf('/control/') > 0) {
                 files.push('styles/siteStyle.css') &&
                 files.push('styles/pluginScreen.css');
-            else
+            }
+            else{
                 files.push('styles/appStyle.css');
+            }
 
-            var base;
             var scripts = document.getElementsByTagName("script");
             for (var i = 0; i < scripts.length; i++) {
                 if (scripts[i].src.indexOf('buildfire.js') > 0) {
@@ -489,7 +490,9 @@ var buildfire = {
                 }
             }
 
-            if (base[base.length - 1] != "/") base += '/';
+            if (base[base.length - 1] != "/"){
+                base += '/';
+            }
 
             for (var i = 0; i < files.length; i++)
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
