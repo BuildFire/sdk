@@ -27,7 +27,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 				title: notification.title,
 				body: notification.text
 			}
-			, templateUrl: 'http://app.buildfire.com/app/pages/templates/modal.html'
+			, templateUrl: 'https://app.buildfire.com/app/pages/templates/modal.html'
 			, controller: 'modalCtrl'
 		};
 
@@ -110,10 +110,10 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	///
 
 //override the imageLibTemplate url
-	imageLibCurrentApp.imageLibTemplate = 'http://app.buildfire.com/pages/imageLib/imageLib.html';
-	postMaster.controlPluginAPI.actionItems.templateUrl = 'http://app.buildfire.com/pages/share/actionBuilder.html';
-	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'http://app.buildfire.com/app/pages/templates/actionItemsListDialog.html';
-	postMaster.controlPluginAPI.pluginInstances.templateUrl = "http://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html";
+	imageLibCurrentApp.imageLibTemplate = 'https://app.buildfire.com/pages/imageLib/imageLib.html';
+	postMaster.controlPluginAPI.actionItems.templateUrl = 'https://app.buildfire.com/pages/share/actionBuilder.html';
+	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'https://app.buildfire.com/app/pages/templates/actionItemsListDialog.html';
+	postMaster.controlPluginAPI.pluginInstances.templateUrl = "https://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html";
 	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
 })();
 
