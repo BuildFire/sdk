@@ -63,20 +63,25 @@ buildfire.components.carousel.view.prototype = {
         }
 
         var self = this;
-        this._renderHTMLItems(function () {
-            self._applySlider();
 
-            buildfire.getContext(function (err, result) {
-                if (result && result.device && result.device.platform && result.device.platform.toLowerCase() == 'ios') {
-                    buildfire.navigation.onAppLauncherActive(function () {
-                        self._applySlider();
-                    }, true);
-                    buildfire.navigation.onAppLauncherInactive(function () {
-                        self._destroySlider();
-                    }, true);
-                }
+        if (this.config.items && this.config.items.length > 0) {
+            this._renderHTMLItems(function () {
+                self._applySlider();
+
+                buildfire.getContext(function (err, result) {
+                    if (result && result.device && result.device.platform && result.device.platform.toLowerCase() == 'ios') {
+                        buildfire.navigation.onAppLauncherActive(function () {
+                            self._applySlider();
+                        }, true);
+                        buildfire.navigation.onAppLauncherInactive(function () {
+                            self._destroySlider();
+                        }, true);
+                    }
+                });
             });
-        });
+        } else{
+            self._applySlider();
+        }
     },
     _destroySlider: function () {
         this.lorySlider.destroy();
@@ -87,13 +92,13 @@ buildfire.components.carousel.view.prototype = {
     },
     _applySlider: function () {
         this.lorySlider = lory(this.config.selector, {
-            classNameSlideContainer: "js_slides",
-            classNameFrame: 'js_frame',
+            classNameSlideContainer: this.config.classNameSlideContainer ||  "js_slides",
+            classNameFrame: this.config.classNameFrame ||  'js_frame',
             ease: 'ease',
             rewindSpeed: 600,//ms
             slideSpeed: this.config.speed,//ms
-            slidesToScroll: 1,
-            infinite: 1,
+            slidesToScroll: this.config.slidesToScroll || 1,
+            infinite: this.config.infinite ||  1,
             enableMouseEvents: true
         });
 
