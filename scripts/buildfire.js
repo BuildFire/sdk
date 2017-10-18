@@ -179,16 +179,16 @@ var buildfire = {
             //alert('parent sent: ' + packet.data);
         }
     }
-    , _resendAttempts:0
+    //, _resendAttempts:0
     , _sendPacket: function (packet, callback) {
         if (typeof (callback) != "function")// handels better on response
             callback = function (err, result) {
                 //console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
             };
-        
-        var retryInterval = 1000,
+
+        var retryInterval = 3000,
             command = packet.cmd,
-            maxResendAttempts = 15,
+            maxResendAttempts = 5,
             resendAttempts = 0;
 
         var isDataStoreRetry = (command.indexOf('datastore') == 0
@@ -205,7 +205,8 @@ var buildfire = {
 
         var resend = function(){
             if(resendAttempts < maxResendAttempts) {
-                console.log("calling " + packet.cmd + ' again. total overall resend attempts ' + resendAttempts);
+                console.error("calling " + packet.cmd + ' again. total overall resend attempts ' + resendAttempts);
+
                 buildfire._sendPacket(packet, function (e, d) {
                     resendAttempts--;
                     callback(e, d);
@@ -268,6 +269,9 @@ var buildfire = {
          * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title ,queryString: to pass to next plugin}
          */
         navigateTo: function (pluginData) {
+
+            if(pluginData.pluginTypeId && !pluginData.pluginId)
+                pluginData.pluginId=pluginData.pluginTypeId;
 
             if (pluginData.pluginId
                 && pluginData.instanceId
@@ -469,14 +473,15 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , attachCSSFiles: function () {
-            var files = ['styles/bootstrap.css'];
-            if (window.location.pathname.indexOf('/control/') > 0)
+            var files = ['styles/bootstrap.css'], base = '';
+            if (window.location.pathname.indexOf('/control/') > 0) {
                 files.push('styles/siteStyle.css') &&
                 files.push('styles/pluginScreen.css');
-            else
+            }
+            else{
                 files.push('styles/appStyle.css');
+            }
 
-            var base;
             var scripts = document.getElementsByTagName("script");
             for (var i = 0; i < scripts.length; i++) {
                 if (scripts[i].src.indexOf('buildfire.js') > 0) {
@@ -485,7 +490,9 @@ var buildfire = {
                 }
             }
 
-            if (base[base.length - 1] != "/") base += '/';
+            if (base[base.length - 1] != "/"){
+                base += '/';
+            }
 
             for (var i = 0; i < files.length; i++)
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
@@ -1302,7 +1309,8 @@ var buildfire = {
             if(buildfire.imageLib.isProdImageServer(url))
                 url = url.replace(/^https:\/\//i, 'http://');
 
-            var ratio = options.disablePixelRatio ?1:window.devicePixelRatio;
+
+            if(!options)options={};
 
             if (typeof(options) != "object")
                 throw ("options not an object");
@@ -1320,6 +1328,8 @@ var buildfire = {
 
 
             var root;
+            var ratio = window.devicePixelRatio;
+            if(options && options.disablePixelRatio)ratio = options.disablePixelRatio ;
 /*
             if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
