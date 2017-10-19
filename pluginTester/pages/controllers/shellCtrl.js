@@ -40,10 +40,57 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             postMaster.widgetPluginAPI.history.pop(breadcrumb);
         };
 
+        $scope.loadWebpackFrames = function(config) {
+            var root = 'http://127.0.0.1:' + config.webpack;
+            $scope.widgetSrc = root + '/widget/index.html?fid=widget';
+
+            if (config.widget && config.widget.service) {
+                serviceFrame = document.createElement('iframe');
+                serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
+                serviceFrame.id='service';
+                serviceFrame.style.display='none';
+                serviceFrame.src = root + '/widget/' + config.widget.service + "?fid=service";
+                document.body.appendChild(serviceFrame);
+            }
+
+            if (config.control.settings.enabled) {
+                $scope.currentControl = $scope.settingsSrc = root + '/control/settings/index.html?fid=controlSettings';
+            }
+
+            if (config.control.design.enabled) {
+                $scope.currentControl = $scope.designSrc = root + '/control/design/index.html?fid=controlDesign';
+            }
+
+            if (config.control.content.enabled) {
+                $scope.currentControl = $scope.contentSrc = root + '/control/content/index.html?fid=controlContent';
+            }
+
+            $scope.pluginControlIframeVisible = true;
+
+            if(config.control.customTabs && config.control.customTabs.length) {
+                for(var i = 0 ; i < config.control.customTabs.length; i++) {
+                    var tab = config.control.customTabs[i];
+                    if(tab && tab.url) {
+                        if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
+                            var root = 'http://127.0.0.1:8080/control/';
+                            // strip leading '/' if any
+                            var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
+                            tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
+                        } else {
+                            tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
+                        }
+                    }
+                }
+                $scope.customTabs = config.control.customTabs;
+            }
+
+            if (!$scope.$$phase)
+                $scope.$apply();
+        }
 
         window.serviceFrame;
         $scope.loadFrames = function (pluginFolder, config) {
-            var root = '../plugins/';
+            var root =  '../plugins/';
             $scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget';
 
             if (config.widget && config.widget.service) {
@@ -100,7 +147,10 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
-            $scope.currentControl = '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control';
+            $scope.currentControl = $scope.pluginConfig.webpack
+                ? 'http://127.0.0.1:8080/control/' + section + '/index.html?fid=control'
+                : '../plugins' + pluginFolder + '/control/' + section + '/index.html?fid=control';
+
             var element = document.querySelector('.active');
             if (element)element.className = '';
             e.target.className = 'active';
@@ -166,10 +216,18 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     config = JSON.parse(xmlhttp.responseText);
-                    $scope.loadFrames(pluginFolder, config);
+                    $scope.pluginConfig = config;
+
+                    if (config.webpack) {
+                        console.log('== LOADING WEBPACK PLUGIN ==');
+                        $scope.loadWebpackFrames(config);
+                    } else {
+                        $scope.loadFrames(pluginFolder, config);
+                    }
+
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
                     keepTrackOfRecentPlugins(pluginFolder);
-                    
+
                     var hideEmulator = (config.widget && typeof config.widget.enabled != 'undefined') ? !config.widget.enabled : false;
 
                     displayEmulator(hideEmulator);
