@@ -149,7 +149,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
             $scope.currentControl = $scope.pluginConfig.webpack
                 ? 'http://127.0.0.1:8080/control/' + section + '/index.html?fid=control'
-                : '../plugins' + pluginFolder + '/control/' + section + '/index.html?fid=control';
+                : '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control';
 
             var element = document.querySelector('.active');
             if (element)element.className = '';
