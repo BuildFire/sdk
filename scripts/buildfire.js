@@ -865,7 +865,7 @@ var buildfire = {
                 if (callback) callback(err, result);
             });
         }
-        /// ref: 
+        /// ref:
         , insert: function (obj, tag, userToken, checkDuplicate, callback) {
 
             var userTokenType = typeof (userToken);
@@ -904,7 +904,7 @@ var buildfire = {
                 callback(err, result);
             });
         }
-        /// ref: 
+        /// ref:
         , bulkInsert: function (arrayObj, tag, userToken, callback) {
 
             if (arrayObj.constructor !== Array) {
@@ -933,7 +933,7 @@ var buildfire = {
                 callback(err, result);
             });
         }
-        ///  
+        ///
         , update: function (id, obj, tag, userToken, callback) {
             var userTokenType = typeof (userToken);
             if (userTokenType == "undefined")
@@ -980,7 +980,7 @@ var buildfire = {
                 if (callback) callback(err, result);
             });
         }
-        /// ref 
+        /// ref
         , delete: function (id, tag, userToken, callback) {
 
             var userTokenType = typeof (userToken);
@@ -1004,7 +1004,7 @@ var buildfire = {
                 if (callback) callback(err, result);
             });
         }
-        /// 
+        ///
         , search: function (options, tag, callback) {
 
             var tagType = typeof (tag);
@@ -1024,21 +1024,21 @@ var buildfire = {
                 callback(err, result);
             });
         }
-        /// ref: 
+        /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('userDataOnUpdate', callback, allowMultipleHandlers);
         }
         , triggerOnUpdate: function (obj) {
             buildfire.eventManager.trigger('userDataOnUpdate', obj);
         }
-        /// ref:  
+        /// ref:
         , onRefresh: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('userDataOnRefresh', callback, allowMultipleHandlers);
         }
         , triggerOnRefresh: function (obj) {
             buildfire.eventManager.trigger('userDataOnRefresh', obj);
         }
-        /// ref:  
+        /// ref:
         , disableRefresh: function () {
             var p = new Packet(null, "userData.disableRefresh");
             buildfire._sendPacket(p);
@@ -1434,7 +1434,7 @@ var buildfire = {
 
                 if (options.width == 'full') options.width = window.innerWidth;
                 if (options.height == 'full') options.height = window.innerHeight;
-                
+
                 var localURL = buildfire.imageLib.local.toLocalPath(url);
                 if (localURL) {
                     var img = new Image();
@@ -1475,7 +1475,7 @@ var buildfire = {
                         dim.height     *= ratio;
                         options.width  *= ratio;
                         options.height *= ratio;
-                        
+
                         canvas.width = options.width;
                         canvas.height = options.height;
                         ctx.drawImage(img, offset.x, offset.y, dim.width, dim.height);
