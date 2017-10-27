@@ -474,7 +474,7 @@ var buildfire = {
         }
         , attachCSSFiles: function () {
             var files = ['styles/bootstrap.css'], base = '';
-            if (window.location.pathname.indexOf('/control/') > 0) {
+            if (window.location.pathname.indexOf('/control/') >= 0) {
                 files.push('styles/siteStyle.css') &&
                 files.push('styles/pluginScreen.css');
             }
