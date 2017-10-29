@@ -24,7 +24,7 @@
   "devDependencies": {
     "body-parser": "1.11.0",
     "chai": "^3.3.0",
-    "express": "4.0.0",
+    "express": "^4.0.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-uglify": "^3.0.0",

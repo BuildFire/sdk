@@ -28,7 +28,9 @@ $app.config(['$routeProvider', '$sceDelegateProvider', function ($routeProvider,
 		// Allow same origin resource loads.
 		'self',
 		// Allow loading from our assets domain.  Notice the difference between * and **.
-		window.siteConfig.endPoints.pluginHost + '/**'
+		window.siteConfig.endPoints.pluginHost + '/**',
+		// Allow webpack plugins
+		'http://127.0.0.1:8080/**'
 	]);
 
 }]);

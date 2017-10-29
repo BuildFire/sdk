@@ -34,6 +34,8 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/localNotificationsAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/localStorageAPI.js"
         , this.domain + "app/scripts/framework/validator.js"
+        , this.domain + "pages/plugins/common/commonPluginService.js"
+        , this.domain + "pages/pluginPromo/promoService.js"
     ];
 }
 
