@@ -64,23 +64,27 @@ buildfire.components.carousel.view.prototype = {
 
         var self = this;
 
+        function validateLauncherCarousel() {
+            buildfire.getContext(function (err, result) {
+                if (result && result.device && result.device.platform && result.device.platform.toLowerCase() == 'ios') {
+                    buildfire.navigation.onAppLauncherActive(function () {
+                        self._applySlider();
+                    }, true);
+                    buildfire.navigation.onAppLauncherInactive(function () {
+                        self._destroySlider();
+                    }, true);
+                }
+            });
+        }
+
         if (this.config.items && this.config.items.length > 0) {
             this._renderHTMLItems(function () {
                 self._applySlider();
-
-                buildfire.getContext(function (err, result) {
-                    if (result && result.device && result.device.platform && result.device.platform.toLowerCase() == 'ios') {
-                        buildfire.navigation.onAppLauncherActive(function () {
-                            self._applySlider();
-                        }, true);
-                        buildfire.navigation.onAppLauncherInactive(function () {
-                            self._destroySlider();
-                        }, true);
-                    }
-                });
+                validateLauncherCarousel();
             });
         } else{
             self._applySlider();
+            validateLauncherCarousel();
         }
     },
     _destroySlider: function () {
