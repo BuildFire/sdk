@@ -1,12 +1,12 @@
 <div ng-controller="shellCtrl">
-    <div class="header clearfix">
+    <div class="header clearfix" ng-hide="pluginConfig.control.removeHeader">
         <h4 class="margin-zero">Plugin</h4>
         <input class="plugin-input margin-left-fifteen border-none border-radius-four" type="text" ng-cloak ng-model="navToValue" ng-keypress="navTo($event);" placeholder="Plugin Name">
         <a href="#/login" ng-hide="currentUser" class="pull-right">Login</a>
         <a href="#/logout" ng-show="currentUser" class="pull-right">Logout</a>
     </div>
     <div class="layout padded clearfix">
-        <div class="item clearfix row">
+        <div class="item clearfix row" ng-hide="pluginConfig.control.removeHeader">
             <ol class="breadcrumb labels col-md-12 padding-right-zero pull-left">
                 <li ng-repeat="breadcrumb in breadcrumbs" ng-class="{'active':$last}">
                     <a ng-if="!$last" href="" ng-click="popHistoryItem($event, breadcrumb)">{{breadcrumb.label}}</a>
@@ -14,7 +14,7 @@
                 </li>
             </ol>
         </div>
-        <ul class="nav nav-tabs nav-justified">
+        <ul class="nav nav-tabs nav-justified" ng-hide="pluginConfig.control.removeHeader">
             <li ng-if="contentSrc">
                 <a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)">Content</a>
             </li>

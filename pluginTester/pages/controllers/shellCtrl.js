@@ -217,6 +217,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     config = JSON.parse(xmlhttp.responseText);
                     $scope.pluginConfig = config;
+                    $scope.$apply();
 
                     if (config.webpack) {
                         console.log('== LOADING WEBPACK PLUGIN ==');
