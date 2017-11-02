@@ -315,7 +315,7 @@ var buildfire = {
             buildfire._sendPacket(new Packet(null, 'navigation.navigateBack'));
         }
         , onBackButtonClick: function () {
-            this._goBackOne();
+            buildfire.navigation._goBackOne();
         }
         , restoreBackButtonClick: function () {
             buildfire.navigation.onBackButtonClick = function () {
