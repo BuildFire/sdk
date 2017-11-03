@@ -6,9 +6,8 @@ var uglify = require('gulp-uglify');
 //Minify files, and bundle together
 gulp.task('bundle1_step1', function(){
     var sdkBundle1 = [
-        "scripts/angular/ng-infinite-scroll.custom.js",
-        "scripts/owlCarousel/owlCarousel.js",
-        "scripts/buildfire/components/carousel/carousel.js"
+        "scripts/buildfire/components/carouselLight/carouselLight.js",
+        "scripts/buildfire/components/pluginInstance/sortableList.js"
     ];
 
     return gulp.src(sdkBundle1, {base: '.'})
@@ -27,10 +26,6 @@ gulp.task('bundle1_step1', function(){
 gulp.task('bundle1_step2', function(){
     var sdkBundle1 = [
         "scripts/buildfire.js",
-        "scripts/jquery/jquery-1.11.2.min.js",
-        "scripts/angular/angular.min.js",
-        "scripts/angular/ui-bootstrap.min.js",
-        "scripts/jquery/jquery-ui.min.js",
         "scripts/_bundles/bundle1.min.js"
     ];
 
