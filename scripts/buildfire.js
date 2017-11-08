@@ -473,19 +473,33 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , attachCSSFiles: function () {
-            var files = ['styles/bootstrap.css'], base = '';
+            var files = [], base = '';
+
+            var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
+
+            if(!disableBootstrap){
+                files.push('styles/bootstrap.css');
+            }
+
             if (window.location.pathname.indexOf('/control/') >= 0) {
                 files.push('styles/siteStyle.css') &&
                 files.push('styles/pluginScreen.css');
             }
             else{
-                files.push('styles/appStyle.css');
+                var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
+
+                if(!disableAppStyles){
+                    files.push('styles/appStyle.css');
+                }
             }
 
             var scripts = document.getElementsByTagName("script");
             for (var i = 0; i < scripts.length; i++) {
                 if (scripts[i].src.indexOf('buildfire.js') > 0) {
                     base = scripts[i].src.replace('/scripts/buildfire.js', '');
+                    break;
+                } else if (scripts[i].src.indexOf('buildfire.min.js') > 0) {
+                    base = scripts[i].src.replace('/scripts/buildfire.min.js', '');
                     break;
                 }
             }

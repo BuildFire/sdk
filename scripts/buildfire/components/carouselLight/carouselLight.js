@@ -11,6 +11,7 @@ if (typeof (buildfire.components.carousel) == "undefined")
 (function () {
     var scripts = document.getElementsByTagName('script');
     var carouselScriptSrc = null;
+
     for (var i = 0; i < scripts.length; i++) {
         if (scripts[i].src && scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.js')) {
             carouselScriptSrc = scripts[i].src;
@@ -18,8 +19,28 @@ if (typeof (buildfire.components.carousel) == "undefined")
     }
 
     if (carouselScriptSrc) {
-        document.write('<script src="' + carouselScriptSrc + '/../../../../lory/lory.min.js"></script>');
-        document.write('<link href="' + carouselScriptSrc + '/../../../../lory/lory.css" rel="stylesheet">');
+        //inject lory script
+        var loryScript = document.createElement('script');
+        loryScript.src = carouselScriptSrc + '/../../../../lory/lory.min.js';
+
+        //check if callback function exists; this function can be overridden and it's for knowing that lory.js has been loaded
+        //this is useful when you are lazy loading  carouselLight.js
+        if(typeof _lightCarouselLoaded != "function"){
+            var _lightCarouselLoaded = function () {
+                console.log('lory.js loaded');
+            };
+        }
+
+        loryScript.onload = _lightCarouselLoaded;
+
+        console.log(loryScript.src);
+        document.head.appendChild(loryScript);
+
+        //inject lory css
+        var loryStyle = document.createElement('link');
+        loryStyle.href = carouselScriptSrc + '/../../../../lory/lory.css';
+        loryStyle.rel = 'stylesheet';
+        document.head.appendChild(loryStyle);
     }
     else {
         throw ("carousellight components not found");
@@ -82,7 +103,7 @@ buildfire.components.carousel.view.prototype = {
                 self._applySlider();
                 validateLauncherCarousel();
             });
-        } else{
+        } else {
             self._applySlider();
             validateLauncherCarousel();
         }
@@ -96,13 +117,13 @@ buildfire.components.carousel.view.prototype = {
     },
     _applySlider: function () {
         this.lorySlider = lory(this.config.selector, {
-            classNameSlideContainer: this.config.classNameSlideContainer ||  "js_slides",
-            classNameFrame: this.config.classNameFrame ||  'js_frame',
+            classNameSlideContainer: this.config.classNameSlideContainer || "js_slides",
+            classNameFrame: this.config.classNameFrame || 'js_frame',
             ease: 'ease',
             rewindSpeed: 600,//ms
             slideSpeed: this.config.speed,//ms
             slidesToScroll: this.config.slidesToScroll || 1,
-            infinite: this.config.infinite ||  1,
+            infinite: this.config.infinite || 1,
             enableMouseEvents: true
         });
 
