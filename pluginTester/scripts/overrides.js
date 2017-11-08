@@ -97,15 +97,12 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 
 
 	///override the authAPI.getCurrentUser to return CP loggedIn user
-	var oldFN = authAPI.getCurrentUser;
 	authAPI.secondaryUserLookup = function () {
-		return window.currentUser;
-	};
-	authAPI.getCurrentUser = function (data, callback) {
-		if (window.currentUser) {
-			authAPI.logout();
+		var user = window.currentUser;
+		if(!user) {
+			return null;
 		}
-		return oldFN(data, callback);
+		return user.authProfile ? user.authProfile : user;
 	};
 	///
 
