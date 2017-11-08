@@ -875,7 +875,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.save', { tag: tag,userToken: userToken, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -914,7 +914,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -943,7 +943,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.bulkInsert', { tag: tag, userToken: userToken, obj: arrayObj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -967,7 +967,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.update', { tag: tag, userToken: userToken, id: id, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -990,7 +990,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.searchAndUpdate', { tag: tag, userToken: userToken, search: search, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1014,7 +1014,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1107,7 +1107,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.save', {tag: tag, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1132,7 +1132,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -1155,7 +1155,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.bulkInsert', {tag: tag, obj: arrayObj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -1172,7 +1172,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.update', {tag: tag, id: id, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1188,7 +1188,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.searchAndUpdate', {tag: tag, search: search, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1205,7 +1205,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.delete', {tag: tag, id: id});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
