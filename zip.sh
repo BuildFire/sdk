@@ -1,3 +1,6 @@
+npm install
+npm start
+
 cd scripts
 zip -r -X ../scripts.zip * -x *tinymce/*
 cd ..

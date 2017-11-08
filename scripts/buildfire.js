@@ -473,19 +473,33 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , attachCSSFiles: function () {
-            var files = ['styles/bootstrap.css'], base = '';
+            var files = [], base = '';
+
+            var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
+
+            if(!disableBootstrap){
+                files.push('styles/bootstrap.css');
+            }
+
             if (window.location.pathname.indexOf('/control/') >= 0) {
                 files.push('styles/siteStyle.css') &&
                 files.push('styles/pluginScreen.css');
             }
             else{
-                files.push('styles/appStyle.css');
+                var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
+
+                if(!disableAppStyles){
+                    files.push('styles/appStyle.css');
+                }
             }
 
             var scripts = document.getElementsByTagName("script");
             for (var i = 0; i < scripts.length; i++) {
                 if (scripts[i].src.indexOf('buildfire.js') > 0) {
                     base = scripts[i].src.replace('/scripts/buildfire.js', '');
+                    break;
+                } else if (scripts[i].src.indexOf('buildfire.min.js') > 0) {
+                    base = scripts[i].src.replace('/scripts/buildfire.min.js', '');
                     break;
                 }
             }
@@ -861,7 +875,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.save', { tag: tag,userToken: userToken, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -900,7 +914,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -929,7 +943,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.bulkInsert', { tag: tag, userToken: userToken, obj: arrayObj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -953,7 +967,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.update', { tag: tag, userToken: userToken, id: id, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -976,7 +990,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.searchAndUpdate', { tag: tag, userToken: userToken, search: search, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1000,7 +1014,7 @@ var buildfire = {
 
             var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1093,7 +1107,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.save', {tag: tag, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1118,7 +1132,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -1141,7 +1155,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.bulkInsert', {tag: tag, obj: arrayObj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 callback(err, result);
             });
         }
@@ -1158,7 +1172,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.update', {tag: tag, id: id, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1174,7 +1188,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.searchAndUpdate', {tag: tag, search: search, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
@@ -1191,7 +1205,7 @@ var buildfire = {
 
             var p = new Packet(null, 'publicData.delete', {tag: tag, id: id});
             buildfire._sendPacket(p, function (err, result) {
-
+                if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
         }
