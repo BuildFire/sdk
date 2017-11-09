@@ -1,5 +1,5 @@
 npm install
-npm start
+npm run build
 
 cd scripts
 zip -r -X ../scripts.zip * -x *tinymce/*

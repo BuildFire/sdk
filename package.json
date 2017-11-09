@@ -7,7 +7,7 @@
     "postinstall": "./node_modules/.bin/bower install",
     "fnTest": "node test/server.js",
     "test": ".\\node_modules\\.bin\\karma start karma.conf.js",
-    "start": "gulp build"
+    "build": "gulp build"
   },
   "dependencies": {
     "bower": "^1.7.6"
