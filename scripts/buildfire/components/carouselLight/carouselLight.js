@@ -13,7 +13,7 @@ if (typeof (buildfire.components.carousel) == "undefined")
     var carouselScriptSrc = null;
 
     for (var i = 0; i < scripts.length; i++) {
-        if (scripts[i].src && scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.js')) {
+        if (scripts[i].src && (scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.js') || scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.min.js'))) {
             carouselScriptSrc = scripts[i].src;
         }
     }
@@ -25,13 +25,14 @@ if (typeof (buildfire.components.carousel) == "undefined")
 
         //check if callback function exists; this function can be overridden and it's for knowing that lory.js has been loaded
         //this is useful when you are lazy loading  carouselLight.js
-        if(typeof _lightCarouselLoaded != "function"){
-            var _lightCarouselLoaded = function () {
+
+        if(typeof window._lightCarouselLoaded != "function"){
+            window._lightCarouselLoaded = function () {
                 console.log('lory.js loaded');
             };
         }
 
-        loryScript.onload = _lightCarouselLoaded;
+        loryScript.onload = window._lightCarouselLoaded;
 
         console.log(loryScript.src);
         document.head.appendChild(loryScript);
