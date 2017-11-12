@@ -48,7 +48,7 @@ gulp.task('minifyBuildfire', function(){
 
         .pipe(concat('buildfire.min.js'))
 
-        .pipe(sourcemaps.write('maps'))
+        .pipe(sourcemaps.write(''))
 
         ///output here
         .pipe(gulp.dest('scripts'));
@@ -63,7 +63,7 @@ gulp.task('minifyCarouselLight', function(){
 
         .pipe(concat('carouselLight.min.js'))
 
-        .pipe(sourcemaps.write('maps'))
+        .pipe(sourcemaps.write(''))
 
         ///output here
         .pipe(gulp.dest('scripts/buildfire/components/carouselLight'));
