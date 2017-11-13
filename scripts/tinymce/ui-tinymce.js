@@ -57,8 +57,7 @@ angular.module('ui.tinymce', [])
 
                 options = {
                     selector: 'textarea',  // change this value according to your HTML
-                    toolbar: ['  styleselect  | insertfile | forecolor | backcolor  | bold italic | alignleft aligncenter alignright alignjustify  | bullist  numlist | outdent indent ',
-                        ' link image | media  | code'
+                    toolbar: ['  styleselect  | insertfile | forecolor | backcolor  | bold italic | alignleft aligncenter alignright alignjustify  | bullist  numlist | outdent indent | link image | media  | code'
                     ],
 
                     menu: {
