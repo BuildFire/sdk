@@ -19,29 +19,25 @@ if (typeof (buildfire.components.carousel) == "undefined")
     }
 
     if (carouselScriptSrc) {
-        //inject lory script
-        var loryScript = document.createElement('script');
-        loryScript.src = carouselScriptSrc + '/../../../../lory/lory.min.js';
-
-        //check if callback function exists; this function can be overridden and it's for knowing that lory.js has been loaded
-        //this is useful when you are lazy loading  carouselLight.js
-
-        if(typeof window._lightCarouselLoaded != "function"){
-            window._lightCarouselLoaded = function () {
-                console.log('lory.js loaded');
-            };
+        if (typeof lory == 'undefined') {
+            document.write('<script src="' + carouselScriptSrc + '/../../../../lory/lory.min.js"></script>');
         }
 
-        loryScript.onload = window._lightCarouselLoaded;
+        //Add Lory CSS
+        var style = document.getElementById("loryInjectedStyle");
+        if (style) document.head.removeChild(style);
 
-        console.log(loryScript.src);
-        document.head.appendChild(loryScript);
+        style = document.createElement('style');
+        style.id = "loryInjectedStyle";
+        style.innerHTML += " .loryFrame {position: relative;font-size: 0; line-height: 0; overflow: hidden; white-space: nowrap;}";
+        style.innerHTML += " .loryFrame li { position: relative; display: inline-block; height: 100%;}";
+        style.innerHTML += " .lorySlides { display: inline-block;}";
+        style.innerHTML += " .loryPercentage .lorySlides { display: block; padding: 0px;}";
+        style.innerHTML += " .loryPercentage li {  width: 100%;}";
 
-        //inject lory css
-        var loryStyle = document.createElement('link');
-        loryStyle.href = carouselScriptSrc + '/../../../../lory/lory.css';
-        loryStyle.rel = 'stylesheet';
-        document.head.appendChild(loryStyle);
+        if (style.innerHTML.length > 0)
+            document.head.appendChild(style);
+        //# Add Lory CSS
     }
     else {
         throw ("carousellight components not found");
