@@ -13,34 +13,31 @@ if (typeof (buildfire.components.carousel) == "undefined")
     var carouselScriptSrc = null;
 
     for (var i = 0; i < scripts.length; i++) {
-        if (scripts[i].src && scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.js')) {
+        if (scripts[i].src && (scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.js') || scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.min.js'))) {
             carouselScriptSrc = scripts[i].src;
         }
     }
 
     if (carouselScriptSrc) {
-        //inject lory script
-        var loryScript = document.createElement('script');
-        loryScript.src = carouselScriptSrc + '/../../../../lory/lory.min.js';
-
-        //check if callback function exists; this function can be overridden and it's for knowing that lory.js has been loaded
-        //this is useful when you are lazy loading  carouselLight.js
-        if(typeof _lightCarouselLoaded != "function"){
-            var _lightCarouselLoaded = function () {
-                console.log('lory.js loaded');
-            };
+        if (typeof lory == 'undefined') {
+            document.write('<script src="' + carouselScriptSrc + '/../../../../lory/lory.min.js"></script>');
         }
 
-        loryScript.onload = _lightCarouselLoaded;
+        //Add Lory CSS
+        var style = document.getElementById("loryInjectedStyle");
+        if (style) document.head.removeChild(style);
 
-        console.log(loryScript.src);
-        document.head.appendChild(loryScript);
+        style = document.createElement('style');
+        style.id = "loryInjectedStyle";
+        style.innerHTML += " .loryFrame {position: relative;font-size: 0; line-height: 0; overflow: hidden; white-space: nowrap;}";
+        style.innerHTML += " .loryFrame li { position: relative; display: inline-block; height: 100%;}";
+        style.innerHTML += " .lorySlides { display: inline-block;}";
+        style.innerHTML += " .loryPercentage .lorySlides { display: block; padding: 0px;}";
+        style.innerHTML += " .loryPercentage li {  width: 100%;}";
 
-        //inject lory css
-        var loryStyle = document.createElement('link');
-        loryStyle.href = carouselScriptSrc + '/../../../../lory/lory.css';
-        loryStyle.rel = 'stylesheet';
-        document.head.appendChild(loryStyle);
+        if (style.innerHTML.length > 0)
+            document.head.appendChild(style);
+        //# Add Lory CSS
     }
     else {
         throw ("carousellight components not found");
