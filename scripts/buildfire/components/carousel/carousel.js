@@ -540,11 +540,7 @@ buildfire.components.carousel.view.prototype = {
         var me = this;
         var image = document.createElement("img");
         me.$slider = $(me.selector);
-
-        buildfire.imageLib.local.cropImage(item.iconUrl, {
-            width: this.width,
-            height: this.height
-        }, function (err, result) {
+        var imageResizeCallback = function (err, result) {
             if (!err) {
                 image.src = result;
                 image.style.transform = "translateZ(0)";
@@ -555,6 +551,18 @@ buildfire.components.carousel.view.prototype = {
                 console.log('Error occurred while cropping image: ', err);
 
             callback();
-        });
+        };
+        if (item.imageResizeType && item.imageResizeType == "resize"){
+            buildfire.imageLib.local.resizeImage(item.iconUrl, {
+                width: this.width,
+                height: this.height
+            },imageResizeCallback );
+        }else
+        {
+            buildfire.imageLib.local.cropImage(item.iconUrl, {
+                width: this.width,
+                height: this.height
+            },imageResizeCallback );
+        }
     }
 };
