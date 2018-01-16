@@ -47,12 +47,38 @@ if (typeof (buildfire.components.carousel) == "undefined")
 // This is the class that will be used in the mobile
 //{selector:selector, items:items, layout:layout, speed:speed}
 buildfire.components.carousel.view = function (options) {
-    if (arguments && arguments.length > 1) {
-        options = {selector: arguments[0], items: arguments[1], layout: arguments[2], speed: arguments[3]};
+    if ( options.items && options.items.length > 0) {
+        /*
+         if more than one image add carousel else add image directly to the carousel container
+         */
+        if (options.items.length > 1) {
+            this.config = this.mergeSettings(options);
+            this._initDimensions(this.config.layout);
+            this.init();
+        } else {
+            //add image directly to carousel container without adding the carousel lib
+            options.selector.innerHTML = '';
+            //append image tag
+            var img = document.createElement('img');
+            img.setAttribute("src", buildfire.imageLib.cropImage(options.items[0].iconUrl, {
+                width: window.innerWidth,
+                height: Math.ceil(9 * (window.innerWidth) / 16)
+            }));
+            img.alt = "Carousel Image";
+            options.selector.appendChild(img);
+            img.addEventListener("click", function () {
+                buildfire.actionItems.execute(carouselImages[0], function (err, result) {
+                    if (err) {
+                        console.warn('Error openning slider action: ', err);
+                    }
+                });
+            });
+        }
+        options.selector.style.display="";
+    } else {
+        options.selector.style.display="none";
     }
-    this.config = this.mergeSettings(options);
-    this._initDimensions(this.config.layout);
-    this.init();
+
 };
 
 // Carousel view methods
