@@ -27,7 +27,9 @@
 
         window.localStorage.setItem('appContext',JSON.stringify(window.appContext));
     }
-
+    if(window.appContext.currentApp){
+        window.appContext.currentApp.liveMode = 0;
+    }
 
     var hash = window.location.hash.split('/');
     if(hash && hash.length > 2)
