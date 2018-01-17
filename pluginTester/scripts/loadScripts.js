@@ -26,7 +26,6 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/pluginAPI/historyAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/pluginAPI.js"
         , this.domain + "app/scripts/framework/pluginAPI/geoAPI.js"
-        , this.domain + "app/scripts/framework/pluginAPI/pushNotificationsAPI.js"
         , this.domain + "app/pages/controllers/authCtrl.js"
         , this.domain + "app/scripts/framework/pluginAPI/authAPI.js"
         , this.domain + "scripts/framework/openDialogCtrl.js"
@@ -37,6 +36,7 @@ function _ScriptLoader(){
         , this.domain + "app/scripts/framework/validator.js"
         , this.domain + "pages/plugins/common/commonPluginService.js"
         , this.domain + "pages/pluginPromo/promoService.js"
+        , this.domain + "app/scripts/framework/pluginAPI/pushNotificationsAPI.js"
     ];
 }
 
