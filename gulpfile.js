@@ -6,6 +6,57 @@ var sourcemaps = require('gulp-sourcemaps');
 var headerComment = require('gulp-header-comment');
 
 //Minify files, and bundle together
+
+gulp.task('Bundle_JQuery_Angulare_Buildfire', function(){
+    var bundle = [
+        "scripts/jquery/jquery-1.11.2.min.js",
+        "scripts/angular/angular.min.js",
+        "scripts/buildfire.js"
+    ];
+
+    return gulp.src(bundle, {base: '.'})
+
+        .pipe(sourcemaps.init())
+
+        /// obfuscate and minify the JS files
+        .pipe(uglify())
+
+        /// merge all the JS files together. If the
+        .pipe(concat('jquery_angular_buildfire.min.js'))
+
+        .pipe(sourcemaps.write(''))
+
+        .pipe(headerComment('Minified Bundle for jquery-1.11.2.js & angular.min.js & buildfire.js'))
+
+        ///output here
+
+        .pipe(gulp.dest('scripts/_bundles'));
+});
+gulp.task('Bundle_Angulare_Buildfire', function(){
+    var bundle = [
+        "scripts/angular/angular.min.js",
+        "scripts/buildfire.js"
+    ];
+
+    return gulp.src(bundle, {base: '.'})
+
+        .pipe(sourcemaps.init())
+
+        /// obfuscate and minify the JS files
+        .pipe(uglify())
+
+        /// merge all the JS files together. If the
+        .pipe(concat('angular_buildfire.min.js'))
+
+        .pipe(sourcemaps.write(''))
+
+        .pipe(headerComment('Minified Bundle for angular.min.js & buildfire.js'))
+
+        ///output here
+
+        .pipe(gulp.dest('scripts/_bundles'));
+});
+    
 gulp.task('Bundle_BuildFire_Lory_LightCarousel', function(){
     var bundle = [
         "scripts/buildfire.js",
@@ -62,5 +113,5 @@ gulp.task('minifyCarouselLight', function(){
 });
 
 gulp.task('build', function(callback){
-    runSequence('Bundle_BuildFire_Lory_LightCarousel','minifyBuildfire','minifyCarouselLight', callback);
+    runSequence('Bundle_Angulare_Buildfire','Bundle_JQuery_Angulare_Buildfire','Bundle_BuildFire_Lory_LightCarousel','minifyBuildfire','minifyCarouselLight', callback);
 });
