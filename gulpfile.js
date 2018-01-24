@@ -61,6 +61,17 @@ gulp.task('minifyCarouselLight', function(){
         .pipe(gulp.dest('scripts/buildfire/components/carouselLight'));
 });
 
+gulp.task('minifyScoreboard', function(){
+    return gulp.src("scripts/buildfire/services/gamify/scoreboard.js", {base: '.'})
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(concat('scoreboard.min.js'))
+        .pipe(sourcemaps.write(''))
+        ///output here
+        .pipe(gulp.dest('scripts/buildfire/services/gamify'));
+});
+
+
 gulp.task('build', function(callback){
-    runSequence('Bundle_BuildFire_Lory_LightCarousel','minifyBuildfire','minifyCarouselLight', callback);
+    runSequence('Bundle_BuildFire_Lory_LightCarousel','minifyBuildfire','minifyCarouselLight','minifyScoreboard', callback);
 });
