@@ -526,7 +526,7 @@ var buildfire = {
                 }
             }
             if(!path){
-                console.error('buildfire.js not found? This should never happen. I cant trust anything anymore.. mommy!');
+                console.log('fastclick.js requires a buildfire.js reference.');
                 return;
             }
             else {
