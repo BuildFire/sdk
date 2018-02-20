@@ -512,6 +512,7 @@ var buildfire = {
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
         }
+        /*
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
 
@@ -526,7 +527,7 @@ var buildfire = {
                 }
             }
             if(!path){
-                console.log('fastclick.js requires a buildfire.js reference.');
+                console.warn('fastclick.js requires a buildfire.js reference.');
                 return;
             }
             else {
@@ -550,6 +551,7 @@ var buildfire = {
             else
                 FastClick.attach(element);
         }
+        */
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
             var linkElement = document.createElement("link");
             buildfire.appearance.CSSBusterCounter = 0;
@@ -1337,7 +1339,7 @@ var buildfire = {
 
             if(!options.width || !options.height){
                 console.warn('cropImage doenst have width or height please fix. returning original url');
-                return url;
+                return url + '?h=' + options.height + '&w=' + options.width;
             }
 
 
@@ -1783,11 +1785,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     });
 
+    /*
     if(window.location.href.indexOf('/widget/')
         && !buildfire.appearance.disableFastClickOnLoad
         && !buildfire.options.disableFastClick
     )
         buildfire.appearance.attachFastClick();
+    */
 
 
     if(!buildfire.options.disableExternalLinkOverride) {
