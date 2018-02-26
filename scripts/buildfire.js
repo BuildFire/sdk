@@ -512,7 +512,8 @@ var buildfire = {
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
         }
-        /*, disableFastClickOnLoad:false
+        /*
+        , disableFastClickOnLoad:false
         , attachFastClick: function(){
 
             var path;
@@ -526,7 +527,7 @@ var buildfire = {
                 }
             }
             if(!path){
-                console.error('buildfire.js not found? This should never happen. I cant trust anything anymore.. mommy!');
+                console.warn('fastclick.js requires a buildfire.js reference.');
                 return;
             }
             else {
@@ -549,7 +550,8 @@ var buildfire = {
                 console.error('fastclick undefined');
             else
                 FastClick.attach(element);
-        }*/
+        }
+        */
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
             var linkElement = document.createElement("link");
             buildfire.appearance.CSSBusterCounter = 0;
@@ -1337,7 +1339,7 @@ var buildfire = {
 
             if(!options.width || !options.height){
                 console.warn('cropImage doenst have width or height please fix. returning original url');
-                return url;
+                return url + '?h=' + options.height + '&w=' + options.width;
             }
 
 
@@ -1783,12 +1785,13 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     });
 
-    /*if(window.location.href.indexOf('/widget/')
+    /*
+    if(window.location.href.indexOf('/widget/')
         && !buildfire.appearance.disableFastClickOnLoad
         && !buildfire.options.disableFastClick
-        && false
     )
-        buildfire.appearance.attachFastClick();*/
+        buildfire.appearance.attachFastClick();
+    */
 
 
     if(!buildfire.options.disableExternalLinkOverride) {

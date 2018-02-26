@@ -64,7 +64,7 @@ angular.module('ui.tinymce', [])
                         edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall' },
                         insert: { title: 'Insert', items: 'link image | media  | code' },
                         view   : { title : 'View'  , items : 'preview' },
-                        format : { title : 'Format', items : 'bold italic underline strikethrough superscript subscript | formats | removeformat' },
+                        format : { title : 'Format', items : 'bold italic underline strikethrough superscript subscript | removeformat' },
                     },
 
                     // Update model when calling setContent

@@ -34,3 +34,4 @@ bower_components
 plugins
 !/plugins/myPlugin/
 !/plugins/testPlugin/
+package-lock.json
