@@ -96,13 +96,29 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	};
 
 
-	///override the authAPI.getCurrentUser to return CP loggedIn user
+	///override the authAPI.getCurrentUser to return auth
 	authAPI.secondaryUserLookup = function () {
-		var user = window.currentUser;
-		if(!user) {
+		if(!window.currentUser || !window.currentUser.userToken || !window.currentUser.auth)
 			return null;
-		}
-		return user.authProfile ? user.authProfile : user;
+
+        if (!window.currentAuthUser) {
+            var appId = '';
+            if (appContext.currentApp && appContext.currentApp.appId)
+                appId = appContext.currentApp.appId;
+
+            var request = new XMLHttpRequest();
+            request.open('GET', 'https://app.buildfire.com/api/user/auth/' + appId, false);  // `false` makes the request synchronous
+            request.setRequestHeader("userToken", window.currentUser.userToken);
+            request.setRequestHeader("auth", window.currentUser.auth);
+            request.send(null);
+            if (request.status === 200) {
+                window.currentAuthUser = JSON.parse(request.responseText);
+            }
+        }
+        if (window.currentAuthUser)
+            window.currentAuthUser._cpUser = window.currentUser;
+
+        return window.currentAuthUser;
 	};
 	///
 

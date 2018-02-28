@@ -8,6 +8,7 @@ buildfire.notifications.pushNotification = {
     //text: string
     //at: Date (optional), representing the time to send the push notification.
     //users: array (optional)
+    //userTags: array (optional)
     //groupName: string (optional)
     //queryString: string (optional)
     schedule: function (options, callback) {
