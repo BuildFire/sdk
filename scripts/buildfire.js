@@ -494,12 +494,19 @@ var buildfire = {
             }
 
             var scripts = document.getElementsByTagName("script");
+
             for (var i = 0; i < scripts.length; i++) {
-                if (scripts[i].src.indexOf('buildfire.js') > 0) {
-                    base = scripts[i].src.replace('/scripts/buildfire.js', '');
+                var src = scripts[i].src;
+
+                if (src.indexOf('buildfire.js') > 0) {
+                    base = src.replace('/scripts/buildfire.js', '');
                     break;
-                } else if (scripts[i].src.indexOf('buildfire.min.js') > 0) {
-                    base = scripts[i].src.replace('/scripts/buildfire.min.js', '');
+                } else if (src.indexOf('buildfire.min.js') > 0) {
+                    base = src.replace('/scripts/buildfire.min.js', '');
+                    break;
+                }
+                else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
+                    base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
                     break;
                 }
             }
