@@ -2,6 +2,12 @@ if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to 
 
 //https://github.com/BuildFire/sdk/wiki/Buildfire-Local-Notifications-API
 buildfire.notifications.localNotification = {
+    _isDate: function(date){
+        var isDate = (Object.prototype.toString.call(date) === "[object Date]") ? true: false;
+
+        return isDate;
+    },
+
     //--- options properties ---
     //title: string
     //text: string
@@ -10,7 +16,10 @@ buildfire.notifications.localNotification = {
     send: function (options, callback) {
         var packetId = null;
         var command = 'localNotifications.schedule';
-
+        if(options.at && !window.buildfire.notifications.localNotification._isDate(options.at)){
+            callback('Option "at" must be a Date type.', null);
+            return;
+        }
         var packet = new Packet(packetId, command, options);
         buildfire._sendPacket(packet, callback);
     },
@@ -23,7 +32,10 @@ buildfire.notifications.localNotification = {
     schedule: function (options, callback) {
         var packetId = null;
         var command = 'localNotifications.schedule';
-
+        if(options.at && !window.buildfire.notifications.localNotification._isDate(options.at)){
+            callback('Option "at" must be a Date type.', null);
+            return;
+        }
         var packet = new Packet(packetId, command, options);
         buildfire._sendPacket(packet, callback);
     }
