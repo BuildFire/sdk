@@ -379,6 +379,10 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
+        ready: function() {
+            var p = new Packet(null, 'appearance.ready');
+            buildfire._sendPacket(p);
+        },
 		_forceCSSRender: function(){
 			// WebKit Rendering Reset on Plugins
 			if(window.location.href.indexOf('widget') > 0){
