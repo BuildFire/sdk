@@ -929,7 +929,7 @@ table.table span.sort-icon{
 	max-height:100%;
 	vertical-align:middle;
 }
-.media-container .files-set .file-holder span.icon{
+.media-container .files-set .file-holder span.icon, .media-container .masonry-container span.icon{
 	position:absolute;
 	top:5px;
 	right:5px;
@@ -939,7 +939,7 @@ table.table span.sort-icon{
 	right:inherit;
 	left:5px;
 }
-.media-container .files-set .file-holder span.file-label{
+.media-container .files-set .file-holder span.file-label, .media-container .masonry-container span.file-label{
 	color:#fff;
 	background:rgba(50,55,58,0.8);
 	font-size:11px;
@@ -954,8 +954,60 @@ table.table span.sort-icon{
 	opacity:0;
 }
 .media-container .files-set .file-holder:hover > span.icon,
-.media-container .files-set .file-holder a:hover > span.file-label{
+.media-container .files-set .file-holder a:hover > span.file-label,
+.media-container .masonry-container .masonry-grid:hover span.icon,
+.media-container .masonry-container .masonry-grid a:hover span.file-label{
 	opacity:1;
+}
+/* Masonry Grid */
+
+.masonry-container-hasImgs{
+	min-height: 500px;
+}
+.masonry-container-noImgs{
+	min-height: 70px;
+	overflow-y: hidden !important;
+}
+.masonry-container .masonry-dynamic-grid{
+	position: relative;
+	display: none;
+}
+.masonry-container .masonry-dynamic-grid.angular-grid{
+	display: block;
+}
+.masonry-container .masonry-grid {
+	position: absolute;
+	list-style: none;
+	background: #ffffff;
+	box-sizing: border-box;
+	-moz-box-sizing : border-box;
+	-webkit-transition: all 0.6s ease-out;
+	transition: all 0.6s ease-out;
+	overflow: hidden;
+}
+.masonry-container .masonry-grid img {
+	width: 100%;
+	vertical-align: middle;
+	-webkit-transition: opacity 0.6s ease-out;
+	transition: opacity 0.6s ease-out;
+	background-color: #fff;
+	opacity: 0;
+	visibility: hidden;
+}
+.masonry-container .masonry-grid img.img-loaded{
+	visibility: visible;
+	opacity: 1;
+}
+.masonry-container .masonry-grid span.btn-edit-icon{
+	top:10px;
+	right: 35px;
+}
+.masonry-container .masonry-grid span.btn-delete-icon{
+	top:10px;
+	right:5px;
+}
+.masonry-container .masonry-grid.selected{
+	box-shadow: 0 0 0 2px #09a3ee;
 }
 
 /* Modal */
