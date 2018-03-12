@@ -564,12 +564,19 @@ var buildfire = {
         }
         */
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
+            this._attachAppThemeCSSFiles(appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
+        }
+        , attachLocalAppThemeCSSFiles: function (appId) {
+            this._attachAppThemeCSSFiles( '../../../../app/scripts/offline/appTheme'+appId+'.css');
+        }
+        ,_attachAppThemeCSSFiles:function(url){
+        ,_attachAppThemeCSSFiles:function(url){
             var linkElement = document.createElement("link");
             buildfire.appearance.CSSBusterCounter = 0;
             linkElement.setAttribute("rel", "stylesheet");
             linkElement.setAttribute("type", "text/css");
             linkElement.setAttribute("id", "appThemeCSS");
-            linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
+            linkElement.setAttribute("href", url);
             document.getElementsByTagName('head')[0].appendChild(linkElement);
         }
         , _resizedTo: 0
@@ -1790,8 +1797,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
             if (window.location.pathname.indexOf('/widget/') > 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 
-                if(!disableTheme)
+                if(!disableTheme) {
+                 if(buildfire.isWeb())
                     buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+                 else
+                     buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
+                }
             }
         }
     });
