@@ -564,10 +564,10 @@ var buildfire = {
         }
         */
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
-            this._attachLocalAppThemeCSSFiles(appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
+            this._attachAppThemeCSSFiles(appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
         }
         , attachLocalAppThemeCSSFiles: function (appId) {
-            this._attachLocalAppThemeCSSFiles( '../../../../app/scripts/offline/appTheme'+appId+'.css');
+            this._attachAppThemeCSSFiles( '../../../../app/scripts/offline/appTheme'+appId+'.css');
         }
         ,_attachAppThemeCSSFiles:function(url){
         ,_attachAppThemeCSSFiles:function(url){
