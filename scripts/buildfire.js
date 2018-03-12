@@ -569,7 +569,8 @@ var buildfire = {
         , attachLocalAppThemeCSSFiles: function (appId) {
             this._attachLocalAppThemeCSSFiles( '../../../../app/scripts/offline/appTheme'+appId+'.css');
         }
-        ,_attachLocalAppThemeCSSFiles:function(url){
+        ,_attachAppThemeCSSFiles:function(url){
+        ,_attachAppThemeCSSFiles:function(url){
             var linkElement = document.createElement("link");
             buildfire.appearance.CSSBusterCounter = 0;
             linkElement.setAttribute("rel", "stylesheet");
