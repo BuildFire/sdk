@@ -132,7 +132,6 @@ buildfire.components.carousel.view.prototype = {
         }
     },
     _destroySlider: function () {
-        this.lorySlider.destroy();
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
