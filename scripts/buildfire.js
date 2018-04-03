@@ -523,7 +523,6 @@ var buildfire = {
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
         }
-        /*
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
 
@@ -562,7 +561,6 @@ var buildfire = {
             else
                 FastClick.attach(element);
         }
-        */
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
             this._attachAppThemeCSSFiles(appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
         }
@@ -1806,14 +1804,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     });
 
-    /*
     if(window.location.href.indexOf('/widget/')
         && !buildfire.appearance.disableFastClickOnLoad
         && !buildfire.options.disableFastClick
     )
         buildfire.appearance.attachFastClick();
-    */
-
 
     if(!buildfire.options.disableExternalLinkOverride) {
         document.onclick = function (e) {
@@ -1833,7 +1828,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }
 	setTimeout(function(){
         if(!buildfire.options.disableTheme)
-		    buildfire.appearance._forceCSSRender();
+            buildfire.appearance._forceCSSRender();
 	}, 1750);
 
 });
