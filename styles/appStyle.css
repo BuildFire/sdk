@@ -27,6 +27,8 @@ body{
     margin:0px;
 	height:100%;
 	overflow:hidden !important;
+	margin-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
+	margin-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */
 }
 html:not([buildfire]){
 	overflow:hidden !important;

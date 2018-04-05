@@ -67,7 +67,7 @@ buildfire.components.carousel.view = function (options) {
             img.alt = "Carousel Image";
             options.selector.appendChild(img);
             img.addEventListener("click", function () {
-                buildfire.actionItems.execute(carouselImages[0], function (err, result) {
+                buildfire.actionItems.execute(options.items[0], function (err, result) {
                     if (err) {
                         console.warn('Error openning slider action: ', err);
                     }
@@ -132,7 +132,6 @@ buildfire.components.carousel.view.prototype = {
         }
     },
     _destroySlider: function () {
-        this.lorySlider.destroy();
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;

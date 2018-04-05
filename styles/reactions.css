@@ -1,0 +1,57 @@
+
+.reactionContainer{
+    overflow: hidden;
+    height: 55px;
+    padding-bottom: 3px;
+    white-space: nowrap;
+}
+
+.reactionContainer > .reactionTransformer {
+    transform: scale(1);
+    transform-origin: 0%;
+    white-space: nowrap;
+}
+
+.reactionContainer  .reactionBar{
+    float: left;
+    background-color: white;
+    background-image: url('./media/reactions.png');
+    background-repeat: no-repeat;
+    height: 52px;
+    width: 279px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    border-radius: 50px;
+    margin-left: -230px;
+    transition: 250ms ease-out;
+}
+
+.reactionContainer  .reactionBar.activeBar{
+    margin-left: 10px ;
+}
+
+.reactionContainer  .reactionBar > div{
+
+    margin-left: 1px;
+    width:45px;
+    height:52px;
+    float: left;
+    white-space: nowrap;
+}
+
+.reactionContainer  .reactionStats > .reactorAvatar{
+    width: 50px;
+    height:50px;
+    border-radius: 50%;
+    border:3px solid white;
+}
+
+.reactionContainer  .reactionStats > .reactorAvatar:nth-child(n+2){
+    margin-left: -20px;
+}
+
+.reactionContainer  .reactionStats > .reactionCount{
+    font-size: 20px;
+    display: inline;
+    padding-top: 15px;
+
+}

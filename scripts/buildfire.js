@@ -379,6 +379,10 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Appearance
     , appearance: {
+        ready: function() {
+            var p = new Packet(null, 'appearance.ready');
+            buildfire._sendPacket(p);
+        },
 		_forceCSSRender: function(){
 			// WebKit Rendering Reset on Plugins
 			if(window.location.href.indexOf('widget') > 0){
@@ -494,12 +498,19 @@ var buildfire = {
             }
 
             var scripts = document.getElementsByTagName("script");
+
             for (var i = 0; i < scripts.length; i++) {
-                if (scripts[i].src.indexOf('buildfire.js') > 0) {
-                    base = scripts[i].src.replace('/scripts/buildfire.js', '');
+                var src = scripts[i].src;
+
+                if (src.indexOf('buildfire.js') > 0) {
+                    base = src.replace('/scripts/buildfire.js', '');
                     break;
-                } else if (scripts[i].src.indexOf('buildfire.min.js') > 0) {
-                    base = scripts[i].src.replace('/scripts/buildfire.min.js', '');
+                } else if (src.indexOf('buildfire.min.js') > 0) {
+                    base = src.replace('/scripts/buildfire.min.js', '');
+                    break;
+                }
+                else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
+                    base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
                     break;
                 }
             }
@@ -512,7 +523,6 @@ var buildfire = {
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
         }
-        /*
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
 
@@ -551,14 +561,19 @@ var buildfire = {
             else
                 FastClick.attach(element);
         }
-        */
         , attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
+            this._attachAppThemeCSSFiles(appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
+        }
+        , attachLocalAppThemeCSSFiles: function (appId) {
+            this._attachAppThemeCSSFiles( '../../../../app/scripts/offline/appTheme'+appId+'.css');
+        }
+        ,_attachAppThemeCSSFiles:function(url){
             var linkElement = document.createElement("link");
             buildfire.appearance.CSSBusterCounter = 0;
             linkElement.setAttribute("rel", "stylesheet");
             linkElement.setAttribute("type", "text/css");
             linkElement.setAttribute("id", "appThemeCSS");
-            linkElement.setAttribute("href", appHost + '/api/app/styles/appTheme.css?appId=' + appId + '&liveMode=' + liveMode + '&v=' + buildfire.appearance.CSSBusterCounter);
+            linkElement.setAttribute("href", url);
             document.getElementsByTagName('head')[0].appendChild(linkElement);
         }
         , _resizedTo: 0
@@ -1779,20 +1794,21 @@ document.addEventListener("DOMContentLoaded", function (event) {
             if (window.location.pathname.indexOf('/widget/') > 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 
-                if(!disableTheme)
+                if(!disableTheme) {
+                 if(buildfire.isWeb())
                     buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+                 else
+                     buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
+                }
             }
         }
     });
 
-    /*
     if(window.location.href.indexOf('/widget/')
         && !buildfire.appearance.disableFastClickOnLoad
         && !buildfire.options.disableFastClick
     )
         buildfire.appearance.attachFastClick();
-    */
-
 
     if(!buildfire.options.disableExternalLinkOverride) {
         document.onclick = function (e) {
@@ -1812,7 +1828,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
     }
 	setTimeout(function(){
         if(!buildfire.options.disableTheme)
-		    buildfire.appearance._forceCSSRender();
+            buildfire.appearance._forceCSSRender();
 	}, 1750);
 
 });
