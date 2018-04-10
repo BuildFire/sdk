@@ -9,8 +9,8 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 buildfire.services.firebase = {
     //--- options properties ---
     //integrationToken: string
-    //forceLogin: bool
-    login: function (options, callback) {
+    //forceLogin: bool, by default false
+    createCustomToken: function (options, callback) {
         var packetId = null;
         var command = 'firebase.login';
 
