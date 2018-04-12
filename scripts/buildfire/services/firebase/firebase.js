@@ -12,7 +12,7 @@ buildfire.services.firebase = {
     //forceLogin: bool, by default false
     createCustomToken: function (options, callback) {
         var packetId = null;
-        var command = 'firebase.login';
+        var command = 'firebase.createCustomToken';
 
         var packet = new Packet(packetId, command, options);
         buildfire._sendPacket(packet, callback);
