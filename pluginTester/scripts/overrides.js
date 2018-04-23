@@ -58,7 +58,16 @@ postMaster.servicePluginAPIs.service.tag = 'service';
         var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
         postMaster.controlPluginAPI.sendMessage(null, packet);
     };
-    
+
+    postMaster.controlPluginAPI.publicData.onUpdate = function (updateObj) {
+        var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
+        postMaster.widgetPluginAPI.sendMessage(null, packet);
+    };
+
+    postMaster.widgetPluginAPI.publicData.onUpdate = function (updateObj) {
+        var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
+        postMaster.controlPluginAPI.sendMessage(null, packet);
+    };
 
 	PluginAPI.prototype.messaging.triggerOnNewWidgetMessage = function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
