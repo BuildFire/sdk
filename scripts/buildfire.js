@@ -142,6 +142,7 @@ var buildfire = {
         , "geo.onPositionChange"
         , "navigation.triggerOnAppLauncherActive"
         , "navigation.triggerOnAppLauncherInactive"
+        , "colorLib._triggerOnChange"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -1522,6 +1523,23 @@ var buildfire = {
         }
 
 
+    }
+    , colorLib: {
+        showDialog: function (options, callback) {
+            buildfire.eventManager.clear('colorLibOnChange');
+            if (callback) {
+                buildfire.eventManager.add('colorLibOnChange', function (data) {
+                    callback(null, data)
+                }, false);
+            }
+
+            var p = new Packet(null, 'colorLib.showDialog', options);
+            buildfire._sendPacket(p);
+
+        },
+        _triggerOnChange: function (data) {
+            buildfire.eventManager.trigger('colorLibOnChange', data);
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {

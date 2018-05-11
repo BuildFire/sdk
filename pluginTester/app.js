@@ -1,7 +1,7 @@
 /**
  * Created by Daniel on 5/23/2015.
  */
-var $app = angular.module('buildfire', ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'ngMap', 'ngAutocomplete','angularGrid']);
+var $app = angular.module('buildfire', ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'ngMap', 'ngAutocomplete','angularGrid','mp.colorPicker']);
 
 $app.config(['$routeProvider', '$sceDelegateProvider', function ($routeProvider, $sceDelegateProvider) {
 
