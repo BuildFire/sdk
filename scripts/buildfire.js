@@ -1795,7 +1795,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 
                 if(!disableTheme) {
-                 if(buildfire.isWeb())
+                 if(buildfire.isWeb() || !context.liveMode)
                     buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
                  else
                      buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
