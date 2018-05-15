@@ -1525,17 +1525,20 @@ var buildfire = {
 
     }
     , colorLib: {
-        showDialog: function (options, callback) {
-            buildfire.eventManager.clear('colorLibOnChange');
-            if (callback) {
+        showDialog: function (data, options, onchange, callback) {
+            if (typeof onchange == "function") {
+                buildfire.eventManager.clear('colorLibOnChange');
                 buildfire.eventManager.add('colorLibOnChange', function (data) {
-                    callback(null, data)
+                    onchange(null, data);
                 }, false);
             }
+            var packetData = {};
+            if (options)
+                packetData = JSON.parse(JSON.stringify(options));
+            packetData.data = data;
 
-            var p = new Packet(null, 'colorLib.showDialog', options);
-            buildfire._sendPacket(p);
-
+            var p = new Packet(null, 'colorLib.showDialog', packetData);
+            buildfire._sendPacket(p, callback);
         },
         _triggerOnChange: function (data) {
             buildfire.eventManager.trigger('colorLibOnChange', data);
