@@ -1526,8 +1526,8 @@ var buildfire = {
     }
     , colorLib: {
         showDialog: function (data, options, onchange, callback) {
+            buildfire.eventManager.clear('colorLibOnChange');
             if (typeof onchange == "function") {
-                buildfire.eventManager.clear('colorLibOnChange');
                 buildfire.eventManager.add('colorLibOnChange', function (data) {
                     onchange(null, data);
                 }, false);
