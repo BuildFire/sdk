@@ -532,6 +532,8 @@ var buildfire = {
             for (var i = 0; i < scripts.length; i++) {
                 if (scripts[i].src.indexOf('buildfire.js') > 0)
                     path = scripts[i].src.replace('buildfire.js', 'fastclick.js');
+                else if (scripts[i].src.indexOf('buildfire.min.js') > 0)
+                    path = scripts[i].src.replace('buildfire.min.js', 'fastclick.js');
                 else if (scripts[i].src.indexOf('fastclick.js') > 0){
                     console.warn('fastclick already attached');
                     return;
