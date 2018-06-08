@@ -287,6 +287,19 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             };
         }
 
+        $scope.showSdkVerison = false;
+        var sdkReleaseUrl = 'https://api.github.com/repos/buildfire/sdk/releases/latest';
+
+        $http.get(sdkReleaseUrl)
+        .success(function (result) {
+            if (result) {
+                $scope.sdkVersion = result.tag_name;
+                $scope.showSdkVerison = true;
+            }
+        }).error(function (err) {
+            console.error('Error fetching SDK release version', err);
+        });
+
     }]
 );
 
