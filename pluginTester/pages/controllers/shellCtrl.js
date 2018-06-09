@@ -286,20 +286,31 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                 $scope.$apply();
             };
         }
-
-        $scope.showSdkVerison = false;
-        var sdkReleaseUrl = 'https://api.github.com/repos/buildfire/sdk/releases/latest';
+    
+        var sdkReleaseUrl = 'https://api.github.com/repos/buildfire/sdk/releases/latest',
+            packageJsonUrl = '/package.json',
+            releaseSdkVersion, localSdkVersion;
 
         $http.get(sdkReleaseUrl)
         .success(function (result) {
             if (result) {
-                $scope.sdkVersion = result.tag_name;
-                $scope.showSdkVerison = true;
+                releaseSdkVersion = result.tag_name;
+
+                $http.get(packageJsonUrl)
+                    .success(function (result) {
+                        if (result) {
+                            localSdkVersion = result.version;
+
+                            if(releaseSdkVersion != localSdkVersion)
+                                console.warn('SDK OUT OF DATE');
+                        }
+                    }).error(function (err) {
+                    console.error('Error fetching package.json', err);
+                });
             }
         }).error(function (err) {
             console.error('Error fetching SDK release version', err);
         });
-
     }]
 );
 
