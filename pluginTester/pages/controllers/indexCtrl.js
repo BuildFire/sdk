@@ -27,6 +27,7 @@ $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
 
     var sdkReleaseUrl = 'https://api.github.com/repos/buildfire/sdk/releases/latest',
         packageJsonUrl = '/package.json',
+        sdkWikiLink = 'https://github.com/BuildFire/sdk/wiki/How-to-Update-the-SDK',
         releaseSdkVersion, localSdkVersion;
 
     $http.get(sdkReleaseUrl)
@@ -40,8 +41,9 @@ $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
                             localSdkVersion = result.version;
 
                             if(releaseSdkVersion != localSdkVersion){
-                                $scope.sdkMessage = 'Update your SDK to the latest version. (' + localSdkVersion + ' -> ' + releaseSdkVersion + ')';
+                                $scope.sdkMessage = 'Your SDK is not up to date. (' + localSdkVersion + ' -> ' + releaseSdkVersion + ')';
                                 $scope.status = 'text-danger';
+                                $scope.sdkWikiLink = sdkWikiLink;
                             }
                             else{
                                 $scope.sdkMessage = 'SDK is up to date';
