@@ -384,6 +384,17 @@ var buildfire = {
             var p = new Packet(null, 'appearance.ready');
             buildfire._sendPacket(p);
         },
+        getAppTheme: function (callback) {
+            buildfire.getContext(function(err,context){
+                if(err)
+                    callback(err,null);
+                if(context)
+                    callback(null,context.appTheme);
+                else
+                    callback(null,null);
+
+            })
+        },
 		_forceCSSRender: function(){
 			// WebKit Rendering Reset on Plugins
 			if(window.location.href.indexOf('widget') > 0){
