@@ -26,7 +26,7 @@
 
 
 </head>
-<body onhashchange="window.location.reload()" ng-controller="indexCtrl" >
+<body onhashchange="window.location.reload()" ng-controller="indexCtrl">
 <div id="container" ng-controller="openDialogCtrl">
     <div class="loading-screen"  ng-show="showSpinner">
         <div class="loading-bg">
@@ -41,6 +41,7 @@
             <a href="http://buildfire.com" class="logo text-center ng-scope">
                 <img src="http://cdn.pluginserver.buildfire.com/docResources/logo.jpg">
             </a>
+            <span class="align-right" ng-class="status" ng-cloak>{{sdkMessage}}</span>
             <div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
         </div>
     </header>
