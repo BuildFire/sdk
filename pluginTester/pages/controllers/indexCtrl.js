@@ -63,7 +63,7 @@ $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
                                 $scope.sdkWikiLink = sdkWikiLink;
                             }
                             else{
-                                $scope.sdkMessage = 'SDK is up to date';
+                                $scope.sdkMessage = '';
                                 $scope.status = 'text-primary';
                             }
 
