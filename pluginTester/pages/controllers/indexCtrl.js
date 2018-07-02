@@ -28,7 +28,24 @@ $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
     var sdkReleaseUrl = 'https://api.github.com/repos/buildfire/sdk/releases/latest',
         packageJsonUrl = '/package.json',
         sdkWikiLink = 'https://github.com/BuildFire/sdk/wiki/How-to-Update-the-SDK',
+        storageKey = 'sdkVersion',
         releaseSdkVersion, localSdkVersion;
+
+    var storage = localStorage.getItem(storageKey);
+
+    if(storage){
+        var cache = JSON.parse(storage),
+            now = new Date(),
+            lastCheckDate = new Date(cache.date),
+            timeDiff = Math.abs(now.getTime() - lastCheckDate.getTime()),
+            diffInHours = timeDiff / (1000 * 60 * 60);
+
+        console.log('Hours since last SDK check', diffInHours);
+
+        if(diffInHours < 2){
+            return;
+        }
+    }
 
     $http.get(sdkReleaseUrl)
         .success(function (result) {
@@ -46,16 +63,23 @@ $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
                                 $scope.sdkWikiLink = sdkWikiLink;
                             }
                             else{
-                                $scope.sdkMessage = 'SDK is up to date';
+                                $scope.sdkMessage = '';
                                 $scope.status = 'text-primary';
                             }
+
+                            var updatedCache = {
+                                version: releaseSdkVersion,
+                                date: new Date()
+                            };
+
+                            localStorage.setItem(storageKey, JSON.stringify(updatedCache));
                         }
                     }).error(function (err) {
-                    console.error('Error fetching package.json', err);
+                    console.warn('Error fetching package.json', err);
                 });
             }
         }).error(function (err) {
-        console.error('Error fetching SDK release version', err);
+        console.warn('Error fetching SDK release version', err);
     });
 
 }]);
