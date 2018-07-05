@@ -286,7 +286,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                 $scope.$apply();
             };
         }
-
     }]
 );
 
