@@ -644,6 +644,16 @@ var buildfire = {
                 metadata: metadata
             }); // wrap object to follow the command(obj, callback)
             buildfire._sendPacket(p);
+        },
+        registerEvent: function (event, callback) {
+            var p = new Packet(null, "analytics.registerPluginEvent", event); // wrap object to follow the command(obj, callback)
+            buildfire._sendPacket(p);
+        },
+        unregisterEvent: function (key, callback) {
+            var p = new Packet(null, "analytics.unregisterPluginEvent", {
+                key: key
+            }); // wrap object to follow the command(obj, callback)
+            buildfire._sendPacket(p);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
