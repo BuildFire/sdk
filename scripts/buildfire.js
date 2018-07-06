@@ -645,8 +645,8 @@ var buildfire = {
             }); // wrap object to follow the command(obj, callback)
             buildfire._sendPacket(p);
         },
-        registerEvent: function (event, callback) {
-            var p = new Packet(null, "analytics.registerPluginEvent", event); // wrap object to follow the command(obj, callback)
+        registerEvent: function (event, options, callback) {
+            var p = new Packet(null, "analytics.registerPluginEvent", {data: event, options: options});
             buildfire._sendPacket(p);
         },
         unregisterEvent: function (key, callback) {
