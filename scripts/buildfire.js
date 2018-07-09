@@ -645,6 +645,7 @@ var buildfire = {
             }); // wrap object to follow the command(obj, callback)
             buildfire._sendPacket(p);
         },
+        /// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Custom-Events
         registerEvent: function (event, options, callback) {
             if (typeof(options) == "function") {
                 callback = options;
@@ -656,7 +657,7 @@ var buildfire = {
         unregisterEvent: function (key, callback) {
             var p = new Packet(null, "analytics.unregisterPluginEvent", {
                 key: key
-            }); // wrap object to follow the command(obj, callback)
+            });
             buildfire._sendPacket(p, callback);
         }
     }
