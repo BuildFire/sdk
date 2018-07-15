@@ -18,6 +18,15 @@ buildfire.notifications.pushNotification = {
         var packet = new Packet(packetId, command, options);
         buildfire._sendPacket(packet, callback);
     },
+    //--- properties ---
+    //id: string, notification Id
+    cancel: function (id, callback) {
+        var packetId = null;
+        var command = 'pushNotifications.cancel';
+
+        var packet = new Packet(packetId, command, id);
+        buildfire._sendPacket(packet, callback);
+    },
     //--- options properties ---
     //groupName: string (optional)
     subscribe: function (options, callback) {
