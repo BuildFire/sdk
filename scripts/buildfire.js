@@ -384,16 +384,42 @@ var buildfire = {
             var p = new Packet(null, 'appearance.ready');
             buildfire._sendPacket(p);
         },
+        _defaultTheme:  {
+            appName: '',
+            colors: {
+                backgroundColor: "#ffffff",
+                bodyText: "#858585",
+                dangerTheme: "#f24965",
+                defaultTheme: "#07a05e",
+                footerMenuBackgroundColor: "#ffffff",
+                footerMenuIconColor: "#45cae6",
+                headerText: "#000000",
+                icons: "#45cae6",
+                infoTheme: "#66d6ed",
+                primaryTheme: "#45cae6",
+                successTheme: "#0ac775",
+                titleBar: "#0ac775",
+                titleBarTextAndIcons: "#ffffff",
+                warningTheme: "#ffcf40"
+            },
+            fontId : "Lato",
+            fontName: "Lato"
+        },
         getAppTheme: function (callback) {
             buildfire.getContext(function(err,context){
                 if(err)
                     callback(err,null);
-                if(context)
+                if(context){
+                    if(!context.appTheme){
+                        context.appTheme = buildfire.appearance._defaultTheme;
+                    }
+
                     callback(null,context.appTheme);
+                }
                 else
                     callback(null,null);
 
-            })
+            });
         },
 		_forceCSSRender: function(){
 			// WebKit Rendering Reset on Plugins
