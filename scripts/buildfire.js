@@ -410,7 +410,7 @@ var buildfire = {
                 if(err)
                     callback(err,null);
                 if(context){
-                    if(!context.appTheme){
+                    if(buildfire.isWeb() && !context.appTheme){
                         context.appTheme = buildfire.appearance._defaultTheme;
                     }
 
