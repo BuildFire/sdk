@@ -670,6 +670,21 @@ var buildfire = {
                 metadata: metadata
             }); // wrap object to follow the command(obj, callback)
             buildfire._sendPacket(p);
+        },
+        /// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Custom-Events
+        registerEvent: function (event, options, callback) {
+            if (typeof(options) == "function") {
+                callback = options;
+                options = null;
+            }
+            var p = new Packet(null, "analytics.registerPluginEvent", {data: event, options: options});
+            buildfire._sendPacket(p, callback);
+        },
+        unregisterEvent: function (key, callback) {
+            var p = new Packet(null, "analytics.unregisterPluginEvent", {
+                key: key
+            });
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore

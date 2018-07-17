@@ -3,7 +3,11 @@
  */
 var $app = angular.module('buildfire', ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'ngMap', 'ngAutocomplete','angularGrid','mp.colorPicker']);
 
-$app.config(['$routeProvider', '$sceDelegateProvider', function ($routeProvider, $sceDelegateProvider) {
+$app.config(['$routeProvider', '$sceDelegateProvider','$sceProvider', function ($routeProvider, $sceDelegateProvider,$sceProvider) {
+
+    // Completely disable SCE.  For demonstration purposes only!
+    // Do not use in new projects.
+    $sceProvider.enabled(false);
 
 	$routeProvider
 		.when('/', {
