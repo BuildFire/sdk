@@ -246,7 +246,7 @@ buildfire.components.pluginInstance.sortableList.prototype = {
                 };
                 if (me.dialogOptions.confirmDeleteItem) {
                     buildfire.notifications.confirm({
-                        title: "Remove Folder Instance",
+                        title: "Remove Feature",
                         message: '<p>Are you sure you want to do this?</p><p class="margin-zero">Note: If you would like to add it again, you can do so by clicking the button above.</p>',
                         buttonLabels: ["Delete", "Cancel"],
                         target: e.currentTarget
@@ -288,15 +288,15 @@ buildfire.components.pluginInstance.sortableList.prototype = {
 
         componentContainer.className = "item clearfix row margin-bottom-fifteen";
         componentName.className = "labels col-md-3 padding-right-zero pull-left";
-        componentName.innerHTML = "Folder Instances";
+        componentName.innerHTML = "Features";
         contentContainer.className = "main col-md-9 pull-right";
         buttonContainer.className = "clearfix";
         getAllContainer.className = "checkbox checkbox-primary";
         button.className = "btn btn-success pull-left add-new-item";
         sliderContainer.className = "carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey";
 
-        button.innerHTML = "Add Folder Instance";
-        getAlllabel.innerHTML = "Load all folder instances";
+        button.innerHTML = "Add Feature";
+        getAlllabel.innerHTML = "Load all features";
         getAlllabel.setAttribute("for", this.checkId);
         getAllCheckbox.id = this.checkId;
 
