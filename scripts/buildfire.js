@@ -1866,7 +1866,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         else {
             if (context && context.debugTag)
                 buildfire.logger.attachRemoteLogger(context.debugTag);
-            if (window.location.pathname.indexOf('/widget/') > -1) {
+            if (window.location.pathname.indexOf('/widget/') > 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 
                 if(!disableTheme) {
