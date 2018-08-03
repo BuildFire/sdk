@@ -206,7 +206,7 @@ var buildfire = {
 
         var resend = function(){
             if(resendAttempts < maxResendAttempts) {
-                console.error("calling " + packet.cmd + ' again. total overall resend attempts ' + resendAttempts);
+                console.log("calling " + packet.cmd + ' again. total overall resend attempts ' + resendAttempts);
 
                 buildfire._sendPacket(packet, function (e, d) {
                     resendAttempts--;
