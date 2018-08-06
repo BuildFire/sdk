@@ -110,7 +110,7 @@ buildfire.components.carousel.view.prototype = {
 
         function validateLauncherCarousel() {
             buildfire.getContext(function (err, result) {
-                if (result && result.device && result.device.platform && result.device.platform.toLowerCase() == 'ios') {
+                if (result && result.device && result.device.platform && result.device.platform.toLowerCase() == 'ios' && buildfire.getFrameType() == "LAUNCHER_PLUGIN") {
                     buildfire.navigation.onAppLauncherActive(function () {
                         self._applySlider();
                     }, true);
@@ -138,16 +138,19 @@ buildfire.components.carousel.view.prototype = {
         }
     },
     _applySlider: function () {
-        this.lorySlider = lory(this.config.selector, {
-            classNameSlideContainer: this.config.classNameSlideContainer || "js_slides",
-            classNameFrame: this.config.classNameFrame || 'js_frame',
-            ease: 'ease',
-            rewindSpeed: 600,//ms
-            slideSpeed: this.config.speed,//ms
-            slidesToScroll: this.config.slidesToScroll || 1,
-            infinite: this.config.infinite || 1,
-            enableMouseEvents: true
-        });
+        if (!this.lorySlider) {
+            this.lorySlider = lory(this.config.selector, {
+                classNameSlideContainer: this.config.classNameSlideContainer || "js_slides",
+                classNameFrame: this.config.classNameFrame || 'js_frame',
+                ease: 'ease',
+                rewindSpeed: 600,//ms
+                slideSpeed: this.config.speed,//ms
+                slidesToScroll: this.config.slidesToScroll || 1,
+                infinite: this.config.infinite || 1,
+                enableMouseEvents: true
+            });
+            console.info("initializing lory for: " + buildfire.getFrameType());
+        }
 
         if (this.config.loop && this.config.items && this.config.items.length > 1) {
             var self = this;
