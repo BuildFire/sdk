@@ -41,7 +41,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         };
 
         $scope.loadWebpackFrames = function(config) {
-            var root = 'http://127.0.0.1:' + config.webpack;
+            var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
             $scope.widgetSrc = root + '/widget/index.html?fid=widget';
 
             if (config.widget && config.widget.service) {
@@ -72,7 +72,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                     var tab = config.control.customTabs[i];
                     if(tab && tab.url) {
                         if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
-                            var root = 'http://127.0.0.1:8080/control/';
+                            var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/';
                             // strip leading '/' if any
                             var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
                             tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
@@ -148,7 +148,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
             $scope.currentControl = $scope.pluginConfig.webpack
-                ? 'http://127.0.0.1:8080/control/' + section + '/index.html?fid=control'
+                ?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control'
                 : '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control';
 
             var element = document.querySelector('.active');
