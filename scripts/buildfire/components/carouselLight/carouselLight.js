@@ -149,7 +149,6 @@ buildfire.components.carousel.view.prototype = {
                 infinite: this.config.infinite || 1,
                 enableMouseEvents: true
             });
-            console.info("initializing lory for: " + buildfire.getFrameType());
         }
 
         if (this.config.loop && this.config.items && this.config.items.length > 1) {
