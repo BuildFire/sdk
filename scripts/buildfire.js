@@ -1608,6 +1608,10 @@ var buildfire = {
             var p = new Packet(null, 'notificationsAPI.confirm', options);
             buildfire._sendPacket(p, callback);
         }
+        , showDialog: function (options, callback) {
+            var p = new Packet(null, 'notificationsAPI.showDialog', options);
+            buildfire._sendPacket(p, callback);
+        }
         , prompt: function (options, callback) {
             var p = new Packet(null, 'notificationsAPI.prompt', options);
             buildfire._sendPacket(p, callback);
