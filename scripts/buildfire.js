@@ -1601,11 +1601,18 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
+            options.allowHtml = false;
             var p = new Packet(null, 'notificationsAPI.alert', options);
             buildfire._sendPacket(p, callback);
         }
         , confirm: function (options, callback) {
+            options.allowHtml = false;
             var p = new Packet(null, 'notificationsAPI.confirm', options);
+            buildfire._sendPacket(p, callback);
+        }
+        , showDialog: function (options, callback) {
+            options.allowHtml = false;
+            var p = new Packet(null, 'notificationsAPI.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
         , prompt: function (options, callback) {
