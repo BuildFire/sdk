@@ -1847,9 +1847,26 @@ var buildfire = {
         ,onPositionChange: function(err,position){
 
         }
-        ,clearWatch:function(watchId, callback){
-            buildfire._sendPacket(new Packet(null,"geo.clearWatch",watchId),callback);
+        ,clearWatch:function(watchId, callback) {
+            buildfire._sendPacket(new Packet(null, "geo.clearWatch", watchId), callback);
         }
+        ,calculateDistance: function (start, end) {
+            var R = 3960,
+                dLat = buildfire.geo.degreesToRadians(end.latitude - start.latitude),
+                dLon = buildfire.geo.degreesToRadians(end.longitude - start.longitude),
+                lat1 = buildfire.geo.degreesToRadians(start.latitude),
+                lat2 = buildfire.geo.degreesToRadians(end.latitude),
+
+                a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2),
+                c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c;
+        }
+        // Converts numeric degrees to radians
+        , degreesToRadians: function (degrees) {
+            return (degrees * Math.PI)/180;
+        },
     }
     , localStorage : {
         setItem: function(key,value,callback) {
