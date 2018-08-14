@@ -62,6 +62,7 @@ buildfire.components.pluginInstance._mapFromSearch = function (data) {
                 tempObj.pluginTypeId = currentPlugin.data._buildfire.pluginType.data;
                 tempObj.pluginTypeName = currentPlugin.data._buildfire.pluginType.result[0].name;
                 tempObj.title = currentPlugin.data.title;
+                tempObj.hasAccess = currentPlugin.hasAccess === undefined?true:currentPlugin.hasAccess;
                 tempObj.iconClassName = currentPlugin.data.iconClassName;
                 result.push(tempObj);
                 tempObj = null;
