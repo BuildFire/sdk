@@ -1602,10 +1602,23 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
+            //make it compatible with app, cp and the old versions
+            if(options && options.buttonName && !options.okButton){
+                options.okButton = {text: options.buttonName};
+            }
             var p = new Packet(null, 'notificationsAPI.alert', options);
             buildfire._sendPacket(p, callback);
         }
         , confirm: function (options, callback) {
+            //make it compatible with app, cp and the old versions
+            if (options && options.buttonLabels) {
+                if (!options.confirmButton) {
+                    options.confirmButton = {text: options.buttonLabels[0]};
+                }
+                if (!options.cancelButton) {
+                    options.cancelButton = {text: options.buttonLabels[1]};
+                }
+            }
             var p = new Packet(null, 'notificationsAPI.confirm', options);
             buildfire._sendPacket(p, callback);
         }
@@ -1619,6 +1632,9 @@ var buildfire = {
         }
         , vibrate: function (options, callback) {
             var p = new Packet(null, 'notificationsAPI.vibrate', options);
+            buildfire._sendPacket(p, callback);
+        }, showDialog: function (options, callback) {
+            var p = new Packet(null, 'notificationsAPI.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
     }
@@ -1848,9 +1864,30 @@ var buildfire = {
         ,onPositionChange: function(err,position){
 
         }
-        ,clearWatch:function(watchId, callback){
-            buildfire._sendPacket(new Packet(null,"geo.clearWatch",watchId),callback);
+        ,clearWatch:function(watchId, callback) {
+            buildfire._sendPacket(new Packet(null, "geo.clearWatch", watchId), callback);
         }
+        ,calculateDistance: function (start, end, options) {
+            var R = (options && options.unitSystem === 'metric') ? 6371 : 3960,
+                decimalPlaces = (options && options.decimalPlaces) ? options.decimalPlaces : 2,
+                dLat = buildfire.geo.degreesToRadians(end.latitude - start.latitude),
+                dLon = buildfire.geo.degreesToRadians(end.longitude - start.longitude),
+                lat1 = buildfire.geo.degreesToRadians(start.latitude),
+                lat2 = buildfire.geo.degreesToRadians(end.latitude),
+
+                a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2),
+                c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return buildfire.geo.round((R * c), decimalPlaces);
+        }
+        , round: function (value, decimals) {
+            return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+        }
+        // Converts numeric degrees to radians
+        , degreesToRadians: function (degrees) {
+            return (degrees * Math.PI)/180;
+        },
     }
     , localStorage : {
         setItem: function(key,value,callback) {
