@@ -7,7 +7,7 @@ if (typeof (buildfire.services.publicFiles) == "undefined")
 
 buildfire.services.publicFiles.upload = function(options,onProgress , callback) {
     buildfire.eventManager.clear('publicFilesOnProgress');
-    var p = new Packet(null, 'publicFiles.upload', {options: options});
+    var p = new Packet(null, 'publicFiles.upload', options);
     buildfire._sendPacket(p, callback);
 };
 
