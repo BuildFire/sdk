@@ -1851,7 +1851,7 @@ var buildfire = {
             buildfire._sendPacket(new Packet(null, "geo.clearWatch", watchId), callback);
         }
         ,calculateDistance: function (start, end, options) {
-            var R = 3960,
+            var R = (options && options.unitSystem === 'metric') ? 6371 : 3960,
                 decimalPlaces = (options && options.decimalPlaces) ? options.decimalPlaces : 2,
                 dLat = buildfire.geo.degreesToRadians(end.latitude - start.latitude),
                 dLon = buildfire.geo.degreesToRadians(end.longitude - start.longitude),
