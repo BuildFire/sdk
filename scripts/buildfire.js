@@ -1866,8 +1866,9 @@ var buildfire = {
         ,clearWatch:function(watchId, callback) {
             buildfire._sendPacket(new Packet(null, "geo.clearWatch", watchId), callback);
         }
-        ,calculateDistance: function (start, end) {
+        ,calculateDistance: function (start, end, options) {
             var R = 3960,
+                decimalPlaces = (options && options.decimalPlaces) ? options.decimalPlaces : 2,
                 dLat = buildfire.geo.degreesToRadians(end.latitude - start.latitude),
                 dLon = buildfire.geo.degreesToRadians(end.longitude - start.longitude),
                 lat1 = buildfire.geo.degreesToRadians(start.latitude),
@@ -1877,7 +1878,10 @@ var buildfire = {
                     Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2),
                 c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-            return R * c;
+            return buildfire.geo.round((R * c), decimalPlaces);
+        }
+        , round: function (value, decimals) {
+            return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
         }
         // Converts numeric degrees to radians
         , degreesToRadians: function (degrees) {
