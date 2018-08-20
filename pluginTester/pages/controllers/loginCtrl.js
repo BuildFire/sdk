@@ -18,18 +18,12 @@
 							window.location.hash = "/";
 						}
 						else {
-							$rootScope.$broadcast('apiError', {
-								code: "NOTFOUND",
-								message: "Invalid username or password"
-							});
+                            $scope.errors.serverError = "Invalid username or password";
 						}
 					})
 					.error(function (err) {
 						if (err && err.code == "NOTFOUND") {
-							$rootScope.$broadcast('apiError', {
-								code: "NOTFOUND",
-								message: "Invalid username or password"
-							});
+                            $scope.errors.serverError = "Invalid username or password";
 						}
 					});
 			}
