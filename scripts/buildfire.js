@@ -1905,6 +1905,11 @@ var buildfire = {
             if(!callback)throw "missing callback on buildfire.localStorage.removeItem";
             buildfire._sendPacket(new Packet(null, 'localStorage.removeItem', key), callback);
         }
+    },
+    input: {
+        show: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'input.show', options), callback);
+        }
     }
 
 };
