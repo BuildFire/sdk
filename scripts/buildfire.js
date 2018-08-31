@@ -1907,8 +1907,8 @@ var buildfire = {
         }
     },
     input: {
-        show: function(options, callback) {
-            buildfire._sendPacket(new Packet(null, 'input.show', options), callback);
+        showDialog: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'input.showDialog', options), callback);
         }
     }
 
