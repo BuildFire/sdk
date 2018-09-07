@@ -8,6 +8,7 @@ postMaster.widgetPluginAPI = new PluginAPI('widget', window.appContext.currentAp
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,null,'app');
 postMaster.widgetPluginAPI.tag = 'shell';
 
+PluginAPI.configType = window.appContext.currentApp.config ? window.appContext.currentApp.config.type : undefined;
 postMaster.controlPluginAPI = new PluginAPI('iframeControl', window.appContext.currentApp.appId
 	, window.appContext.currentPlugin.pluginPath, window.appContext.currentPlugin.instanceId, 0,appContext.currentApp.keys.datastoreKey,'control');
 postMaster.controlPluginAPI.tag = 'controlPluginAPI';
