@@ -9,7 +9,7 @@
         }
     }
 
-    if(!window.appContext || !window.appContext.currentApp || window.appContext.currentApp.config) {
+    if(!window.appContext || !window.appContext.currentApp || !window.appContext.currentApp.config) {
         var key= window.localStorage.getItem('autoGenKey'); //legacy
         if(!key) key= ((new Date()).getTime() + "-" + Math.random()).replace(".", "");
         window.appContext = {
