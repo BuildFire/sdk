@@ -32,6 +32,3 @@ buildfire.services.publicFiles._triggerOnProgress = function (data) {
 buildfire.services.publicFiles._triggerOnComplete = function (data) {
     buildfire.eventManager.trigger('publicFilesOnComplete', data);
 }
-
-buildfire._whitelistedCommands.push("services.publicFiles._triggerOnProgress")
-buildfire._whitelistedCommands.push("services.publicFiles._triggerOnComplete")
