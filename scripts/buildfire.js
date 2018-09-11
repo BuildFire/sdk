@@ -143,6 +143,8 @@ var buildfire = {
         , "navigation.triggerOnAppLauncherActive"
         , "navigation.triggerOnAppLauncherInactive"
         , "colorLib._triggerOnChange"
+        , "services.publicFiles._triggerOnProgress"
+        , "services.publicFiles._triggerOnComplete"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
