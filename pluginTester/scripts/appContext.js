@@ -9,13 +9,14 @@
         }
     }
 
-    if(!window.appContext) {
+    if(!window.appContext || !window.appContext.currentApp || !window.appContext.currentApp.config) {
         var key= window.localStorage.getItem('autoGenKey'); //legacy
         if(!key) key= ((new Date()).getTime() + "-" + Math.random()).replace(".", "");
         window.appContext = {
             currentApp: {
                 appId: key
                 , keys: {datastoreKey: key}
+                , config: { type: "trial" }
             }
             , currentPlugin: {
                 pluginId: key
