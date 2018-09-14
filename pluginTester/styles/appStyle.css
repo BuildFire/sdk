@@ -1588,6 +1588,11 @@ html[buildfire] body.no-scroll .scrollable{
 	cursor: pointer;
 	width: 100px;
   color: #f0f0f0;
+  background-color: transparent;
+  border: none;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
 }
 
 #inputDialog .inputapi-done {
@@ -1597,6 +1602,15 @@ html[buildfire] body.no-scroll .scrollable{
 	width: 100px;
 	text-align: right;
   color: #f0f0f0;
+  background-color: transparent;
+  border: none;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+#inputDialog .inputapi-done:disabled {
+	opacity: 0.5;
 }
 
 #inputDialog .inputapi-user-container {
