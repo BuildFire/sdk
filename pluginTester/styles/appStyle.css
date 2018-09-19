@@ -1535,7 +1535,7 @@ html[buildfire] body.no-scroll .scrollable{
 
 #inputDialog {
 	background-color: #fff;
-	position: fixed;
+	position: absolute;
 	top: 0;
 	right: 0;
 	left: 0;
@@ -1615,6 +1615,7 @@ html[buildfire] body.no-scroll .scrollable{
 
 #inputDialog .inputapi-user-container {
 	display: flex;
+	padding-bottom: 10px;
 }
 
 #inputDialog .inputapi-user-image {
@@ -1648,6 +1649,8 @@ html[buildfire] body.no-scroll .scrollable{
   width: 100%;
   flex-grow: 1;
   resize: none;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 #inputDialog .inputapi-footer {
