@@ -7,7 +7,8 @@ window.siteConfig = {
 		authHost: "https://auth.buildfire.com",
 		pluginHost : "http://s3-us-west-2.amazonaws.com/pluginserver.prod/plugins",
         socialHost : "https://social.buildfire.com",
-        pushV2: "https://push2.buildfire.com"
+        pushV2: "https://push2.buildfire.com",
+        publicFilesHost : "https://datastore.buildfire.com"
 	}
 	, keys: {
 		datastoreKey: '123-ASD-TEST'

@@ -121,7 +121,7 @@ iframe#launcherPlugin.showNav{
 section.showNav.hideBack #btnBack{
 	display:none;
 }
-section.showNav #plugin{
+section.showNav #plugin, #plugin.access-code-visible{
 	z-index:1030;
 }
 /* To prevent launcher navbar from overlapping plugin navbar */
@@ -1651,6 +1651,49 @@ html[buildfire] body.no-scroll .scrollable{
   resize: none;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+}
+
+#inputDialog .inputapi-footer {
+	display: flex;
+  align-items: center;
+  padding: 0 30px;
+  justify-content: flex-end;
+}
+
+#inputDialog .inputapi-footer span {
+    font-size: 28px;
+}
+
+#inputDialog .galery-delete {
+	position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  color: white !important;
+}
+
+#inputDialog .glyphicon-plus {
+	font-size: 30px;
+  padding: 38px;
+  color: rgba(100,100,100,0.2) !important;
+}
+
+#inputDialog .img-gallery-container {
+	position: relative;
+	width: 100px;
+	height: 100px;
+	margin: 5px;
+	overflow: hidden;
+	flex: 0 0 auto;
+	background-color: rgba(0,0,0,0.1);
+}
+
+#inputDialog #imageGallery {
+	display: flex;
+	width: 100vw;
+	overflow-x: scroll;
+	-webkit-overflow-scrolling: touch;
+	padding: 5px;
 }
 
 #inputDialog .inputapi-footer {
