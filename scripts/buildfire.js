@@ -1915,7 +1915,7 @@ var buildfire = {
     },
     imagePreviewer: {
         show: function(options, callback) {
-            buildfire._sendPacket(new Packet(null, 'input.showTextDialog', options), callback);
+            buildfire._sendPacket(new Packet(null, 'imagePreviewer.show', options), callback);
         }
     }
 
