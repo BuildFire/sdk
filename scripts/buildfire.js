@@ -1912,6 +1912,11 @@ var buildfire = {
         showTextDialog: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'input.showTextDialog', options), callback);
         }
+    },
+    imagePreviewer: {
+        show: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'input.showTextDialog', options), callback);
+        }
     }
 
 };
