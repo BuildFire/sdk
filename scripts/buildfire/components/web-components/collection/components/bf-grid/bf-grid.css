@@ -1,0 +1,28 @@
+.wrapper {
+    display: grid;
+    grid-gap: 2px;
+}
+
+.box{
+    margin: 2vh 0 2vh 0;
+}
+
+.row-1{
+    grid-template-columns: 100%;
+}
+
+.row-2{
+    grid-template-columns: 50% 50%;
+}
+
+.row-3{
+    grid-template-columns: 33% 33% 33%;
+}
+
+.row-4{
+    grid-template-columns: 25% 25% 25% 25%;
+}
+
+.row-5{
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}

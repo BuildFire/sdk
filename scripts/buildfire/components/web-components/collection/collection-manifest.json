@@ -1,0 +1,225 @@
+{
+  "components": [
+    {
+      "tag": "bf-grid",
+      "dependencies": [
+        "bf-image-grid",
+        "bf-image-list"
+      ],
+      "componentClass": "Grid",
+      "componentPath": "components/bf-grid/bf-grid.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/bf-grid/bf-grid.css"
+          ]
+        }
+      },
+      "props": [
+        {
+          "name": "images",
+          "attr": "images"
+        },
+        {
+          "name": "token",
+          "type": "String",
+          "attr": "token"
+        }
+      ],
+      "states": [
+        {
+          "name": "viewState"
+        }
+      ],
+      "listeners": [
+        {
+          "event": "body:backClick",
+          "method": "handleBack",
+          "passive": false,
+          "capture": false
+        }
+      ],
+      "events": [
+        {
+          "event": "imageSelected"
+        }
+      ],
+      "shadow": true
+    },
+    {
+      "tag": "bf-image-grid",
+      "dependencies": [
+        "bf-img"
+      ],
+      "componentClass": "Grid1",
+      "componentPath": "components/bf-image-grid/bf-image-grid.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/bf-image-grid/bf-image-grid.css"
+          ]
+        }
+      },
+      "props": [
+        {
+          "name": "images",
+          "attr": "images",
+          "watch": [
+            "watchHandler"
+          ]
+        },
+        {
+          "name": "token",
+          "type": "String",
+          "attr": "token"
+        }
+      ],
+      "states": [
+        {
+          "name": "imageCount"
+        },
+        {
+          "name": "imageHeight"
+        },
+        {
+          "name": "imageWidth"
+        }
+      ],
+      "listeners": [
+        {
+          "event": "window:resize",
+          "method": "calculateWidth",
+          "capture": false
+        }
+      ],
+      "shadow": true
+    },
+    {
+      "tag": "bf-image-list",
+      "dependencies": [
+        "bf-img"
+      ],
+      "componentClass": "ImageList",
+      "componentPath": "components/bf-image-list/bf-image-list.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/bf-image-list/bf-image-list.css"
+          ]
+        }
+      },
+      "props": [
+        {
+          "name": "height",
+          "type": "Number",
+          "attr": "height"
+        },
+        {
+          "name": "images",
+          "attr": "images"
+        },
+        {
+          "name": "token",
+          "type": "String",
+          "attr": "token"
+        },
+        {
+          "name": "width",
+          "type": "Number",
+          "attr": "width"
+        }
+      ],
+      "states": [
+        {
+          "name": "imageCount"
+        },
+        {
+          "name": "listImageHeight"
+        },
+        {
+          "name": "listImageWidth"
+        }
+      ],
+      "listeners": [
+        {
+          "event": "window:resize",
+          "method": "calculateWidth",
+          "capture": false
+        }
+      ],
+      "events": [
+        {
+          "event": "imageSelected"
+        }
+      ],
+      "shadow": true
+    },
+    {
+      "tag": "bf-img",
+      "dependencies": [],
+      "componentClass": "Img",
+      "componentPath": "components/bf-img/bf-img.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/bf-img/bf-img.css"
+          ]
+        }
+      },
+      "props": [
+        {
+          "name": "height",
+          "type": "String",
+          "attr": "height"
+        },
+        {
+          "name": "operation",
+          "type": "String",
+          "attr": "operation"
+        },
+        {
+          "name": "quality",
+          "type": "Number",
+          "attr": "quality"
+        },
+        {
+          "name": "token",
+          "type": "String",
+          "attr": "token"
+        },
+        {
+          "name": "url",
+          "type": "String",
+          "attr": "url"
+        },
+        {
+          "name": "width",
+          "type": "String",
+          "attr": "width"
+        }
+      ],
+      "states": [
+        {
+          "name": "realSrc"
+        }
+      ],
+      "shadow": true
+    }
+  ],
+  "collections": [],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "0.14.0-0",
+    "typescriptVersion": "2.9.2"
+  },
+  "bundles": [
+    {
+      "components": [
+        "bf-grid",
+        "bf-image-grid",
+        "bf-image-list",
+        "bf-img"
+      ]
+    }
+  ]
+}
