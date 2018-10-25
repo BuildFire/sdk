@@ -687,6 +687,13 @@ var buildfire = {
                 key: key
             });
             buildfire._sendPacket(p, callback);
+        },
+        ///params:{eventKey:''}
+        showReports: function (params, callback) {
+            if (!params)
+                params = {};
+            var p = new Packet(null, "analytics.showReports", params);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
