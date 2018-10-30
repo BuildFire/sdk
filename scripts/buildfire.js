@@ -1648,7 +1648,10 @@ var buildfire = {
         },
         execute: function (actionItem, options, callback) {
             var p = new Packet(null, 'actionItems.execute', actionItem);
-            buildfire._sendPacket(p, callback);
+            buildfire._sendPacket(p, function(err, result) {
+                console.log('Got callback of actionItems.execute', err, result);
+                callback(err, result);
+            });
         },
         list: function (actionItems, options, callback) {
             var p = new Packet(null, 'actionItems.list', {actionItems: actionItems, options: options});
