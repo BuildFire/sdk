@@ -147,7 +147,6 @@ var buildfire = {
         , "services.publicFiles._triggerOnComplete"
     ]
     , _postMessageHandler: function (e) {
-        console.log('[1] _postMessageHandler source:', e.source, 'data:', e.data);
         if (e.source === window) {
             console.log(' >>>> IGNORE MESSAGE <<<< ');
             return;
@@ -160,7 +159,6 @@ var buildfire = {
             packet = JSON.parse(e.data);
 
         if (packet.id && buildfire._callbacks[packet.id]) {
-            console.log('[2] _postMessageHandler', buildfire._callbacks[packet.id]);
             buildfire._callbacks[packet.id](packet.error, packet.data);
             delete buildfire._callbacks[packet.id];
         }
@@ -186,7 +184,6 @@ var buildfire = {
     }
     //, _resendAttempts:0
     , _sendPacket: function (packet, callback) {
-        console.log('[0] postMessageHandler parameters', typeof callback, callback);
         if (typeof (callback) != "function")// handels better on response
             callback = function (err, result) {
                 //console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
@@ -228,13 +225,11 @@ var buildfire = {
         //packet.cmd.indexOf('getContext') == 0? 250 :
 
         var wrapper = function (err, data) {
-            console.log('[3] postMessageHandler wrapper', callback);
             clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
             callback(err, data);
         };
 
         buildfire._callbacks[packet.id] = wrapper;
-        console.log('[4] postMessageHandler callbacks', buildfire._callbacks, packet.id)
         packet.fid= buildfire.fid;
 
 
@@ -306,7 +301,6 @@ var buildfire = {
             buildfire._sendPacket(p,callback);
         }
         , openWindow: function (url, target, callback) {
-            console.log('[-2] postMessageHandler', url, target, callback);
             if (!target) target = '_blank';
             if (!callback) callback = function () {
                 console.info('openWindow:: completed');
@@ -316,10 +310,7 @@ var buildfire = {
                 , url: url
                 , openIn: target
             };
-
-            console.log('[-1] postMessageHandler, openWindow', typeof callback, callback);
             var p = new Packet(null, 'actionItems.execute', actionItem, callback);
-            console.log('[-0.5] postMessageHandler, packet', p);
             buildfire._sendPacket(p, callback);
         }
         , _goBackOne: function () {
@@ -694,6 +685,13 @@ var buildfire = {
             var p = new Packet(null, "analytics.unregisterPluginEvent", {
                 key: key
             });
+            buildfire._sendPacket(p, callback);
+        },
+        ///params:{eventKey:''}
+        showReports: function (params, callback) {
+            if (!params)
+                params = {};
+            var p = new Packet(null, "analytics.showReports", params);
             buildfire._sendPacket(p, callback);
         }
     }
