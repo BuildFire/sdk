@@ -78,9 +78,9 @@ a:focus{
     color:#fff;
 }
 #container{
-    width:100%;
-		height:100%;
-		overflow: auto;
+	width:100%;
+	height:100%;
+	overflow: auto;
 }
 
 /* Top Nav */
