@@ -340,7 +340,7 @@ buildfire.components.carousel.view.prototype = {
         this._initDimensions(layout);
         this._renderSlider();
 
-        this._loadItems(items, appendItems, layout, speed, pixelRatio);
+        this._loadItems(items, appendItems);
 
         var that = this;
 
