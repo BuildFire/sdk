@@ -544,15 +544,26 @@ buildfire.components.carousel.view.prototype = {
 
         let ratio;
 
-        if (window.devicePixelRatio > 1 && pixelRatio > 0) {
-            ratio = (pixelRatio / 100) * window.devicePixelRatio;
-        } else if (typeof pixelRatio === "number" && pixelRatio === 0) {
-            ratio = true;
-        } else if (!pixelRatio) {
-            ratio = false;
-        } else {
-            ratio = 1
-        }
+        /**
+         * if @param {number} pixelRatio is not a number or omitted:
+         * keep default upscaling behavior
+         */
+        if (typeof pixelRatio != 'number' || !pixelRatio) ratio = false;
+        /**
+         * if device's has pixel upscaling and @param {number} pixelRatio is greater than 0:
+         * reduce upscaling by a percentage defined by @param {number} pixelRatio
+         */
+        else if (window.devicePixelRatio > 1 && pixelRatio > 0) ratio = (pixelRatio / 100) * window.devicePixelRatio;
+        /**
+         * if @param {number} pixelRatio is set to zero:
+         * disable upscaling
+         */
+        else if (typeof pixelRatio === "number" && pixelRatio === 0) ratio = true;
+        /**
+         * keep default behavior if something goes wrong
+         */
+        else ratio = false;
+        
 
         buildfire.imageLib.local.cropImage(item.iconUrl, {
             width: this.width,
