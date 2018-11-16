@@ -313,7 +313,7 @@ buildfire.components.carousel.view = function (selector, items, layout,speed) {
 // Carousel view methods
 buildfire.components.carousel.view.prototype = {
     // will be called to initialize the setting in the constructor
-    init: function (selector,speed) {
+    init: function (selector,speed, pixelRatio) {
         this.selector = buildfire.components.carousel._getDomSelector(selector);
         this._renderSlider();
 
@@ -328,10 +328,10 @@ buildfire.components.carousel.view.prototype = {
             } else {
                 that._hideSlider();
             }
-        });
+        }, pixelRatio);
     },
     // this method allows you to append or replace slider images
-    loadItems: function (items, appendItems, layout,speed) {
+    loadItems: function (items, appendItems, layout,speed, pixelRatio) {
         if (this.$slider) {
             this._destroySlider();
             this._removeAll();
@@ -340,7 +340,7 @@ buildfire.components.carousel.view.prototype = {
         this._initDimensions(layout);
         this._renderSlider();
 
-        this._loadItems(items, appendItems);
+        this._loadItems(items, appendItems, layout, speed, pixelRatio);
 
         var that = this;
 
@@ -356,7 +356,7 @@ buildfire.components.carousel.view.prototype = {
                 return;
             }
             that._applySlider(speed);
-        });
+        }, pixelRatio);
     },
     // allows you to append a single item or an array of items
     append: function(items){
@@ -380,6 +380,7 @@ buildfire.components.carousel.view.prototype = {
         }else if(layout == "MobileScreen"){
             this.height=(window.innerHeight/this.width)*this.width;
             this.width=this.width;
+            console.log(this.height, this.width)
         }
 
         this.cssWidth = this.width + "px";
@@ -495,7 +496,7 @@ buildfire.components.carousel.view.prototype = {
         me.selector.className = "plugin-slider text-center";
     },
     // loop and append the images to the DOM
-    _loadImages: function (speed, callback) {
+    _loadImages: function (speed, callback, pixelRatio) {
         var items = this.items;
         var itemsLength = items.length;
 
@@ -512,11 +513,11 @@ buildfire.components.carousel.view.prototype = {
                 if(pending == 0){
                     callback();
                 }
-            });
+            }, pixelRatio);
         }
     },
     // add new slider to the DOM
-    _appendItem: function (item, index, speed, callback) {
+    _appendItem: function (item, index, speed, callback, pixelRatio) {
         var slider = document.createElement("div");
 
         if(typeof speed === 'undefined')
@@ -541,9 +542,22 @@ buildfire.components.carousel.view.prototype = {
         var image = document.createElement("img");
         me.$slider = $(me.selector);
 
+        let ratio;
+        debugger
+        if (window.devicePixelRatio > 1 && pixelRatio > 0) {
+            ratio = (pixelRatio / 100) * window.devicePixelRatio;
+        } else if (typeof pixelRatio === "number" && pixelRatio === 0) {
+            ratio = true;
+        } else if (!pixelRatio) {
+            ratio = false;
+        } else {
+            ratio = 1
+        }
+
         buildfire.imageLib.local.cropImage(item.iconUrl, {
             width: this.width,
-            height: this.height
+            height: this.height,
+            disablePixelRatio: ratio
         }, function (err, result) {
             if (!err) {
                 image.src = result;
