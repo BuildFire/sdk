@@ -313,7 +313,7 @@ buildfire.components.carousel.view = function (selector, items, layout,speed) {
 // Carousel view methods
 buildfire.components.carousel.view.prototype = {
     // will be called to initialize the setting in the constructor
-    init: function (selector,speed, pixelRatio) {
+    init: function (selector,speed) {
         this.selector = buildfire.components.carousel._getDomSelector(selector);
         this._renderSlider();
 
@@ -328,7 +328,7 @@ buildfire.components.carousel.view.prototype = {
             } else {
                 that._hideSlider();
             }
-        }, pixelRatio);
+        });
     },
     // this method allows you to append or replace slider images
     loadItems: function (items, appendItems, layout,speed, pixelRatio) {
@@ -380,6 +380,7 @@ buildfire.components.carousel.view.prototype = {
         }else if(layout == "MobileScreen"){
             this.height=(window.innerHeight/this.width)*this.width;
             this.width=this.width;
+            console.log(this.height, this.width)
         }
 
         this.cssWidth = this.width + "px";
