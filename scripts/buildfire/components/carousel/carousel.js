@@ -380,7 +380,6 @@ buildfire.components.carousel.view.prototype = {
         }else if(layout == "MobileScreen"){
             this.height=(window.innerHeight/this.width)*this.width;
             this.width=this.width;
-            console.log(this.height, this.width)
         }
 
         this.cssWidth = this.width + "px";
