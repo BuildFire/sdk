@@ -543,7 +543,7 @@ buildfire.components.carousel.view.prototype = {
         me.$slider = $(me.selector);
 
         let ratio;
-        debugger
+
         if (window.devicePixelRatio > 1 && pixelRatio > 0) {
             ratio = (pixelRatio / 100) * window.devicePixelRatio;
         } else if (typeof pixelRatio === "number" && pixelRatio === 0) {
