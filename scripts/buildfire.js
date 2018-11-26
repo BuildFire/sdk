@@ -253,9 +253,7 @@ var buildfire = {
             parent.postMessage(packet, "*");
         }
     }
-    ,_stopYoutubeVideos:function () {
 
-    }
     , getContext: function (callback) {
         if (buildfire._context)
             callback(null, buildfire._context);
@@ -1930,6 +1928,8 @@ var buildfire = {
     }
 
 };
+
+buildfire.init();
 
 buildfire.eventManager.add('deviceAppBackgrounded', function () {
     var stopYoutubeVideos=function (iframes) {
