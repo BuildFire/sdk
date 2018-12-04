@@ -1476,6 +1476,17 @@ html[buildfire] body.no-scroll .scrollable{
 	max-height: 74vh;
 }
 
+#richModal .detail-modal .rich-content,
+#richModal .detail-modal .rich-content h1,
+#richModal .detail-modal .rich-content h2,
+#richModal .detail-modal .rich-content h3,
+#richModal .detail-modal .rich-content h4,
+#richModal .detail-modal .rich-content h5,
+#richModal .detail-modal .rich-content h6,
+#richModal .detail-modal .rich-content p {
+	color: #222;
+}
+
 #richModal .detail-modal .rich-content {
 	  overflow-wrap: break-word;
 }
@@ -1704,3 +1715,147 @@ html[buildfire] body.no-scroll .scrollable{
 	border-top: 1px solid rgba(128, 128, 128, 0.15);
 	background-color: rgba(128, 128, 128, 0.1);
 }
+
+.iap-items {
+	padding: 20px 0;
+}
+
+.iap-action-items {
+	margin: 20px 0;
+}
+
+.restore-purchase {
+	padding-top: 15px;
+	text-align: center;
+	display: block;
+}
+
+.restore-purchase a {
+	text-align: center;
+	display: block;
+	width: 100%;
+	padding: 5px 0;
+}
+
+.restore-purchase a.secondary {
+	font-size: 0.9em;
+}
+
+.bf-carousel {
+  display: flex;
+  overflow-x: auto;
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bf-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.bf-carousel-item-wrapper {
+  padding: 10px 5px;
+  box-sizing: border-box !important;
+}
+
+.bf-carousel-item-wrapper:first-child {
+  padding-left: 10px;
+}
+
+.bf-carousel-item-wrapper:last-child {
+  padding-right: 10px;
+}
+
+.bf-carousel-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 50vw;
+  max-width: 50vw;
+  height: 50vw;
+  padding: 15px 10px 0 10px;
+  border-radius: 5px;
+  box-sizing: border-box !important;
+  color: #fff;
+  justify-content: space-between;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.bf-carousel-item .callout {
+	font-weight: 800;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.bf-carousel-item .titles {
+  display: flex;
+  flex-direction: column;
+}
+.bf-carousel-item .title {
+  font-size: 6.5vw;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.bf-carousel-item .subtitle {
+  font-size: 4vw;
+}
+.bf-carousel-item .description {
+  font-size: 3.5vw;
+  word-break: break-word;
+}
+
+.bf-carousel-item .description-wrapper {
+  height: 14vw;
+  overflow: hidden;
+  line-height: 1em;
+}
+
+.js_frame {
+    position: relative;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.js_slides {
+    display: inline-block;
+    list-style-type: none;
+    padding: 0;
+}
+
+.js_slides li {
+    position: relative;
+    display: inline-block;
+}
+
+.js_slides img {
+	display: block;
+	max-width: 100%;
+	pointer-events: none;
+}
+
+#iap-wysiwyg {
+	padding: 0 20px;
+}
+
+#iap-wysiwyg h1 {
+	margin: 20px 0 !important;
+}
+
+#iap-wysiwyg h1,
+#iap-wysiwyg h2,
+#iap-wysiwyg h3,
+#iap-wysiwyg h4,
+#iap-wysiwyg h5,
+#iap-wysiwyg h6,
+#iap-wysiwyg p,
+#iap-wysiwyg span {
+	color: #222 !important;
+	word-break: break-word;
+}
+
+/** Lory */
+.loryFrame {position: relative;font-size: 0; line-height: 0; overflow: hidden; white-space: nowrap;}
+.loryFrame li { position: relative; display: inline-block; height: 100%;}
+.lorySlides { display: inline-block;}
+.loryPercentage .lorySlides { display: block; padding: 0px;}
+.loryPercentage li {  width: 100%;}
