@@ -253,6 +253,7 @@ var buildfire = {
             parent.postMessage(packet, "*");
         }
     }
+
     , getContext: function (callback) {
         if (buildfire._context)
             callback(null, buildfire._context);
@@ -1927,7 +1928,23 @@ var buildfire = {
     }
 
 };
+
 buildfire.init();
+
+buildfire.eventManager.add('deviceAppBackgrounded', function () {
+    var stopYoutubeVideos=function (iframes) {
+        for(var i = 0 ; i<iframes.length;i++)
+            if( iframes[i].src.indexOf("youtube.com")>-1){
+                if(iframes[i].src.indexOf("enablejsapi=1")==-1)
+                    iframes[i].src = iframes[i].src+"?enablejsapi=1";
+                var youtube_command = window.JSON.stringify( { event: 'command', func: 'pauseVideo' } );
+                iframes[i].contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );
+            }
+    };
+    var iframes=window.document.getElementsByTagName("iframe");
+    stopYoutubeVideos(iframes);
+
+}, true);
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
