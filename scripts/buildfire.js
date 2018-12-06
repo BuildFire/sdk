@@ -1942,9 +1942,8 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
             }
     };
     //this code should be in the app
-    var iframes=window.parent.document.getElementsByTagName("iframe");
-    for(var i=0;i<iframes.length;i++)
-        stopYoutubeVideos(iframes[i].contentWindow.document.getElementsByTagName("iframe"));
+    var iframes=window.document.getElementsByTagName("iframe");
+    stopYoutubeVideos(iframes);
 
 }, true);
 
