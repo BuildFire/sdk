@@ -1941,7 +1941,6 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
                 iframes[i].contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );
             }
     };
-    //this code should be in the app
     var iframes=window.document.getElementsByTagName("iframe");
     stopYoutubeVideos(iframes);
 
