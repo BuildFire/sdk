@@ -118,8 +118,11 @@ var buildfire = {
 
         buildfire.appearance.insertHTMLAttributes();
 
-        if(!buildfire.options.disableTheme)
+        if(!buildfire.options.disableTheme) {
             buildfire.appearance.attachCSSFiles();
+        } else if (buildfire.options.widgetDefaults) {
+            buildfire.appearance._attachDefaultWidgetCSS();
+        }
 
     }
     , _whitelistedCommands: ["datastore.triggerOnUpdate"
@@ -562,6 +565,27 @@ var buildfire = {
             for (var i = 0; i < files.length; i++)
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
 
+        }
+        , _attachDefaultWidgetCSS: function () {
+            let style = document.createElement("style");
+            style.innerHTML = `
+                html[buildfire] {
+                    width: 100%;
+                    min-width: 100%;
+                    max-width: 100%;
+                    height: 100%;
+                    background: none;
+                    overflow: hidden !important;
+                }
+                html[buildfire] body {
+                    height: 100% !important;
+                    width: 100% !important;
+                    overflow-y: auto !important;
+                    -webkit-overflow-scrolling: touch !important;
+                    margin: 0 auto;
+                }
+            `;
+            document.getElementsByTagName('head')[0].appendChild(style);
         }
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
