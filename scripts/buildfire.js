@@ -1645,7 +1645,24 @@ var buildfire = {
             var p = new Packet(null, 'notificationsAPI.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
-    }
+    },
+    bookmarks: {
+        add: function(options, callback) {
+            var p = new Packet(null, 'bookmarkAPI.add', options);
+            buildfire._sendPacket(p, callback);
+        },
+        get: function(callback) {
+            // read bookmark data from url
+        },
+        getAll: function(callback) {
+            var p new Packet(null, 'bookmarkAPI.getAllFromPlugin');
+            buildfire._sendPacket(p, callback);
+        },
+        delete: function(options, callback) {
+            var p = new Packet(null, 'bookmarkAPI.deleteFromPlugin', options);
+            buildfire._sendPacket(p, callback);
+        }
+    },
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-action-Items
     /// also https://github.com/BuildFire/sdk/wiki/BuildFire-Action-Items-Component
     , actionItems: {
