@@ -1655,7 +1655,7 @@ var buildfire = {
             // read bookmark data from url
         },
         getAll: function(callback) {
-            var p new Packet(null, 'bookmarkAPI.getAllFromPlugin');
+            var p = new Packet(null, 'bookmarkAPI.getAllFromPlugin');
             buildfire._sendPacket(p, callback);
         },
         delete: function(options, callback) {
