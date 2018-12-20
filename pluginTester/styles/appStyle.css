@@ -1724,6 +1724,11 @@ html[buildfire] body.no-scroll .scrollable{
 	margin: 20px 0;
 }
 
+.iap-action-items a {
+	min-width: 70px;
+  min-height: 34px;
+}
+
 .restore-purchase {
 	padding-top: 15px;
 	text-align: center;
@@ -1841,14 +1846,18 @@ html[buildfire] body.no-scroll .scrollable{
 	margin: 20px 0 !important;
 }
 
-#iap-wysiwyg h1,
-#iap-wysiwyg h2,
-#iap-wysiwyg h3,
-#iap-wysiwyg h4,
-#iap-wysiwyg h5,
-#iap-wysiwyg h6,
-#iap-wysiwyg p,
-#iap-wysiwyg span {
+.iap-safe-padding {
+	padding-top: 20vh;
+}
+
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg h1,
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg h2,
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg h3,
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg h4,
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg h5,
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg h6,
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg p,
+.iap-subscriptions:not(.iapMessage) #iap-wysiwyg span {
 	color: #222 !important;
 	word-break: break-word;
 }
