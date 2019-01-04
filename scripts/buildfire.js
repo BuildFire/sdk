@@ -1651,8 +1651,19 @@ var buildfire = {
             var p = new Packet(null, 'bookmarkAPI.add', options);
             buildfire._sendPacket(p, callback);
         },
+        _getParameterByName: function(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        },
         get: function(callback) {
-            // read bookmark data from url
+            var param = buildfire.bookmarks._getParameterByName('bookmarkPayload');
+            var bookmark = JSON.parse(param);
+            callback(null, bookmark);
         },
         getAll: function(callback) {
             var p = new Packet(null, 'bookmarkAPI.getAllFromPlugin');
