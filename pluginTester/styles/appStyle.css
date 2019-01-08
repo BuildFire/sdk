@@ -1165,6 +1165,9 @@ html[ios="true"][view="app"] nav.menu span.menu-close{
 	[ios="true"][view="app"][storyboard-launch-images="true"] .app-settings-plugin{
 		padding-top:70px !important;
 	}
+	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container{
+		padding-top:70px !important;
+	}
 	[ios="true"][view="app"][storyboard-launch-images="true"] .pushSubscriptions-holder{
 		height: 95% !important;
 	}
@@ -1869,7 +1872,54 @@ html[buildfire] body.no-scroll .scrollable{
 .loryPercentage .lorySlides { display: block; padding: 0px;}
 .loryPercentage li {  width: 100%;}
 
-.bookmark-item-link {
+/* Bookmarks */
+html[ios="true"][view="app"] .bookmarks-container {
+padding-top: 64px !important;
+}
+.bookmarks-container {
+	padding-top: 50px;
+}
+.bookmark-item-link h4{
+	flex: auto;
 	display: block;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.bookmark-item-link {
+	padding: 0 0 0 16px;
+	display: flex;
+	align-items: center;
+	height: 50px;
 	border-bottom: 1px solid #dedede;
+}
+.bookmark-item-link .media img{
+	width: 100%;
+	height: 32px;
+}
+.bookmark-item-link .media span,
+.bookmark-item-link .media i{
+	text-align: center;
+	font-size: 18px;
+	padding: 6px;
+}
+.bookmark-item-link .media{
+	margin-right: 16px;
+	width:32px;
+	height:32px;
+	overflow: hidden;
+	border-radius: 5px;
+	flex-shrink: 0;
+}
+.bookmark-item-link .delete{
+	padding: 8px 16px;
+}
+.delete .icon{
+	color: #777 !important;
+	font-style: normal;
+}
+.bookmarks-container .empty-state img{
+	margin: 0 auto;
+	display: block;
+	padding-top: 10vh;
 }
