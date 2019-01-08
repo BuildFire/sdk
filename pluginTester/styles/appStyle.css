@@ -1868,3 +1868,8 @@ html[buildfire] body.no-scroll .scrollable{
 .lorySlides { display: inline-block;}
 .loryPercentage .lorySlides { display: block; padding: 0px;}
 .loryPercentage li {  width: 100%;}
+
+.bookmark-item-link {
+	display: block;
+	border-bottom: 1px solid #dedede;
+}
