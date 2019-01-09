@@ -38,7 +38,7 @@ buildfire.services.searchEngine.insert = function(options, cb){
  * Update data in buildfire search engine.
  * @param {Object} options - update options.
  * @param {string} options.id - An id for your document to update it.
- * @param {string=} options.linkedUser - This will make the data linked to the current logged user, which means it will be private.
+ * @param {boolean=} options.linkedUser - This will make the data linked to the current logged user, which means it will be private.
  * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
  * @param {string} options.title - Title for your data, this will be searchable by our search engine.
  * @param {string=} options.description - Description for your data, this will be searchable by our search engine.
@@ -72,7 +72,7 @@ buildfire.services.searchEngine.search = function(options, cb){
 
 buildfire.services.searchEngine.feeds = {
     /**
-     * Insert data in buildfire search engine.
+     * Attach feed in buildfire search engine.
      * @param {Object} options - insert options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
      * @param {string} options.title - Title for your data.
@@ -102,8 +102,8 @@ buildfire.services.searchEngine.feeds = {
         buildfire._sendPacket(packet, cb);
     },
     /**
-     * Insert data in buildfire search engine.
-     * @param {Object} options - insert options.
+     * delete feed from buildfire search engine.
+     * @param {Object} options - delete options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
      * @param {string} options.feed_id - Feed Id returned from feeds.get method.
      * @param {boolean=} options.remove_feed_data - If true, this will remove all feed data inside the app that's related to this feed.
@@ -123,8 +123,8 @@ buildfire.services.searchEngine.feeds = {
         buildfire._sendPacket(packet, cb);
     },
     /**
-     * Insert data in buildfire search engine.
-     * @param {Object} options - insert options.
+     * get feeds from buildfire search engine.
+     * @param {Object} options - get options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
      * @param {string} options.feed_type - feed type, available types : [rss].
      */
