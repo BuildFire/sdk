@@ -67,8 +67,8 @@ buildfire.services.searchEngine.update = function(options, cb){
  * @param {Object} options - search options.
  * @param {string} options.search_text - Your search text.
  * @param {boolean} [options.linkedUser] - If true this will return all public data and the data added by the current logged user.
- * @param {string} [options.page_size = 10]  - Number of data returned per page size.
- * @param {string} [options.page_index = 0] - Number of returned page.
+ * @param {string} [options.page_size = 10]  - Size of data returned per page size.
+ * @param {string} [options.page_index = 0] - Index of returned page.
  * @param {string} [options.pre_highlight_tag] - Use in conjunction with post_tags to define the HTML tags to use for the highlighted text.
  * @param {string} [options.post_highlight_tag] - Use in conjunction with pre_tags to define the HTML tags to use for the highlighted text.
  */
