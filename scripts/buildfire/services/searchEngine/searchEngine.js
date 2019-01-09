@@ -38,7 +38,7 @@ buildfire.services.searchEngine.insert = function(options, cb){
  * Update data in buildfire search engine.
  * @param {Object} options - update options.
  * @param {string} options.id - An id for your document to update it.
- * @param {boolean=} [options.linkedUser] - This will make the data linked to the current logged user, which means it will be private.
+ * @param {boolean} [options.linkedUser] - This will make the data linked to the current logged user, which means it will be private.
  * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
  * @param {string} options.title - Title for your data, this will be searchable by our search engine.
  * @param {string} [options.description] - Description for your data, this will be searchable by our search engine.
