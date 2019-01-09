@@ -81,7 +81,7 @@ buildfire.services.searchEngine.update = function(options, cb){
  * @param {Object} response.hits
  * @param {Object} response.hits.total
  * @param {Object} response.hits.max_score
- * @param {Object[]} response.hits.hits - Array of matched documents/
+ * @param {Object[]} response.hits.hits - Array of matched documents.
  */
 buildfire.services.searchEngine.search = function(options, cb){
     var packetId = null;
