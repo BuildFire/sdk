@@ -100,10 +100,10 @@ buildfire.services.searchEngine.feeds = {
      * @param {string} options.feedType - feed type, available types : [rss].
      * @param {Object} options.feedConfig
      * @param {string} options.feedConfig.url - Your feed service url.
-     * @param {Object} options.feedItemConfig.
-     * @param {string} options.feedItemConfig.uniqueKey - Your feed unique id.
-     * @param {string} options.feedItemConfig.titleKey
-     * @param {string} options.feedItemConfig.descriptionKey
+     * @param {Object} [options.feedItemConfig]
+     * @param {string} [options.feedItemConfig.uniqueKey - Your feed unique id]
+     * @param {string} [options.feedItemConfig.titleKey]
+     * @param {string} [options.feedItemConfig.descriptionKey]
      * @param {string} [options.feedItemConfig.urlKey]
      * @param {string} [options.feedItemConfig.publishDateKey]
      * @param {string} [options.feedItemConfig.imageUrlKey]
