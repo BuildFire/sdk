@@ -11,12 +11,12 @@ if (typeof (buildfire.services.searchEngine) == "undefined") buildfire.services.
 /**
  * Insert data in buildfire search engine.
  * @param {Object} options - insert options.
- * @param {boolean} [options.linked_user] - This will make the data linked to the current logged user, which means it will be private.
+ * @param {boolean} [options.linkedUser] - This will make the data linked to the current logged user, which means it will be private.
  * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
  * @param {string} options.title - Title for your data, this will be searchable by our search engine.
  * @param {string} [options.description] - Description for your data, this will be searchable by our search engine.
  * @param {string} [options.keywords] - Any keywords related to your data, this will be searchable by our search engine.
- * @param {string} [options.image_url].
+ * @param {string} [options.imageUrl].
  * @param {Object} [options.data] - You can add whatever you want here, this won't be searchable by our search engine.
  */
 
@@ -38,12 +38,12 @@ buildfire.services.searchEngine.insert = function(options, cb){
  * Update data in buildfire search engine.
  * @param {Object} options - update options.
  * @param {string} options.id - An id for your document to update it.
- * @param {boolean} [options.linked_user] - This will make the data linked to the current logged user, which means it will be private.
+ * @param {boolean} [options.linkedUser] - This will make the data linked to the current logged user, which means it will be private.
  * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
  * @param {string} options.title - Title for your data, this will be searchable by our search engine.
  * @param {string} [options.description] - Description for your data, this will be searchable by our search engine.
  * @param {string} [options.keywords] - Any keywords related to your data, this will be searchable by our search engine.
- * @param {string} [options.image_url].
+ * @param {string} [options.imageUrl].
  * @param {Object} [options.data] - You can add whatever you want here, this won't be searchable by our search engine.
  */
 
@@ -65,12 +65,12 @@ buildfire.services.searchEngine.update = function(options, cb){
 /**
  * Search data in buildfire search engine.
  * @param {Object} options - search options.
- * @param {string} options.search_text - Your search text.
- * @param {boolean} [options.linked_user] - If true this will return all public data and the data added by the current logged user.
- * @param {string} [options.page_size = 50]  - Size of data returned per page size.
- * @param {string} [options.page_index = 0] - Index of returned page.
- * @param {string} [options.pre_highlight_tag] - Use in conjunction with post_tags to define the HTML tags to use for the highlighted text.
- * @param {string} [options.post_highlight_tag] - Use in conjunction with pre_tags to define the HTML tags to use for the highlighted text.
+ * @param {string} options.searchText - Your search text.
+ * @param {boolean} [options.linkedUser] - If true this will return all public data and the data added by the current logged user.
+ * @param {string} [options.pageSize = 50]  - Size of data returned per page size.
+ * @param {string} [options.pageIndex = 0] - Index of returned page.
+ * @param {string} [options.preHighlightTag] - Use in conjunction with post tags to define the HTML tags to use for the highlighted text.
+ * @param {string} [options.postHighlightTag] - Use in conjunction with pre tags to define the HTML tags to use for the highlighted text.
  */
 
 /**
@@ -97,16 +97,16 @@ buildfire.services.searchEngine.feeds = {
      * @param {Object} options - attach options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
      * @param {string} options.title - Title for your data.
-     * @param {string} options.feed_type - feed type, available types : [rss].
-     * @param {Object} options.feed_config
-     * @param {string} options.feed_config.url - Your feed service url.
-     * @param {Object} options.feed_item_config.
-     * @param {string} options.feed_item_config.unique_key - Your feed unique id.
-     * @param {string} options.feed_item_config.title_key
-     * @param {string} options.feed_item_config.description_key
-     * @param {string} [options.feed_item_config.url_key]
-     * @param {string} [options.feed_item_config.publish_date_key]
-     * @param {string} [options.feed_item_config.image_url_key]
+     * @param {string} options.feedType - feed type, available types : [rss].
+     * @param {Object} options.feedConfig
+     * @param {string} options.feedConfig.url - Your feed service url.
+     * @param {Object} options.feedItemConfig.
+     * @param {string} options.feedItemConfig.uniqueKey - Your feed unique id.
+     * @param {string} options.feedItemConfig.titleKey
+     * @param {string} options.feedItemConfig.descriptionKey
+     * @param {string} [options.feedItemConfig.urlKey]
+     * @param {string} [options.feedItemConfig.publishDateKey]
+     * @param {string} [options.feedItemConfig.imageUrlKey]
      */
 
     /**
@@ -126,8 +126,8 @@ buildfire.services.searchEngine.feeds = {
      * delete feed from buildfire search engine.
      * @param {Object} options - delete options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
-     * @param {string} options.feed_id - Feed Id returned from feeds.get method.
-     * @param {boolean} [options.remove_feed_data] - If true, this will remove all feed data inside the app that's related to this feed.
+     * @param {string} options.feedId - Feed Id returned from feeds.get method.
+     * @param {boolean} [options.removeFeedData] - If true, this will remove all feed data inside the app that's related to this feed.
      */
 
     /**
@@ -147,7 +147,7 @@ buildfire.services.searchEngine.feeds = {
      * get feeds from buildfire search engine.
      * @param {Object} options - get options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
-     * @param {string} options.feed_type - feed type, available types : [rss].
+     * @param {string} options.feedType - feed type, available types : [rss].
      */
 
     /**
