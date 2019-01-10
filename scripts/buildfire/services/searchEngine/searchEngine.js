@@ -11,7 +11,7 @@ if (typeof (buildfire.services.searchEngine) == "undefined") buildfire.services.
 /**
  * Insert data in buildfire search engine.
  * @param {Object} options - insert options.
- * @param {boolean} [options.linkedUser] - This will make the data linked to the current logged user, which means it will be private.
+ * @param {boolean} [options.linked_user] - This will make the data linked to the current logged user, which means it will be private.
  * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
  * @param {string} options.title - Title for your data, this will be searchable by our search engine.
  * @param {string} [options.description] - Description for your data, this will be searchable by our search engine.
@@ -38,7 +38,7 @@ buildfire.services.searchEngine.insert = function(options, cb){
  * Update data in buildfire search engine.
  * @param {Object} options - update options.
  * @param {string} options.id - An id for your document to update it.
- * @param {boolean} [options.linkedUser] - This will make the data linked to the current logged user, which means it will be private.
+ * @param {boolean} [options.linked_user] - This will make the data linked to the current logged user, which means it will be private.
  * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
  * @param {string} options.title - Title for your data, this will be searchable by our search engine.
  * @param {string} [options.description] - Description for your data, this will be searchable by our search engine.
@@ -66,8 +66,8 @@ buildfire.services.searchEngine.update = function(options, cb){
  * Search data in buildfire search engine.
  * @param {Object} options - search options.
  * @param {string} options.search_text - Your search text.
- * @param {boolean} [options.linkedUser] - If true this will return all public data and the data added by the current logged user.
- * @param {string} [options.page_size = 10]  - Size of data returned per page size.
+ * @param {boolean} [options.linked_user] - If true this will return all public data and the data added by the current logged user.
+ * @param {string} [options.page_size = 50]  - Size of data returned per page size.
  * @param {string} [options.page_index = 0] - Index of returned page.
  * @param {string} [options.pre_highlight_tag] - Use in conjunction with post_tags to define the HTML tags to use for the highlighted text.
  * @param {string} [options.post_highlight_tag] - Use in conjunction with pre_tags to define the HTML tags to use for the highlighted text.
