@@ -63,6 +63,26 @@ buildfire.services.searchEngine.update = function(options, cb){
 };
 
 /**
+ * Delete data in buildfire search engine.
+ * @param {Object} options - delete options.
+ * @param {string} options.id - An id for your document to delete it.
+ * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {boolean} response
+ */
+buildfire.services.searchEngine.delete = function(options, cb){
+    var packetId = null;
+    var command = 'searchEngine.delete';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
  * Search data in buildfire search engine.
  * @param {Object} options - search options.
  * @param {string} options.searchText - Your search text.
@@ -76,7 +96,6 @@ buildfire.services.searchEngine.update = function(options, cb){
 /**
  * @callback cb
  * @param {Object} error
- *
  * @param {Object} response
  * @param {Object} response.hits
  * @param {Object} response.hits.total
@@ -133,8 +152,7 @@ buildfire.services.searchEngine.feeds = {
     /**
      * @callback cb
      * @param {Object} error
-     * @param {Object} response
-     * @param {string} response - return true.
+     * @param {boolean} response
      */
     delete: function (options, cb) {
         var packetId = null;
