@@ -1,0 +1,15 @@
+<div ng-controller="notesCtrl" id='notesDialog' ng-show="notesShown" ng-class="{active: notesShown ? true : false}">
+    <nav id="pluginNav" class="navbar navbar-default navbar-fixed-top text-center clearfix">
+        <a ng-click='close()' id="btnBack" class="back-btn-icon icon icon-chevron-left"></a>
+        <h4 id="appSettingsTitle" data-translate="notes" class="ellipsis">Notes</h4>
+        <a class="menu-btn-icon icon" onclick="cpSync.menu.showSideMenu()"></a>
+    </nav>
+    <div class='notes-container'>
+      <button ng-click="addNote()">Add</button>
+      <div ng-repeat="note in notes">
+        <h3>{{note.title}}</h3>
+        <h4>{{note.description}}</h4>
+        <p>{{note.timeIndex}}</p>
+      </div>
+    </div>
+</div>

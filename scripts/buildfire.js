@@ -1953,8 +1953,12 @@ var buildfire = {
         show: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'imagePreviewer.show', options), callback);
         }
+    },
+    notes: {
+        openDialog: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'notes.openDialog', options), callback);
+        }
     }
-
 };
 
 buildfire.init();
