@@ -2557,3 +2557,9 @@ label.custom-checkbox{
 	flex-shrink: 0;
 	font-size: 24px;
 }
+.pos-static {
+	position: static;
+}
+.pos-fixed {
+	position: fixed;
+}
