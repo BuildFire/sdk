@@ -145,6 +145,7 @@ var buildfire = {
         , "colorLib._triggerOnChange"
         , "services.publicFiles._triggerOnProgress"
         , "services.publicFiles._triggerOnComplete"
+        , "notes.triggerOnSeekTo"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -1957,8 +1958,15 @@ var buildfire = {
     notes: {
         openDialog: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'notes.openDialog', options), callback);
+        },
+        onSeekTo: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('NOTES_SEEK_TO', callback, allowMultipleHandlers);
+        },
+        triggerOnSeekTo: function (data) {
+            buildfire.eventManager.trigger('NOTES_SEEK_TO', data, false)
         }
     }
+
 };
 
 buildfire.init();
