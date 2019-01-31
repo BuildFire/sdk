@@ -159,23 +159,22 @@ section.showNav #plugin, #plugin.access-code-visible{
 }
 
 #footerMenuParent .action-group {
-	display: table;
+	display: flex;
+	align-items: center;
 	width: 100%;
 	cursor: pointer;
-	table-layout: fixed;
 	position: relative;
-	vertical-align: middle;
 	height: 100%;
 }
 
 #footerMenuParent .action-group .action-item {
-	display: table-cell;
-	width: 1%;
-	float: none!important;
-	position: relative;
-	text-align: center;
-	vertical-align: middle;
-	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	/* position: relative;
+	overflow: hidden; */
 }
 
 #footerMenuParent .action-group .action-item > *{
@@ -193,12 +192,14 @@ section.showNav #plugin, #plugin.access-code-visible{
 	/*box-shadow: 0px -10px 10px rgba(0, 0, 0, 0.5);*/
 	box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.15);
 }
-
 .has-footer-menu-topborder{
 	border-top: 1px solid white !important;
 }
-
-.has-footer-menu-border-right .action-item:not(:last-child) {
+#footerMenuParent .action-item:not(:last-child){
+	margin-right: -1px;
+}
+#footerMenuParent.has-footer-menu-border-right .action-item:not(:last-child) {
+	margin: 0;
 	border-right: 1px solid rgba(193, 193, 193, 0.47);
 }
 
@@ -266,63 +267,48 @@ nav.menuLeft.active{
 nav.menu a{
 	display:block;
 	width:100%;
-	padding:10px 12px;
+	padding:.8em 16px;
 	text-decoration:none;
 	position:relative;
 }
 nav.menu a.username{
-	padding-top:15px;
+	padding-top:12px;
 	padding-bottom:14px;
 	padding-right:37px;
 	cursor:default;
 }
-nav.menu a.playing{
-	padding:0;
-}
-nav.menu a.playing .media{
-	width:38px;
-	height:38px;
-	margin:0;
-}
-nav.menu a.playing .media img{
-	max-height:100%;
-	max-width:100%;
-}
-nav.menu a.playing p{
-	margin:0;
-	max-width:77%;
-	padding:11px 10px 9px;
-}
-nav.menu a.playing span.icon{
-	margin:8px 10px 0 0;
-	font-size:21px;
+/* Menu Close Button */
+.menu-close-container{
+	margin: 4px 0 8px 0;
+	display: flex;
+	justify-content: flex-end;
 }
 nav.menu span.menu-close{
-	position:absolute;
-	top:19px;
-	right:12px;
-	font-size:13px;
+	position:relative;
+	font-size:12px;
 	font-weight:600;
 	cursor:pointer;
 	z-index:99;
 }
 nav.menu #sideMenuCloseButton{
-	padding:15px;
-	margin:-15px;
+	padding:16px;
 }
 nav.menu a.divider{
-	padding-top:2px;
-	padding-bottom:4px;
+	padding: 4px 16px;
 	border-top:none !important;
 	background:#efefef;
 	cursor:default;
 }
 nav.menu a .media{
-	display:inline-block;
-
-	line-height:20px;
-	margin-right:12px;
-	text-align:center;
+	display: flex;
+	line-height: 20px;
+	margin-right: 12px;
+	text-align: center;
+	width: 32px;
+	flex-shrink: 0;
+	height: 32px;
+	justify-content: center;
+	align-items: center;
 }
 nav.menu a .media img{
 	vertical-align:middle;
@@ -340,9 +326,8 @@ nav.menu a .media .main-icon{
 nav.menu a p{
 	margin:3px 0 0;
 	max-width:100%;
-	font-size:3vh;
-	line-height:3.5vh;
-
+	font-size:2.5vh;
+	line-height:1.2em;
 }
 
 nav.menu a.notifications {
@@ -1156,7 +1141,7 @@ html[ios="true"][view="app"] nav.menu a.username{
 	padding-top:26px !important;
 }
 html[ios="true"][view="app"] nav.menu span.menu-close{
-	top:30px !important;
+	margin-top:30px !important;
 }
 
 /* iPhone X Nav bar. [storyboard-launch-images="true"] means that splash screens supports iPhone X */
@@ -1165,7 +1150,13 @@ html[ios="true"][view="app"] nav.menu span.menu-close{
 	[ios="true"][view="app"][storyboard-launch-images="true"] .app-settings-plugin{
 		padding-top:70px !important;
 	}
+	[ios="true"][view="app"][storyboard-launch-images="true"] .app-search-plugin{
+		padding-top:70px !important;
+	}
 	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container{
+		padding-top:70px !important;
+	}
+	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container{
 		padding-top:70px !important;
 	}
 	[ios="true"][view="app"][storyboard-launch-images="true"] .pushSubscriptions-holder{
@@ -1238,6 +1229,11 @@ html[ios="true"][view="app"] nav.menu span.menu-close{
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
 		padding-bottom: 41px;
+	}
+
+	/* Menu Close Button */
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .menu-close-container{
+		margin: -30px 0px 45px 0;
 	}
 
 }
@@ -1878,24 +1874,24 @@ padding-top: 64px !important;
 }
 .bookmarks-container {
 	padding-top: 50px;
-}
-.bookmark-item-link h4{
-	flex: auto;
-	display: block;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
+	padding-bottom: 80px;
+	padding-bottom: calc(constant(safe-area-inset-bottom) + 80px); /* iOS 11.0 */
+	padding-bottom: calc(env(safe-area-inset-bottom) + 80px); /* iOS 11.2 */
 }
 .bookmark-item-link {
 	padding: 0 0 0 16px;
 	display: flex;
 	align-items: center;
-	height: 50px;
+	justify-content: space-between;
 	border-bottom: 1px solid #dedede;
+}
+.bookmark-item-link p{
+	flex: auto;
 }
 .bookmark-item-link .media img{
 	width: 100%;
-	height: 32px;
+	height: 100%;
+	object-fit: cover;
 }
 .bookmark-item-link .media span,
 .bookmark-item-link .media i{
@@ -1911,15 +1907,653 @@ padding-top: 64px !important;
 	border-radius: 5px;
 	flex-shrink: 0;
 }
-.bookmark-item-link .delete{
-	padding: 8px 16px;
+.bookmark-item-link .delete i{
+	padding: 16px;
+	display: block;
 }
 .delete .icon{
 	color: #777 !important;
 	font-style: normal;
 }
-.bookmarks-container .empty-state img{
+@keyframes load-appear {
+	0%, 70%  {
+		opacity: 0;
+		transform: translateY(80px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+.empty-state{
+	position: relative;
+	display: none;
+}
+.empty-state.empty-animate{
+	display: block;
+	animation-delay: .8s;
+	animation: .9s cubic-bezier(0.21, 1.74, 0.94, 1.04) load-appear;
+	animation-fill-mode: forwards;
+}
+.empty-state i{
+	position: absolute;
+	top: calc(10vh + 48px);
+	right: calc(50% - 27px);
+	font-size: 48px;
+	text-align: center;
+	width: 48px;
+	height: 48px;
+	color: #b8b8b8 !important;
+}
+.bookmarks-container .empty-state img,
+.notes-container .empty-state img{
 	margin: 0 auto;
 	display: block;
 	padding-top: 10vh;
+}
+#notesDialog {
+	height: 100vh;
+	background-color: #fff;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 1050;
+	transform: translateY(100%);
+	-webkit-transform: translateY(100%);
+	transition-duration: 250ms;
+	-webkit-transition-duration: 250ms;
+	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+#notesDialog.active {
+	transform: translateY(0%);
+	-webkit-transform: translateY(0%);
+	transition-duration: 200ms;
+	-webkit-transition-duration: 200ms;
+	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+/* Notes */
+
+.page-container{
+	padding-bottom: 120px;
+	padding-bottom: calc(constant(safe-area-inset-bottom) + 120px); /* iOS 11.0 */
+	padding-bottom: calc(env(safe-area-inset-bottom) + 120px); /* iOS 11.2 */
+	padding-top: 50px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+html[ios="true"][view="app"] .page-container{
+	padding-top:64px !important;
+}
+.plugin-li,
+.notes-container .plugin-li-content,
+.notes-container .plugin-li-note{
+	display: flex;
+	align-items: center;
+}
+.plugin-li{
+	justify-content: space-between;
+	background-color: rgba(0,0,0,0.05);
+	padding-left: 16px;
+}
+.plugin-li h4{
+	font-size: 16px;
+}
+.notes-container .collapse-btn{
+	padding: 0;
+	flex-shrink: 0;
+	display: block;
+	border: 0;
+	background-color: transparent;
+}
+.notes-container .collapse-btn i{
+	padding: 16px;
+}
+.notes-container .plugin-li-content{
+	padding: 12px;
+	border-top: 1px solid #dedede;
+	border-bottom: 1px solid #dedede;
+}
+.notes-container .plugin-content-img{
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+	flex-shrink: 0;
+	margin-right: 12px;
+	overflow: hidden;
+}
+.notes-container .plugin-content-img img{
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.plugin-li-note{
+	justify-content: space-between;
+	border-bottom: 1px solid #dedede;
+}
+.notes-in-plugin .plugin-content-img{
+	width: 40px;
+	height: 40px;
+	margin-right: 16px;
+}
+.notes-in-plugin .plugin-li-note{
+	padding-left: 12px;
+	margin-left: 0;
+}
+.plugin-li-note div{
+	display: flex;
+	align-items: center;
+}
+.plugin-li-note:last-child {
+	border-bottom: 0;
+}
+.notes-in-plugin  .plugin-li-note:last-child {
+	border-bottom: 0;
+	border-bottom: 1px solid #dedede;
+}
+.plugin-li-note button{
+	padding: 0;
+	background-color: transparent;
+	border: 0;
+}
+.plugin-li-note button i{
+	padding: 16px;
+	display: block;
+}
+/* Floating Action Button - FAB */
+.fab-container{
+	position: fixed;
+	bottom: 0;
+	z-index: 1;
+	right: 0;
+	animation-delay: .5s;
+	animation: .8s cubic-bezier(0.21, 1.74, 0.94, 1.04) load-appear;
+	animation-fill-mode: forwards;
+}
+.fab-btn{
+	display: block;
+	position: relative;
+	text-align: center;
+	border-radius: 50%;
+	width: 56px;
+	height: 56px;
+	box-shadow: 0 4px 8px rgba(0,0,0,.25);
+	bottom: 0;
+	right: 0;
+	margin: 16px;
+	transition: transform ease-in .05s, box-shadow ease-in-out .05s;
+}
+.fab-btn:active{
+	transform: scale(.95);
+	box-shadow: 0 2px 2px rgba(0,0,0,.5);
+}
+.fab-btn.fab-add i{
+	font-size: 18px;
+	color: #fff !important;
+	top: calc(50% - 9px);
+	text-align: center;
+}
+.fab-btn-option{
+	display: flex;
+	align-items: center;
+	border-radius: 24px;
+	padding: 12px;
+	background-color: inherit;
+	box-shadow: 0 4px 8px rgba(0,0,0,.25);
+	position: absolute;
+	right: 72px;
+	top: calc(50% - 22px);
+	margin-right: 16px;
+	background-color: #fff;
+}
+.note-time{
+	font-variant-numeric: tabular-nums;
+}
+/* Custom Checkbox */
+.custom-checkbox {
+  display: flex;
+  position: relative;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+	user-select: none;
+	align-items: center;
+	justify-content: center;
+}
+label.custom-checkbox{
+	margin: 0 12px 0 0;
+}
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+	width: 0;
+	margin: 0;
+}
+.checkmark {
+  display: block;
+  height: 18px;
+	width: 18px;
+	border-radius: 2px;
+  background-color: #eee;
+}
+.custom-checkbox:hover input ~ .checkmark {
+  background-color: rgba(0,0,0,.30);
+}
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+.custom-checkbox .checkmark:after {
+  font-family: 'Glyphicons Halflings';
+	content: "\e013";
+	position: absolute;
+	color:#fff;
+	font-size: 12px;
+	top: -2px;
+	right: 3px;
+}
+/* Search Bar */
+.search-container{
+	margin: 0 16px 8px 16px;
+	position: relative;
+}
+.search-container i.search-icon{
+	height: 100%;
+	display: flex;
+	align-items: center;
+	position: absolute;
+	top: 0;
+	padding: 0 .8em;
+	font-size: 14px;
+	pointer-events: none;
+	/* color:rgba(0, 0, 0, 0.4) !important; */
+	opacity: .5;
+}
+.search-clear{
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: transparent;
+	border: 0;
+	height: 100%;
+	padding: 0 1em;
+	align-items: center;
+	display: flex;
+}
+.search-clear i{
+	font-size: 12px;
+	top: 0;
+	/* color: rgba(0, 0, 0, 0.4) !important; */
+	opacity: .5;
+}
+.search-container .search-bar{
+	background-color: rgba(20, 20, 20, 0.12);
+	border: 0;
+	border-radius: 8px;
+	padding: .5em 2.6em;
+	height: auto;
+	font-size: 14px;
+}
+.search-container .search-bar:active,
+.search-container .search-bar:focus{
+	border: 0;
+	background-color: rgba(0, 0, 0, 0.15);
+}
+.menu .login,
+.menu .logout{
+	margin: 0 0 16px 0;
+}
+/* Search Page */
+.app-search-plugin {
+	padding-top: 50px;
+	height: 100%;
+}
+html[ios="true"][view="app"] .bookmarks-container {
+	padding-top: 64px !important;
+}
+.holder {
+	height: 100%;
+}
+.no-scroll {
+	overflow: hidden;
+	height: 100%;
+}
+.no-scroll .scrollable {
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.app-search-plugin .titleBarBackgroundTheme{
+	padding: 12px 0 16px 0;
+	margin-bottom: 8px;
+}
+.app-search-plugin .search-container{
+	margin: 0 16px;
+}
+.result-item{
+	display: flex;
+	padding: 8px 15px;
+	border-bottom: 1px solid #efefef;
+}
+.result-item .result-image{
+	width: 56px;
+	height: 56px;
+	border-radius: 4px;
+	margin-right: 12px;
+	flex-shrink: 0;
+	overflow: hidden;
+}
+.result-image img{
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.result-title{
+	font-size: 1.8rem;
+}
+.result-description{
+	font-size: 1.4rem;
+}
+.result-plugin{
+	opacity: .5;
+	font-size: 1.2rem;
+}
+.search-error,
+.search-no-result,
+.search-empty-response{
+	padding: 40px;
+	text-align: center;
+}
+/* Side Menu */
+nav.menu a p{
+	font-size:16px;
+}
+nav.menu a{
+	display: flex;
+	align-items: center;
+	padding: 12px 16px;
+}
+nav.menu a .media{
+	flex-shrink: 0;
+}
+@media (min-width: 768px){
+	nav.menu a p,
+	.menu-now-playing-body p{
+		font-size:18px;
+	}
+	nav.menu a{
+		padding: 16px 18px;
+	}
+}
+@media (min-width: 1024px){
+	nav.menu a p,
+	.menu-now-playing-body p{
+		font-size:24px;
+	}
+	nav.menu a{
+		padding: 18px 22px;
+	}
+}
+#notesDialog {
+	height: 100vh;
+	background-color: #fff;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 1050;
+	transform: translateY(100%);
+	-webkit-transform: translateY(100%);
+	transition-duration: 250ms;
+	-webkit-transition-duration: 250ms;
+	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+#notesDialog.active {
+	transform: translateY(0%);
+	-webkit-transform: translateY(0%);
+	transition-duration: 200ms;
+	-webkit-transition-duration: 200ms;
+	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+/* Notes */
+.page-container{
+	padding-bottom: 120px;
+	padding-bottom: calc(constant(safe-area-inset-bottom) + 120px); /* iOS 11.0 */
+	padding-bottom: calc(env(safe-area-inset-bottom) + 120px); /* iOS 11.2 */
+	/* margin-top: 50px; */
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+html[ios="true"][view="app"] .page-container{
+	padding-top:61px !important;
+}
+.plugin-li,
+.notes-container .plugin-li-content,
+.notes-container .plugin-li-note{
+	display: flex;
+	align-items: center;
+}
+.plugin-li{
+	justify-content: space-between;
+	background-color: rgba(0,0,0,0.05);
+	padding-left: 16px;
+}
+.plugin-li h4{
+	font-size: 16px;
+}
+.notes-container .collapse-btn{
+	padding: 0;
+	flex-shrink: 0;
+	display: block;
+	border: 0;
+	background-color: transparent;
+}
+.notes-container .collapse-btn i{
+	padding: 16px;
+}
+.notes-container .plugin-li-content{
+	padding: 12px;
+	border-top: 1px solid #dedede;
+	border-bottom: 1px solid #dedede;
+}
+.notes-container .plugin-content-img{
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+	flex-shrink: 0;
+	margin-right: 12px;
+	overflow: hidden;
+}
+.notes-container .plugin-content-img img{
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.plugin-li-note{
+	justify-content: space-between;
+	padding-left: 48px;
+	border-bottom: 1px solid #dedede;
+}
+.plugin-li-note p{
+	padding: 12px 0;
+}
+.notes-in-plugin .plugin-content-img{
+	width: 40px;
+	height: 40px;
+	margin-right: 16px;
+}
+.notes-in-plugin .plugin-li-note{
+	padding-left: 12px;
+	margin-left: 0;
+}
+.plugin-li-note div{
+	display: flex;
+	align-items: center;
+}
+.plugin-li-note:last-child {
+	border-bottom: 0;
+}
+.notes-in-plugin  .plugin-li-note:last-child {
+	border-bottom: 0;
+	border-bottom: 1px solid #dedede;
+}
+.plugin-li-note button{
+	padding: 0;
+	background-color: transparent;
+	border: 0;
+}
+.plugin-li-note button i{
+	padding: 16px;
+	display: block;
+}
+/* Floating Action Button - FAB */
+.fab-container{
+	position: fixed;
+	bottom: 0;
+	z-index: 1;
+	right: 0;
+	animation-delay: .5s;
+	animation: .8s cubic-bezier(0.21, 1.74, 0.94, 1.04) load-appear;
+	animation-fill-mode: forwards;
+}
+.fab-btn{
+	display: block;
+	position: relative;
+	text-align: center;
+	border-radius: 50%;
+	width: 56px;
+	height: 56px;
+	box-shadow: 0 4px 8px rgba(0,0,0,.25);
+	bottom: 0;
+	right: 0;
+	margin: 16px;
+	transition: transform ease-in .05s, box-shadow ease-in-out .05s;
+}
+.fab-btn:active{
+	transform: scale(.95);
+	box-shadow: 0 2px 2px rgba(0,0,0,.5);
+}
+.fab-btn.fab-add i{
+	font-size: 18px;
+	color: #fff !important;
+	top: calc(50% - 9px);
+	text-align: center;
+}
+.fab-btn-option{
+	display: flex;
+	align-items: center;
+	border-radius: 24px;
+	padding: 12px;
+	background-color: inherit;
+	box-shadow: 0 4px 8px rgba(0,0,0,.25);
+	position: absolute;
+	right: 72px;
+	top: calc(50% - 22px);
+	margin-right: 16px;
+	background-color: #fff;
+}
+.plugin-li-note .note-time{
+	padding: 12px;
+	font-variant-numeric: tabular-nums;
+}
+/* Custom Checkbox */
+.custom-checkbox {
+  display: flex;
+  position: relative;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+	user-select: none;
+	align-items: center;
+	justify-content: center;
+}
+label.custom-checkbox{
+	margin: 0 12px 0 0;
+}
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+	width: 0;
+	margin: 0;
+}
+.checkmark {
+  display: block;
+  height: 18px;
+	width: 18px;
+	border-radius: 2px;
+  background-color: #eee;
+}
+.custom-checkbox:hover input ~ .checkmark {
+  background-color: rgba(0,0,0,.30);
+}
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+.custom-checkbox .checkmark:after {
+  font-family: 'Glyphicons Halflings';
+	content: "\e013";
+	position: absolute;
+	color:#fff;
+	font-size: 12px;
+	top: -2px;
+	right: 3px;
+}
+/* Menu Now Playing */
+.menu-now-playing-body{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	padding-left: 16px;
+	margin: 8px 0;
+}
+.menu-now-playing-body .media{
+	flex-shrink: 0;
+	margin-right: 12px;
+	width: 32px;
+	height: 32px;
+}
+.menu-now-playing-body .media img{
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
+	object-fit: cover;
+}
+.menu-now-playing-body p{
+	flex: auto;
+}
+.menu-now-playing-body .now-playing-btns span{
+	padding: 12px;
+	flex-shrink: 0;
+	font-size: 24px;
 }
