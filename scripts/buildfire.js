@@ -149,7 +149,6 @@ var buildfire = {
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
-            console.log(' >>>> IGNORE MESSAGE <<<< ');
             return;
         }//e.origin != "null"
 
@@ -588,7 +587,6 @@ var buildfire = {
                 script.src = path;
                 script.type="text/javascript";
                 script.onload=function(){
-                    console.info('fastclick.js loaded');
                     if(typeof(FastClick) == "undefined")
                         console.error('fastclick undefined');
                     else
