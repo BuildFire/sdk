@@ -13,7 +13,6 @@ html{
     height:100%;
     width:100%;
 	min-width:1024px;
-	max-width:1400px;
 }
 html.no-transition{
 	transition:none !important;
@@ -26,11 +25,11 @@ body{
     font-size:14px;
 	line-height:22px;
     text-rendering:optimizeLegibility;
-    /*height:100%;*/
+	display: flex;
     width:100%;
-    overflow:auto;
+	overflow-y:auto;
+	overflow-x: hidden;
 	min-width:1024px;
-	max-width:1400px;
 	top:0 !important;
 }
 img,
@@ -78,9 +77,10 @@ a:focus{
     color:#fff;
 }
 #container{
-	width:100%;
-	height:100%;
-	overflow: auto;
+	width: 100%;
+    height: 100%;
+	overflow: hidden;
+	display: flex;
 }
 
 /* Top Nav */
@@ -324,20 +324,22 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 
 /* Main Content */
 #main-content{
-    margin-left:220px;
-	margin-right:20px;
-	min-width:1002px;
-	position:relative;
+	margin-left: 220px;
+    margin-top: 80px;
+    position: relative;
+    display: unset;
+    overflow: hidden;
+    flex: 1 1 auto;
 }
 #main-content .wrapper{
-    display:inline-block;
-    margin-top:84px;
-    background-color:#fff;
-	width:765px;
-	min-height:729px;
-	margin-bottom:138px;
-	position:relative;
-	position:absolute;
+	background-color: #fff;
+    min-width: 768px;
+    min-height: 729px;
+    height: 100%;
+    position: relative;
+    overflow: auto;
+    flex-basis: 768px;
+    margin-bottom: 20px;
 }
 #main-content .wrapper.largeWidth{
 	width:1160px;
@@ -1441,17 +1443,134 @@ p.info.no-icon:before{
 
 /* Emulator */
 #emulator{
-	position:fixed;
-	top:84px;
-	left:1004px;
-	width:376px;
+	position: relative;
+    margin-left: 20px;
+    display: inline-flex;
 }
 #emulatorContainer{
 	background:#fff;
 	padding:66px 15px 59px;
 	border-radius:45px;
 	position:relative;
+	height: 100%;
+	width: 100%;
+	/* transform: scaleY(0.4) scaleX(0.4);
+    transform-origin: 0 0;
+	height: 1366px;
+    width: 1024px; */
 }
+
+/** IPAD-PRO */
+#emulator.ipad-pro {
+	width: 698px;
+    height: 576px;
+    position: relative;
+    float: left;
+    display: -webkit-box;
+}
+#emulator.ipad-pro #app {
+	transform: scaleY(0.35) scaleX(0.35);
+    transform-origin: 0 0;
+    height: 1370px!important;
+    width: 1028px!important;
+}
+#emulator.ipad-pro #emulatorContainer {
+	width: 391px;
+    height: 610px;
+}
+
+/** IPAD */
+#emulator.ipad {
+	width: 416px;
+    height: 640px;
+    position: relative;
+    float: left;
+    display: -webkit-box;
+}
+#emulator.ipad #app {
+	transform: scaleY(0.5) scaleX(0.5);
+    transform-origin: 0 0;
+    height: 1028px!important;
+    width: 772px!important;
+}
+#emulator.ipad #emulatorContainer {
+	width: 416px;
+    height: 639px;
+}
+
+/** IphoneX */
+#emulator.iphone-x {
+	width: 259px;
+    height: 617px;
+    position: relative;
+    float: left;
+    display: -webkit-box;
+}
+#emulator.iphone-x #app {
+	transform: scaleY(0.6) scaleX(0.6);
+    transform-origin: 0 0;
+    height: 816px!important;
+    width: 379px!important;
+}
+#emulator.iphone-x #emulatorContainer {
+	width: 257px;
+    height: 615px;
+}
+/** Iphone-678-Plus */
+#emulator.iphone-678-plus {
+	width: 325px;
+    height: 642px;
+    position: relative;
+    float: left;
+    display: -webkit-box;
+}
+#emulator.iphone-678-plus #app {
+	transform: scaleY(0.7) scaleX(0.7);
+    transform-origin: 0 0;
+    height: 740px!important;
+    width: 418px!important;
+}
+#emulator.iphone-678-plus #emulatorContainer {
+	width: 323px;
+    height: 641px;
+}
+/** Iphone-678 */
+#emulator.iphone-678 {
+	width: 333px;
+    height: 665px;
+    position: relative;
+    float: left;
+    display: -webkit-box;
+}
+#emulator.iphone-678 #app {
+	transform: scaleY(0.8) scaleX(0.8);
+    transform-origin: 0 0;
+    height: 671px!important;
+    width: 379px!important;
+}
+#emulator.iphone-678 #emulatorContainer {
+	width: 332px;
+    height: 662px;
+}
+/** Iphone-5-se */
+#emulator.iphone-5-se {
+	width: 324px;
+    height: 641px;
+    position: relative;
+    float: left;
+    display: -webkit-box;
+}
+#emulator.iphone-5-se #app {
+	transform: scaleY(0.9) scaleX(0.9);
+    transform-origin: 0 0;
+    height: 572px!important;
+    width: 324px!important;
+}
+#emulator.iphone-5-se #emulatorContainer {
+	width: 321px;
+    height: 639px;
+}
+
 #emulator .emulatorlabel{
 	position:absolute;
 	top:27px;
@@ -1560,6 +1679,16 @@ body.rtl .pagination > li + li{
 }
 
 /* SDK */
+.shell-sdk {
+	flex: 1 1 auto;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: flex-start;
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+
 .shell-sdk .plugin-input{
 	color:#5f5f5f;
 	background: #fff;
@@ -1583,6 +1712,13 @@ body.rtl .pagination > li + li{
 }
 .shell-sdk #emulator #app{
 	position:relative;
+	height: 100%;
+	width: 100%;
+    border: 1px solid black;
+}
+.shell-sdk #emulator #app #pluginContentPanel {
+	height: 100%;
+    width: 100%;
 }
 
 /* Plugin iFrame */
@@ -1592,7 +1728,7 @@ body.rtl .pagination > li + li{
 	width:100%;
 	min-width:100%;
 	max-width:100%;
-	min-height:1000px;
+	min-height:2000px;
 }
 html[buildfire]{
 	padding-top:30px;
@@ -1603,7 +1739,7 @@ html[buildfire] body{
 	min-width:100%;
 	max-width:100%;
 	background:none;
-	overflow-x:hidden;
+	overflow:hidden;
 }
 html[buildfire='control'] body{
 	height:100%;

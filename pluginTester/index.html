@@ -109,11 +109,23 @@
         <div class="shell-sdk holder">
             <section id="pageContent" ng-class="{'largeWidth': hideEmulator}" class="pull-left slide wrapper border-radius-six border-grey" ng-view>
             </section>
-            <section id="emulator" class="pull-right" ng-controller="shellCtrl">
+            <section id="emulator" ng-class="selectedDeviceName" class="pull-right" ng-controller="shellCtrl">
                 <div id="emulatorContainer" ng-hide="hideEmulator" class="border-grey">
-                    <span class="emulatorlabel">iOS / Android</span>
+                    <span class="emulatorlabel">
+                        <select ng-model="selectedDeviceName" ng-change="changeWidgetPlatform()">
+                                <option value="iphone-678">IPhone (6,7,8)</option>
+                            <option value="ipad-pro">IPad Pro</option>
+                            <option value="ipad">IPad</option>
+                            <option value="iphone-x">IPhoneX</option>
+                            <option value="iphone-678-plus">IPhone (6,7,8) Plus</option>
+                            <option value="iphone-5-se">IPhone5/SE</option>
+                            <!-- <option value="pixel-2-xl">Pixel2XL</option>
+                            <option value="pixel-2">Pixel2</option>
+                            <option value="galaxy-s5">GalaxyS5</option> -->
+                        </select>
+                    </span>
 
-                    <div id="app" class="overflow-hidden">
+                    <div id="app">
 						<div class="loading-screen" ng-show="showSpinner">
 							<div class="loading-bg">
 								<div class="loading-dots">
@@ -131,7 +143,7 @@
                                 <span ng-click="titleClick()">Title</span>
                             </div>
                             {{errorMessage}}
-                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" ng-style="{'padding-top': showNavigationBar ? '49px' : '0px' }" class="border-grey pluginFrame" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height: 100%; width: 100%;" ng-style="{'padding-top': showNavigationBar ? '49px' : '0px' }" class="border-grey pluginFrame" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
                             <div id="login" ng-include="'https://app.buildfire.com/app/fragments/auth/auth.html'"></div>
                         </div>
                     </div>

@@ -39,6 +39,11 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         $scope.popHistoryItem = function (event, breadcrumb) {
             postMaster.widgetPluginAPI.history.pop(breadcrumb);
         };
+        $scope.selectedDeviceName = 'iphone-678';
+
+        $scope.changeWidgetPlatform = function() {
+            document.getElementById('widget').contentWindow.location.replace($scope.widgetSrc);
+        };
 
         $scope.loadWebpackFrames = function(config) {
             var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
@@ -92,6 +97,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         $scope.loadFrames = function (pluginFolder, config) {
             var root =  '../plugins/';
             $scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget';
+            $scope.widgetStyle = {};
 
             if (config.widget && config.widget.service) {
                 serviceFrame = document.createElement('iframe');
