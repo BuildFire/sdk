@@ -35,6 +35,33 @@ buildfire.services.searchEngine.insert = function(options, cb){
 };
 
 /**
+ * Save data in buildfire search engine.
+ * @param {Object} options - save options.
+ * @param {boolean} [options.linkedUser] - This will make the data linked to the current logged user, which means it will be private.
+ * @param {string} options.key - A unique key for your document, this will be the id of your document.
+ * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
+ * @param {string} options.title - Title for your data, this will be searchable by our search engine.
+ * @param {string} [options.description] - Description for your data, this will be searchable by our search engine.
+ * @param {string} [options.keywords] - Any keywords related to your data, this will be searchable by our search engine.
+ * @param {string} [options.imageUrl].
+ * @param {Object} [options.data] - You can add whatever you want here, this won't be searchable by our search engine.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ * @param {string} response.id - The id of the saved document.
+ */
+buildfire.services.searchEngine.save = function(options, cb){
+    var packetId = null;
+    var command = 'searchEngine.save';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
  * Update data in buildfire search engine.
  * @param {Object} options - update options.
  * @param {string} options.id - An id for your document to update it.
