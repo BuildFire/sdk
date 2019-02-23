@@ -39,9 +39,14 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         $scope.popHistoryItem = function (event, breadcrumb) {
             postMaster.widgetPluginAPI.history.pop(breadcrumb);
         };
-        $scope.selectedDeviceName = 'iphone-678';
+
+        var __lastEmulatorDevice = localStorage.getItem('__widgetEmulatorDevice');
+        $scope.selectedDeviceName = __lastEmulatorDevice || 'default';
+
+        console.log("bla bla bla", __lastEmulatorDevice);
 
         $scope.changeWidgetPlatform = function() {
+            window.localStorage.setItem('__widgetEmulatorDevice', $scope.selectedDeviceName);
             document.getElementById('widget').contentWindow.location.replace($scope.widgetSrc);
         };
 
@@ -247,8 +252,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
             xmlhttp.open("GET", url, true);
             xmlhttp.send();
-
-
         };
 
 
