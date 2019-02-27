@@ -1972,17 +1972,20 @@ var buildfire = {
 buildfire.init();
 
 buildfire.eventManager.add('deviceAppBackgrounded', function () {
-    var stopYoutubeVideos=function (iframes) {
+    var stopVideos=function (iframes) {
         for(var i = 0 ; i<iframes.length;i++)
             if( iframes[i].src.indexOf("youtube.com")>-1){
                 if(iframes[i].src.indexOf("enablejsapi=1")==-1)
                     iframes[i].src = iframes[i].src+"?enablejsapi=1";
                 var youtube_command = window.JSON.stringify( { event: 'command', func: 'pauseVideo' } );
                 iframes[i].contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );
+            } else if (iframes[i].src.indexOf("vimeo.com")>-1) {
+                var vimeo_command = JSON.stringify( { method: "pause" } );
+                iframes[i].contentWindow.postMessage( vimeo_command, '*' );
             }
     };
     var iframes=window.document.getElementsByTagName("iframe");
-    stopYoutubeVideos(iframes);
+    stopVideos(iframes);
 
 }, true);
 
