@@ -45,6 +45,10 @@ var buildfire = {
         for (var i = 0; i < vars.length; i++) {
             var pair = vars[i].split('=');
             obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+            var index = vars[i].indexOf('=');
+            var key = vars[i].substring(0, index);
+            var value = vars[i].substring(index + 1);
+            obj[decodeURIComponent(key)] = decodeURIComponent(value);
         }
         return obj;
     }
