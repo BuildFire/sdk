@@ -1978,7 +1978,7 @@ buildfire.init();
 buildfire.eventManager.add('deviceAppBackgrounded', function () {
     var stopVideos=function (iframes, videos) {
         if (iframes) {
-            for(var i = 0 ; i<iframes.length;i++) {
+            for(var i = 0 ; i < iframes.length; i++) {
                 if( iframes[i].src.indexOf("youtube.com")>-1){
                     if(iframes[i].src.indexOf("enablejsapi=1")==-1)
                         iframes[i].src = iframes[i].src+"?enablejsapi=1";
@@ -1992,7 +1992,7 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
         }
         if (videos) {
             for (var j = 0; j < videos.length; j++) {
-                videos[j].pause();                
+                if (videos[j].pause) videos[j].pause();
             }
         }
     };
