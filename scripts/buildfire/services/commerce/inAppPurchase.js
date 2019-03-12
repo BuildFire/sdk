@@ -20,5 +20,13 @@ buildfire.services.commerce.inAppPurchase = {
     getProducts: function (callback) {
         var p = new Packet(null, 'inAppPurchase.getProducts');
         buildfire._sendPacket(p, callback);
+    },
+    getSubscriptions: function (callback) {
+        var p = new Packet(null, 'inAppPurchase.getSubscriptions');
+        buildfire._sendPacket(p, callback);
+    },
+    checkIsPurchased: function (options, callback) {
+        var p = new Packet(null, 'inAppPurchase.checkIsPurchased', options);
+        buildfire._sendPacket(p, callback);
     }
 };
