@@ -45,6 +45,10 @@ var buildfire = {
         for (var i = 0; i < vars.length; i++) {
             var pair = vars[i].split('=');
             obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+            var index = vars[i].indexOf('=');
+            var key = vars[i].substring(0, index);
+            var value = vars[i].substring(index + 1);
+            obj[decodeURIComponent(key)] = decodeURIComponent(value);
         }
         return obj;
     }
@@ -1972,17 +1976,29 @@ var buildfire = {
 buildfire.init();
 
 buildfire.eventManager.add('deviceAppBackgrounded', function () {
-    var stopYoutubeVideos=function (iframes) {
-        for(var i = 0 ; i<iframes.length;i++)
-            if( iframes[i].src.indexOf("youtube.com")>-1){
-                if(iframes[i].src.indexOf("enablejsapi=1")==-1)
-                    iframes[i].src = iframes[i].src+"?enablejsapi=1";
-                var youtube_command = window.JSON.stringify( { event: 'command', func: 'pauseVideo' } );
-                iframes[i].contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );
+    var stopVideos=function (iframes, videos) {
+        if (iframes) {
+            for(var i = 0 ; i < iframes.length; i++) {
+                if( iframes[i].src.indexOf("youtube.com")>-1){
+                    if(iframes[i].src.indexOf("enablejsapi=1")==-1)
+                        iframes[i].src = iframes[i].src+"?enablejsapi=1";
+                    var youtube_command = window.JSON.stringify( { event: 'command', func: 'pauseVideo' } );
+                    iframes[i].contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );
+                } else if (iframes[i].src.indexOf("vimeo.com")>-1) {
+                    var vimeo_command = JSON.stringify( { method: "pause" } );
+                    iframes[i].contentWindow.postMessage( vimeo_command, '*' );
+                }
             }
+        }
+        if (videos) {
+            for (var j = 0; j < videos.length; j++) {
+                if (videos[j].pause) videos[j].pause();
+            }
+        }
     };
     var iframes=window.document.getElementsByTagName("iframe");
-    stopYoutubeVideos(iframes);
+    var videos = window.document.getElementsByTagName("video");
+    stopVideos(iframes, videos);
 
 }, true);
 
