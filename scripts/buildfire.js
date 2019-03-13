@@ -377,9 +377,9 @@ var buildfire = {
             UNKNOWN : "UNKNOWN"
         };
         var fid= buildfire.fid;
-        if (fid == PLUGIN_STRING_ENUM.LAUNCHER_PLUGIN)
+        if (fid && fid.indexOf(PLUGIN_STRING_ENUM.LAUNCHER_PLUGIN) > -1)
             return PLUGIN_TYPE_ENUM.LAUNCHER_PLUGIN;
-        else if (fid == PLUGIN_STRING_ENUM.CONTROL_FRAME)
+        else if (fid && fid.indexOf(PLUGIN_STRING_ENUM.CONTROL_FRAME) > -1)
             return  PLUGIN_TYPE_ENUM.CONTROL_FRAME;
         else
             return PLUGIN_TYPE_ENUM.UNKNOWN;
