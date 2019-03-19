@@ -442,8 +442,7 @@ buildfire.components.carousel.view.prototype = {
                     lazyLoad: true,
                     autoHeight: false,
                     autoplay: true,
-                    autoplaySpeed: 800,
-                    responsive: false
+                    autoplaySpeed: 800
                 };
 
                 sliderOptions.autoplay = (speed == 0) ? 0 : 3000;
