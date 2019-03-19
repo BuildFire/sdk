@@ -298,13 +298,13 @@ buildfire.components.carousel.editor.prototype = {
 };
 
 // This is the class that will be used in the mobile
-buildfire.components.carousel.view = function (selector, items, layout, speed, responsive) {
+buildfire.components.carousel.view = function (selector, items, layout, speed, disableResponsive) {
 	if (typeof($.fn) != "object" || !($.fn && $.fn.owlCarousel)) {
         throw ("please add owlCarousel.js first to use carousel component");
     }
     this.selector = selector;
     this.items = [];
-    this.responsive = typeof responsive != "undefined" ? responsive : true;
+    this.responsive = disableResponsive ? false : true;
     this._initDimensions(layout);
     this._loadItems(items, false);
     this.init(selector,speed);
