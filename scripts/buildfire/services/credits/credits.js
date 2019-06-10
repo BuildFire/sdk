@@ -22,7 +22,7 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.add = function(options, cb){
+buildfire.services.credits.addCredit = function(options, cb){
     var packetId = null;
     var command = 'credits.add';
     debugger;
@@ -117,7 +117,7 @@ buildfire.services.credits.addUser = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.consume = function(options, cb){
+buildfire.services.credits.consumeCredit = function(options, cb){
     var packetId = null;
     var command = 'credits.consume';
     debugger;
@@ -153,7 +153,7 @@ buildfire.services.credits.consume = function(options, cb){
     "public_key" : "123"
 },function(err,result){debugger});*/
 
-buildfire.services.credits.consume({
+/*buildfire.services.credits.consume({
     "public_key" : "123",
     "credit_amount" : "5",
-},function(err,result){debugger});
+},function(err,result){debugger});*/
