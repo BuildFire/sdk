@@ -124,36 +124,3 @@ buildfire.services.credits.consumeCredit = function(options, cb){
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
-
-
-
-
-
-/*buildfire.services.credits.add({
-    "access_token": "q8cDMjg2GUj8LfVwkQTOuap0IBxWkKCvrqCEiIoVb0o=",
-    "amount" : 50 ,
-    "provider" : "stripe",
-    "stripe" : {
-        "source_token" : "tok_visa_debit"
-    },
-    "bundle_id" : "123",
-    "public_key" : "123"
-},function(err,result){debugger});*/
-
-
-/*buildfire.services.credits.getBundles({
-    "public_key" : "123"
-},function(err,result){debugger});*/
-
-/*buildfire.services.credits.getBalance({
-    "public_key" : "123"
-},function(err,result){debugger});*/
-
-/*buildfire.services.credits.addUser({
-    "public_key" : "123"
-},function(err,result){debugger});*/
-
-/*buildfire.services.credits.consume({
-    "public_key" : "123",
-    "credit_amount" : "5",
-},function(err,result){debugger});*/
