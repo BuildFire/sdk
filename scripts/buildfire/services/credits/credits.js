@@ -86,7 +86,7 @@ buildfire.services.credits.addUser = function(options, cb){
 };
 
 /**
- * get credit balance
+ * consume credit
  * @param {string} options.public_key - A unique key for merchant public key.
  * @param {string} options.amount - credit amount to be consume from the logged in user
  */
