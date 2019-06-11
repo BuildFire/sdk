@@ -9,7 +9,6 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
 
 /**
  * add credit for user.
- * @param {string} options.public_key - A unique key for merchant public key.
  * @param {string} options.amount - An amount which the user paid through stripe
  * @param {string} options.provider - the payment provider "stripe"
  * @param {object} options.stripe - the stripe object which will contain the stripe token data
@@ -51,7 +50,6 @@ buildfire.services.credits.getBundles = function(options, cb){
 
 /**
  * get credit balance
- * @param {string} options.public_key - A unique key for merchant public key.
  */
 
 /**
@@ -68,8 +66,7 @@ buildfire.services.credits.getBalance = function(options, cb){
 };
 
 /**
- * get credit balance
- * @param {string} options.public_key - A unique key for merchant public key.
+ * add merchant user
  */
 
 /**
@@ -87,7 +84,6 @@ buildfire.services.credits.addUser = function(options, cb){
 
 /**
  * consume credit
- * @param {string} options.public_key - A unique key for merchant public key.
  * @param {string} options.amount - credit amount to be consume from the logged in user
  */
 
