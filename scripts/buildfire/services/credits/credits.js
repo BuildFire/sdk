@@ -24,7 +24,7 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
  */
 buildfire.services.credits.addCredit = function(options, cb){
     var packetId = null;
-    var command = 'credits.add';
+    var command = 'credits.addCredit';
     debugger;
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
@@ -48,27 +48,6 @@ buildfire.services.credits.getBundles = function(options, cb){
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
-
-/**
- * get merchant bundles
- * @param {string} options.public_key - A unique key for merchant public key.
- * @param {string} options.apple_product_id - A unique key for apple product
- */
-
-/**
- * @callback cb
- * @param {Object} error
- * @param {Object} response
- */
-buildfire.services.credits.addBundles = function(options, cb){
-    var packetId = null;
-    var command = 'credits.addBundles';
-    debugger;
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
-};
-
-
 
 /**
  * get credit balance
@@ -119,7 +98,7 @@ buildfire.services.credits.addUser = function(options, cb){
  */
 buildfire.services.credits.consumeCredit = function(options, cb){
     var packetId = null;
-    var command = 'credits.consume';
+    var command = 'credits.consumeCredit';
     debugger;
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
