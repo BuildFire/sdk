@@ -8,7 +8,8 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credits = {};
 
 /**
- * add credit for user.
+ * purchase a bundle.
+ * @param {string} options.amount - An amount which the user paid through stripe
  * @param {string} options.provider - the payment provider "stripe"
  * @param {object} options.stripe - the stripe object which will contain the stripe token data
  * @param {object} options.stripe.source_token - the stripe source token which return back after the customer filled stripe popup
@@ -48,7 +49,7 @@ buildfire.services.credits.getBundles = function(options, cb){
 };
 
 /**
- * get credit balance
+ * get user details (ex. credit balance)
  */
 
 /**
@@ -56,26 +57,9 @@ buildfire.services.credits.getBundles = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.getBalance = function(options, cb){
+buildfire.services.credits.getCreditsUser = function(options, cb){
     var packetId = null;
-    var command = 'credits.getBalance';
-    debugger;
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
-};
-
-/**
- * add merchant user
- */
-
-/**
- * @callback cb
- * @param {Object} error
- * @param {Object} response
- */
-buildfire.services.credits.addUser = function(options, cb){
-    var packetId = null;
-    var command = 'credits.addUser';
+    var command = 'credits.getCreditsUser';
     debugger;
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
@@ -93,7 +77,7 @@ buildfire.services.credits.addUser = function(options, cb){
  */
 buildfire.services.credits.consumeCredit = function(options, cb){
     var packetId = null;
-    var command = 'credits.consumeCredit';
+    var command = 'credits.consumeCredits';
     debugger;
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
