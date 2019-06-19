@@ -325,10 +325,13 @@ nav.menu span.menu-close{
 	z-index:99;
 }
 nav.menu #sideMenuCloseButton{
-	padding-right: 0;
-	padding-left: 28px;
-	padding-top: 14px;
-	padding-bottom: 14px;
+	padding-right: 10px;
+	padding-left: 24px;
+	padding-top: 24px;
+	padding-bottom: 24px;
+	margin: -10px;
+	margin-left: 0px;
+	overflow: hidden;
 }
 nav.menu a.divider{
 	padding: 4px 16px;
@@ -1108,6 +1111,10 @@ nav.menu.layout7 a.notifications span.icon{
 	margin:70px auto 0;
 	max-width:677px;
 }
+.user-profile .multi-line{
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
 
 
 /* Edit User Profile */
@@ -1144,6 +1151,11 @@ nav.menu.layout7 a.notifications span.icon{
 	min-height:inherit;
 	font-size:14px;
 	background:none;
+}
+.user-profile.edit .custom-registration .form-control{
+	border-bottom:1px solid;
+	border-radius:0;
+	padding-bottom: 5px;
 }
 .user-profile.edit textarea.form-control{
 	min-height:40px;
@@ -1601,8 +1613,8 @@ html[buildfire] body.no-scroll .scrollable{
 }
 
 #inputDialog {
+	opacity: 0;
 	background-color: #fff;
-	display: none !important;
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -1610,18 +1622,19 @@ html[buildfire] body.no-scroll .scrollable{
 	z-index: 1050;
 	transform: translateY(100%);
 	-webkit-transform: translateY(100%);
-	transition-duration: 250ms;
-	-webkit-transition-duration: 250ms;
+	transition-duration: 500ms;
+	-webkit-transition-duration: 500ms;
 	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
   transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 #inputDialog.active {
+	opacity: 1;
 	display: flex !important;
 	transform: translateY(0%);
 	-webkit-transform: translateY(0%);
-	transition-duration: 200ms;
-	-webkit-transition-duration: 200ms;
+	transition-duration: 500ms;
+	-webkit-transition-duration: 500ms;
 	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
   transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 }
