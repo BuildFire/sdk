@@ -9,7 +9,6 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
 
 /**
  * add credit for user.
- * @param {string} options.amount - An amount which the user paid through stripe
  * @param {string} options.provider - the payment provider "stripe"
  * @param {object} options.stripe - the stripe object which will contain the stripe token data
  * @param {object} options.stripe.source_token - the stripe source token which return back after the customer filled stripe popup
@@ -21,9 +20,9 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.addCredit = function(options, cb){
+buildfire.services.credits.purchase = function(options, cb){
     var packetId = null;
-    var command = 'credits.addCredit';
+    var command = 'credits.purchaseCredits';
     debugger;
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
