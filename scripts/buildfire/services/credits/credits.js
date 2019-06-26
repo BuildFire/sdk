@@ -9,11 +9,11 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
 
 /**
  * purchase a bundle.
- * @param {string} options.amount - An amount which the user paid through stripe
- * @param {string} options.provider - the payment provider "stripe"
+ * @param {string} options.paymentProvider - the payment provider "stripe"
  * @param {object} options.stripe - the stripe object which will contain the stripe token data
  * @param {object} options.stripe.source_token - the stripe source token which return back after the customer filled stripe popup
  * @param {object} options.bundle_id - the bundle id which has been selected by the user
+ * @param {object} options.memo -
  */
 
 /**
@@ -21,10 +21,10 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.purchase = function(options, cb){
+buildfire.services.credits.purchaseBundle = function(options, cb){
     var packetId = null;
-    var command = 'credits.purchaseCredits';
-    debugger;
+    var command = 'credits.purchaseBundle';
+
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
