@@ -31,7 +31,7 @@ buildfire.services.credits.purchaseBundle = function(options, cb){
 
 
 /**
-* get merchant bundles
+* get bundles
 * @param {string} options.public_key - A unique key for merchant public key.
 */
 
@@ -43,13 +43,13 @@ buildfire.services.credits.purchaseBundle = function(options, cb){
 buildfire.services.credits.getBundles = function(options, cb){
     var packetId = null;
     var command = 'credits.getBundles';
-    debugger;
+
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
 
 /**
- * get user details (ex. credit balance)
+ * get user details
  */
 
 /**
@@ -57,10 +57,10 @@ buildfire.services.credits.getBundles = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.getCreditsUser = function(options, cb){
+buildfire.services.credits.getUser = function(options, cb){
     var packetId = null;
-    var command = 'credits.getCreditsUser';
-    debugger;
+    var command = 'credits.getUser';
+
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
@@ -77,8 +77,8 @@ buildfire.services.credits.getCreditsUser = function(options, cb){
  */
 buildfire.services.credits.consumeCredit = function(options, cb){
     var packetId = null;
-    var command = 'credits.consumeCredits';
-    debugger;
+    var command = 'credits.consumeCredit';
+
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
