@@ -82,3 +82,16 @@ buildfire.services.credits.consumeCredit = function(options, cb){
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.credits.getUserHistroy = function(options, cb){
+    var packetId = null;
+    var command = 'credits.getUserHistroy';
+    debugger;
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
