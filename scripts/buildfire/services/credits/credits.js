@@ -75,9 +75,27 @@ buildfire.services.credits.getUser = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.consumeCredit = function(options, cb){
+buildfire.services.credits.consumeCredits = function(options, cb){
     var packetId = null;
-    var command = 'credits.consumeCredit';
+    var command = 'credits.consumeCredits';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * consume credit
+ * @param {string} options.amount - credit amount to be consume from the logged in user
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.credits.transferCredits = function(options, cb){
+    var packetId = null;
+    var command = 'credits.transferCredits';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
@@ -88,10 +106,10 @@ buildfire.services.credits.consumeCredit = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.getUserHistroy = function(options, cb){
+buildfire.services.credits.getUserTransactions = function(options, cb){
     var packetId = null;
-    var command = 'credits.getUserHistroy';
-    debugger;
+    var command = 'credits.searchTransactions';
+
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
