@@ -8,12 +8,29 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credits = {};
 
 /**
+ * get bundles
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.credits.getBundles = function(options, cb){
+    var packetId = null;
+    var command = 'credits.getBundles';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
  * purchase a bundle.
- * @param {string} options.paymentProvider - the payment provider "stripe"
- * @param {object} options.stripe - the stripe object which will contain the stripe token data
- * @param {object} options.stripe.source_token - the stripe source token which return back after the customer filled stripe popup
- * @param {object} options.bundle_id - the bundle id which has been selected by the user
- * @param {object} options.memo -
+ * @param {string} options.bundle_id - the bundle id which has been selected by the user
+ * @param {string} options.memo
+ * @param {string} options.xRef1
+ * @param {string} options.xRef2
+ * @param {string} options.xRef3
  */
 
 /**
@@ -24,25 +41,6 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
 buildfire.services.credits.purchaseBundle = function(options, cb){
     var packetId = null;
     var command = 'credits.purchaseBundle';
-
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
-};
-
-
-/**
-* get bundles
-* @param {string} options.public_key - A unique key for merchant public key.
-*/
-
-/**
- * @callback cb
- * @param {Object} error
- * @param {Object} response
- */
-buildfire.services.credits.getBundles = function(options, cb){
-    var packetId = null;
-    var command = 'credits.getBundles';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
