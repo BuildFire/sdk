@@ -41,5 +41,9 @@
     window.appContext.currentPlugin.pluginPath = hash;
 
 
+    window.appContext.currentApp.apiKeys = {
+        creditsSystemPublicKey: "test-public",
+        stripePublicKey: "pk_test_Uc7I6bT2fxNiTp3bFqstkyFh00mbnGl0A5"
+    };
 
 })();
