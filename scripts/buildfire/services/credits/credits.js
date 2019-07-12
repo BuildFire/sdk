@@ -16,7 +16,7 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.getBundles = function(options, cb){
+buildfire.services.credits.getBundles = function (options, cb) {
     var packetId = null;
     var command = 'credits.getBundles';
 
@@ -38,7 +38,7 @@ buildfire.services.credits.getBundles = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.purchaseBundle = function(options, cb){
+buildfire.services.credits.purchaseBundle = function (options, cb) {
     var packetId = null;
     var command = 'credits.purchaseBundle';
 
@@ -55,7 +55,11 @@ buildfire.services.credits.purchaseBundle = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.getUser = function(options, cb){
+buildfire.services.credits.getUser = function (options, cb) {
+    if (typeof (options) == 'function') {
+        cb = options;
+        options = {};
+    }
     var packetId = null;
     var command = 'credits.getUser';
 
@@ -73,7 +77,7 @@ buildfire.services.credits.getUser = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.consumeCredits = function(options, cb){
+buildfire.services.credits.consumeCredits = function (options, cb) {
     var packetId = null;
     var command = 'credits.consumeCredits';
 
@@ -91,7 +95,7 @@ buildfire.services.credits.consumeCredits = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.transferCredits = function(options, cb){
+buildfire.services.credits.transferCredits = function (options, cb) {
     var packetId = null;
     var command = 'credits.transferCredits';
 
@@ -104,7 +108,7 @@ buildfire.services.credits.transferCredits = function(options, cb){
  * @param {Object} error
  * @param {Object} response
  */
-buildfire.services.credits.getUserTransactions = function(options, cb){
+buildfire.services.credits.getUserTransactions = function (options, cb) {
     var packetId = null;
     var command = 'credits.searchTransactions';
 
