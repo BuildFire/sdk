@@ -1856,6 +1856,8 @@ html[buildfire] body.no-scroll .scrollable{
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 .bf-carousel-item .callout {
+	font-size: 3.75vw;
+	line-height: 3.75vw;
 	font-weight: 800;
 	white-space: nowrap;
 	overflow: hidden;
@@ -1866,23 +1868,27 @@ html[buildfire] body.no-scroll .scrollable{
   flex-direction: column;
 }
 .bf-carousel-item .title {
-  font-size: 6.5vw;
+  font-size: 6.6vw;
+  line-height: 7vw;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
 }
 .bf-carousel-item .subtitle {
-  font-size: 4vw;
+  font-size: 3.25vw;
+  line-height: 4.5vw;
+  overflow: hidden;
 }
 .bf-carousel-item .description {
-  font-size: 3.5vw;
+  font-size: 3vw;
+  line-height: 3.25vw;
   word-break: break-word;
 }
 
 .bf-carousel-item .description-wrapper {
   height: 14vw;
+  line-height: 4vw;
   overflow: hidden;
-  line-height: 1em;
 }
 
 .js_frame {
