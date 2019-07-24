@@ -518,7 +518,7 @@ var buildfire = {
 
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
             if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
-                html.setAttribute('iOS', 'true');
+                html.setAttribute('safe-area', 'true');
             }
         }
         , getCSSFiles: function (callback) {
