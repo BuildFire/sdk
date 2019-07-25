@@ -43,6 +43,9 @@
             </a>
             <span class="align-right" ng-class="status" ng-cloak>{{sdkMessage}} &nbsp;<a target="_blank" ng-show="sdkWikiLink" href="{{sdkWikiLink}}">How to update</a></span>
             <div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
+            <div ng-controller="toastCtrl" ng-class="{'active' : showToast}" ng-cloak
+                 class="alert-{{style}} alert site-alert transition-half text-center ellipsis">{{text}}
+            </div>
         </div>
     </header>
     <nav>
@@ -90,6 +93,12 @@
                 <a href="#/settings" class="parent primary-color-hover transition-third">
                     <p class="text margin-zero ellipsis transition-third">Settings</p>
                     <span class="icon icon-cog transition-third"></span>
+                </a>
+            </li>
+            <li>
+                <a href="#/apiKeys" class="parent primary-color-hover transition-third">
+                    <p class="text margin-zero ellipsis transition-third">API Keys</p>
+                    <span class="icon icon-hammer-wrench transition-third"></span>
                 </a>
             </li>
             <li class="dark divider">
@@ -180,6 +189,7 @@
 <script type="text/javascript" src="pages/controllers/shellCtrl.js"></script>
 <script type="text/javascript" src="pages/controllers/indexCtrl.js"></script>
 <script type="text/javascript" src="pages/controllers/settingsCtrl.js"></script>
+<script type="text/javascript" src="pages/controllers/apiKeysCtrl.js"></script>
 <script type="text/javascript" src="pages/services/gdprService.js"></script>
 <script type="text/javascript" src="pages/controllers/loginCtrl.js"></script>
 
