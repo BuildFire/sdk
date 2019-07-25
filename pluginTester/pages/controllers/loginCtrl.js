@@ -22,8 +22,15 @@
 						}
 					})
 					.error(function (err) {
-						if (err && err.code == "NOTFOUND") {
-                            $scope.errors.serverError = "Invalid username or password";
+						if(err){
+							switch (err.code) {
+								case "authServiceUserExists":
+									$scope.errors.serverError = "Invalid account, make sure to use control panel account";
+									break;
+								case "NOTFOUND":
+									$scope.errors.serverError = "Invalid username or password";
+									break;
+							}
 						}
 					});
 			}
