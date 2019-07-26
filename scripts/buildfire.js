@@ -1845,7 +1845,7 @@ var buildfire = {
             var p = new Packet(null, 'auth.getUsersByEmail', options);
             buildfire._sendPacket(p, callback);
         },
-        getUserPictureUrl:function (params) {
+        getUserPictureUrl: function (params) {
             var key = null;
             var value = null;
             if (!params) {
@@ -1863,9 +1863,23 @@ var buildfire = {
                 key = 'username';
                 value = params.username;
             }
-            if(!key || !value)
+            if (!key || !value)
                 throw Error('Invalid user picture params');
-            return "https://auth.buildfire.com/src/server.js/user/picture?" + key + "=" + value;
+
+            value = encodeURIComponent(value);
+            var qString = key + "=" + value;
+
+            var authUrl = "https://auth.buildfire.com";
+            if (buildfire._context) {
+                if (buildfire._context.endPoints && buildfire._context.endPoints.authHost) {
+                    authUrl = buildfire._context.endPoints.authHost;
+                }
+                if (buildfire._context.appId) {
+                    qString = qString + '&externalAppId=' + encodeURIComponent(buildfire._context.appId);
+                }
+            }
+
+            return authUrl + "/src/server.js/user/picture?" + qString;
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
