@@ -1,0 +1,54 @@
+<div ng-controller="apiKeysCtrl">
+    <div class="header clearfix">
+        <h4 class="margin-zero">The following are API keys to be used in App and Features.</h4>
+    </div>
+    <div class="padded clearfix">
+        <div class="item clearfix row">
+            <div class="labels col-md-4 padding-right-zero pull-left">
+                <span>Google Api Key</span>
+            </div>
+            <div class="main pull-right col-md-8 padding-left-zero">
+                <input type="text" class="form-control" maxlength="50" placeholder="Google Api Key"
+                       ng-model="keys.googleApiKey">
+            </div>
+        </div>
+        <hr class="none">
+        <div class="item clearfix row">
+            <div class="labels col-md-4 padding-right-zero pull-left">
+                <span>Google Map Key</span>
+            </div>
+            <div class="main pull-right col-md-8 padding-left-zero">
+                <input type="text" class="form-control" maxlength="50" placeholder="Google Map Key"
+                       ng-model="keys.googleMapKey">
+            </div>
+        </div>
+        <hr class="none">
+        <div class="item clearfix row">
+            <div class="labels col-md-4 padding-right-zero pull-left">
+                <span>Stripe Public Key</span>
+            </div>
+            <div class="main pull-right col-md-8 padding-left-zero">
+                <input type="text" class="form-control" maxlength="50" placeholder="Stripe Public Key"
+                       ng-model="keys.stripePublicKey">
+            </div>
+        </div>
+        <hr class="none">
+        <div class="item clearfix row">
+            <div class="labels col-md-4 padding-right-zero pull-left">
+                <span>Credit System Public Key</span>
+            </div>
+            <div class="main pull-right col-md-8 padding-left-zero">
+                <input type="text" class="form-control" maxlength="50" placeholder="Credit System Public Key"
+                       ng-model="keys.creditsSystemPublicKey">
+            </div>
+        </div>
+    </div>
+    <div class="padded padding-top-zero clearfix">
+        <hr class="none">
+        <div class="item clearfix row">
+            <div class="pull-right col-md-3">
+                <a class="btn btn-primary stretch" ng-disabled="saving" ng-click="save()">Save</a>
+            </div>
+        </div>
+    </div>
+</div>
