@@ -18,6 +18,7 @@ $app.config(['$routeProvider', '$sceDelegateProvider','$sceProvider', function (
 		})
 		.when('/plugin/:pluginFolder', {templateUrl: 'pages/templates/shell.html'})
 		.when('/settings', {templateUrl: 'pages/templates/settings.html'})
+		.when('/apiKeys', {templateUrl: 'pages/templates/apiKeys.html'})
 		.when('/login', {templateUrl: 'pages/templates/login.html'})
 		.when('/logout', {
 			controller: function () {
@@ -45,3 +46,26 @@ $app.run(function () {
 		window.currentUser = JSON.parse(user);
 	}
 });
+
+var __tmrToastClearOut;
+$app.controller('toastCtrl', ['$scope', function ($scope) {
+
+	function clear() {
+		$scope.showToast = false;
+		if (!$scope.$$phase) $scope.$apply();
+		$scope.text = '';
+	}
+
+	window.toast = function (text, style) {
+		__tmrToastClearOut = setTimeout(clear, 5000);
+		if ($scope.text && $scope.text != text)
+			$scope.text += ' ' + text;
+		else
+			$scope.text = text;
+		if (!style) style = 'success';
+		$scope.style = style + ' active';
+
+		$scope.showToast = true;
+		if (!$scope.$$phase) $scope.$apply();
+	};
+}]);
