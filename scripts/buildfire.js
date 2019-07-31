@@ -281,21 +281,31 @@ var buildfire = {
             if(pluginData.pluginTypeId && !pluginData.pluginId)
                 pluginData.pluginId=pluginData.pluginTypeId;
 
-            if (pluginData.pluginId
-                && pluginData.instanceId
-                && pluginData.folderName) {
 
-                var p = new Packet(null, 'navigation.navigateTo', {
-                    pluginId: pluginData.pluginId,
-                    instanceId: pluginData.instanceId,
-                    title: pluginData.title,
-                    folderName: pluginData.folderName,
-                    queryString: pluginData.queryString
-                });
-                buildfire._sendPacket(p);
+            var p = new Packet(null, 'navigation.navigateTo', {
+                pluginId: pluginData.pluginId,
+                instanceId: pluginData.instanceId,
+                title: pluginData.title,
+                folderName: pluginData.folderName,
+                queryString: pluginData.queryString
+            });
+            buildfire._sendPacket(p);
+        }
+        , navigateToSocialWall: function (pluginData) {
+
+            if(!pluginData) {
+                pluginData = {};
             }
-            else
-                console.error('invalid navigation request ' ,pluginData);
+            pluginData.pluginId = '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d';
+
+            var p = new Packet(null, 'navigation.navigateTo', {
+                pluginId: pluginData.pluginId,
+                instanceId: pluginData.instanceId,
+                title: pluginData.title,
+                folderName: pluginData.folderName,
+                queryString: pluginData.queryString
+            });
+            buildfire._sendPacket(p);
         }
         , navigateHome: function () {
             var p = new Packet(null, 'navigation.navigateHome');
