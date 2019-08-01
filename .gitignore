@@ -35,3 +35,4 @@ plugins
 !/plugins/myPlugin/
 !/plugins/testPlugin/
 package-lock.json
+.DS_Store

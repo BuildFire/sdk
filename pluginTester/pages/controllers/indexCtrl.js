@@ -5,7 +5,7 @@
 $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
     //show navigation bar by default
     $scope.showNavigationBar = true;
-    
+
     var recentPlugins = localStorage.getItem('__recentPlugins');
     if (recentPlugins) {
         try {
@@ -39,8 +39,6 @@ $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
             lastCheckDate = new Date(cache.date),
             timeDiff = Math.abs(now.getTime() - lastCheckDate.getTime()),
             diffInHours = timeDiff / (1000 * 60 * 60);
-
-        console.log('Hours since last SDK check', diffInHours);
 
         if(diffInHours < 2){
             return;

@@ -45,6 +45,10 @@ var buildfire = {
         for (var i = 0; i < vars.length; i++) {
             var pair = vars[i].split('=');
             obj[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+            var index = vars[i].indexOf('=');
+            var key = vars[i].substring(0, index);
+            var value = vars[i].substring(index + 1);
+            obj[decodeURIComponent(key)] = decodeURIComponent(value);
         }
         return obj;
     }
@@ -149,7 +153,6 @@ var buildfire = {
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
-            console.log(' >>>> IGNORE MESSAGE <<<< ');
             return;
         }//e.origin != "null"
 
@@ -278,21 +281,31 @@ var buildfire = {
             if(pluginData.pluginTypeId && !pluginData.pluginId)
                 pluginData.pluginId=pluginData.pluginTypeId;
 
-            if (pluginData.pluginId
-                && pluginData.instanceId
-                && pluginData.folderName) {
 
-                var p = new Packet(null, 'navigation.navigateTo', {
-                    pluginId: pluginData.pluginId,
-                    instanceId: pluginData.instanceId,
-                    title: pluginData.title,
-                    folderName: pluginData.folderName,
-                    queryString: pluginData.queryString
-                });
-                buildfire._sendPacket(p);
+            var p = new Packet(null, 'navigation.navigateTo', {
+                pluginId: pluginData.pluginId,
+                instanceId: pluginData.instanceId,
+                title: pluginData.title,
+                folderName: pluginData.folderName,
+                queryString: pluginData.queryString
+            });
+            buildfire._sendPacket(p);
+        }
+        , navigateToSocialWall: function (pluginData) {
+
+            if(!pluginData) {
+                pluginData = {};
             }
-            else
-                console.error('invalid navigation request ' ,pluginData);
+            pluginData.pluginId = '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d';
+
+            var p = new Packet(null, 'navigation.navigateTo', {
+                pluginId: pluginData.pluginId,
+                instanceId: pluginData.instanceId,
+                title: pluginData.title,
+                folderName: pluginData.folderName,
+                queryString: pluginData.queryString
+            });
+            buildfire._sendPacket(p);
         }
         , navigateHome: function () {
             var p = new Packet(null, 'navigation.navigateHome');
@@ -373,9 +386,9 @@ var buildfire = {
             UNKNOWN : "UNKNOWN"
         };
         var fid= buildfire.fid;
-        if (fid == PLUGIN_STRING_ENUM.LAUNCHER_PLUGIN)
+        if (fid && fid.indexOf(PLUGIN_STRING_ENUM.LAUNCHER_PLUGIN) > -1)
             return PLUGIN_TYPE_ENUM.LAUNCHER_PLUGIN;
-        else if (fid == PLUGIN_STRING_ENUM.CONTROL_FRAME)
+        else if (fid && fid.indexOf(PLUGIN_STRING_ENUM.CONTROL_FRAME) > -1)
             return  PLUGIN_TYPE_ENUM.CONTROL_FRAME;
         else
             return PLUGIN_TYPE_ENUM.UNKNOWN;
@@ -588,7 +601,6 @@ var buildfire = {
                 script.src = path;
                 script.type="text/javascript";
                 script.onload=function(){
-                    console.info('fastclick.js loaded');
                     if(typeof(FastClick) == "undefined")
                         console.error('fastclick undefined');
                     else
@@ -1843,7 +1855,7 @@ var buildfire = {
             var p = new Packet(null, 'auth.getUsersByEmail', options);
             buildfire._sendPacket(p, callback);
         },
-        getUserPictureUrl:function (params) {
+        getUserPictureUrl: function (params) {
             var key = null;
             var value = null;
             if (!params) {
@@ -1861,9 +1873,23 @@ var buildfire = {
                 key = 'username';
                 value = params.username;
             }
-            if(!key || !value)
+            if (!key || !value)
                 throw Error('Invalid user picture params');
-            return "https://auth.buildfire.com/src/server.js/user/picture?" + key + "=" + value;
+
+            value = encodeURIComponent(value);
+            var qString = key + "=" + value;
+
+            var authUrl = "https://auth.buildfire.com";
+            if (buildfire._context) {
+                if (buildfire._context.endPoints && buildfire._context.endPoints.authHost) {
+                    authUrl = buildfire._context.endPoints.authHost;
+                }
+                if (buildfire._context.appId) {
+                    qString = qString + '&externalAppId=' + encodeURIComponent(buildfire._context.appId);
+                }
+            }
+
+            return authUrl + "/src/server.js/user/picture?" + qString;
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -1972,17 +1998,29 @@ var buildfire = {
 buildfire.init();
 
 buildfire.eventManager.add('deviceAppBackgrounded', function () {
-    var stopYoutubeVideos=function (iframes) {
-        for(var i = 0 ; i<iframes.length;i++)
-            if( iframes[i].src.indexOf("youtube.com")>-1){
-                if(iframes[i].src.indexOf("enablejsapi=1")==-1)
-                    iframes[i].src = iframes[i].src+"?enablejsapi=1";
-                var youtube_command = window.JSON.stringify( { event: 'command', func: 'pauseVideo' } );
-                iframes[i].contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );
+    var stopVideos=function (iframes, videos) {
+        if (iframes) {
+            for(var i = 0 ; i < iframes.length; i++) {
+                if( iframes[i].src.indexOf("youtube.com")>-1){
+                    if(iframes[i].src.indexOf("enablejsapi=1")==-1)
+                        iframes[i].src = iframes[i].src+"?enablejsapi=1";
+                    var youtube_command = window.JSON.stringify( { event: 'command', func: 'pauseVideo' } );
+                    iframes[i].contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );
+                } else if (iframes[i].src.indexOf("vimeo.com")>-1) {
+                    var vimeo_command = JSON.stringify( { method: "pause" } );
+                    iframes[i].contentWindow.postMessage( vimeo_command, '*' );
+                }
             }
+        }
+        if (videos) {
+            for (var j = 0; j < videos.length; j++) {
+                if (videos[j].pause) videos[j].pause();
+            }
+        }
     };
     var iframes=window.document.getElementsByTagName("iframe");
-    stopYoutubeVideos(iframes);
+    var videos = window.document.getElementsByTagName("video");
+    stopVideos(iframes, videos);
 
 }, true);
 

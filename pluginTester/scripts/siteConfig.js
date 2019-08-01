@@ -9,7 +9,8 @@ window.siteConfig = {
         socialHost : "https://social.buildfire.com",
         pushV2: "https://push2.buildfire.com",
         publicFilesHost : "https://datastore.buildfire.com",
-		searchEngineHost : 'https://public.buildfire.com/1.0'
+		searchEngineHost : 'https://public.buildfire.com/1.0',
+        creditSystemHost : 'https://public.buildfire.com/1.0'
 	}
 	, keys: {
 		datastoreKey: '123-ASD-TEST'

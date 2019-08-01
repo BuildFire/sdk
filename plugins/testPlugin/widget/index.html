@@ -9,6 +9,7 @@
 	
 	<!-- JS -->
 	<script src="../../../scripts/buildfire.min.js"></script>
+    <script src="../../../scripts/buildfire/services/credits/credits.js"></script>
    
  	<!--
     <script src="../../../scripts/angular/angular.min.js"></script>
@@ -17,6 +18,18 @@
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
     -->
 </head>
+<script>
+    var params = {
+        public_key : 'test-public'
+    };
+    buildfire.services.credits.getBundles(params,function(err,result){
+        if(err)
+            debugger;
+        else {
+            debugger;
+        }
+    });
+</script>
 <body>
 </body>
 </html>

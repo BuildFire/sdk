@@ -220,7 +220,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                     $scope.$apply();
 
                     if (config.webpack) {
-                        console.log('== LOADING WEBPACK PLUGIN ==');
                         $scope.loadWebpackFrames(config);
                     } else {
                         $scope.loadFrames(pluginFolder, config);
