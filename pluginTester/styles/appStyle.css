@@ -1184,13 +1184,15 @@ html[ios="true"][view="app"] #pluginNav h5{
 html[ios="true"][view="app"] #menu-location{
 	top:23px !important;
 }
-html[ios="true"][view="app"] iframe.pluginFrame{
+html[ios="true"][view="app"] iframe.pluginFrame,
+html[ios="true"][view="app"] #frmExternalRegistrationForm {
 	padding-top:64px !important;
 }
-html[ios="true"][view="app"] iframe.pluginFrame.noTitleBar{
+html[ios="true"][view="app"] iframe.pluginFrame.noTitleBar {
 	padding-top:0px !important;
 }
-html[ios="true"][view="app"] .login-holder .cancel-link{
+html[ios="true"][view="app"] .login-holder .cancel-link,
+html[ios="true"][view="app"] .login-holder .sso-back.input {
 	top:27px !important;
 }
 html[ios="true"][view="app"] nav.menu .menu-close-container{
@@ -1215,7 +1217,8 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .notification-plugin,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .app-search-plugin,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container {
+	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container,
+	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
 		padding-top: 88px !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
@@ -1242,7 +1245,7 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 		top: 127px !important;
 	}
 
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon{
+	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
 		top:54px !important;
 		padding-bottom:23px !important;
 	}
@@ -1263,7 +1266,8 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 		padding-bottom:18px !important;
 	}
 
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .login-holder .cancel-link{
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
+	html[ios="true"][view="app"] .login-holder .sso-back.input {
 		top: 50px !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu {
@@ -1588,6 +1592,11 @@ html[buildfire] body.no-scroll .scrollable{
 }
 
 #richModal .detail-modal button.dismiss-button.dismiss-large {
+	width: 100%;
+	border-right: none;
+}
+
+#richModal .detail-modal button.action-button.action-button-large {
 	width: 100%;
 	border-right: none;
 }
