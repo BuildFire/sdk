@@ -18,6 +18,8 @@ if (typeof (buildfire.services.stripe) == "undefined") buildfire.services.stripe
  * @param {string} [options.items[].currency = "usd"] - Three-letter ISO currency code, in lowercase. Must be a supported, for more details check [https://stripe.com/docs/currencies].
  * @param {integer} [options.items[].quantity = 1] - The quantity of the line item being purchased.
  * @param {string} [options.submitType] - Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. Supported values are "auto, book, donate, or pay".
+ * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
+ * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
  */
 
 /**
@@ -40,6 +42,8 @@ buildfire.services.stripe.charge = function (options, cb) {
  * @param {string} options.items[].planId - Plan ID for this item.
  * @param {integer} [options.items[].quantity = 1] - Quantity for this item.
  * @param {integer} [options.trialPeriodDays = 1] - The number of trial period days before the customer is charged for the first time. Has to be at least 1.
+ * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
+ * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
  */
 
 /**
@@ -62,6 +66,7 @@ buildfire.services.stripe.subscribe = function (options, cb) {
  * @param {string} options.items[].sku - The ID of the SKU that the customer would like to purchase.
  * @param {integer} [options.items[].quantity = 1] - The quantity of the line item being purchased.
  * @param {string} [options.submitType] - Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. Supported values are "auto, book, donate, or pay".
+ * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
  */
 
 /**
@@ -72,6 +77,45 @@ buildfire.services.stripe.subscribe = function (options, cb) {
 buildfire.services.stripe.purchase = function (options, cb) {
     var packetId = null;
     var command = 'stripe.purchase';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * get stripe subscription details.
+ * @param {Object} options.
+ * @param {string} options.subscriptionId - stripe subscription id.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.getSubscription = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.getSubscription';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * cancel stripe subscription.
+ * @param {Object} options.
+ * @param {string} options.subscriptionId - stripe subscription id.
+ * @param {string} options.customerId - stripe customer id.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.cancelSubscription = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.cancelSubscription';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
