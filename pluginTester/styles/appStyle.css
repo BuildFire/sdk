@@ -1596,6 +1596,11 @@ html[buildfire] body.no-scroll .scrollable{
 	border-right: none;
 }
 
+#richModal .detail-modal button.action-button.action-button-large {
+	width: 100%;
+	border-right: none;
+}
+
 #richModal,
 #richModal .detail-modal,
 #richModal, .detail-modal button {

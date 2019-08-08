@@ -10,7 +10,8 @@ window.siteConfig = {
         pushV2: "https://push2.buildfire.com",
         publicFilesHost : "https://datastore.buildfire.com",
 		searchEngineHost : 'https://public.buildfire.com/1.0',
-        creditSystemHost : 'https://public.buildfire.com/1.0'
+        creditSystemHost : 'https://public.buildfire.com/1.0',
+        stripeHost: 'https://public.buildfire.com/1.0'
 	}
 	, keys: {
 		datastoreKey: '123-ASD-TEST'
