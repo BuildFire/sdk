@@ -39,7 +39,7 @@
     <header class="navbar-fixed-top border-bottom-grey">
         <div class="contain">
             <a href="http://buildfire.com" class="logo text-center ng-scope">
-                <img src="http://cdn.pluginserver.buildfire.com/docResources/logo.jpg">
+                <img src="http://czi3m2qn.cloudimg.io/s/width/400/http://imageserver.prod.s3.amazonaws.com/1717/58fcb420-dbb1-11e7-8d52-1d1f162b9785.png">
             </a>
             <span class="align-right" ng-class="status" ng-cloak>{{sdkMessage}} &nbsp;<a target="_blank" ng-show="sdkWikiLink" href="{{sdkWikiLink}}">How to update</a></span>
             <div class="alert alert-danger site-alert trans ition-half text-center">Error Message.</div>
@@ -51,62 +51,62 @@
     <nav>
         <ul class="menu">
             <li>
-                <a href="http://github.com/buildfire/sdk/wiki" target="_blank" class="parent primary-color-hover transition-third">
+                <a href="http://github.com/buildfire/sdk/wiki" target="_blank" class="parent transition-third">
                     <p class="text margin-zero ellipsis transition-third">API Docs</p>
                     <span class="icon icon-bubble-question transition-third"></span>
                 </a>
             </li>
             <li>
-                <a href="#/" class="parent primary-color-hover transition-third">
+                <a href="#/" class="parent transition-third">
                     <p class="text margin-zero ellipsis transition-third">Tester</p>
                     <span class="icon icon-home transition-third"></span>
                 </a>
             </li>
             <li>
                 <a href="https://twitter.com/BuildfireJS" target="_blank"
-                   class="parent primary-color-hover transition-third" >
+                   class="parent transition-third" >
                     <p class="text margin-zero ellipsis transition-third">BuildFire News</p>
                     <span class="icon icon-bullhorn transition-third"></span>
                 </a>
             </li>
             <li>
                 <a ng-href="https://dev.buildfire.com" target="_blank"
-                   class="parent primary-color-hover transition-third">
+                   class="parent transition-third">
                     <p class="text margin-zero ellipsis transition-third">Submit Plugin</p>
                     <span class="icon icon-check-square transition-third"></span>
                 </a>
             </li>
             <li class="datatracer" >
-                <a href="{{dataTracer}}" ng-show="dataTracer" class="parent primary-color-hover transition-third" target="_blank">
+                <a href="{{dataTracer}}" ng-show="dataTracer" class="parent transition-third" target="_blank">
                     <p class="text margin-zero ellipsis transition-third">Data Tracer</p>
                     <span class="icon icon-cli transition-third"></span>
                 </a>
             </li>
             <li>
-                <a target="_blank" class="parent primary-color-hover transition-third"
+                <a target="_blank" class="parent transition-third"
                    href="https://app.buildfire.com">
                     <p class="text margin-zero ellipsis transition-third">Control Panel</p>
                     <span class="icon icon-window transition-third"></span>
                 </a>
             </li>
             <li>
-                <a href="#/settings" class="parent primary-color-hover transition-third">
+                <a href="#/settings" class="parent transition-third">
                     <p class="text margin-zero ellipsis transition-third">Settings</p>
                     <span class="icon icon-cog transition-third"></span>
                 </a>
             </li>
             <li>
-                <a href="#/apiKeys" class="parent primary-color-hover transition-third">
-                    <p class="text margin-zero ellipsis transition-third">API Keys</p>
+                <a href="#/apiKeys" class="parent transition-third">
+                    <p class="text margin-zero ellipsis transition-third current">API Keys</p>
                     <span class="icon icon-hammer-wrench transition-third"></span>
                 </a>
             </li>
-            <li class="dark divider">
+            <li class="divider">
                 Recent Plugins
             </li>
             <div >
-                <li class="dark" ng-repeat="p in recentPlugins" >
-                    <a ng-cloak href="#/plugin/{{p}}" class="parent primary-color-hover transition-third">
+                <li class="" ng-repeat="p in recentPlugins" >
+                    <a ng-cloak href="#/plugin/{{p}}" class="parent transition-third">
                         <p class="text margin-zero ellipsis transition-third">{{p}}</p>
                     </a>
                 </li>
@@ -118,38 +118,41 @@
         <div class="shell-sdk holder">
             <section id="pageContent" ng-class="{'largeWidth': hideEmulator}" class="pull-left slide wrapper border-radius-six border-grey" ng-view>
             </section>
-            <section id="emulator" class="pull-right" ng-controller="shellCtrl">
-                <div id="emulatorContainer" ng-hide="hideEmulator" class="border-grey">
-                    <span class="emulatorlabel">iOS / Android</span>
-
-                    <div id="app" class="overflow-hidden">
-						<div class="loading-screen" ng-show="showSpinner">
-							<div class="loading-bg">
-								<div class="loading-dots">
-									<div class="dot dot1"></div>
-									<div class="dot dot2"></div>
-								</div>
-							</div>
-						</div>
-                        <div id="pluginRefreshPanel" ng-show="showNavigationBar">
-                            <p class="text-center">Pull to Refresh</p>
+            <section id="emulator" class="emulator-color" ng-controller="shellCtrl">
+                <div id="emulatorContainer" ng-hide="hideEmulator">
+                    <div class="emulatorDevice">
+                        <div class="emulator-info-resize">
+                            <p>Resize to test on different resolutions!</p>
                         </div>
-                        <div id="pluginContentPanel">
-                            <div id="widgetTitle" ng-show="showNavigationBar" class="header text-center" style="min-height:45px; position:absolute; width:100%;">
-                                <a class="back-btn-icon icon icon-chevron-left pull-left" ng-click="back()"></a>
-                                <span ng-click="titleClick()">Title</span>
+                        <div id="app" class="overflow-hidden">
+                            <div class="loading-screen" ng-show="showSpinner">
+                                <div class="loading-bg">
+                                    <div class="loading-dots">
+                                        <div class="dot dot1"></div>
+                                        <div class="dot dot2"></div>
+                                    </div>
+                                </div>
                             </div>
-                            {{errorMessage}}
-                            <iframe id="widget" ng-src="{{widgetSrc}}" style="height:596px; width:346px;" ng-style="{'padding-top': showNavigationBar ? '49px' : '0px' }" class="border-grey pluginFrame" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
-                            <div id="login" ng-include="'https://app.buildfire.com/app/fragments/auth/auth.html'"></div>
+                            <div id="pluginRefreshPanel" ng-show="showNavigationBar">
+                                <p class="text-center">Pull to Refresh</p>
+                            </div>
+                            <div id="pluginContentPanel">
+                                <div id="widgetTitle" ng-show="showNavigationBar" class="emulator-header text-center" style="min-height:45px; position:absolute; width:100%;">
+                                    <a class="back-btn-icon icon icon-chevron-left" ng-click="back()"></a>
+                                    <!-- <span class="headerTitle" ng-click="titleClick()">Title</span> -->
+                                </div>
+                                {{errorMessage}}
+                                <iframe id="widget" ng-src="{{widgetSrc}}" style="height:100%; width:100%;"  ng-style="{'padding-top': showNavigationBar ? '49px' : '0px' }" class="pluginFrame" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
+                                <div id="login" ng-include="'https://app.buildfire.com/app/fragments/auth/auth.html'"></div>
+                            </div>
                         </div>
                     </div>
-                    <div >
-                        <div class="showTools-links text-center">
+                    <div class="showTools">
+                        <div class="showTools-links">
                             <a ng-show="!showTools" ng-click="showTools=true">Show Tools</a>
                             <a ng-show="showTools" ng-click="showTools=false">Hide Tools</a>
                         </div>
-                        <div class="showTools-content margin-top-ten clearfix" ng-show="showTools">
+                        <div class="showTools-content clearfix" ng-show="showTools">
                             <div class="labels col-md-3 pull-left padding-zero margin-top-five">
                                 <span>Deeplink Data</span>
                             </div>
