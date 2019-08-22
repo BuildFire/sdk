@@ -1374,6 +1374,12 @@ var buildfire = {
         // disablePixelRation: bool
         // }
         , resizeImage: function (url, options) {
+            // return unsupported file types
+            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
+                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
+                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+                return url;
+            }
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
@@ -1435,6 +1441,12 @@ var buildfire = {
         }
 
         , cropImage: function (url, options) {
+            // return unsupported file types
+            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
+                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
+                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+                return url;
+            }
 
             if (buildfire.imageLib.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
