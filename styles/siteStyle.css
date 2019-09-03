@@ -19,7 +19,7 @@
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	font-family: 'Conv_apercu_regular', 'Helvetica', 'Sans-Serif', 'Arial' !important;
+	
 }
 html{
     text-rendering:optimizeLegibility !important;
@@ -48,7 +48,6 @@ body{
 	/* min-width:1024px; */
 	/* max-width:1400px; */
 	top:0 !important;
-	
 }
 img,
 iframe,
@@ -160,6 +159,7 @@ nav{
 	background-color:#fff;
 	/* border-right:1px solid #26282b; */
 	/* border-right:1px solid #242a36; */
+	box-shadow: 0 0 8px rgba(0,0,0,.2);
 }
 nav ul.menu{
     padding-top:65px;
@@ -363,17 +363,22 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 .nav-tabs.nav-justified > li > a {
 	margin-bottom: 0 !important;
-  }
+}
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a.active,
 .nav-tabs > li > a.active:hover,
 .nav-tabs > li > a.active:focus {
   border-bottom: 4px solid #09a3ee !important;
 }
+.nav-tabs > li > a {
+    border-right: 1px solid #ddd !important;
+}
 .nav-tabs > li:first-child > a {
 	border-left: 0 !important;
-    border-right: 1px solid #ddd !important;
-    border-radius: 0 !important;
+	border-radius: 0 !important;
+}
+.nav-tabs > li:last-child > a {
+	border-right: 0 !important;
 }
 @media (max-width: 767px) {
 	.nav-tabs > li:first-child > a {
@@ -382,7 +387,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	}
 }
 .nav-tabs > li:last-child > a {
-	border-left: 1px solid #ddd !important;
+	/* border-left: 1px solid #ddd !important; */
     border-radius: 0 !important;
 }
 @media (max-width: 767px) {
@@ -1545,7 +1550,22 @@ p.info.no-icon:before{
 	padding: 24px 40px 0;
 	flex-shrink: 0;
 	position: relative;
+	opacity: 0;
 	/* left: calc(50vw); */
+	animation: fade-in .5s ease-out .5s forwards;
+}
+@keyframes fade-in {
+	0%{
+		opacity: 0;
+		transform: translateY(100%);
+	}
+	80%{
+		opacity: 0;
+	}
+	100%{
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 #emulator #pluginContentPanel{
 	height: 100%;
@@ -1581,7 +1601,7 @@ p.info.no-icon:before{
     border-radius: 12px 12px 0 12px;
 	box-shadow: 0 4px 32px rgba(0,0,0,.2);
 	pointer-events: none;
-	animation: fade-out .3s ease-out 3s forwards;
+	animation: fade-out .3s ease-out 3.5s forwards;
 }
 @keyframes fade-out{
 	0%{
