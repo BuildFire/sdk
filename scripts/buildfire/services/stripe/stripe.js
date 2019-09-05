@@ -41,7 +41,7 @@ buildfire.services.stripe.charge = function (options, cb) {
  * @param {Array.<Object>} options.items - a list of items.
  * @param {string} options.items[].planId - Plan ID for this item.
  * @param {integer} [options.items[].quantity = 1] - Quantity for this item.
- * @param {integer} [options.trialPeriodDays = 1] - The number of trial period days before the customer is charged for the first time. Has to be at least 1.
+ * @param {integer} [options.trialPeriodDays] - The number of trial period days before the customer is charged for the first time.
  * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
  * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
  */
@@ -116,6 +116,26 @@ buildfire.services.stripe.getSubscription = function (options, cb) {
 buildfire.services.stripe.cancelSubscription = function (options, cb) {
     var packetId = null;
     var command = 'stripe.cancelSubscription';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * add customer card.
+ * @param {Object} options.
+ * @param {string} options.customerId - stripe customer id.
+ * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.addCustomerCard = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.addCustomerCard';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
