@@ -100,6 +100,10 @@ a:focus{
 }
 
 /* Top Nav */
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+  z-index: 2000 !important;
+}
 header{
 	background:#fff;
 }
@@ -381,7 +385,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	border-right: 0 !important;
 }
 @media (max-width: 767px) {
-	.nav-tabs > li:first-child > a {
+	.nav-tabs > li > a {
 		border-left: 0 !important;
 		border-right: 0 !important;
 	}
