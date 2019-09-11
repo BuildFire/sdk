@@ -22,7 +22,7 @@ label{
 html,
 body{
 	font-family:Helvetica, Sans-Serif;
-	font-weight:100;
+	font-weight:400;
 	color:#5f5f5f;
 	margin:0px;
 	height:100%;
@@ -114,12 +114,6 @@ textarea{
 #pluginNav #btnBack{
 	padding:17px;
 	margin:-17px;
-}
-html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav {
-	padding-top:64px !important;
-}
-iframe#launcherPlugin.showNav{
-	padding-top:49px;
 }
 section.showNav.hideBack #btnBack{
 	display:none;
@@ -245,23 +239,23 @@ nav.menu{
 	height:100%;
 	z-index:99999999;
 	background:#fff;
-	opacity:0.95;
 	overflow-x:hidden;
 	overflow-y:hidden;
 	transition:all 0.15s ease;
+	pointer-events: none !important;
 }
 nav.menu.active{
-	opacity:0.95 !important;
 	-webkit-transform:translateX(-100%);
 	transform:translateX(-100%);
 }
+nav.menu * {
+	pointer-events: all;
+}
 
 nav.menuLeft{
-	opacity:0.95;
 	right:100% !important;
 }
 nav.menuLeft.active{
-	opacity:0.95;
 	-webkit-transform:translateX(100%) !important;
 	transform:translateX(100%) !important;
 }
@@ -288,6 +282,7 @@ nav.menu a.username p {
 }
 /* Menu Close Button */
 .menu-close-container{
+	pointer-events: none !important;
 	display: flex;
 	align-items: center;
 	padding-right: 24px;
@@ -298,6 +293,7 @@ nav.menu a.username p {
 	position: absolute;
 	left: 0;
 	right: 0;
+	z-index: 9999;
 }
 .menu-close-container.menu-close-container__down{
 	-webkit-box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.3);
@@ -305,17 +301,21 @@ nav.menu a.username p {
 	box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.3);
 }
 .menu-body-container {
+	top: 0;
 	overflow-x: hidden;
 	overflow-y: auto;
 	width: 100%;
 	height: 100%;
 	-webkit-overflow-scrolling: touch;
 	position: absolute;
-	top: 77px;
+	padding-top: 77px;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: auto;
+}
+.menu-body-container.no-search {
+	/* fallback */
+	padding-top: 30px;
 }
 nav.menu span.menu-close{
 	position:relative;
@@ -325,6 +325,7 @@ nav.menu span.menu-close{
 	z-index:99;
 }
 nav.menu #sideMenuCloseButton{
+	pointer-events: auto;
 	padding-right: 10px;
 	padding-left: 24px;
 	padding-top: 24px;
@@ -332,6 +333,14 @@ nav.menu #sideMenuCloseButton{
 	margin: -10px;
 	margin-left: 0px;
 	overflow: hidden;
+}
+nav.menu .menu-shadow {
+	width: 100vw;
+	height: 35px;
+	position: absolute;
+	top: 0px;
+	z-index: 500;
+	pointer-events: none !important;
 }
 nav.menu a.divider{
 	padding: 4px 16px;
@@ -1165,7 +1174,29 @@ nav.menu.layout7 a.notifications span.icon{
 	padding:6px 0;
 }
 
+iframe#launcherPlugin.showNav,
+iframe.pluginFrame,
+.app-settings-plugin,
+.notification-plugin,
+.app-search-plugin,
+.bookmarks-container,
+.page-container,
+.push-notifications,
+iframe#frmExternalRegistrationForm {
+	padding-top: 50px;
+}
 /* iOS Transparent Nav */
+html[ios="true"][view="app"] iframe#launcherPlugin.showNav,
+html[ios="true"][view="app"] iframe.pluginFrame,
+html[ios="true"][view="app"] .app-settings-plugin,
+html[ios="true"][view="app"] .notification-plugin,
+html[ios="true"][view="app"] .app-search-plugin,
+html[ios="true"][view="app"] .bookmarks-container,
+html[ios="true"][view="app"] .page-container,
+html[ios="true"][view="app"] .push-notifications,
+html[ios="true"][view="app"] #frmExternalRegistrationForm {
+	padding-top: 64px !important;
+}
 html[ios="true"][view="app"] #pluginNav{
 	padding-top:27px !important;
 	height:64px !important;
@@ -1184,10 +1215,6 @@ html[ios="true"][view="app"] #pluginNav h5{
 html[ios="true"][view="app"] #menu-location{
 	top:23px !important;
 }
-html[ios="true"][view="app"] iframe.pluginFrame,
-html[ios="true"][view="app"] #frmExternalRegistrationForm {
-	padding-top:64px !important;
-}
 html[ios="true"][view="app"] iframe.pluginFrame.noTitleBar {
 	padding-top:0px !important;
 }
@@ -1198,8 +1225,11 @@ html[ios="true"][view="app"] .login-holder .sso-back.input {
 html[ios="true"][view="app"] nav.menu .menu-close-container{
 	padding-top: 30px!important;
 }
-html[ios="true"][view="app"]  nav.menu .menu-body-container{
-	top: 87px !important;
+html[ios="true"][view="app"] nav.menu .menu-shadow {
+	height: calc(env(safe-area-inset-top) * 1.25) !important;
+	height: calc(constant(safe-area-inset-top) * 1.25) !important;
+	/* fallback */
+	height: 40px;
 }
 
 /* iPhone X, Xr, Xs and Xs Max*/
@@ -1218,6 +1248,7 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .app-search-plugin,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container,
+	[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications,
 	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
 		padding-top: 88px !important;
 	}
@@ -1238,11 +1269,17 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-close-container{
-		padding-top: 70px!important;
+		padding-top: env(safe-area-inset-top) !important;
+		padding-top: constant(safe-area-inset-top) !important;
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container{
-		top: 127px !important;
+		padding-top: 100px !important;
+	}
+
+	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container.no-search{
+		padding-top: env(safe-area-inset-top) !important;
+		padding-top: constant(safe-area-inset-top) !important;
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
@@ -1274,7 +1311,6 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 		padding-top:15px !important;
 	}
 
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications, 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .notificationHolder{
 		padding-top: 20px!important ;
 	}
@@ -1286,7 +1322,9 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 	} */
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame {
+	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .app-search-plugin .groups-tab,
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications {
 		padding-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
 		padding-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */
 	}
@@ -1957,11 +1995,7 @@ html[buildfire] body.no-scroll .scrollable{
 .loryPercentage li {  width: 100%;}
 
 /* Bookmarks */
-html[ios="true"][view="app"] .bookmarks-container {
-padding-top: 64px !important;
-}
 .bookmarks-container {
-	padding-top: 50px;
 	padding-bottom: 80px;
 	padding-bottom: calc(constant(safe-area-inset-bottom) + 80px); /* iOS 11.0 */
 	padding-bottom: calc(env(safe-area-inset-bottom) + 80px); /* iOS 11.2 */
@@ -2045,12 +2079,8 @@ padding-top: 64px !important;
 	padding-bottom: 120px;
 	padding-bottom: calc(constant(safe-area-inset-bottom) + 120px); /* iOS 11.0 */
 	padding-bottom: calc(env(safe-area-inset-bottom) + 120px); /* iOS 11.2 */
-	padding-top: 50px;
 	overflow-x: hidden;
 	overflow-y: auto;
-}
-html[ios="true"][view="app"] .page-container{
-	padding-top:64px !important;
 }
 .btn.btn-round{
 	font-size: 12px;
@@ -2087,6 +2117,7 @@ html[ios="true"][view="app"] .page-container{
 	opacity: 1;
 }
 .search-clear{
+	pointer-events: all;
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -2104,6 +2135,7 @@ html[ios="true"][view="app"] .page-container{
 	opacity: .7;
 }
 .search-container .search-bar{
+	pointer-events: all;
 	background-color: rgba(200,200,200,.2);
 	border: 0;
 	border-radius: 8px;
@@ -2123,12 +2155,16 @@ html[ios="true"][view="app"] .page-container{
 
 /* Search Page */
 .app-search-plugin {
-	padding: 50px 0;
 	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
-html[ios="true"][view="app"] .bookmarks-container {
-	padding-top: 64px !important;
+.app-search-plugin .scrollable {
+	-webkit-overflow-scrolling: touch;
+	overflow: scroll;
 }
+
 .holder {
 	height: 100%;
 }
@@ -2144,7 +2180,6 @@ html[ios="true"][view="app"] .bookmarks-container {
 }
 .app-search-plugin .titleBarBackgroundTheme{
 	padding: 12px 0 16px 0;
-	margin-bottom: 8px;
 }
 .app-search-plugin .search-container{
 	margin: 0 16px;
@@ -2311,9 +2346,6 @@ nav.menu a .media{
 	transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 /* Notes */
-html[ios="true"][view="app"] .page-container{
-	padding-top:64px !important;
-}
 .plugin-li,
 .notes-container .plugin-li-content,
 .notes-container .plugin-li-note{
