@@ -1935,3 +1935,31 @@ html.translated-ltr body{
 .form-group.has-error .validationMessage {
 	display: block;
 }
+
+/* Modal styles */
+.modal .modal-content .bottom, .section .bottom.border-top-grey {
+    height: auto !important;
+}
+.modal-dialog .header {
+    padding: 11px 15px !important;
+}
+.modal-dialog .header h4 {
+    font-size: 18px !important;
+	line-height: 27px !important;
+	font-weight: bold !important;
+}
+.modal-dialog .header span.close-modal {
+    font-size: 20px !important;
+}
+.modal .modal-content .padded {
+    padding: 30px 15px !important;
+}
+.modal .modal-content .bottom {
+	height: 66px !important;
+	padding: 13px !important;
+}
+.bottom div a.action, .modal .modal-content .bottom div a {
+    width: 100px !important;
+    padding: 8px !important;
+    margin-left: 10px !important;
+}
