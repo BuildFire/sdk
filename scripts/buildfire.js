@@ -1374,6 +1374,12 @@ var buildfire = {
         // disablePixelRation: bool
         // }
         , resizeImage: function (url, options) {
+            // return unsupported file types
+            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
+                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
+                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+                return url;
+            }
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
@@ -1413,70 +1419,85 @@ var buildfire = {
                     return url;
             }
             else{
-                root = (window.location.protocol == "https:"?"https:":"http:") + "//czi3m2qn.cloudimg.io/s/";
+                var protocol = window.location.protocol == "https:" ? "https:" : "http:";
+                var root = protocol + "//czi3m2qn.cloudimg.io/";
+                var compression = buildfire.imageLib.getCompression(options.compression);
 
-                if (options.width && !options.height)
-                    return root + "width/" + Math.floor(options.width * ratio) + "/" + url;
-                else if (!options.width && options.height)
-                    return root + "height/" + Math.floor(options.height * ratio) + "/" + url;
-                else if (options.width && options.height)
-                    return root + "resizenp/" + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
-                else
+                if (options.width && !options.height) {
+                    var size = Math.floor(options.width * ratio);
+                    return root + "width/" + size + "/" + compression + url;
+                }
+                else if (!options.width && options.height) {
+                    var size = Math.floor(options.height * ratio);
+                    return root + "height/" + size + "/" + compression + url;
+                }
+                else if (options.width && options.height) {
+                    var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio);
+                    return root + "bound/" + size + "/" + compression + url;
+                } else {
                     return url;
+                }
             }
         }
 
         , cropImage: function (url, options) {
+            // return unsupported file types
+            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
+                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
+                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+                return url;
+            }
 
-            if(buildfire.imageLib.isProdImageServer(url))
+            if (buildfire.imageLib.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
-
-
-            if(!options)options={};
-
-            if (typeof(options) != "object")
+            }
+            if (!options) {
+                options = {};
+            }
+            if (typeof (options) != "object") {
                 throw ("options not an object");
-
-            if (!options.width && !options.height)
-                options = {width: 'full', height: 'full'};
-
-            if (options.width == 'full') options.width = window.innerWidth;
-            if (options.height == 'full') options.height = window.innerHeight;
-
-            if(!options.width || !options.height){
+            }
+            if (!options.width && !options.height) {
+                options = { width: 'full', height: 'full' };
+            }
+            if (options.width == 'full') {
+                options.width = window.innerWidth;
+            }
+            if (options.height == 'full') {
+                options.height = window.innerHeight;
+            }
+            if (!options.width || !options.height) {
                 console.warn('cropImage doenst have width or height please fix. returning original url');
                 return url + '?h=' + options.height + '&w=' + options.width;
             }
 
-
-            var root;
             var ratio = window.devicePixelRatio;
-            if(options && options.disablePixelRatio)ratio = options.disablePixelRatio ;
-/*
-            if(buildfire.imageLib.isProdImageServer(url)){
-                url = url.replace(/^https:\/\//i, 'http://');
-                root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            }
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
-                root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
+            if (options && options.disablePixelRatio) {
+                ratio = options.disablePixelRatio;
             }
 
+            var protocol = window.location.protocol == "https:" ? "https:" : "http:";
+            var root = protocol + "//czi3m2qn.cloudimg.io/crop/";
 
-            if(false && root) {
-                return root + "?fit=crop"
-                    + (options.width? "&w=" + Math.floor(options.width * ratio):"")
-                    + (options.height ? "&h=" + Math.floor(options.height * ratio) : "") ;
+            var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
+            var compression = buildfire.imageLib.getCompression(options.compression);
+
+            return root + size + compression + url;
+        },
+        getCompression: function (c) {
+            var result = 'n/'
+            if (c) {
+                var isValid = typeof c === "number" && c >= 1 && c <= 100;
+                if (isValid) {
+                    var value = 'png-lossy-' + c + '.q' + c + '/';
+                    if (/png-lossy-\d{1,3}.q\d{1,3}\//g.test(value)) {
+                        result = value;
+                    }
+                } else {
+                    console.warn('Disabling compression, must be an integer between 1-100');
+                }
             }
-             else {
- */
-                root = (window.location.protocol == "https:"?"https:":"http:") + "//czi3m2qn.cloudimg.io/s/crop/";
-
-                root =  root + Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/" + url;
-
-                //root = "http://czi3m2qn.cloudimg.io/width/"+ Math.floor(options.width * ratio) + "/tjpg.q40/" + root;
-                return root;
- //           }
-
+            return result;
         }
         ,local: {
             _parser: document.createElement('a')
