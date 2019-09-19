@@ -41,6 +41,7 @@ $app.config(['$routeProvider', '$sceDelegateProvider','$sceProvider', function (
 }]);
 
 $app.run(function () {
+	window._appRoot = '';
 	var user = localStorage.getItem("user");
 	if (user) {
 		window.currentUser = JSON.parse(user);
