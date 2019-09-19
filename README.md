@@ -29,7 +29,7 @@ Plugins consists of three major components:
   * Settings
 * the Widget
 * **The Resources** 
-  * **Note** :This folder is only meant for plugin configuration resource like default widget icon and widget hero image.** You can replace those two files if you need by overriding the default hero image and default icon image. **Don't add any other files in this folder, any dependencies in this folder WILL NOT be carried over to the app.**
+  * **Note** :This folder is only meant for plugin configuration resource like default widget icon, widget hero image and media files.** You can replace those two files if you need by overriding the default hero image and default icon image and **you can add extra images to showcase you plugin in the control panel market place and attract new users by filling the images paths and types in the `media` property in  `plugin.json`**.
 
 
 #### the Config (plugin.json)
@@ -55,7 +55,7 @@ The Resources is the default images which will be used for your widget .
 
 * icon.png : this image file will be used as a default icon for your widget which will appear as an icon for the widget on the emulator and the actual device .
 
-* **Note** :This folder is only meant for plugin configuration resource like default widget icon and widget hero image.** You can replace those two files if you need by overriding the default hero image and default icon image. **Don't add any other files in this folder, any dependencies in this folder WILL NOT be carried over to the app.**
+* **Note** :This folder is only meant for plugin configuration resource like default widget icon, widget hero image and media files.** You can replace those two files if you need by overriding the default hero image and default icon image and **you can add extra images to showcase you plugin in the control panel market place and attract new users by filling the images paths and types in the `media` property in  `plugin.json`**.
 
 [Video Tutorial Here](https://www.youtube.com/watch?v=4qh4S-BwLJM&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=2)
 
