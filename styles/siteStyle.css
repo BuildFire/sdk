@@ -351,6 +351,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 /* Main Content */
 .nav-tabs {
 	border: 1px solid #ddd !important;
+	flex-shrink: 0;
 }
 .nav-tabs > li > a,
 .nav-tabs.nav-justified > li > a {
@@ -1797,6 +1798,18 @@ html[buildfire] body{
 html[buildfire='control'] body{
 	height:100%;
 }
+
+.sdk-main-container {
+	display: flex;
+	flex-direction: column;
+	flex: auto;
+	height: 100%;
+} 
+.sdk-main-container .secondary-container {
+	display: flex;
+	flex-direction: column;
+	flex: auto;
+}  
 
 /* Plugin Control Header */
 #pluginControlHeader .screens .screen{
