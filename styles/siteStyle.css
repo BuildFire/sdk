@@ -100,10 +100,10 @@ a:focus{
 }
 
 /* Top Nav */
-.navbar-fixed-top,
+/* .navbar-fixed-top,
 .navbar-fixed-bottom {
   z-index: 2000 !important;
-}
+} */
 header{
 	background:#fff;
 }
