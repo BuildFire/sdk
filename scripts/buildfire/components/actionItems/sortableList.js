@@ -39,7 +39,7 @@ buildfire.components.actionItems.sortableList.prototype = {
     },
     // This will be triggered when you add a new item, item index will be items.length
     onAddItems: function (items) {
-        console.warn("please handle onAddItems", item);
+        console.warn("please handle onAddItems", items);
     },
     // This will be triggered when you delete an item
     onDeleteItem: function (item, index) {
