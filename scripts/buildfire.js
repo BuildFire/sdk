@@ -150,6 +150,7 @@ var buildfire = {
         , "services.publicFiles._triggerOnProgress"
         , "services.publicFiles._triggerOnComplete"
         , "notes.triggerOnSeekTo"
+        , "navigation.triggerOnPluginOpened"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -370,6 +371,12 @@ var buildfire = {
         }
         , triggerOnAppLauncherInactive: function (data) {
             return buildfire.eventManager.trigger('appLauncherInactive', data);
+        }
+        , onPluginOpened: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('pluginOpened', callback, allowMultipleHandlers);
+        }
+        , triggerOnPluginOpened: function (data) {
+            return buildfire.eventManager.trigger('pluginOpened', data);
         }
     },
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
