@@ -1329,14 +1329,6 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 		padding-top: 25px; this is causing launcher plugin with BG images to appear they are cut from the top
 	} */
 
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .app-search-plugin .groups-tab,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications {
-		padding-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */
-		padding-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */
-	}
-
 	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent{
 		padding-bottom: constant(safe-area-inset-bottom) !important; /* iOS 11.0 */
 		padding-bottom: env(safe-area-inset-bottom) !important; /* iOS 11.2 */
