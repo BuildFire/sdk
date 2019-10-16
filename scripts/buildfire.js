@@ -1364,6 +1364,146 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
     }
+    , appData: {
+        get: function (tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var obj = {tag: tag};
+            var p = new Packet(null, 'appData.get', obj);
+            buildfire._sendPacket(p, callback);
+        },
+        getById: function (id, tag, callback) {
+
+            var idType = typeof (id);
+            if (idType == "function" && typeof (callback) == "undefined") {
+                callback = id;
+                id = '';
+            }
+
+            if (!this._isTagValid(tag, callback)) return;
+
+            var obj = {tag: tag, id: id};
+            var p = new Packet(null, 'appData.get', obj);
+            buildfire._sendPacket(p, callback);
+        }
+        , save: function (obj, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.save', {tag: tag, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , insert: function (obj, tag, checkDuplicate, callback) {
+
+            var checkDuplicateType = typeof (checkDuplicate);
+            if (checkDuplicateType == "undefined")
+                checkDuplicate = false;
+            else if (checkDuplicateType == "function" && typeof (callback) == "undefined") {
+                callback = checkDuplicate;
+                checkDuplicate = false;
+            }
+
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                callback(err, result);
+            });
+        }
+        , bulkInsert: function (arrayObj, tag, callback) {
+            if (arrayObj.constructor !== Array) {
+                callback({"code": "error", "message": "the data should be an array"}, null);
+                return;
+            }
+
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.bulkInsert', {tag: tag, obj: arrayObj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                callback(err, result);
+            });
+        }
+        , update: function (id, obj, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.update', {tag: tag, id: id, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , searchAndUpdate: function (search, obj, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.searchAndUpdate', {tag: tag, search: search, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , delete: function (id, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.delete', {tag: tag, id: id});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , search: function (options, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            //auto correct empty string filter
+            if (typeof (options) == "undefined") options = {filter: {}};
+            if (!options.filter) options.filter = {};
+
+            var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
+        , onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appDataOnUpdate', callback, allowMultipleHandlers);
+        }
+        , triggerOnUpdate: function (obj) {
+            buildfire.eventManager.trigger('appDataOnUpdate', obj);
+        }
+        , onRefresh: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appDataOnRefresh', callback, allowMultipleHandlers);
+        }
+        , triggerOnRefresh: function (obj) {
+            buildfire.eventManager.trigger('appDataOnRefresh', obj);
+        }
+        , disableRefresh: function () {
+            var p = new Packet(null, "appData.disableRefresh");
+            buildfire._sendPacket(p);
+        }
+        , _isTagValid: function (tag, callback) {
+            var isTagValid = false;
+
+            if (typeof tag === 'string' && tag) {
+                isTagValid = true;
+            }
+
+            if (isTagValid) return isTagValid;
+
+            if (typeof tag === 'function') {
+                callback = tag;
+            }
+
+            if (typeof callback !== 'function') {
+                callback = console.warn;
+            }
+            
+            callback({ "code": "error", "message": "tag is required for appData, and must be a string" }, null);
+
+            return isTagValid;
+        }
+    }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
     , imageLib: {
         /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib#buildfireimagelibshowdialogoptions-callback
