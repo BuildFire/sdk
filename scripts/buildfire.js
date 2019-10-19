@@ -133,6 +133,7 @@ var buildfire = {
         , "publicData.triggerOnUpdate"
         , "publicData.triggerOnRefresh"
         , "messaging.onReceivedMessage"
+        , "messaging.triggerOnReceivedMessageFromWidget"
         , "history.triggerOnPop"
         , "navigation.onBackButtonClick"
         , "services.media.audioPlayer.triggerOnEvent"
@@ -1785,6 +1786,16 @@ var buildfire = {
         }
         , onReceivedMessage: function (message) {
             console.info('onReceivedMessage ignored', window.location);
+        }
+        , sendMessageToServices: function (data) {
+            var p = new Packet(null, 'messaging.sendMessageToServices', data);
+            buildfire._sendPacket(p);
+        }
+        , onServiceReceivedMessageFromWidget: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('ServiceReceivedMessageFromWidget', callback, allowMultipleHandlers);
+        }
+        , triggerOnReceivedMessageFromWidget: function (data) {
+            return buildfire.eventManager.trigger('ServiceReceivedMessageFromWidget', data);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Instances
