@@ -20,6 +20,11 @@ buildfire.services.credits.getBundles = function (options, cb) {
     var packetId = null;
     var command = 'credits.getBundles';
 
+    if (typeof (options) == "function") {
+        cb = options;
+        options = {};
+    }
+
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
@@ -111,6 +116,19 @@ buildfire.services.credits.transferCredits = function (options, cb) {
 buildfire.services.credits.getUserTransactions = function (options, cb) {
     var packetId = null;
     var command = 'credits.searchTransactions';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.credits.showTransactions = function (options, cb) {
+    var packetId = null;
+    var command = 'credits.showTransactions';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);

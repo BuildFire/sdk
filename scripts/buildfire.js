@@ -535,20 +535,17 @@ var buildfire = {
             html.setAttribute('majorVersion', majorVersion);
             html.setAttribute('fullVersion', fullVersion);
 
-            /**
-             * Enable this for safe-area deployment
-             */
-            // var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            // if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
-            //     var p = new Packet(null, 'appearance.getFooterMenu');
-            //     buildfire._sendPacket(p, function (err, footerMenu) {
-            //         if (err) {
-            //             console.error(err);
-            //         } else if (footerMenu && footerMenu.settings && !footerMenu.settings.turnOnFooterMenu) {
-            //             html.setAttribute('safe-area', 'true');
-            //         }
-            //     });
-            // }
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
+                var p = new Packet(null, 'appearance.getFooterMenu');
+                buildfire._sendPacket(p, function (err, footerMenu) {
+                    if (err) {
+                        console.error(err);
+                    } else if (footerMenu && footerMenu.settings && !footerMenu.settings.turnOnFooterMenu) {
+                        html.setAttribute('safe-area', 'true');
+                    }
+                });
+            }
         }
         , getCSSFiles: function (callback) {
             var p = new Packet(null, 'appearance.getCSSFiles');
