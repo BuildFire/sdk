@@ -126,12 +126,15 @@ var buildfire = {
             buildfire.appearance.attachCSSFiles();
 
     }
-    , _whitelistedCommands: ["datastore.triggerOnUpdate"
+    , _whitelistedCommands: [
+        "datastore.triggerOnUpdate"
         , "datastore.triggerOnRefresh"
         , "userData.triggerOnUpdate"
         , "userData.triggerOnRefresh"
         , "publicData.triggerOnUpdate"
         , "publicData.triggerOnRefresh"
+        , "appData.triggerOnUpdate"
+        , "appData.triggerOnRefresh"
         , "messaging.onReceivedMessage"
         , "history.triggerOnPop"
         , "navigation.onBackButtonClick"
