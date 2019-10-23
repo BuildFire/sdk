@@ -294,7 +294,7 @@ var buildfire = {
         }
         , navigateToSocialWall: function (pluginData, callback) {
             var pluginIds = {
-                'social2.0': 'SOCIAL_WALL_2_KEY',
+                'social2.0': '697f1612-8208-4870-93f9-555c65103578',
                 'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
             };
             if (!callback) {
