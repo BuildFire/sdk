@@ -94,6 +94,11 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	    console.warn("supress navigation in shell");
 	    alert("supress navigation in shell");
 	};
+
+	postMaster.controlPluginAPI.auth.openProfile = postMaster.widgetPluginAPI.auth.openProfile = function () {
+		console.warn("supress openProfile in shell");
+		alert("supress openProfile in shell");
+};
 	/**************************************************/
 
 	/*
