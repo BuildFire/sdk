@@ -100,10 +100,10 @@ a:focus{
 }
 
 /* Top Nav */
-.navbar-fixed-top,
+/* .navbar-fixed-top,
 .navbar-fixed-bottom {
   z-index: 2000 !important;
-}
+} */
 header{
 	background:#fff;
 }
@@ -351,6 +351,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 /* Main Content */
 .nav-tabs {
 	border: 1px solid #ddd !important;
+	flex-shrink: 0;
 }
 .nav-tabs > li > a,
 .nav-tabs.nav-justified > li > a {
@@ -1798,6 +1799,18 @@ html[buildfire='control'] body{
 	height:100%;
 }
 
+.sdk-main-container {
+	display: flex;
+	flex-direction: column;
+	flex: auto;
+	height: 100%;
+} 
+.sdk-main-container .secondary-container {
+	display: flex;
+	flex-direction: column;
+	flex: auto;
+}  
+
 /* Plugin Control Header */
 #pluginControlHeader .screens .screen{
 	width:50px;
@@ -1934,4 +1947,32 @@ html.translated-ltr body{
 
 .form-group.has-error .validationMessage {
 	display: block;
+}
+
+/* Modal styles */
+.modal .modal-content .bottom, .section .bottom.border-top-grey {
+    height: auto !important;
+}
+.modal-dialog .header {
+    padding: 11px 15px !important;
+}
+.modal-dialog .header h4 {
+    font-size: 18px !important;
+	line-height: 27px !important;
+	font-weight: bold !important;
+}
+.modal-dialog .header span.close-modal {
+    font-size: 20px !important;
+}
+.modal .modal-content .padded {
+    padding: 30px 15px !important;
+}
+.modal .modal-content .bottom {
+	height: 66px !important;
+	padding: 13px !important;
+}
+.bottom div a.action, .modal .modal-content .bottom div a {
+    width: 100px !important;
+    padding: 8px !important;
+    margin-left: 10px !important;
 }
