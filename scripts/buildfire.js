@@ -295,21 +295,36 @@ var buildfire = {
             });
             buildfire._sendPacket(p);
         }
-        , navigateToSocialWall: function (pluginData) {
-
-            if(!pluginData) {
+        , navigateToSocialWall: function (pluginData, callback) {
+            var pluginIds = {
+                'social2.0': '697f1612-8208-4870-93f9-555c65103578',
+                'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
+            };
+            if (!callback) {
+                callback = console.warn;
+            }
+            if (!pluginData) {
                 pluginData = {};
             }
-            pluginData.pluginId = '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d';
 
-            var p = new Packet(null, 'navigation.navigateTo', {
-                pluginId: pluginData.pluginId,
-                instanceId: pluginData.instanceId,
-                title: pluginData.title,
-                folderName: pluginData.folderName,
-                queryString: pluginData.queryString
+            navigate(pluginData, pluginIds['social2.0'], function (error) {
+                if (!error) return callback(null, {status: 'completed'});
+
+                navigate(pluginData, pluginIds['social'], callback);
             });
-            buildfire._sendPacket(p);
+            
+            function navigate(data, pluginId, cb) {
+                data.pluginId = pluginId;
+
+                var p = new Packet(null, 'navigation.navigateTo', {
+                    pluginId: data.pluginId,
+                    instanceId: data.instanceId,
+                    title: data.title,
+                    folderName: data.folderName,
+                    queryString: data.queryString
+                });
+                buildfire._sendPacket(p, cb);
+            }
         }
         , navigateHome: function () {
             var p = new Packet(null, 'navigation.navigateHome');
