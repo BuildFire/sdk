@@ -1535,7 +1535,8 @@ var buildfire = {
         // height: integer or 'full'
         // disablePixelRation: bool
         // }
-        , resizeImage: function (url, options) {
+        , resizeImage: function (url, options, element, callback) {
+            if (!url) return null;
             // return unsupported file types
             if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
                 var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
@@ -1584,25 +1585,32 @@ var buildfire = {
                 var protocol = window.location.protocol == "https:" ? "https:" : "http:";
                 var root = protocol + "//czi3m2qn.cloudimg.io/";
                 var compression = buildfire.imageLib.getCompression(options.compression);
+                var result = '';
 
                 if (options.width && !options.height) {
                     var size = Math.floor(options.width * ratio);
-                    return root + "width/" + size + "/" + compression + url;
+                    result = root + "width/" + size + "/" + compression + url;
                 }
                 else if (!options.width && options.height) {
                     var size = Math.floor(options.height * ratio);
-                    return root + "height/" + size + "/" + compression + url;
+                    result = root + "height/" + size + "/" + compression + url;
                 }
                 else if (options.width && options.height) {
                     var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio);
-                    return root + "bound/" + size + "/" + compression + url;
+                    result = root + "bound/" + size + "/" + compression + url;
                 } else {
-                    return url;
+                    result = url;
                 }
+
+                this._handleElement(element, result, callback);
+
+                return result;
             }
+
         }
 
-        , cropImage: function (url, options) {
+        , cropImage: function (url, options, element, callback) {
+            if (!url) return null;
             // return unsupported file types
             if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
                 var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
@@ -1644,7 +1652,88 @@ var buildfire = {
             var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
             var compression = buildfire.imageLib.getCompression(options.compression);
 
-            return root + size + compression + url;
+            var result = root + size + compression + url;
+
+            this._handleElement(element, result, callback);
+
+            return result;
+        },
+        _handleElement: function (element, src, callback) {
+            if (!element || !src) return;
+
+            var path = this._getLocalPath(src);
+            
+            if (element.tagName === 'IMG') {
+                element.style.setProperty('opacity', '0', 'important');
+                element.src = path;
+
+                element.onload = function () {
+                    element.style.removeProperty('opacity');
+                    if (callback) callback(path);
+                }
+
+                element.onerror = function () {
+                    var p = new Packet(null, 'imageCache.download', src);
+                    buildfire._sendPacket(p, function (error, localPath) {
+                        element.src = localPath;
+                    });
+                }
+            } else {
+                this._handleBgImage(element, path, src, callback);
+            }
+        },
+        _handleBgImage: function (element, path, src, callback) {
+            applyStyle(element, path);
+
+            var img = new Image();
+            img.src = path;
+
+            img.onload = function () {
+                if (callback) callback(path);
+            }
+
+            img.onerror = function () {
+                applyStyle(element);
+                var p = new Packet(null, 'imageCache.download', src);
+                buildfire._sendPacket(p, function (error, localPath) {
+                    if (error) {
+                        applyStyle(element, src);
+                        if (callback) callback(src);
+                    }
+                    window.requestAnimationFrame(function () {
+                        applyStyle(element, localPath);
+                        if (callback) callback(localPath);
+                    });
+                });
+            }
+
+            function applyStyle(ele, source) {
+                if (!source) {
+                    return ele.style.removeProperty('background-image');
+                }
+                var backgroundCss = 'url("' + source + '")';
+                ele.style.setProperty('background-image', backgroundCss, 'important');
+            }
+        },
+        _getLocalPath: function (string) {
+            if (buildfire.isWeb()) {
+                return string;
+            }
+
+            string = string.replace(/(http|https):\/\/\S{0,8}.cloudimg.io\//g, '');
+            var extension = string.match(/(png|jpg|jpeg)/g)[0] || '';
+            extension = extension ? '.' + extension : '';
+
+            var hash = 0;
+            if (!string.length) return hash;
+
+            for (var i = 0; i < string.length; i++) {
+                var char = string.charCodeAt(i);
+                hash = (hash << 5) - hash + char;
+                hash |= 0; // Convert to 32bit integer
+            }
+
+            return 'cdvfile://localhost/persistent/imageCache/images/' + hash + extension;
         },
         getCompression: function (c) {
             var result = 'n/'
