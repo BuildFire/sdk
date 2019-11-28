@@ -449,6 +449,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 #main-content .emulator-header {
 	background-color: #eef0f0;
 	display: flex;
+	justify-content: space-between;
 	align-items: center;
     color: #616368;
     font-size: 15px;
@@ -459,6 +460,10 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 .headerTitle{
 	justify-self: center;
+}
+.emulator-header .test-device{
+	padding: 16px;
+	color: #26282b;
 }
 #main-content .emulator-header .back-btn-icon {
 	color: #616368;
