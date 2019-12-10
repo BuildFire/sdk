@@ -68,7 +68,17 @@ postMaster.servicePluginAPIs.service.tag = 'service';
     postMaster.widgetPluginAPI.publicData.onUpdate = function (updateObj) {
         var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
         postMaster.controlPluginAPI.sendMessage(null, packet);
-    };
+		};
+	
+		postMaster.controlPluginAPI.appData.onUpdate = function (updateObj) {
+			var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
+			postMaster.widgetPluginAPI.sendMessage(null, packet);
+	};
+
+	postMaster.widgetPluginAPI.appData.onUpdate = function (updateObj) {
+			var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
+			postMaster.controlPluginAPI.sendMessage(null, packet);
+	};
 
 	PluginAPI.prototype.messaging.triggerOnNewWidgetMessage = function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
@@ -84,6 +94,11 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	    console.warn("supress navigation in shell");
 	    alert("supress navigation in shell");
 	};
+
+	postMaster.controlPluginAPI.auth.openProfile = postMaster.widgetPluginAPI.auth.openProfile = function () {
+		console.warn("supress openProfile in shell");
+		alert("supress openProfile in shell");
+};
 	/**************************************************/
 
 	/*

@@ -126,12 +126,15 @@ var buildfire = {
             buildfire.appearance.attachCSSFiles();
 
     }
-    , _whitelistedCommands: ["datastore.triggerOnUpdate"
+    , _whitelistedCommands: [
+        "datastore.triggerOnUpdate"
         , "datastore.triggerOnRefresh"
         , "userData.triggerOnUpdate"
         , "userData.triggerOnRefresh"
         , "publicData.triggerOnUpdate"
         , "publicData.triggerOnRefresh"
+        , "appData.triggerOnUpdate"
+        , "appData.triggerOnRefresh"
         , "messaging.onReceivedMessage"
         , "history.triggerOnPop"
         , "navigation.onBackButtonClick"
@@ -292,21 +295,36 @@ var buildfire = {
             });
             buildfire._sendPacket(p);
         }
-        , navigateToSocialWall: function (pluginData) {
-
-            if(!pluginData) {
+        , navigateToSocialWall: function (pluginData, callback) {
+            var pluginIds = {
+                'social2.0': '697f1612-8208-4870-93f9-555c65103578',
+                'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
+            };
+            if (!callback) {
+                callback = console.warn;
+            }
+            if (!pluginData) {
                 pluginData = {};
             }
-            pluginData.pluginId = '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d';
 
-            var p = new Packet(null, 'navigation.navigateTo', {
-                pluginId: pluginData.pluginId,
-                instanceId: pluginData.instanceId,
-                title: pluginData.title,
-                folderName: pluginData.folderName,
-                queryString: pluginData.queryString
+            navigate(pluginData, pluginIds['social2.0'], function (error) {
+                if (!error) return callback(null, {status: 'completed'});
+
+                navigate(pluginData, pluginIds['social'], callback);
             });
-            buildfire._sendPacket(p);
+            
+            function navigate(data, pluginId, cb) {
+                data.pluginId = pluginId;
+
+                var p = new Packet(null, 'navigation.navigateTo', {
+                    pluginId: data.pluginId,
+                    instanceId: data.instanceId,
+                    title: data.title,
+                    folderName: data.folderName,
+                    queryString: data.queryString
+                });
+                buildfire._sendPacket(p, cb);
+            }
         }
         , navigateHome: function () {
             var p = new Packet(null, 'navigation.navigateHome');
@@ -1361,6 +1379,146 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
     }
+    , appData: {
+        get: function (tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var obj = {tag: tag};
+            var p = new Packet(null, 'appData.get', obj);
+            buildfire._sendPacket(p, callback);
+        },
+        getById: function (id, tag, callback) {
+
+            var idType = typeof (id);
+            if (idType == "function" && typeof (callback) == "undefined") {
+                callback = id;
+                id = '';
+            }
+
+            if (!this._isTagValid(tag, callback)) return;
+
+            var obj = {tag: tag, id: id};
+            var p = new Packet(null, 'appData.get', obj);
+            buildfire._sendPacket(p, callback);
+        }
+        , save: function (obj, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.save', {tag: tag, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , insert: function (obj, tag, checkDuplicate, callback) {
+
+            var checkDuplicateType = typeof (checkDuplicate);
+            if (checkDuplicateType == "undefined")
+                checkDuplicate = false;
+            else if (checkDuplicateType == "function" && typeof (callback) == "undefined") {
+                callback = checkDuplicate;
+                checkDuplicate = false;
+            }
+
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                callback(err, result);
+            });
+        }
+        , bulkInsert: function (arrayObj, tag, callback) {
+            if (arrayObj.constructor !== Array) {
+                callback({"code": "error", "message": "the data should be an array"}, null);
+                return;
+            }
+
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.bulkInsert', {tag: tag, obj: arrayObj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                callback(err, result);
+            });
+        }
+        , update: function (id, obj, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.update', {tag: tag, id: id, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , searchAndUpdate: function (search, obj, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.searchAndUpdate', {tag: tag, search: search, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , delete: function (id, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            var p = new Packet(null, 'appData.delete', {tag: tag, id: id});
+            buildfire._sendPacket(p, function (err, result) {
+                if (result)buildfire.appData.triggerOnUpdate(result);
+                if (callback) callback(err, result);
+            });
+        }
+        , search: function (options, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            //auto correct empty string filter
+            if (typeof (options) == "undefined") options = {filter: {}};
+            if (!options.filter) options.filter = {};
+
+            var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
+        , onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appDataOnUpdate', callback, allowMultipleHandlers);
+        }
+        , triggerOnUpdate: function (obj) {
+            buildfire.eventManager.trigger('appDataOnUpdate', obj);
+        }
+        , onRefresh: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appDataOnRefresh', callback, allowMultipleHandlers);
+        }
+        , triggerOnRefresh: function (obj) {
+            buildfire.eventManager.trigger('appDataOnRefresh', obj);
+        }
+        , disableRefresh: function () {
+            var p = new Packet(null, "appData.disableRefresh");
+            buildfire._sendPacket(p);
+        }
+        , _isTagValid: function (tag, callback) {
+            var isTagValid = false;
+
+            if (typeof tag === 'string' && tag) {
+                isTagValid = true;
+            }
+
+            if (isTagValid) return isTagValid;
+
+            if (typeof tag === 'function') {
+                callback = tag;
+            }
+
+            if (typeof callback !== 'function') {
+                callback = console.warn;
+            }
+            
+            callback({ "code": "error", "message": "tag is required for appData, and must be a string" }, null);
+
+            return isTagValid;
+        }
+    }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
     , imageLib: {
         /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib#buildfireimagelibshowdialogoptions-callback
@@ -1377,7 +1535,8 @@ var buildfire = {
         // height: integer or 'full'
         // disablePixelRation: bool
         // }
-        , resizeImage: function (url, options) {
+        , resizeImage: function (url, options, element, callback) {
+            if (!url) return null;
             // return unsupported file types
             if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
                 var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
@@ -1426,25 +1585,32 @@ var buildfire = {
                 var protocol = window.location.protocol == "https:" ? "https:" : "http:";
                 var root = protocol + "//czi3m2qn.cloudimg.io/";
                 var compression = buildfire.imageLib.getCompression(options.compression);
+                var result = '';
 
                 if (options.width && !options.height) {
                     var size = Math.floor(options.width * ratio);
-                    return root + "width/" + size + "/" + compression + url;
+                    result = root + "width/" + size + "/" + compression + url;
                 }
                 else if (!options.width && options.height) {
                     var size = Math.floor(options.height * ratio);
-                    return root + "height/" + size + "/" + compression + url;
+                    result = root + "height/" + size + "/" + compression + url;
                 }
                 else if (options.width && options.height) {
                     var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio);
-                    return root + "bound/" + size + "/" + compression + url;
+                    result = root + "bound/" + size + "/" + compression + url;
                 } else {
-                    return url;
+                    result = url;
                 }
+
+                this._handleElement(element, result, callback);
+
+                return result;
             }
+
         }
 
-        , cropImage: function (url, options) {
+        , cropImage: function (url, options, element, callback) {
+            if (!url) return null;
             // return unsupported file types
             if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
                 var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
@@ -1486,7 +1652,88 @@ var buildfire = {
             var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
             var compression = buildfire.imageLib.getCompression(options.compression);
 
-            return root + size + compression + url;
+            var result = root + size + compression + url;
+
+            this._handleElement(element, result, callback);
+
+            return result;
+        },
+        _handleElement: function (element, src, callback) {
+            if (!element || !src) return;
+
+            var path = this._getLocalPath(src);
+            
+            if (element.tagName === 'IMG') {
+                element.style.setProperty('opacity', '0', 'important');
+                element.src = path;
+
+                element.onload = function () {
+                    element.style.removeProperty('opacity');
+                    if (callback) callback(path);
+                }
+
+                element.onerror = function () {
+                    var p = new Packet(null, 'imageCache.download', src);
+                    buildfire._sendPacket(p, function (error, localPath) {
+                        element.src = localPath;
+                    });
+                }
+            } else {
+                this._handleBgImage(element, path, src, callback);
+            }
+        },
+        _handleBgImage: function (element, path, src, callback) {
+            applyStyle(element, path);
+
+            var img = new Image();
+            img.src = path;
+
+            img.onload = function () {
+                if (callback) callback(path);
+            }
+
+            img.onerror = function () {
+                applyStyle(element);
+                var p = new Packet(null, 'imageCache.download', src);
+                buildfire._sendPacket(p, function (error, localPath) {
+                    if (error) {
+                        applyStyle(element, src);
+                        if (callback) callback(src);
+                    }
+                    window.requestAnimationFrame(function () {
+                        applyStyle(element, localPath);
+                        if (callback) callback(localPath);
+                    });
+                });
+            }
+
+            function applyStyle(ele, source) {
+                if (!source) {
+                    return ele.style.removeProperty('background-image');
+                }
+                var backgroundCss = 'url("' + source + '")';
+                ele.style.setProperty('background-image', backgroundCss, 'important');
+            }
+        },
+        _getLocalPath: function (string) {
+            if (buildfire.isWeb()) {
+                return string;
+            }
+
+            string = string.replace(/(http|https):\/\/\S{0,8}.cloudimg.io\//g, '');
+            var extension = string.match(/(png|jpg|jpeg)/g)[0] || '';
+            extension = extension ? '.' + extension : '';
+
+            var hash = 0;
+            if (!string.length) return hash;
+
+            for (var i = 0; i < string.length; i++) {
+                var char = string.charCodeAt(i);
+                hash = (hash << 5) - hash + char;
+                hash |= 0; // Convert to 32bit integer
+            }
+
+            return 'cdvfile://localhost/persistent/imageCache/images/' + hash + extension;
         },
         getCompression: function (c) {
             var result = 'n/'
@@ -1785,6 +2032,10 @@ var buildfire = {
         }
         , onReceivedMessage: function (message) {
             console.info('onReceivedMessage ignored', window.location);
+        }
+        , sendMessageToService: function (data) {
+            var p = new Packet(null, 'messaging.sendMessageToService', data);
+            buildfire._sendPacket(p);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Instances
