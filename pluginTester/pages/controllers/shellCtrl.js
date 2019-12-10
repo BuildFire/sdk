@@ -219,10 +219,12 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                     $scope.pluginConfig = config;
                     $scope.$apply();
 
-                    if (config.webpack) {
-                        $scope.loadWebpackFrames(config);
-                    } else {
-                        $scope.loadFrames(pluginFolder, config);
+                    if ($scope.isWidgetShell) {
+                        if (config.webpack) {
+                            $scope.loadWebpackFrames(config);
+                        } else {
+                            $scope.loadFrames(pluginFolder, config);
+                        }
                     }
 
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
