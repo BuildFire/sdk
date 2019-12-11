@@ -44,7 +44,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
             $scope.widgetSrc = root + '/widget/index.html?fid=widget';
 
-            if (config.widget && config.widget.service) {
+            if ($scope.isWidgetShell && config.widget && config.widget.service) {
                 serviceFrame = document.createElement('iframe');
                 serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
                 serviceFrame.id='service';
@@ -93,7 +93,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             var root =  '../plugins/';
             $scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget';
 
-            if (config.widget && config.widget.service) {
+            if ($scope.isWidgetShell && config.widget && config.widget.service) {
                 serviceFrame = document.createElement('iframe');
                 serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
                 serviceFrame.id='service';
@@ -219,12 +219,10 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                     $scope.pluginConfig = config;
                     $scope.$apply();
 
-                    if ($scope.isWidgetShell) {
-                        if (config.webpack) {
-                            $scope.loadWebpackFrames(config);
-                        } else {
-                            $scope.loadFrames(pluginFolder, config);
-                        }
+                    if (config.webpack) {
+                        $scope.loadWebpackFrames(config);
+                    } else {
+                        $scope.loadFrames(pluginFolder, config);
                     }
 
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
