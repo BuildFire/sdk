@@ -1042,6 +1042,10 @@ var buildfire = {
                 tag = '';
             }
 
+            if (!obj || !obj._buildfire || !obj._buildfire.index || !Object.keys(obj._buildfire.index)) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
+
             var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.userData.triggerOnUpdate(result);
@@ -1163,6 +1167,10 @@ var buildfire = {
             if (typeof (options) == "undefined") options = { filter: {} };
             if (!options.filter) options.filter = {};
 
+            if (!options.filter._buildfire || !options.filter._buildfire.index || !Object.keys(options.filter._buildfire.index)) {
+                console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
+
             var p = new Packet(null, 'userData.search', { tag: tag, obj: options });
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
@@ -1260,6 +1268,10 @@ var buildfire = {
                 tag = '';
             }
 
+            if (!obj || !obj._buildfire || !obj._buildfire.index || !Object.keys(obj._buildfire.index)) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
+
             var p = new Packet(null, 'publicData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.publicData.triggerOnUpdate(result);
@@ -1354,6 +1366,10 @@ var buildfire = {
             if (typeof (options) == "undefined") options = {filter: {}};
             if (!options.filter) options.filter = {};
 
+            if (!options.filter._buildfire || !options.filter._buildfire.index || !Object.keys(options.filter._buildfire.index)) {
+                console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
+
             var p = new Packet(null, 'publicData.search', {tag: tag, obj: options});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
@@ -1422,6 +1438,10 @@ var buildfire = {
 
             if (!this._isTagValid(tag, callback)) return;
 
+            if (!obj || !obj._buildfire || !obj._buildfire.index || !Object.keys(obj._buildfire.index)) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
+
             var p = new Packet(null, 'appData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.appData.triggerOnUpdate(result);
@@ -1475,6 +1495,10 @@ var buildfire = {
             //auto correct empty string filter
             if (typeof (options) == "undefined") options = {filter: {}};
             if (!options.filter) options.filter = {};
+
+            if (!options.filter._buildfire || !options.filter._buildfire.index || !Object.keys(options.filter._buildfire.index)) {
+                console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
 
             var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
             buildfire._sendPacket(p, function (err, result) {
