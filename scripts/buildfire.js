@@ -1562,9 +1562,9 @@ var buildfire = {
         , resizeImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
-                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+            if (!/.(png|jpg|jpeg)(?!.)/g.test(url)) {
+                var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
+                console.warn(filetype + ' files are not supported by imagelib. Returning original URL: ' + url);
                 return url;
             }
 
@@ -1636,9 +1636,9 @@ var buildfire = {
         , cropImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
-                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+            if (!/.(png|jpg|jpeg)(?!.)/g.test(url)) {
+                var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
+                console.warn(filetype + ' files are not supported by imagelib. Returning original URL: ' + url);
                 return url;
             }
 
