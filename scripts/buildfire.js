@@ -1042,15 +1042,30 @@ var buildfire = {
                 tag = '';
             }
 
-            if (!obj || !obj._buildfire || !obj._buildfire.index || !Object.keys(obj._buildfire.index)) {
-                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
-            }
-
             var p = new Packet(null, 'userData.insert', { tag: tag, userToken: userToken, obj: obj, checkDuplicate: checkDuplicate });
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.userData.triggerOnUpdate(result);
                 callback(err, result);
             });
+
+            var hasIndex = false;
+
+            if (obj && obj._buildfire && obj._buildfire.index && Object.keys(obj._buildfire.index)) {
+                var filterKeys = Object.keys(obj._buildfire.index);
+                var validKeys = ['string1', 'date1', 'number1', 'array1', 'text'];
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((validKeys.indexOf(key) > -1) && obj._buildfire.index[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+            }
+                
+            if (!hasIndex) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
         }
         /// ref:
         , bulkInsert: function (arrayObj, tag, userToken, callback) {
@@ -1121,12 +1136,29 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-
+debugger
             var p = new Packet(null, 'userData.searchAndUpdate', { tag: tag, userToken: userToken, search: search, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
+
+            if (!search.$text || !search.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(search);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+                }
+            }
         }
         /// ref
         , delete: function (id, tag, userToken, callback) {
@@ -1167,14 +1199,27 @@ var buildfire = {
             if (typeof (options) == "undefined") options = { filter: {} };
             if (!options.filter) options.filter = {};
 
-            if (!options.filter._buildfire || !options.filter._buildfire.index || !Object.keys(options.filter._buildfire.index)) {
-                console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
-            }
-
             var p = new Packet(null, 'userData.search', { tag: tag, obj: options });
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
+
+            if (!options.filter.$text || !options.filter.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(options.filter);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+                }
+            }
         }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
@@ -1268,15 +1313,30 @@ var buildfire = {
                 tag = '';
             }
 
-            if (!obj || !obj._buildfire || !obj._buildfire.index || !Object.keys(obj._buildfire.index)) {
-                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
-            }
-
             var p = new Packet(null, 'publicData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.publicData.triggerOnUpdate(result);
                 callback(err, result);
             });
+
+            var hasIndex = false;
+
+            if (obj && obj._buildfire && obj._buildfire.index && Object.keys(obj._buildfire.index)) {
+                var filterKeys = Object.keys(obj._buildfire.index);
+                var validKeys = ['string1', 'date1', 'number1', 'array1', 'text'];
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((validKeys.indexOf(key) > -1) && obj._buildfire.index[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+            }
+                
+            if (!hasIndex) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
         }
         /// ref:
         , bulkInsert: function (arrayObj, tag, callback) {
@@ -1333,6 +1393,23 @@ var buildfire = {
                 if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
+
+            if (!search.$text || !search.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(search);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+                }
+            }
         }
         /// ref
         , delete: function (id, tag, callback) {
@@ -1366,14 +1443,30 @@ var buildfire = {
             if (typeof (options) == "undefined") options = {filter: {}};
             if (!options.filter) options.filter = {};
 
-            if (!options.filter._buildfire || !options.filter._buildfire.index || !Object.keys(options.filter._buildfire.index)) {
-                console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
-            }
-
+            
+            
             var p = new Packet(null, 'publicData.search', {tag: tag, obj: options});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
+
+            if (!options.filter.$text || !options.filter.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(options.filter);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
+                        // if (key.includes('_buildfire.index') && options.filter[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+                }
+            }
         }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
@@ -1438,15 +1531,30 @@ var buildfire = {
 
             if (!this._isTagValid(tag, callback)) return;
 
-            if (!obj || !obj._buildfire || !obj._buildfire.index || !Object.keys(obj._buildfire.index)) {
-                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
-            }
-
             var p = new Packet(null, 'appData.insert', {tag: tag, obj: obj, checkDuplicate: checkDuplicate});
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.appData.triggerOnUpdate(result);
                 callback(err, result);
             });
+
+            var hasIndex = false;
+
+            if (obj && obj._buildfire && obj._buildfire.index && Object.keys(obj._buildfire.index)) {
+                var filterKeys = Object.keys(obj._buildfire.index);
+                var validKeys = ['string1', 'date1', 'number1', 'array1', 'text'];
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((validKeys.indexOf(key) > -1) && obj._buildfire.index[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+            }
+                
+            if (!hasIndex) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
         }
         , bulkInsert: function (arrayObj, tag, callback) {
             if (arrayObj.constructor !== Array) {
@@ -1479,6 +1587,23 @@ var buildfire = {
                 if (result)buildfire.appData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
+
+            if (!search.$text || !search.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(search);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+                }
+            }
         }
         , delete: function (id, tag, callback) {
             if (!this._isTagValid(tag, callback)) return;
@@ -1496,8 +1621,21 @@ var buildfire = {
             if (typeof (options) == "undefined") options = {filter: {}};
             if (!options.filter) options.filter = {};
 
-            if (!options.filter._buildfire || !options.filter._buildfire.index || !Object.keys(options.filter._buildfire.index)) {
-                console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            if (!options.filter.$text || !options.filter.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(options.filter);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+                }
             }
 
             var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
