@@ -1136,7 +1136,7 @@ var buildfire = {
                 callback = tag;
                 tag = '';
             }
-debugger
+
             var p = new Packet(null, 'userData.searchAndUpdate', { tag: tag, userToken: userToken, search: search, obj: obj });
             buildfire._sendPacket(p, function (err, result) {
                 if (result)buildfire.userData.triggerOnUpdate(result);
