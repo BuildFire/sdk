@@ -1673,9 +1673,10 @@ var buildfire = {
                 }
 
                 element.onerror = function () {
+                    element.src = src;
                     var p = new Packet(null, 'imageCache.download', src);
-                    buildfire._sendPacket(p, function (error, localPath) {
-                        element.src = localPath;
+                    buildfire._sendPacket(p, function () {
+                        if (callback) callback(path);
                     });
                 }
             } else {
@@ -1693,15 +1694,13 @@ var buildfire = {
             }
 
             img.onerror = function () {
-                applyStyle(element);
+                applyStyle(element, src);
                 var p = new Packet(null, 'imageCache.download', src);
                 buildfire._sendPacket(p, function (error, localPath) {
                     if (error) {
-                        applyStyle(element, src);
                         if (callback) callback(src);
                     }
                     window.requestAnimationFrame(function () {
-                        applyStyle(element, localPath);
                         if (callback) callback(localPath);
                     });
                 });
