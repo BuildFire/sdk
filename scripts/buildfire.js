@@ -1530,8 +1530,11 @@ var buildfire = {
                     m: 200,
                     l: 304,
                     xl: 416,
-                    xxl: 1080,
-                    get full() {
+                    xxl: 600,
+                    '720': 720,
+                    '1080': 1080,
+                    '1440': 1440,
+                    get full() { //rename
                         return this.findNearest(1);
                     },
                     get half() {
@@ -1543,10 +1546,16 @@ var buildfire = {
                     get quarter() {
                         return this.findNearest(4);
                     },
-                    findNearest(ratio) {
+                    get fifth() {
+                        return this.findNearest(5);
+                    },
+                    get sixth() {
+                        return this.findNearest(6);
+                    },
+                    findNearest: function (ratio) {
                         var match = null;
                         for (var i = 0; i < this.VALID_SIZES.length; i++) {
-                            const size = this.VALID_SIZES[i];
+                            var size = this.VALID_SIZES[i];
 
                             if ((window.innerWidth / ratio) < this[size]) {
                                 match = size;
@@ -1555,14 +1564,15 @@ var buildfire = {
                         }
                         return this[match];
                     },
-                    VALID_SIZES: ['xs', 's', 'm', 'l', 'xl', 'xxl', 'full', 'half', 'third', 'quarter']
+                    VALID_SIZES: ['xs', 's', 'm', 'l', 'xl', 'xxl', '720', '1080', '1440', 'full', 'half', 'third', 'quarter', 'fifth', 'sixth']
                 },
                 ASPECT_RATIOS: {
                     '1:1': 1,
                     '4:3': 0.75,
                     '16:9': 0.5625,
                     '9:16': 1.77777778,
-                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16']
+                    '2.39:1': 0.41841004,
+                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '2.39:1']
                 }
             }
         },
@@ -1573,7 +1583,7 @@ var buildfire = {
         }
         ,isProdImageServer: function(url){
             return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
-            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+                || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
         }
         //options:{
         // width: integer or 'full'
@@ -1591,10 +1601,10 @@ var buildfire = {
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
-			// Don't pass any value under 1
-			if(ratio < 1){
-				var ratio = 1;
-			}
+            // Don't pass any value under 1
+            if(ratio < 1){
+                var ratio = 1;
+            }
 
             if (!options)
                 options = {width: window.innerWidth};
@@ -1635,19 +1645,19 @@ var buildfire = {
                 if (options.size && options.aspect) {
                     if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
                         var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
-                        console.warn('Inavlid size. Availible options are ' + sizes  + '. Returning original url');
+                        console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
                         return url;
                     }
                     if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
                         var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
-                        console.warn('Inavlid aspect ratio. Availible options are ' + ratios  + '. Returning original url');
+                        console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
                         return url;
                     }
-
+                    //math.round
                     options.width = this.ENUMS.SIZES[options.size];
                     options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
                 }
-
+                // check for missing size or aspect
                 if (options.width && !options.height) {
                     var size = Math.floor(options.width * ratio);
                     result = root + "width/" + size + "/" + compression + url;
@@ -1691,12 +1701,12 @@ var buildfire = {
             if (options.size && options.aspect) {
                 if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
                     var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
-                    console.warn('Inavlid size. Availible options are ' + sizes  + '. Returning original url');
+                    console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
                     return url;
                 }
                 if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
                     var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
-                    console.warn('Inavlid aspect ratio. Availible options are ' + ratios  + '. Returning original url');
+                    console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
                     return url;
                 }
 
@@ -1738,7 +1748,7 @@ var buildfire = {
             if (!element || !src) return;
 
             var path = this._getLocalPath(src);
-            
+
             if (element.tagName === 'IMG') {
                 element.style.setProperty('opacity', '0', 'important');
                 element.src = path;
