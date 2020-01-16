@@ -122,8 +122,7 @@ var buildfire = {
 
         buildfire.appearance.insertHTMLAttributes();
 
-        if(!buildfire.options.disableTheme)
-            buildfire.appearance.attachCSSFiles();
+        buildfire.appearance.attachCSSFiles();
 
     }
     , _whitelistedCommands: [
@@ -570,39 +569,67 @@ var buildfire = {
             var files = [], base = '';
 
             var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
+            var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
+            var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
 
-            if(!disableBootstrap){
-                files.push('styles/bootstrap.css');
-            }
+            if (!disableTheme && !enableMDTheme) {
+                if(!disableTheme && !disableBootstrap){
+                    files.push('styles/bootstrap.css');
+                }
 
-            if (window.location.pathname.indexOf('/control/') >= 0) {
-                files.push('styles/siteStyle.css') &&
-                files.push('styles/pluginScreen.css');
-            }
-            else{
-                var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
+                if (window.location.pathname.indexOf('/control/') >= 0) {
+                    files.push('styles/siteStyle.css') &&
+                    files.push('styles/pluginScreen.css');
+                }
+                else{
+                    var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
 
-                if(!disableAppStyles){
-                    files.push('styles/appStyle.css');
+                    if(!disableAppStyles){
+                        files.push('styles/appStyle.css');
+                    }
+                }
+
+                // TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
+                var scripts = document.getElementsByTagName("script");
+
+                for (var i = 0; i < scripts.length; i++) {
+                    var src = scripts[i].src;
+
+                    if (src.indexOf('buildfire.js') > 0) {
+                        base = src.replace('/scripts/buildfire.js', '');
+                        break;
+                    } else if (src.indexOf('buildfire.min.js') > 0) {
+                        base = src.replace('/scripts/buildfire.min.js', '');
+                        break;
+                    }
+                    else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
+                        base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
+                        break;
+                    }
                 }
             }
 
-            var scripts = document.getElementsByTagName("script");
-
-            for (var i = 0; i < scripts.length; i++) {
-                var src = scripts[i].src;
-
-                if (src.indexOf('buildfire.js') > 0) {
-                    base = src.replace('/scripts/buildfire.js', '');
-                    break;
-                } else if (src.indexOf('buildfire.min.js') > 0) {
-                    base = src.replace('/scripts/buildfire.min.js', '');
-                    break;
-                }
-                else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
-                    base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
-                    break;
-                }
+            if (enableMDTheme) {
+                buildfire.appearance.getAppTheme(function(err, appTheme) {
+                    let styleElement = document.createElement('style');
+                    styleElement.id = 'appMDTheme';
+                    styleElement.type = 'text/css';
+                    let css = `@import url(https://fonts.googleapis.com/css?family=${appTheme.fontId});
+                            :root {
+                              --mdc-typography-font-family: unquote("${appTheme.fontId}, sans-serif");
+                              --mdc-theme-primary: ${appTheme.colors.primaryTheme};
+                              --mdc-theme-surface: ${appTheme.colors.infoTheme}};
+                              --mdc-theme-background: ${appTheme.colors.backgroundColor};
+                              --mdc-theme-error: ${appTheme.colors.dangerTheme};
+                              --mdc-theme-on-primary: ${appTheme.colors.headerText};
+                              --mdc-theme-on-secondary: ${appTheme.colors.bodyText};
+                              --mdc-theme-on-error: ${appTheme.colors.bodyText};
+                              --mdc-theme-on-surface: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-primary-on-background: red;
+                            }`;
+                    styleElement.innerHTML = css;
+                    document.body.appendChild(styleElement);
+                });
             }
 
             if (base[base.length - 1] != "/"){
