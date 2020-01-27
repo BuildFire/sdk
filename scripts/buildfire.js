@@ -1534,22 +1534,22 @@ var buildfire = {
                     '720': 720,
                     '1080': 1080,
                     '1440': 1440,
-                    get full() { //rename
+                    get 'full-width'() {
                         return this.findNearest(1);
                     },
-                    get half() {
+                    get 'half-width'() {
                         return this.findNearest(2);
                     },
-                    get third() {
+                    get 'third-width'() {
                         return this.findNearest(3);
                     },
-                    get quarter() {
+                    get 'fourth-width'() {
                         return this.findNearest(4);
                     },
-                    get fifth() {
+                    get 'fifth-width'() {
                         return this.findNearest(5);
                     },
-                    get sixth() {
+                    get 'sixth-width'() {
                         return this.findNearest(6);
                     },
                     findNearest: function (ratio) {
@@ -1564,7 +1564,11 @@ var buildfire = {
                         }
                         return this[match];
                     },
-                    VALID_SIZES: ['xs', 's', 'm', 'l', 'xl', 'xxl', '720', '1080', '1440', 'full', 'half', 'third', 'quarter', 'fifth', 'sixth']
+                    VALID_SIZES: [
+                        'xs', 's', 'm', 'l', 'xl', 'xxl', //standard
+                        '720', '1080', '1440', //desktop
+                        'full-width', 'half-width', 'third-width', 'quarter-width', 'fifth-width', 'sixth-width' // responsive
+                    ]
                 },
                 ASPECT_RATIOS: {
                     '1:1': 1,
