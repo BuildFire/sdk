@@ -14,20 +14,28 @@
                 </li>
             </ol>
         </div>
-        <ul class="nav nav-tabs nav-justified" ng-hide="pluginConfig.control.removeHeader">
-            <li ng-if="contentSrc">
-                <a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)">Content</a>
-            </li>
-            <li ng-if="designSrc">
-                <a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
-            </li>
-            <li ng-if="settingsSrc">
-                <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
-            </li>
-            <li ng-repeat="tab in customTabs">
-                <a ng-click="loadCustomTab(tab,$event)">{{tab.title}}</a>
-            </li>
-        </ul>
+
+        <div class="arrows-tabs-container">
+            <span class="icon-chevron-left tab-arrow"></span>
+            <div class="tabs-scroll">
+                <ul class="nav nav-tabs nav-justified" ng-hide="pluginConfig.control.removeHeader">
+                    <li ng-if="contentSrc">
+                        <a id="btnLoadContent" class="active" ng-click="loadIFrame('content',$event)">Content</a>
+                    </li>
+                    <li ng-if="designSrc">
+                        <a id="btnLoadDesign" ng-click="loadIFrame('design',$event)">Design</a>
+                    </li>
+                    <li ng-if="settingsSrc">
+                        <a id="btnLoadSettings" ng-click="loadIFrame('settings',$event)">Settings</a>
+                    </li>
+                    <li ng-repeat="tab in customTabs">
+                        <a ng-click="loadCustomTab(tab,$event)">{{tab.title}}</a>
+                    </li>
+                </ul>
+            </div>
+            <span class="icon-chevron-right tab-arrow active"></span>
+        </div>
+       
         <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
                 ng-src="{{currentControl}}"></iframe>
         <iframe ng-hide="pluginControlIframeVisible" class="non-control-iframe" id="iframeNonControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
