@@ -60,7 +60,7 @@ var buildfire = {
         if(tags && tags.content) {
             var sections = tags.content.split(",");
             sections.forEach(function(section){
-               var s = section.split("=");
+                var s = section.split("=");
                 options[s[0]] = s.length>1?s[1]:true;
             });
         }
@@ -202,11 +202,11 @@ var buildfire = {
             resendAttempts = 0;
 
         var isDataStoreRetry = (command.indexOf('datastore') == 0
-                && command.indexOf('datastore.insert') != 0
-                && command.indexOf('datastore.bulkInsert') != 0
-                && command.indexOf('datastore.disableRefresh') != 0
-                && command.indexOf('datastore.searchAndUpdate') != 0
-                && command.indexOf('datastore.update') != 0
+            && command.indexOf('datastore.insert') != 0
+            && command.indexOf('datastore.bulkInsert') != 0
+            && command.indexOf('datastore.disableRefresh') != 0
+            && command.indexOf('datastore.searchAndUpdate') != 0
+            && command.indexOf('datastore.update') != 0
         );
 
         var isGetContextRetry = (command.indexOf('getContext') == 0);
@@ -311,7 +311,7 @@ var buildfire = {
 
                 navigate(pluginData, pluginIds['social'], callback);
             });
-            
+
             function navigate(data, pluginId, cb) {
                 data.pluginId = pluginId;
 
@@ -461,22 +461,22 @@ var buildfire = {
 
             });
         },
-		_forceCSSRender: function(){
-			// WebKit Rendering Reset on Plugins
-			if(window.location.href.indexOf('widget') > 0){
-				var html = document.getElementsByTagName('html')[0];
-				var style = document.createElement('style');
-				style.type = 'text/css';
-				style.innerHTML = 'body{position:relative !important; z-index:1 !important;} .plugin-slide{position:relative !important;} .plugin-slide, .plugin-slide img{transform: translateZ(0) !important;';
-				html.appendChild(style);
-			}
-		},
+        _forceCSSRender: function(){
+            // WebKit Rendering Reset on Plugins
+            if(window.location.href.indexOf('widget') > 0){
+                var html = document.getElementsByTagName('html')[0];
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = 'body{position:relative !important; z-index:1 !important;} .plugin-slide{position:relative !important;} .plugin-slide, .plugin-slide img{transform: translateZ(0) !important;';
+                html.appendChild(style);
+            }
+        },
         insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
 
             if(window.location.href.indexOf('widget') > 0){
                 html.setAttribute('buildfire', 'widget');
-				html.setAttribute('type', 'app');
+                html.setAttribute('type', 'app');
             }else{
                 html.setAttribute('buildfire', 'control');
             }
@@ -618,17 +618,64 @@ var buildfire = {
                             :root {
                               --mdc-typography-font-family: unquote("${appTheme.fontId}, sans-serif");
                               --mdc-theme-primary: ${appTheme.colors.primaryTheme};
-                              --mdc-theme-surface: ${appTheme.colors.infoTheme}};
+                              --mdc-theme-surface: ${appTheme.colors.backgroundColor};
                               --mdc-theme-background: ${appTheme.colors.backgroundColor};
                               --mdc-theme-error: ${appTheme.colors.dangerTheme};
-                              --mdc-theme-on-primary: ${appTheme.colors.headerText};
+                              --mdc-theme-on-background: ${appTheme.colors.headerText};
+                              --mdc-theme-on-primary: ${appTheme.colors.bodyText};
                               --mdc-theme-on-secondary: ${appTheme.colors.bodyText};
                               --mdc-theme-on-error: ${appTheme.colors.bodyText};
                               --mdc-theme-on-surface: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-primary-on-background: red;
-                            }`;
+                              --mdc-theme-text-primary-on-background: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-secondary-on-background: ${appTheme.colors.bodyText};
+                              
+                              --mdc-theme-text-disabled-on-background: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-icon-on-background: ${appTheme.colors.bodyText};
+                              
+                              --mdc-theme-text-primary-on-light:  ${appTheme.colors.bodyText};
+                              --mdc-theme-text-secondary-on-light:  ${appTheme.colors.bodyText};
+                              --mdc-theme-text-hint-on-light:  ${appTheme.colors.bodyText};
+                              --mdc-theme-text-disabled-on-light:  ${appTheme.colors.bodyText};
+                              --mdc-theme-text-icon-on-light:  ${appTheme.colors.bodyText};
+                              
+                              --mdc-theme-text-primary-on-dark: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-secondary-on-dark: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-hint-on-dark: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-disabled-on-dark: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-icon-on-dark: ${appTheme.colors.bodyText};
+                            }
+                            
+                            .mdc-theme--primary { color: #6200ee !important; color: var(--mdc-theme-primary, #6200ee) !important; }
+                            .mdc-theme--secondary { color: #018786 !important; color: var(--mdc-theme-secondary, #018786) !important; }
+                            .mdc-theme--background { background-color: #fff; background-color: var(--mdc-theme-background, #fff);}
+                            .mdc-theme--surface { background-color: #fff; background-color: var(--mdc-theme-surface, #fff);}
+                            .mdc-theme--error { color: #b00020 !important; color: var(--mdc-theme-error, #b00020) !important;}
+                            .mdc-theme--on-primary { color: #fff !important; color: var(--mdc-theme-on-primary, #fff) !important;}
+                            .mdc-theme--on-secondary { color: #fff !important; color: var(--mdc-theme-on-secondary, #fff) !important;}
+                            .mdc-theme--on-surface { color: #000 !important; color: var(--mdc-theme-on-surface, #000) !important;}
+                            .mdc-theme--on-error { color: #fff !important; color: var(--mdc-theme-on-error, #fff) !important;}
+                            .mdc-theme--text-primary-on-background { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87)) !important;}
+                            .mdc-theme--text-secondary-on-background { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54)) !important;}
+                            .mdc-theme--text-hint-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.38)) !important;}
+                            .mdc-theme--text-disabled-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-background, rgba(0, 0, 0, 0.38)) !important;}
+                            .mdc-theme--text-icon-on-background { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-background, rgba(0, 0, 0, 0.38)) !important;}
+                            .mdc-theme--text-primary-on-light { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-light, rgba(0, 0, 0, 0.87)) !important;}
+                            .mdc-theme--text-secondary-on-light { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, 0.54)) !important;}
+                            .mdc-theme--text-hint-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-light, rgba(0, 0, 0, 0.38)) !important;}
+                            .mdc-theme--text-disabled-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-light, rgba(0, 0, 0, 0.38)) !important;}
+                            .mdc-theme--text-icon-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-light, rgba(0, 0, 0, 0.38)) !important;}
+                            .mdc-theme--text-primary-on-dark { color: white !important; color: var(--mdc-theme-text-primary-on-dark, white) !important;}
+                            .mdc-theme--text-secondary-on-dark { color: rgba(255, 255, 255, 0.7) !important; color: var(--mdc-theme-text-secondary-on-dark, rgba(255, 255, 255, 0.7)) !important;}
+                            .mdc-theme--text-hint-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-hint-on-dark, rgba(255, 255, 255, 0.5)) !important;}
+                            .mdc-theme--text-disabled-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-disabled-on-dark, rgba(255, 255, 255, 0.5)) !important;}
+                            .mdc-theme--text-icon-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-icon-on-dark, rgba(255, 255, 255, 0.5)) !important;}
+                            .mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}
+                            .mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}
+                            `
+                    ;
                     styleElement.innerHTML = css;
                     document.body.appendChild(styleElement);
+
                 });
             }
 
@@ -992,7 +1039,7 @@ var buildfire = {
 
         },
         /// ref:
-         getById: function (id, tag, callback) {
+        getById: function (id, tag, callback) {
 
             var idType = typeof (id);
             if (idType == "function" && typeof (callback) == "undefined") {
@@ -1540,7 +1587,7 @@ var buildfire = {
             if (typeof callback !== 'function') {
                 callback = console.warn;
             }
-            
+
             callback({ "code": "error", "message": "tag is required for appData, and must be a string" }, null);
 
             return isTagValid;
@@ -1555,7 +1602,7 @@ var buildfire = {
         }
         ,isProdImageServer: function(url){
             return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
-            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+                || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
         }
         //options:{
         // width: integer or 'full'
@@ -1573,10 +1620,10 @@ var buildfire = {
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
-			// Don't pass any value under 1
-			if(ratio < 1){
-				var ratio = 1;
-			}
+            // Don't pass any value under 1
+            if(ratio < 1){
+                var ratio = 1;
+            }
 
             if (!options)
                 options = {width: window.innerWidth};
@@ -1689,7 +1736,7 @@ var buildfire = {
             if (!element || !src) return;
 
             var path = this._getLocalPath(src);
-            
+
             if (element.tagName === 'IMG') {
                 element.style.setProperty('opacity', '0', 'important');
                 element.src = path;
@@ -2360,10 +2407,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 
                 if(!disableTheme) {
-                 if(buildfire.isWeb() || !context.liveMode)
-                    buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
-                 else
-                     buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
+                    if(buildfire.isWeb() || !context.liveMode)
+                        buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+                    else
+                        buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
                 }
             }
         }
@@ -2391,10 +2438,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
             }
         };
     }
-	setTimeout(function(){
+    setTimeout(function(){
         if(!buildfire.options.disableTheme)
             buildfire.appearance._forceCSSRender();
-	}, 1750);
+    }, 1750);
 
 });
 
