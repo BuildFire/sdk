@@ -21,6 +21,7 @@
     <link href="https://app.buildfire.com/styles/siteScreen.css" rel="stylesheet">
     <link href="styles/appStyle.css" rel="stylesheet">
     <link href="styles/input.css" rel="stylesheet">
+    <link href="styles/loading-bar.css" rel="stylesheet">
 
     <link href="styles/pulldown.css" rel="stylesheet">
     <!-- JS-->
@@ -126,13 +127,8 @@
                             <p>Resize to test on different resolutions!</p>
                         </div>
                         <div id="app" class="overflow-hidden">
-                            <div class="loading-screen" ng-show="showSpinner">
-                                <div class="loading-bg">
-                                    <div class="loading-dots">
-                                        <div class="dot dot1"></div>
-                                        <div class="dot dot2"></div>
-                                    </div>
-                                </div>
+                            <div id="loading-bar-spinner" style="overflow: hidden;">
+                                <div class="loader">Loading...</div>
                             </div>
                             <div id="pluginRefreshPanel" ng-show="showNavigationBar">
                                 <p class="text-center">Pull to Refresh</p>

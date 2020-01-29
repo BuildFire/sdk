@@ -274,13 +274,16 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                 window.location.hash = '/plugin/' + $scope.navToValue;
         };
 
-        if (postMaster.widgetPluginAPI && postMaster.controlPluginAPI) {
-            postMaster.controlPluginAPI.spinner.show = postMaster.widgetPluginAPI.spinner.show = function () {
+        if (postMaster.widgetPluginAPI) {
+            postMaster.widgetPluginAPI.spinner = window.spinner;
+        }
+
+        if (postMaster.controlPluginAPI) {
+            postMaster.controlPluginAPI.spinner.show = function () {
                 $scope.showSpinner = true;
                 $scope.$apply();
             };
-
-            postMaster.controlPluginAPI.spinner.hide = postMaster.widgetPluginAPI.spinner.hide = function () {
+            postMaster.controlPluginAPI.spinner.hide = function () {
                 $scope.showSpinner = false;
                 $scope.$apply();
             };
