@@ -618,33 +618,30 @@ var buildfire = {
                             :root {
                               --mdc-typography-font-family: unquote("${appTheme.fontId}, sans-serif");
                               --mdc-theme-primary: ${appTheme.colors.primaryTheme};
+                              --mdc-theme-secondary: ${appTheme.colors.successTheme};
                               --mdc-theme-surface: ${appTheme.colors.backgroundColor};
                               --mdc-theme-background: ${appTheme.colors.backgroundColor};
                               --mdc-theme-error: ${appTheme.colors.dangerTheme};
-                              --mdc-theme-on-background: ${appTheme.colors.headerText};
-                              --mdc-theme-on-primary: ${appTheme.colors.bodyText};
-                              --mdc-theme-on-secondary: ${appTheme.colors.bodyText};
-                              --mdc-theme-on-error: ${appTheme.colors.bodyText};
+                              --mdc-theme-on-background: ${appTheme.colors.bodyText};
+                              --mdc-theme-on-primary: white;
+                              --mdc-theme-on-secondary: white;
+                              --mdc-theme-on-error: white;
                               --mdc-theme-on-surface: ${appTheme.colors.bodyText};
                               --mdc-theme-text-primary-on-background: ${appTheme.colors.bodyText};
                               --mdc-theme-text-secondary-on-background: ${appTheme.colors.bodyText};
-                              
                               --mdc-theme-text-disabled-on-background: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-icon-on-background: ${appTheme.colors.bodyText};
-                              
-                              --mdc-theme-text-primary-on-light:  ${appTheme.colors.bodyText};
-                              --mdc-theme-text-secondary-on-light:  ${appTheme.colors.bodyText};
-                              --mdc-theme-text-hint-on-light:  ${appTheme.colors.bodyText};
-                              --mdc-theme-text-disabled-on-light:  ${appTheme.colors.bodyText};
-                              --mdc-theme-text-icon-on-light:  ${appTheme.colors.bodyText};
-                              
-                              --mdc-theme-text-primary-on-dark: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-secondary-on-dark: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-hint-on-dark: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-disabled-on-dark: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-icon-on-dark: ${appTheme.colors.bodyText};
+                              --mdc-theme-text-icon-on-background: ${appTheme.colors.bodyText}; 
+                              --mdc-theme-text-primary-on-light: white;
+                              --mdc-theme-text-secondary-on-light: white;
+                              --mdc-theme-text-hint-on-light: white;
+                              --mdc-theme-text-disabled-on-light: white;
+                              --mdc-theme-text-icon-on-light:  white;
+                              --mdc-theme-text-primary-on-dark: white;
+                              --mdc-theme-text-secondary-on-dark: white;
+                              --mdc-theme-text-hint-on-dark: white;
+                              --mdc-theme-text-disabled-on-dark: white;
+                              --mdc-theme-text-icon-on-dark: white;
                             }
-                            
                             .mdc-theme--primary { color: #6200ee !important; color: var(--mdc-theme-primary, #6200ee) !important; }
                             .mdc-theme--secondary { color: #018786 !important; color: var(--mdc-theme-secondary, #018786) !important; }
                             .mdc-theme--background { background-color: #fff; background-color: var(--mdc-theme-background, #fff);}
