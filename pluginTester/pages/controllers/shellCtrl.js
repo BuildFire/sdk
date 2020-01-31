@@ -285,6 +285,24 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                 $scope.$apply();
             };
         }
+
+        postMaster.widgetPluginAPI.auth = { ...postMaster.widgetPluginAPI.auth };
+        postMaster.widgetPluginAPI.auth.getCurrentUser = function (data, callback) {
+            if (typeof(data) == 'function') {
+                callback = data;
+            }
+
+            user = localStorage.getItem('AUTH_CURRENT_USER');
+            user = JSON.parse(user);
+
+            if (!(user && user.userToken)) {
+                user = null;
+            }
+            if (callback)
+                callback(null, user);
+            else
+                return user;
+        }
     }]
 );
 
