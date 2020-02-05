@@ -611,65 +611,63 @@ var buildfire = {
 
             if (enableMDTheme) {
                 buildfire.appearance.getAppTheme(function(err, appTheme) {
-                    let styleElement = document.createElement('style');
+                    var styleElement = document.createElement('style');
                     styleElement.id = 'appMDTheme';
                     styleElement.type = 'text/css';
-                    let css = `@import url(https://fonts.googleapis.com/css?family=${appTheme.fontId});
-                            :root {
-                              --mdc-typography-font-family: unquote("${appTheme.fontId}, sans-serif");
-                              --mdc-theme-primary: ${appTheme.colors.primaryTheme};
-                              --mdc-theme-secondary: ${appTheme.colors.successTheme};
-                              --mdc-theme-surface: ${appTheme.colors.backgroundColor};
-                              --mdc-theme-background: ${appTheme.colors.backgroundColor};
-                              --mdc-theme-error: ${appTheme.colors.dangerTheme};
-                              --mdc-theme-on-background: ${appTheme.colors.bodyText};
-                              --mdc-theme-on-primary: white;
-                              --mdc-theme-on-secondary: white;
-                              --mdc-theme-on-error: white;
-                              --mdc-theme-on-surface: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-primary-on-background: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-secondary-on-background: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-disabled-on-background: ${appTheme.colors.bodyText};
-                              --mdc-theme-text-icon-on-background: ${appTheme.colors.bodyText}; 
-                              --mdc-theme-text-primary-on-light: white;
-                              --mdc-theme-text-secondary-on-light: white;
-                              --mdc-theme-text-hint-on-light: white;
-                              --mdc-theme-text-disabled-on-light: white;
-                              --mdc-theme-text-icon-on-light:  white;
-                              --mdc-theme-text-primary-on-dark: white;
-                              --mdc-theme-text-secondary-on-dark: white;
-                              --mdc-theme-text-hint-on-dark: white;
-                              --mdc-theme-text-disabled-on-dark: white;
-                              --mdc-theme-text-icon-on-dark: white;
-                            }
-                            .mdc-theme--primary { color: #6200ee !important; color: var(--mdc-theme-primary, #6200ee) !important; }
-                            .mdc-theme--secondary { color: #018786 !important; color: var(--mdc-theme-secondary, #018786) !important; }
-                            .mdc-theme--background { background-color: #fff; background-color: var(--mdc-theme-background, #fff);}
-                            .mdc-theme--surface { background-color: #fff; background-color: var(--mdc-theme-surface, #fff);}
-                            .mdc-theme--error { color: #b00020 !important; color: var(--mdc-theme-error, #b00020) !important;}
-                            .mdc-theme--on-primary { color: #fff !important; color: var(--mdc-theme-on-primary, #fff) !important;}
-                            .mdc-theme--on-secondary { color: #fff !important; color: var(--mdc-theme-on-secondary, #fff) !important;}
-                            .mdc-theme--on-surface { color: #000 !important; color: var(--mdc-theme-on-surface, #000) !important;}
-                            .mdc-theme--on-error { color: #fff !important; color: var(--mdc-theme-on-error, #fff) !important;}
-                            .mdc-theme--text-primary-on-background { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87)) !important;}
-                            .mdc-theme--text-secondary-on-background { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54)) !important;}
-                            .mdc-theme--text-hint-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.38)) !important;}
-                            .mdc-theme--text-disabled-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-background, rgba(0, 0, 0, 0.38)) !important;}
-                            .mdc-theme--text-icon-on-background { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-background, rgba(0, 0, 0, 0.38)) !important;}
-                            .mdc-theme--text-primary-on-light { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-light, rgba(0, 0, 0, 0.87)) !important;}
-                            .mdc-theme--text-secondary-on-light { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, 0.54)) !important;}
-                            .mdc-theme--text-hint-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-light, rgba(0, 0, 0, 0.38)) !important;}
-                            .mdc-theme--text-disabled-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-light, rgba(0, 0, 0, 0.38)) !important;}
-                            .mdc-theme--text-icon-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-light, rgba(0, 0, 0, 0.38)) !important;}
-                            .mdc-theme--text-primary-on-dark { color: white !important; color: var(--mdc-theme-text-primary-on-dark, white) !important;}
-                            .mdc-theme--text-secondary-on-dark { color: rgba(255, 255, 255, 0.7) !important; color: var(--mdc-theme-text-secondary-on-dark, rgba(255, 255, 255, 0.7)) !important;}
-                            .mdc-theme--text-hint-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-hint-on-dark, rgba(255, 255, 255, 0.5)) !important;}
-                            .mdc-theme--text-disabled-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-disabled-on-dark, rgba(255, 255, 255, 0.5)) !important;}
-                            .mdc-theme--text-icon-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-icon-on-dark, rgba(255, 255, 255, 0.5)) !important;}
-                            .mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}
-                            .mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}
-                            `
-                    ;
+                    var css = '@import url(https://fonts.googleapis.com/css?family='+ appTheme.fontId +');'
+                            + ':root {'
+                            + '  --mdc-typography-font-family: unquote("' + appTheme.fontId + ', sans-serif");'
+                            + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
+                            + '  --mdc-theme-secondary:' + appTheme.colors.successTheme + ';'
+                            + '  --mdc-theme-surface:' + appTheme.colors.backgroundColor + ';'
+                            + '  --mdc-theme-background' + appTheme.colors.backgroundColor + ';'
+                            + '  --mdc-theme-error:' + appTheme.colors.dangerTheme + ';'
+                            + '  --mdc-theme-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-on-primary: white;'
+                            + '  --mdc-theme-on-secondary: white;'
+                            + '  --mdc-theme-on-error: white;'
+                            + '  --mdc-theme-on-surface:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-primary-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-secondary-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-disabled-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-primary-on-light: white;'
+                            + '  --mdc-theme-text-secondary-on-light: white;'
+                            + '  --mdc-theme-text-hint-on-light: white;'
+                            + '  --mdc-theme-text-disabled-on-light: white;'
+                            + '  --mdc-theme-text-icon-on-light:  white;'
+                            + '  --mdc-theme-text-primary-on-dark: white;'
+                            + '  --mdc-theme-text-secondary-on-dark: white;'
+                            + '  --mdc-theme-text-hint-on-dark: white;'
+                            + '  --mdc-theme-text-disabled-on-dark: white;'
+                            + '  --mdc-theme-text-icon-on-dark: white;'
+                            + '}'
+                            + '.mdc-theme--primary { color: #6200ee !important; color: var(--mdc-theme-primary, #6200ee) !important; }'
+                            + '.mdc-theme--secondary { color: #018786 !important; color: var(--mdc-theme-secondary, #018786) !important; }'
+                            + '.mdc-theme--background { background-color: #fff; background-color: var(--mdc-theme-background, #fff);}'
+                            + '.mdc-theme--surface { background-color: #fff; background-color: var(--mdc-theme-surface, #fff);}'
+                            + '.mdc-theme--error { color: #b00020 !important; color: var(--mdc-theme-error, #b00020) !important;}'
+                            + '.mdc-theme--on-primary { color: #fff !important; color: var(--mdc-theme-on-primary, #fff) !important;}'
+                            + '.mdc-theme--on-secondary { color: #fff !important; color: var(--mdc-theme-on-secondary, #fff) !important;}'
+                            + '.mdc-theme--on-surface { color: #000 !important; color: var(--mdc-theme-on-surface, #000) !important;}'
+                            + '.mdc-theme--on-error { color: #fff !important; color: var(--mdc-theme-on-error, #fff) !important;}'
+                            + '.mdc-theme--text-primary-on-background { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87)) !important;}'
+                            + '.mdc-theme--text-secondary-on-background { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54)) !important;}'
+                            + '.mdc-theme--text-hint-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-disabled-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-icon-on-background { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-primary-on-light { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-light, rgba(0, 0, 0, 0.87)) !important;}'
+                            + '.mdc-theme--text-secondary-on-light { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, 0.54)) !important;}'
+                            + '.mdc-theme--text-hint-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-disabled-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-icon-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-primary-on-dark { color: white !important; color: var(--mdc-theme-text-primary-on-dark, white) !important;}'
+                            + '.mdc-theme--text-secondary-on-dark { color: rgba(255, 255, 255, 0.7) !important; color: var(--mdc-theme-text-secondary-on-dark, rgba(255, 255, 255, 0.7)) !important;}'
+                            + '.mdc-theme--text-hint-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-hint-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--text-disabled-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-disabled-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--text-icon-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-icon-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
+                            + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
                     styleElement.innerHTML = css;
                     document.body.appendChild(styleElement);
 
