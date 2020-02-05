@@ -1683,6 +1683,65 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
     , imageLib: {
+        get ENUMS() {
+            return {
+                SIZES: {
+                    xxs: 32,
+                    xs: 64,
+                    s: 128,
+                    m: 200,
+                    l: 304,
+                    xl: 416,
+                    xxl: 600,
+                    '720': 720,
+                    '1080': 1080,
+                    '1440': 1440,
+                    get 'full-width'() {
+                        return this.findNearest(1);
+                    },
+                    get 'half-width'() {
+                        return this.findNearest(2);
+                    },
+                    get 'third-width'() {
+                        return this.findNearest(3);
+                    },
+                    get 'fourth-width'() {
+                        return this.findNearest(4);
+                    },
+                    get 'fifth-width'() {
+                        return this.findNearest(5);
+                    },
+                    get 'sixth-width'() {
+                        return this.findNearest(6);
+                    },
+                    findNearest: function (ratio) {
+                        var match = null;
+                        for (var i = 0; i < this.VALID_SIZES.length; i++) {
+                            var size = this.VALID_SIZES[i];
+
+                            if ((window.innerWidth / ratio) < this[size]) {
+                                match = size;
+                                break;
+                            }
+                        }
+                        return this[match];
+                    },
+                    VALID_SIZES: [
+                        'xs', 's', 'm', 'l', 'xl', 'xxl', //standard
+                        '720', '1080', '1440', //desktop
+                        'full-width', 'half-width', 'third-width', 'quarter-width', 'fifth-width', 'sixth-width' // responsive
+                    ]
+                },
+                ASPECT_RATIOS: {
+                    '1:1': 1,
+                    '4:3': 0.75,
+                    '16:9': 0.5625,
+                    '9:16': 1.77777778,
+                    '2.39:1': 0.41841004,
+                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '2.39:1']
+                }
+            }
+        },
         /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib#buildfireimagelibshowdialogoptions-callback
         showDialog: function (options, callback) {
             var p = new Packet(null, 'imageLib.showDialog', options);
@@ -1690,7 +1749,7 @@ var buildfire = {
         }
         ,isProdImageServer: function(url){
             return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
-            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+                || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
         }
         //options:{
         // width: integer or 'full'
@@ -1700,18 +1759,18 @@ var buildfire = {
         , resizeImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (!/.(png|jpg|jpeg)(?!.)/g.test(url)) {
+            if (/\..{3,4}(?!.)/g.test(url) && !/.(png|jpg|jpeg)(?!.)/g.test(url)) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL: ' + url);
+                console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
                 return url;
             }
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
-			// Don't pass any value under 1
-			if(ratio < 1){
-				var ratio = 1;
-			}
+            // Don't pass any value under 1
+            if(ratio < 1){
+                var ratio = 1;
+            }
 
             if (!options)
                 options = {width: window.innerWidth};
@@ -1749,6 +1808,22 @@ var buildfire = {
                 var compression = buildfire.imageLib.getCompression(options.compression);
                 var result = '';
 
+                if (options.size && options.aspect) {
+                    if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
+                        var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
+                        console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+                        return url;
+                    }
+                    if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
+                        var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
+                        console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+                        return url;
+                    }
+                    //math.round
+                    options.width = this.ENUMS.SIZES[options.size];
+                    options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
+                }
+                // check for missing size or aspect
                 if (options.width && !options.height) {
                     var size = Math.floor(options.width * ratio);
                     result = root + "width/" + size + "/" + compression + url;
@@ -1774,9 +1849,9 @@ var buildfire = {
         , cropImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (!/.(png|jpg|jpeg)(?!.)/g.test(url)) {
+            if (/\..{3,4}(?!.)/g.test(url) && !/.(png|jpg|jpeg)(?!.)/g.test(url)) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL: ' + url);
+                console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
             }
 
@@ -1788,6 +1863,21 @@ var buildfire = {
             }
             if (typeof (options) != "object") {
                 throw ("options not an object");
+            }
+            if (options.size && options.aspect) {
+                if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
+                    var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
+                    console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+                    return url;
+                }
+                if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
+                    var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
+                    console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+                    return url;
+                }
+
+                options.width = this.ENUMS.SIZES[options.size];
+                options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
             }
             if (!options.width && !options.height) {
                 options = { width: 'full', height: 'full' };
@@ -1824,7 +1914,7 @@ var buildfire = {
             if (!element || !src) return;
 
             var path = this._getLocalPath(src);
-            
+
             if (element.tagName === 'IMG') {
                 element.style.setProperty('opacity', '0', 'important');
                 element.src = path;
@@ -1835,9 +1925,10 @@ var buildfire = {
                 }
 
                 element.onerror = function () {
+                    element.src = src;
                     var p = new Packet(null, 'imageCache.download', src);
-                    buildfire._sendPacket(p, function (error, localPath) {
-                        element.src = localPath;
+                    buildfire._sendPacket(p, function () {
+                        if (callback) callback(path);
                     });
                 }
             } else {
@@ -1855,15 +1946,13 @@ var buildfire = {
             }
 
             img.onerror = function () {
-                applyStyle(element);
+                applyStyle(element, src);
                 var p = new Packet(null, 'imageCache.download', src);
                 buildfire._sendPacket(p, function (error, localPath) {
                     if (error) {
-                        applyStyle(element, src);
                         if (callback) callback(src);
                     }
                     window.requestAnimationFrame(function () {
-                        applyStyle(element, localPath);
                         if (callback) callback(localPath);
                     });
                 });

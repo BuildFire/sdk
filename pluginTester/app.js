@@ -46,6 +46,10 @@ $app.run(function () {
 	if (user) {
 		window.currentUser = JSON.parse(user);
 	}
+	var appUser = localStorage.getItem("AUTH_CURRENT_USER");
+	if (appUser) {
+		window.currentAppUser = JSON.parse(appUser);
+	}
 });
 
 var __tmrToastClearOut;

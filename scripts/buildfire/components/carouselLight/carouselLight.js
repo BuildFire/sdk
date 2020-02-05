@@ -61,6 +61,8 @@ buildfire.components.carousel.view = function (options) {
             //append image tag
             var img = document.createElement('img');
             img.setAttribute("src", buildfire.imageLib.cropImage(options.items[0].iconUrl, {
+                size: 'full',
+                aspect: '16:9',
                 width: window.innerWidth,
                 height: Math.ceil(9 * (window.innerWidth) / 16)
             }));
@@ -226,6 +228,8 @@ buildfire.components.carousel.view.prototype = {
         });
 
         buildfire.imageLib.local.cropImage(item.iconUrl, {
+            aspect: this.aspect,
+            size: 'full-width',
             width: this.width,
             height: this.height
         }, function (err, result) {
@@ -263,13 +267,18 @@ buildfire.components.carousel.view.prototype = {
         layout = layout || "WideScreen";
         if (layout == "WideScreen") {
             this.height = Math.ceil(9 * this.width / 16);
+            this.aspect = '16:9';
         } else if (layout == "Square") {
             this.height = this.width;
+            this.aspect = '1:1';
         } else if (layout == "Cinema") {
             this.height = Math.ceil(1 * this.width / 2.39);
+            this.height = Math.ceil(1 * this.width / 2.39);
+            this.aspect = '2.39:1';
         } else if (layout == "MobileScreen") {
             this.height = (window.innerHeight / this.width) * this.width;
             this.width = this.width;
+            this.aspect = '9:16';
         }
 
         this.cssWidth = this.width + "px";
