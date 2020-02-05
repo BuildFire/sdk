@@ -6,39 +6,10 @@
 $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$http', function ($rootScope, $scope, $routeParams, $sce, $http) {
         window.$http = $http;
         var config = null;
-        var widgetIframe = document.getElementById('widget');
         $scope.link = {
             deeplinkData: ""
         };
         $scope.currentUser = window.currentUser;
-
-        if (postMaster.widgetPluginAPI.history.historyItems.length == 0) {
-            postMaster.widgetPluginAPI.history.historyItems.push({label: 'Plugin', source: 'control',  options: { pluginData: undefined }});
-            if (!$scope.$$phase) $scope.$apply();
-        }
-        postMaster.widgetPluginAPI.history.onUpdate(function (data) {
-            if (data.historyItems) {
-                for (var i = 0; i < data.historyItems.length; i++) {
-                    data.historyItems[i].title = decodeURIComponent(data.historyItems[i].title);
-                }
-                $scope.breadcrumbs = data.historyItems.slice(0);
-            }
-            else {
-                $scope.breadcrumbs = [];
-            }
-            if (!$scope.$$phase) $scope.$apply();
-        });
-        postMaster.widgetPluginAPI.history.onPop(function (data) {
-            if (data.popTriggered) {
-                return;
-            }
-            var packet = new Packet(null, "history.triggerOnPop", JSON.parse(angular.toJson(data.poppedItem)));
-            postMaster.controlPluginAPI.sendMessage(null, packet);
-            data.popTriggered = true;
-        });
-        $scope.popHistoryItem = function (event, breadcrumb) {
-            postMaster.widgetPluginAPI.history.pop(breadcrumb);
-        };
 
         $scope.loadWebpackFrames = function(config) {
             var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
@@ -91,16 +62,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         window.serviceFrame;
         $scope.loadFrames = function (pluginFolder, config) {
             var root =  '../plugins/';
-            $scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget';
-
-            if ($scope.isWidgetShell && config.widget && config.widget.service) {
-                serviceFrame = document.createElement('iframe');
-                serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
-                serviceFrame.id='service';
-                serviceFrame.style.display='none';
-                serviceFrame.src = root + pluginFolder + '/widget/' + config.widget.service + "?fid=service";
-                document.body.appendChild(serviceFrame);
-            }
 
             if (config.control.settings.enabled) {
                 $scope.currentControl = $scope.settingsSrc = root + pluginFolder + '/control/settings/index.html?fid=controlSettings';
@@ -202,10 +163,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             localStorage.setItem('__recentPlugins', JSON.stringify(recentPlugins));
         }
 
-        var displayEmulator = function(value){
-            $rootScope.hideEmulator = value;
-        };
-
         $scope.init = function () {
             var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
@@ -227,10 +184,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
                     $scope.navToValue = $scope.pluginFolder = pluginFolder;
                     keepTrackOfRecentPlugins(pluginFolder);
-
-                    var hideEmulator = (config.widget && typeof config.widget.enabled != 'undefined') ? !config.widget.enabled : false;
-
-                    displayEmulator(hideEmulator);
                 }
                 else if (xmlhttp.status >= 300)
                     $scope.errorMessage = 'Error loading plugin';
@@ -247,40 +200,18 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
         $scope.init();
 
-        $scope.back = function () {
-            var packet = new Packet(null, "navigation.onBackButtonClick");
-            postMaster.widgetPluginAPI.sendMessage(null, packet);
-        };
-
-        var clickCounter = 0;
-        $scope.titleClick = function () {
-            clickCounter++;
-            setTimeout(function () {
-                clickCounter--;
-            }, 3000);
-            if (clickCounter > 5) {
-                var packet = new Packet(null, "logger.showHistory");
-                postMaster.widgetPluginAPI.sendMessage(null, packet);
-            }
-        };
-
-        $scope.sendDeeplinkData = function () {
-            widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?fid=widget&dld=" + $scope.link.deeplinkData;
-        };
-
         $scope.navTo = function ($event) {
 
             if ($event.keyCode == 13)
                 window.location.hash = '/plugin/' + $scope.navToValue;
         };
 
-        if (postMaster.widgetPluginAPI && postMaster.controlPluginAPI) {
-            postMaster.controlPluginAPI.spinner.show = postMaster.widgetPluginAPI.spinner.show = function () {
+        if (postMaster.controlPluginAPI) {
+            postMaster.controlPluginAPI.spinner.show = function () {
                 $scope.showSpinner = true;
                 $scope.$apply();
             };
-
-            postMaster.controlPluginAPI.spinner.hide = postMaster.widgetPluginAPI.spinner.hide = function () {
+            postMaster.controlPluginAPI.spinner.hide = function () {
                 $scope.showSpinner = false;
                 $scope.$apply();
             };
