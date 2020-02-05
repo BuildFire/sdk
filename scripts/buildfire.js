@@ -1761,7 +1761,7 @@ var buildfire = {
             // return unsupported file types
             if (/\..{3,4}(?!.)/g.test(url) && !/.(png|jpg|jpeg)(?!.)/g.test(url)) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL: ' + url);
+                console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
                 return url;
             }
 
@@ -1851,7 +1851,7 @@ var buildfire = {
             // return unsupported file types
             if (/\..{3,4}(?!.)/g.test(url) && !/.(png|jpg|jpeg)(?!.)/g.test(url)) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL: ' + url);
+                console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
             }
 
