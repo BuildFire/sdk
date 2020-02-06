@@ -168,22 +168,11 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 		if (!$scope.$$phase) $scope.$apply();
 	};
 
-	if (postMaster.widgetPluginAPI && postMaster.controlPluginAPI) {
-			postMaster.controlPluginAPI.spinner.show = postMaster.widgetPluginAPI.spinner.show = function () {
-					$scope.showSpinner = true;
-					$scope.$apply();
-			};
-
-			postMaster.controlPluginAPI.spinner.hide = postMaster.widgetPluginAPI.spinner.hide = function () {
-					$scope.showSpinner = false;
-					$scope.$apply();
-			};
-	}
-
 	clickFeedback = function () {
 			return;
 	};
 
+	postMaster.widgetPluginAPI.spinner = window.spinner;
 	postMaster.widgetPluginAPI.auth = { ...postMaster.widgetPluginAPI.auth };
 	postMaster.widgetPluginAPI.auth.secondaryUserLookup = function () { // prefer this
 		return null;
