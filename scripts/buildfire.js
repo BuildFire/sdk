@@ -677,7 +677,7 @@ var buildfire = {
                             + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
                             + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
                     styleElement.innerHTML = css;
-                    document.body.appendChild(styleElement);
+                    (document.head || document.body || document).appendChild(styleElement);
 
                 });
             }
