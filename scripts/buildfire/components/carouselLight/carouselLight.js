@@ -229,7 +229,7 @@ buildfire.components.carousel.view.prototype = {
 
         buildfire.imageLib.local.cropImage(item.iconUrl, {
             aspect: this.aspect,
-            size: 'fullWidth',
+            size: 'full_width',
             width: this.width,
             height: this.height
         }, function (err, result) {
