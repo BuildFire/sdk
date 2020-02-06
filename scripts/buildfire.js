@@ -271,7 +271,7 @@ var buildfire = {
                 if(callback)callback(null, buildfire._context);
             } else {
                 if(!callback) throw 'Context not ready. Use callback parameter instead of direct return';
-                let p = new Packet(null, 'getContext');
+                var p = new Packet(null, 'getContext');
                 buildfire._sendPacket(p, function (err, data) {
                     if (data)
                         buildfire._context = data;

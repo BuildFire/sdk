@@ -12,95 +12,94 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         $scope.currentUser = window.currentUser;
 
         $scope.loadWebpackFrames = function(config) {
-            var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
-            $scope.widgetSrc = root + '/widget/index.html?fid=widget';
+            postMaster.controlPluginAPI.getContext(null, function(err, context){
+                var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
+                var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
 
-            if ($scope.isWidgetShell && config.widget && config.widget.service) {
-                serviceFrame = document.createElement('iframe');
-                serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
-                serviceFrame.id='service';
-                serviceFrame.style.display='none';
-                serviceFrame.src = root + '/widget/' + config.widget.service + "?fid=service";
-                document.body.appendChild(serviceFrame);
-            }
+                if (config.control.settings.enabled) {
+                    $scope.currentControl = $scope.settingsSrc = root + '/control/settings/index.html?fid=controlSettings&' + contextQueryParameter;
+                }
 
-            if (config.control.settings.enabled) {
-                $scope.currentControl = $scope.settingsSrc = root + '/control/settings/index.html?fid=controlSettings';
-            }
+                if (config.control.design.enabled) {
+                    $scope.currentControl = $scope.designSrc = root + '/control/design/index.html?fid=controlDesign&' + contextQueryParameter;
+                }
 
-            if (config.control.design.enabled) {
-                $scope.currentControl = $scope.designSrc = root + '/control/design/index.html?fid=controlDesign';
-            }
+                if (config.control.content.enabled) {
+                    $scope.currentControl = $scope.contentSrc = root + '/control/content/index.html?fid=controlContent&' + contextQueryParameter;
+                }
 
-            if (config.control.content.enabled) {
-                $scope.currentControl = $scope.contentSrc = root + '/control/content/index.html?fid=controlContent';
-            }
+                $scope.pluginControlIframeVisible = true;
 
-            $scope.pluginControlIframeVisible = true;
-
-            if(config.control.customTabs && config.control.customTabs.length) {
-                for(var i = 0 ; i < config.control.customTabs.length; i++) {
-                    var tab = config.control.customTabs[i];
-                    if(tab && tab.url) {
-                        if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
-                            var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/';
-                            // strip leading '/' if any
-                            var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
-                            tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
-                        } else {
-                            tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
+                if(config.control.customTabs && config.control.customTabs.length) {
+                    for(var i = 0 ; i < config.control.customTabs.length; i++) {
+                        var tab = config.control.customTabs[i];
+                        if(tab && tab.url) {
+                            if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
+                                var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/';
+                                // strip leading '/' if any
+                                var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
+                                var contextSeparator = customTabUrl.indexOf('?') > -1 ? '&' : '?';
+                                customTabUrl += contextSeparator + contextQueryParameter;
+                                tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
+                            } else {
+                                tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
+                            }
                         }
                     }
+                    $scope.customTabs = config.control.customTabs;
                 }
-                $scope.customTabs = config.control.customTabs;
-            }
 
-            if (!$scope.$$phase)
-                $scope.$apply();
-        }
+                if (!$scope.$$phase)
+                    $scope.$apply();
+            });
+        };
 
-        window.serviceFrame;
         $scope.loadFrames = function (pluginFolder, config) {
-            var root =  '../plugins/';
+            postMaster.controlPluginAPI.getContext(null, function(err, context){
+                var root =  '../plugins/';
+                var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
 
-            if (config.control.settings.enabled) {
-                $scope.currentControl = $scope.settingsSrc = root + pluginFolder + '/control/settings/index.html?fid=controlSettings';
-                $sce.trustAsResourceUrl($scope.currentControl);
-            }
+                if (config.control.settings.enabled) {
+                    $scope.currentControl = $scope.settingsSrc = root + pluginFolder + '/control/settings/index.html?fid=controlSettings&' + contextQueryParameter;
+                    $sce.trustAsResourceUrl($scope.currentControl);
+                }
 
-            if (config.control.design.enabled) {
-                $scope.currentControl = $scope.designSrc = root + pluginFolder + '/control/design/index.html?fid=controlDesign';
-                $sce.trustAsResourceUrl($scope.currentControl);
-            }
+                if (config.control.design.enabled) {
+                    $scope.currentControl = $scope.designSrc = root + pluginFolder + '/control/design/index.html?fid=controlDesign&' + contextQueryParameter;
+                    $sce.trustAsResourceUrl($scope.currentControl);
+                }
 
-            if (config.control.content.enabled) {
-                $scope.currentControl = $scope.contentSrc = root + pluginFolder + '/control/content/index.html?fid=controlContent';
-                $sce.trustAsResourceUrl($scope.currentControl);
-            }
+                if (config.control.content.enabled) {
+                    $scope.currentControl = $scope.contentSrc = root + pluginFolder + '/control/content/index.html?fid=controlContent&' + contextQueryParameter;
+                    $sce.trustAsResourceUrl($scope.currentControl);
+                }
 
-            $scope.pluginControlIframeVisible = true;
+                $scope.pluginControlIframeVisible = true;
 
-            if(config.control.customTabs && config.control.customTabs.length) {
-                var pluginFolder = $routeParams.pluginFolder;
-                if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
-                for(var i = 0 ; i < config.control.customTabs.length; i++) {
-                    var tab = config.control.customTabs[i];
-                    if(tab && tab.url) {
-                        if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
-                            var root = '../plugins/' + pluginFolder + '/control/';
-                            // strip leading '/' if any
-                            var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
-                            tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
-                        } else {
-                            tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
+                if(config.control.customTabs && config.control.customTabs.length) {
+                    var tabPluginFolder = $routeParams.pluginFolder;
+                    if (!tabPluginFolder) tabPluginFolder = window.appContext.currentPlugin.pluginPath;
+                    for(var i = 0 ; i < config.control.customTabs.length; i++) {
+                        var tab = config.control.customTabs[i];
+                        if(tab && tab.url) {
+                            if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
+                                var root = '../plugins/' + tabPluginFolder + '/control/';
+                                // strip leading '/' if any
+                                var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
+                                var contextSeparator = customTabUrl.indexOf('?') > -1 ? '&' : '?';
+                                customTabUrl += contextSeparator + contextQueryParameter;
+                                tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
+                            } else {
+                                tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
+                            }
                         }
                     }
+                    $scope.customTabs = config.control.customTabs;
                 }
-                $scope.customTabs = config.control.customTabs;
-            }
 
-            if (!$scope.$$phase)
-                $scope.$apply();
+                if (!$scope.$$phase)
+                    $scope.$apply();
+            });
         };
 
         $scope.loadIFrame = function (section, e) {
@@ -108,13 +107,16 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
-            $scope.currentControl = $scope.pluginConfig.webpack
-                ?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control'
-                : '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control';
+            postMaster.controlPluginAPI.getContext(null, function(err, context){
+                var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
+                $scope.currentControl = $scope.pluginConfig.webpack
+                    ?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control'
+                    : '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter;
 
-            var element = document.querySelector('.active');
-            if (element)element.className = '';
-            e.target.className = 'active';
+                var element = document.querySelector('.active');
+                if (element)element.className = '';
+                e.target.className = 'active';
+            });
         };
 
         $scope.loadCustomTab = function (tab, e) {
