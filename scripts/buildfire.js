@@ -60,7 +60,7 @@ var buildfire = {
         if(tags && tags.content) {
             var sections = tags.content.split(",");
             sections.forEach(function(section){
-               var s = section.split("=");
+                var s = section.split("=");
                 options[s[0]] = s.length>1?s[1]:true;
             });
         }
@@ -122,8 +122,7 @@ var buildfire = {
 
         buildfire.appearance.insertHTMLAttributes();
 
-        if(!buildfire.options.disableTheme)
-            buildfire.appearance.attachCSSFiles();
+        buildfire.appearance.attachCSSFiles();
 
     }
     , _whitelistedCommands: [
@@ -203,11 +202,11 @@ var buildfire = {
             resendAttempts = 0;
 
         var isDataStoreRetry = (command.indexOf('datastore') == 0
-                && command.indexOf('datastore.insert') != 0
-                && command.indexOf('datastore.bulkInsert') != 0
-                && command.indexOf('datastore.disableRefresh') != 0
-                && command.indexOf('datastore.searchAndUpdate') != 0
-                && command.indexOf('datastore.update') != 0
+            && command.indexOf('datastore.insert') != 0
+            && command.indexOf('datastore.bulkInsert') != 0
+            && command.indexOf('datastore.disableRefresh') != 0
+            && command.indexOf('datastore.searchAndUpdate') != 0
+            && command.indexOf('datastore.update') != 0
         );
 
         var isGetContextRetry = (command.indexOf('getContext') == 0);
@@ -263,16 +262,24 @@ var buildfire = {
     }
 
     , getContext: function (callback) {
-        if (buildfire._context)
-            callback(null, buildfire._context);
-        else {
-            var p = new Packet(null, 'getContext');
-            buildfire._sendPacket(p, function (err, data) {
-                if (data)
-                    buildfire._context = data;
-                if(callback)callback(err, data);
-            });
+        if (buildfire._context) {
+            if(callback)callback(null, buildfire._context);
         }
+        else {
+            if(window.parsedQuerystring.appcontext) {
+                buildfire._context = JSON.parse(window.parsedQuerystring.appcontext);
+                if(callback)callback(null, buildfire._context);
+            } else {
+                if(!callback) throw 'Context not ready. Use callback parameter instead of direct return';
+                var p = new Packet(null, 'getContext');
+                buildfire._sendPacket(p, function (err, data) {
+                    if (data)
+                        buildfire._context = data;
+                    if(callback)callback(err, data);
+                });
+            }
+        }
+        return buildfire._context;
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
     , navigation: {
@@ -312,7 +319,7 @@ var buildfire = {
 
                 navigate(pluginData, pluginIds['social'], callback);
             });
-            
+
             function navigate(data, pluginId, cb) {
                 data.pluginId = pluginId;
 
@@ -462,22 +469,22 @@ var buildfire = {
 
             });
         },
-		_forceCSSRender: function(){
-			// WebKit Rendering Reset on Plugins
-			if(window.location.href.indexOf('widget') > 0){
-				var html = document.getElementsByTagName('html')[0];
-				var style = document.createElement('style');
-				style.type = 'text/css';
-				style.innerHTML = 'body{position:relative !important; z-index:1 !important;} .plugin-slide{position:relative !important;} .plugin-slide, .plugin-slide img{transform: translateZ(0) !important;';
-				html.appendChild(style);
-			}
-		},
+        _forceCSSRender: function(){
+            // WebKit Rendering Reset on Plugins
+            if(window.location.href.indexOf('widget') > 0){
+                var html = document.getElementsByTagName('html')[0];
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = 'body{position:relative !important; z-index:1 !important;} .plugin-slide{position:relative !important;} .plugin-slide, .plugin-slide img{transform: translateZ(0) !important;';
+                html.appendChild(style);
+            }
+        },
         insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
 
             if(window.location.href.indexOf('widget') > 0){
                 html.setAttribute('buildfire', 'widget');
-				html.setAttribute('type', 'app');
+                html.setAttribute('type', 'app');
             }else{
                 html.setAttribute('buildfire', 'control');
             }
@@ -570,39 +577,109 @@ var buildfire = {
             var files = [], base = '';
 
             var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
+            var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
+            var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
 
-            if(!disableBootstrap){
-                files.push('styles/bootstrap.css');
-            }
+            if (!disableTheme && !enableMDTheme) {
+                if(!disableTheme && !disableBootstrap){
+                    files.push('styles/bootstrap.css');
+                }
 
-            if (window.location.pathname.indexOf('/control/') >= 0) {
-                files.push('styles/siteStyle.css') &&
-                files.push('styles/pluginScreen.css');
-            }
-            else{
-                var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
+                if (window.location.pathname.indexOf('/control/') >= 0) {
+                    files.push('styles/siteStyle.css') &&
+                    files.push('styles/pluginScreen.css');
+                }
+                else{
+                    var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
 
-                if(!disableAppStyles){
-                    files.push('styles/appStyle.css');
+                    if(!disableAppStyles){
+                        files.push('styles/appStyle.css');
+                    }
+                }
+
+                // TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
+                var scripts = document.getElementsByTagName("script");
+
+                for (var i = 0; i < scripts.length; i++) {
+                    var src = scripts[i].src;
+
+                    if (src.indexOf('buildfire.js') > 0) {
+                        base = src.replace('/scripts/buildfire.js', '');
+                        break;
+                    } else if (src.indexOf('buildfire.min.js') > 0) {
+                        base = src.replace('/scripts/buildfire.min.js', '');
+                        break;
+                    }
+                    else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
+                        base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
+                        break;
+                    }
                 }
             }
 
-            var scripts = document.getElementsByTagName("script");
+            if (enableMDTheme) {
+                buildfire.appearance.getAppTheme(function(err, appTheme) {
+                    var styleElement = document.createElement('style');
+                    styleElement.id = 'appMDTheme';
+                    styleElement.type = 'text/css';
+                    var css = '@import url(https://fonts.googleapis.com/css?family='+ appTheme.fontId +');'
+                            + ':root {'
+                            + '  --mdc-typography-font-family: unquote("' + appTheme.fontId + ', sans-serif");'
+                            + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
+                            + '  --mdc-theme-secondary:' + appTheme.colors.successTheme + ';'
+                            + '  --mdc-theme-surface:' + appTheme.colors.backgroundColor + ';'
+                            + '  --mdc-theme-background' + appTheme.colors.backgroundColor + ';'
+                            + '  --mdc-theme-error:' + appTheme.colors.dangerTheme + ';'
+                            + '  --mdc-theme-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-on-primary: white;'
+                            + '  --mdc-theme-on-secondary: white;'
+                            + '  --mdc-theme-on-error: white;'
+                            + '  --mdc-theme-on-surface:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-primary-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-secondary-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-disabled-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-primary-on-light: white;'
+                            + '  --mdc-theme-text-secondary-on-light: white;'
+                            + '  --mdc-theme-text-hint-on-light: white;'
+                            + '  --mdc-theme-text-disabled-on-light: white;'
+                            + '  --mdc-theme-text-icon-on-light:  white;'
+                            + '  --mdc-theme-text-primary-on-dark: white;'
+                            + '  --mdc-theme-text-secondary-on-dark: white;'
+                            + '  --mdc-theme-text-hint-on-dark: white;'
+                            + '  --mdc-theme-text-disabled-on-dark: white;'
+                            + '  --mdc-theme-text-icon-on-dark: white;'
+                            + '}'
+                            + '.mdc-theme--primary { color: #6200ee !important; color: var(--mdc-theme-primary, #6200ee) !important; }'
+                            + '.mdc-theme--secondary { color: #018786 !important; color: var(--mdc-theme-secondary, #018786) !important; }'
+                            + '.mdc-theme--background { background-color: #fff; background-color: var(--mdc-theme-background, #fff);}'
+                            + '.mdc-theme--surface { background-color: #fff; background-color: var(--mdc-theme-surface, #fff);}'
+                            + '.mdc-theme--error { color: #b00020 !important; color: var(--mdc-theme-error, #b00020) !important;}'
+                            + '.mdc-theme--on-primary { color: #fff !important; color: var(--mdc-theme-on-primary, #fff) !important;}'
+                            + '.mdc-theme--on-secondary { color: #fff !important; color: var(--mdc-theme-on-secondary, #fff) !important;}'
+                            + '.mdc-theme--on-surface { color: #000 !important; color: var(--mdc-theme-on-surface, #000) !important;}'
+                            + '.mdc-theme--on-error { color: #fff !important; color: var(--mdc-theme-on-error, #fff) !important;}'
+                            + '.mdc-theme--text-primary-on-background { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87)) !important;}'
+                            + '.mdc-theme--text-secondary-on-background { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54)) !important;}'
+                            + '.mdc-theme--text-hint-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-disabled-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-icon-on-background { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-primary-on-light { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-light, rgba(0, 0, 0, 0.87)) !important;}'
+                            + '.mdc-theme--text-secondary-on-light { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, 0.54)) !important;}'
+                            + '.mdc-theme--text-hint-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-disabled-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-icon-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-primary-on-dark { color: white !important; color: var(--mdc-theme-text-primary-on-dark, white) !important;}'
+                            + '.mdc-theme--text-secondary-on-dark { color: rgba(255, 255, 255, 0.7) !important; color: var(--mdc-theme-text-secondary-on-dark, rgba(255, 255, 255, 0.7)) !important;}'
+                            + '.mdc-theme--text-hint-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-hint-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--text-disabled-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-disabled-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--text-icon-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-icon-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
+                            + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
+                    styleElement.innerHTML = css;
+                    (document.head || document.body || document).appendChild(styleElement);
 
-            for (var i = 0; i < scripts.length; i++) {
-                var src = scripts[i].src;
-
-                if (src.indexOf('buildfire.js') > 0) {
-                    base = src.replace('/scripts/buildfire.js', '');
-                    break;
-                } else if (src.indexOf('buildfire.min.js') > 0) {
-                    base = src.replace('/scripts/buildfire.min.js', '');
-                    break;
-                }
-                else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
-                    base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
-                    break;
-                }
+                });
             }
 
             if (base[base.length - 1] != "/"){
@@ -965,7 +1042,7 @@ var buildfire = {
 
         },
         /// ref:
-         getById: function (id, tag, callback) {
+        getById: function (id, tag, callback) {
 
             var idType = typeof (id);
             if (idType == "function" && typeof (callback) == "undefined") {
@@ -1675,7 +1752,7 @@ var buildfire = {
             if (typeof callback !== 'function') {
                 callback = console.warn;
             }
-            
+
             callback({ "code": "error", "message": "tag is required for appData, and must be a string" }, null);
 
             return isTagValid;
@@ -2536,6 +2613,8 @@ var buildfire = {
 
 };
 
+window.parsedQuerystring = buildfire.parseQueryString();
+buildfire.fid = window.parsedQuerystring.fid;
 buildfire.init();
 
 buildfire.eventManager.add('deviceAppBackgrounded', function () {
@@ -2584,10 +2663,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 
                 if(!disableTheme) {
-                 if(buildfire.isWeb() || !context.liveMode)
-                    buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
-                 else
-                     buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
+                    if(buildfire.isWeb() || !context.liveMode)
+                        buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+                    else
+                        buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
                 }
             }
         }
@@ -2615,15 +2694,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
             }
         };
     }
-	setTimeout(function(){
+    setTimeout(function(){
         if(!buildfire.options.disableTheme)
             buildfire.appearance._forceCSSRender();
-	}, 1750);
+    }, 1750);
 
 });
-
-buildfire.fid = buildfire.parseQueryString().fid;
-
 
 document.addEventListener("resize", function (event) {
     buildfire.appearance.autosizeContainer();

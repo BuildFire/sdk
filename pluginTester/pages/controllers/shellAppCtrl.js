@@ -42,72 +42,43 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 
 	$scope.loadWebpackFrames = function(config) {
 			var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
-			$scope.widgetSrc = root + '/widget/index.html?fid=widget';
+        	postMaster.widgetPluginAPI.getContext(null, function(err, context){
+                var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
+                $scope.widgetSrc = root + '/widget/index.html?fid=widget&' + contextQueryParameter;
 
-			if ($scope.isWidgetShell && config.widget && config.widget.service) {
-					serviceFrame = document.createElement('iframe');
-					serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
-					serviceFrame.id='service';
-					serviceFrame.style.display='none';
-					serviceFrame.src = root + '/widget/' + config.widget.service + "?fid=service";
-					document.body.appendChild(serviceFrame);
-			}
+                if ($scope.isWidgetShell && config.widget && config.widget.service) {
+                    serviceFrame = document.createElement('iframe');
+                    serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
+                    serviceFrame.id='service';
+                    serviceFrame.style.display='none';
+                    serviceFrame.src = root + '/widget/' + config.widget.service + "?fid=service&" + contextQueryParameter;
+                    document.body.appendChild(serviceFrame);
+                }
 
-			$scope.pluginControlIframeVisible = true;
+                $scope.pluginControlIframeVisible = true;
 
-			if (!$scope.$$phase)
-					$scope.$apply();
+                if (!$scope.$$phase)
+                    $scope.$apply();
+			});
+
 	}
 
 	window.serviceFrame;
 	$scope.loadFrames = function (pluginFolder, config) {
 			var root =  '../plugins/';
-			$scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget';
+			postMaster.widgetPluginAPI.getContext(null, function(err, context){
+                var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
+                $scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget&' + contextQueryParameter;
 
-			if ($scope.isWidgetShell && config.widget && config.widget.service) {
-					serviceFrame = document.createElement('iframe');
-					serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
-					serviceFrame.id='service';
-					serviceFrame.style.display='none';
-					serviceFrame.src = root + pluginFolder + '/widget/' + config.widget.service + "?fid=service";
-					document.body.appendChild(serviceFrame);
-			}
-
-			if (config.control.settings.enabled) {
-					$scope.currentControl = $scope.settingsSrc = root + pluginFolder + '/control/settings/index.html?fid=controlSettings';
-					$sce.trustAsResourceUrl($scope.currentControl);
-			}
-
-			if (config.control.design.enabled) {
-					$scope.currentControl = $scope.designSrc = root + pluginFolder + '/control/design/index.html?fid=controlDesign';
-					$sce.trustAsResourceUrl($scope.currentControl);
-			}
-
-			if (config.control.content.enabled) {
-					$scope.currentControl = $scope.contentSrc = root + pluginFolder + '/control/content/index.html?fid=controlContent';
-					$sce.trustAsResourceUrl($scope.currentControl);
-			}
-
-			$scope.pluginControlIframeVisible = true;
-
-			if(config.control.customTabs && config.control.customTabs.length) {
-					var pluginFolder = $routeParams.pluginFolder;
-					if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
-					for(var i = 0 ; i < config.control.customTabs.length; i++) {
-							var tab = config.control.customTabs[i];
-							if(tab && tab.url) {
-									if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
-											var root = '../plugins/' + pluginFolder + '/control/';
-											// strip leading '/' if any
-											var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
-											tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
-									} else {
-											tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
-									}
-							}
-					}
-					$scope.customTabs = config.control.customTabs;
-			}
+                if ($scope.isWidgetShell && config.widget && config.widget.service) {
+                    serviceFrame = document.createElement('iframe');
+                    serviceFrame.sandbox="allow-scripts allow-forms allow-same-origin";
+                    serviceFrame.id='service';
+                    serviceFrame.style.display='none';
+                    serviceFrame.src = root + pluginFolder + '/widget/' + config.widget.service + "?fid=service&" + contextQueryParameter;
+                    document.body.appendChild(serviceFrame);
+                }
+			});
 
 			if (!$scope.$$phase)
 					$scope.$apply();
@@ -176,7 +147,9 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 	};
 
 	$scope.sendDeeplinkData = function () {
-			widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?fid=widget&dld=" + $scope.link.deeplinkData;
+        postMaster.widgetPluginAPI.getContext(null, function(err, context){
+            widgetIframe.src = $scope.widgetSrc.split("?")[0] + "?fid=widget&dld=" + $scope.link.deeplinkData + '&appcontext=' + encodeURIComponent(JSON.stringify(context));
+		});
 	};
 
 	$scope.appLogin = function () {
@@ -186,31 +159,20 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 			window.currentAppUser = user;
 			if (!$scope.$$phase) $scope.$apply();
 		});
-	}
+	};
 
 	$scope.appLogout = function () {
 		postMaster.widgetPluginAPI.auth.logout();
 		$scope.currentAppUser = null;
 		window.currentAppUser = null;
 		if (!$scope.$$phase) $scope.$apply();
-	}
-
-	if (postMaster.widgetPluginAPI && postMaster.controlPluginAPI) {
-			postMaster.controlPluginAPI.spinner.show = postMaster.widgetPluginAPI.spinner.show = function () {
-					$scope.showSpinner = true;
-					$scope.$apply();
-			};
-
-			postMaster.controlPluginAPI.spinner.hide = postMaster.widgetPluginAPI.spinner.hide = function () {
-					$scope.showSpinner = false;
-					$scope.$apply();
-			};
-	}
+	};
 
 	clickFeedback = function () {
 			return;
-	}
+	};
 
+	postMaster.widgetPluginAPI.spinner = window.spinner;
 	postMaster.widgetPluginAPI.auth = { ...postMaster.widgetPluginAPI.auth };
 	postMaster.widgetPluginAPI.auth.secondaryUserLookup = function () { // prefer this
 		return null;
