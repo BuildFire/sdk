@@ -1804,7 +1804,7 @@ var buildfire = {
                         return this[match];
                     },
                     VALID_SIZES: [
-                        'xs', 's', 'm', 'l', 'xl', 'xxl', //standard
+                        'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', //standard
                         '720', '1080', '1440', //desktop
                         'full_width', 'half_width', 'third_width', 'quarter_width', 'fifth_width', 'sixth_width' // responsive
                     ]
@@ -1836,7 +1836,7 @@ var buildfire = {
         , resizeImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/\..{3,4}(?!.)/g.test(url) && !/.(png|jpg|jpeg)(?!.)/g.test(url)) {
+            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/g.test(url))) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
                 console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
                 return url;
@@ -1926,7 +1926,7 @@ var buildfire = {
         , cropImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/\..{3,4}(?!.)/g.test(url) && !/.(png|jpg|jpeg)(?!.)/g.test(url)) {
+            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/g.test(url))) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
                 console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
