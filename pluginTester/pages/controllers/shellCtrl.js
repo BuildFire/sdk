@@ -217,6 +217,27 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                 $scope.showSpinner = false;
                 $scope.$apply();
             };
+
+            postMaster.controlPluginAPI.auth = { ...postMaster.controlPluginAPI.auth };
+            postMaster.controlPluginAPI.auth.getCurrentUser = function (data, callback) {
+                debugger
+                if (typeof(data) == 'function') {
+                    callback = data;
+                }
+                var user = authAPI.secondaryUserLookup();
+                if(!user){
+                    user = localStorage.getItem('user');
+                    user = JSON.parse(user);
+        
+                }
+                if (!(user && user.userToken)) {
+                    user = null;
+                }
+                if (callback)
+                    callback(null, user);
+                else
+                    return user;
+            }
         }
     }]
 );
