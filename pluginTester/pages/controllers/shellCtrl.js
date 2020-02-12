@@ -220,7 +220,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
             postMaster.controlPluginAPI.auth = { ...postMaster.controlPluginAPI.auth };
             postMaster.controlPluginAPI.auth.getCurrentUser = function (data, callback) {
-                debugger
                 if (typeof(data) == 'function') {
                     callback = data;
                 }
