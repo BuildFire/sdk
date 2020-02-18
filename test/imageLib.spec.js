@@ -51,4 +51,26 @@ describe('buildfire.imageLib', function () {
             expect(buildfire.imageLib.cropImage).toHaveBeenCalledWith('https://www.google.com/images/srpr/logo11w.png', {width:100,height:150});
         });
     });
+
+    describe('buildfire.imageLib.ENUMS.SIZES', function () {
+        beforeEach( function () {
+            spyOn(buildfire.imageLib.ENUMS, 'SIZES');
+
+            buildfire.imageLib.ENUMS.SIZES;
+        });
+        it("buildfire.imageLib.ENUMS.SIZES should exist and return an object", function () {
+            expect(typeof buildfire.imageLib.ENUMS.SIZES).toEqual("object");
+        });
+    });
+
+    describe('buildfire.imageLib.ENUMS.ASPECT_RATIOS', function () {
+        beforeEach( function () {
+            spyOn(buildfire.imageLib.ENUMS, 'ASPECT_RATIOS');
+
+            buildfire.imageLib.ENUMS.ASPECT_RATIOS;
+        });
+        it("buildfire.imageLib.ENUMS.ASPECT_RATIOS should exist and return an object", function () {
+            expect(typeof buildfire.imageLib.ENUMS.ASPECT_RATIOS).toEqual("object");
+        });
+    });
 });
