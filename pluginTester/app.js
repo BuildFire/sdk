@@ -46,6 +46,10 @@ $app.run(function () {
 	if (user) {
 		window.currentUser = JSON.parse(user);
 	}
+	var appUser = localStorage.getItem("AUTH_CURRENT_USER");
+	if (appUser) {
+		window.currentAppUser = JSON.parse(appUser);
+	}
 });
 
 var __tmrToastClearOut;
@@ -70,3 +74,48 @@ $app.controller('toastCtrl', ['$scope', function ($scope) {
 		if (!$scope.$$phase) $scope.$apply();
 	};
 }]);
+
+window.spinner = {
+    element: null,
+    hideCount: 0,
+    hideTimer: null,
+
+    hide: function(forceHide) {
+        console.log('hide', {
+            forceHide: forceHide,
+            hideCount: window.spinner.hideCount,
+            element: window.spinner.element
+        });
+
+        if (!window.spinner.element) {
+            window.spinner.element = document.getElementById('loading-bar-spinner');
+        }
+
+        window.spinner.hideCount--;
+
+        if (window.spinner.hideCount <= 0 || forceHide) {
+            window.spinner.element.style.display = 'none';
+            window.spinner.hideCount = 0;
+
+            if (window.spinner.hideTimer) {
+                clearTimeout(window.spinner.hideTimer);
+            }
+        };
+    },
+    show: function() {
+        console.log('show', { hideCount: window.spinner.hideCount });
+
+        if (!window.spinner.element) {
+            window.spinner.element = document.getElementById('loading-bar-spinner');
+        }
+
+        if (window.spinner.hideCount == 0) {
+            window.spinner.hideTimer = setTimeout(function() {
+                window.spinner.hide(true);
+            },10000);
+        }
+
+        window.spinner.hideCount++;
+        window.spinner.element.style.display = 'block';
+    }
+};

@@ -1378,6 +1378,9 @@ html[buildfire] body{
 	overflow-y:auto !important;
 	-webkit-overflow-scrolling:touch !important;
 }
+::-webkit-scrollbar{
+	display:none;
+}
 html[buildfire] body.no-scroll{
 	overflow:hidden !important;
 	-webkit-overflow-scrolling:inherit !important;
