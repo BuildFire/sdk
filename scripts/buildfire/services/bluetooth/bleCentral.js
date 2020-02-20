@@ -113,7 +113,7 @@ if (buildfire._whitelistedCommands) {
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.disconnect');
 
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnDeviceConnected');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnDeviceDisonnected');
+	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnDeviceDisconnected');
 	/////////////////////////////////// READ/WRITE ////////////////////////////////////
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.read');
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.write');
