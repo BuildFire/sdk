@@ -99,32 +99,11 @@ buildfire.services.bluetooth.bleCentral = {
 
 if (buildfire._whitelistedCommands) {
 	//////////////////////////////////// SCANNING /////////////////////////////////////
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.scan');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.startScan');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.startScanWithOptions');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.stopScan');
-
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnDeviceDiscovered');
 	/////////////////////////////////// CONNECTIONS ///////////////////////////////////
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.connect');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.autoConnect');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.isConnected');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.connectedPeripheralsWithServices');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.disconnect');
-
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnDeviceConnected');
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnDeviceDisconnected');
-	/////////////////////////////////// READ/WRITE ////////////////////////////////////
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.read');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.write');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.writeWithoutResponse');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.readRSSI');
 	/////////////////////////////////// NOTIFICATIONS ////////////////////////////////////
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.startNotification');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.stopNotification');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.startStateNotifications');
-	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.stopStateNotifications');
-
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnNotification');
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnStateNotification');
 }
