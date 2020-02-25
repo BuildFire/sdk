@@ -426,17 +426,27 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
     margin: 0 -20px;
     border-top: 1px solid #dddddd;
     border-bottom: 1px solid #dedede;
+	position: relative;
 }
 .tab-arrow {
-    z-index: 1;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
+	z-index: 1;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 36px;
-	opacity: .2;
+	opacity: 1;
+	position: absolute;
 }
+
+.tab-arrow.icon-chevron-left {
+	left: 0;
+}
+
+.tab-arrow.icon-chevron-right {
+	right: 0;
+}
+
 .tab-arrow.active {
 	opacity: 1;
 }
@@ -448,6 +458,31 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
     overflow-x: auto;
     width: 100%;
 }
+
+.has-custom-tabs #pluginControlHeaderTabs .nav-tabs > li {
+	float: unset !important;
+	display: inline-block !important;
+}
+
+.has-custom-tabs #pluginControlHeaderTabs > ul {
+	display: inline-block !important;
+	min-width: 100% !important;
+}
+
+.has-custom-tabs #pluginControlHeaderTabs {
+	white-space: nowrap;
+	overflow-x: scroll;
+	margin-left: 40px;
+	margin-right: 40px;
+	min-height: 30px;
+	scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.has-custom-tabs #pluginControlHeaderTabs::-webkit-scrollbar {
+	display: none;
+}
+
 /* End of tabs scroll */
 #main-content{
     margin-left:220px;
