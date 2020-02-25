@@ -438,6 +438,9 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	opacity: 1;
 	position: absolute;
 }
+.nav-tabs.nav-justified {
+    width: auto !important;
+}
 
 .tab-arrow.icon-chevron-left {
 	left: 0;
@@ -467,6 +470,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .has-custom-tabs #pluginControlHeaderTabs > ul {
 	display: inline-block !important;
 	min-width: 100% !important;
+	vertical-align: bottom;
 }
 
 .has-custom-tabs #pluginControlHeaderTabs {
