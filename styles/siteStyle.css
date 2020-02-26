@@ -468,7 +468,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 }
 
 .has-custom-tabs #pluginControlHeaderTabs > ul {
-	display: inline-block !important;
+	display: inline-flex !important;
 	min-width: 100% !important;
 	vertical-align: bottom;
 }
