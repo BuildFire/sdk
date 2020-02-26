@@ -1858,7 +1858,7 @@ var buildfire = {
         , resizeImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/g.test(url))) {
+            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
                 console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
                 return url;
@@ -1948,7 +1948,7 @@ var buildfire = {
         , cropImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/g.test(url))) {
+            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
                 var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
                 console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
