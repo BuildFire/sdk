@@ -199,6 +199,30 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
         };
 
+        $scope.scrollTabs = function (type) {
+            var moveBy = document.querySelectorAll("#pluginControlHeaderTabs ul li")[0].clientWidth;
+            switch (type) {
+                case "left":
+                    // document.querySelector("#pluginControlHeaderTabs").scrollBy(-1 * moveBy,0);
+
+                    document.querySelector("#pluginControlHeaderTabs").scrollBy({
+                        top: 0, // could be negative value
+                        left: -1 * moveBy,
+                        behavior: 'smooth'
+                    });
+                    break;
+
+                case "right":
+                    // document.querySelector("#pluginControlHeaderTabs").scrollBy(moveBy,0);
+                    document.querySelector("#pluginControlHeaderTabs").scrollBy({
+                        top: 0, // could be negative value
+                        left: moveBy,
+                        behavior: 'smooth'
+                    });
+
+                    break;
+            }
+        };
 
         $scope.init();
 
