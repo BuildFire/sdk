@@ -60,7 +60,7 @@ var buildfire = {
         if(tags && tags.content) {
             var sections = tags.content.split(",");
             sections.forEach(function(section){
-               var s = section.split("=");
+                var s = section.split("=");
                 options[s[0]] = s.length>1?s[1]:true;
             });
         }
@@ -122,8 +122,7 @@ var buildfire = {
 
         buildfire.appearance.insertHTMLAttributes();
 
-        if(!buildfire.options.disableTheme)
-            buildfire.appearance.attachCSSFiles();
+        buildfire.appearance.attachCSSFiles();
 
     }
     , _whitelistedCommands: [
@@ -203,11 +202,11 @@ var buildfire = {
             resendAttempts = 0;
 
         var isDataStoreRetry = (command.indexOf('datastore') == 0
-                && command.indexOf('datastore.insert') != 0
-                && command.indexOf('datastore.bulkInsert') != 0
-                && command.indexOf('datastore.disableRefresh') != 0
-                && command.indexOf('datastore.searchAndUpdate') != 0
-                && command.indexOf('datastore.update') != 0
+            && command.indexOf('datastore.insert') != 0
+            && command.indexOf('datastore.bulkInsert') != 0
+            && command.indexOf('datastore.disableRefresh') != 0
+            && command.indexOf('datastore.searchAndUpdate') != 0
+            && command.indexOf('datastore.update') != 0
         );
 
         var isGetContextRetry = (command.indexOf('getContext') == 0);
@@ -263,16 +262,24 @@ var buildfire = {
     }
 
     , getContext: function (callback) {
-        if (buildfire._context)
-            callback(null, buildfire._context);
-        else {
-            var p = new Packet(null, 'getContext');
-            buildfire._sendPacket(p, function (err, data) {
-                if (data)
-                    buildfire._context = data;
-                if(callback)callback(err, data);
-            });
+        if (buildfire._context) {
+            if(callback)callback(null, buildfire._context);
         }
+        else {
+            if(window.parsedQuerystring.appcontext) {
+                buildfire._context = JSON.parse(window.parsedQuerystring.appcontext);
+                if(callback)callback(null, buildfire._context);
+            } else {
+                if(!callback) throw 'Context not ready. Use callback parameter instead of direct return';
+                var p = new Packet(null, 'getContext');
+                buildfire._sendPacket(p, function (err, data) {
+                    if (data)
+                        buildfire._context = data;
+                    if(callback)callback(err, data);
+                });
+            }
+        }
+        return buildfire._context;
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
     , navigation: {
@@ -312,7 +319,7 @@ var buildfire = {
 
                 navigate(pluginData, pluginIds['social'], callback);
             });
-            
+
             function navigate(data, pluginId, cb) {
                 data.pluginId = pluginId;
 
@@ -462,22 +469,22 @@ var buildfire = {
 
             });
         },
-		_forceCSSRender: function(){
-			// WebKit Rendering Reset on Plugins
-			if(window.location.href.indexOf('widget') > 0){
-				var html = document.getElementsByTagName('html')[0];
-				var style = document.createElement('style');
-				style.type = 'text/css';
-				style.innerHTML = 'body{position:relative !important; z-index:1 !important;} .plugin-slide{position:relative !important;} .plugin-slide, .plugin-slide img{transform: translateZ(0) !important;';
-				html.appendChild(style);
-			}
-		},
+        _forceCSSRender: function(){
+            // WebKit Rendering Reset on Plugins
+            if(window.location.href.indexOf('widget') > 0){
+                var html = document.getElementsByTagName('html')[0];
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = 'body{position:relative !important; z-index:1 !important;} .plugin-slide{position:relative !important;} .plugin-slide, .plugin-slide img{transform: translateZ(0) !important;';
+                html.appendChild(style);
+            }
+        },
         insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
 
             if(window.location.href.indexOf('widget') > 0){
                 html.setAttribute('buildfire', 'widget');
-				html.setAttribute('type', 'app');
+                html.setAttribute('type', 'app');
             }else{
                 html.setAttribute('buildfire', 'control');
             }
@@ -570,39 +577,131 @@ var buildfire = {
             var files = [], base = '';
 
             var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
+            var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
+            var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
 
-            if(!disableBootstrap){
-                files.push('styles/bootstrap.css');
-            }
+            if (!disableTheme && !enableMDTheme) {
+                if(!disableTheme && !disableBootstrap){
+                    files.push('styles/bootstrap.css');
+                }
 
-            if (window.location.pathname.indexOf('/control/') >= 0) {
-                files.push('styles/siteStyle.css') &&
-                files.push('styles/pluginScreen.css');
-            }
-            else{
-                var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
+                if (window.location.pathname.indexOf('/control/') >= 0) {
+                    files.push('styles/siteStyle.css') &&
+                    files.push('styles/pluginScreen.css');
+                }
+                else{
+                    var disableAppStyles = (buildfire.options && buildfire.options.disableAppStyles) ? buildfire.options.disableAppStyles : false;
 
-                if(!disableAppStyles){
-                    files.push('styles/appStyle.css');
+                    if(!disableAppStyles){
+                        files.push('styles/appStyle.css');
+                    }
+                }
+
+                // TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
+                var scripts = document.getElementsByTagName("script");
+
+                for (var i = 0; i < scripts.length; i++) {
+                    var src = scripts[i].src;
+
+                    if (src.indexOf('buildfire.js') > 0) {
+                        base = src.replace('/scripts/buildfire.js', '');
+                        break;
+                    } else if (src.indexOf('buildfire.min.js') > 0) {
+                        base = src.replace('/scripts/buildfire.min.js', '');
+                        break;
+                    }
+                    else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
+                        base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
+                        break;
+                    }
                 }
             }
 
-            var scripts = document.getElementsByTagName("script");
+            if (enableMDTheme) {
+                buildfire.appearance.getAppTheme(function(err, appTheme) {
+                    var styleElement = document.createElement('style');
+                    styleElement.id = 'appMDTheme';
+                    styleElement.type = 'text/css';
+                    var css = "";
+                    if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
+                    && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
+                    && appTheme.fontId !== 'Shadows+into+Light'&& appTheme.fontId !== 'Asap+condensed') {
+                        css += '@import url(\'https://fonts.googleapis.com/css?family='+ appTheme.fontName +'\');'
+                    }
+                    css +=  ':root {'
+                            + '  --mdc-typography-font-family: unquote("' + appTheme.fontName + ', sans-serif");'
+                            + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
+                            + '  --mdc-theme-secondary:' + appTheme.colors.successTheme + ';'
+                            + '  --mdc-theme-surface:' + appTheme.colors.backgroundColor + ';'
+                            + '  --mdc-theme-background:' + appTheme.colors.backgroundColor + ';'
+                            + '  --mdc-theme-error:' + appTheme.colors.dangerTheme + ';'
+                            + '  --mdc-theme-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-on-primary: white;'
+                            + '  --mdc-theme-on-secondary: white;'
+                            + '  --mdc-theme-on-error: white;'
+                            + '  --mdc-theme-on-surface:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-primary-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-secondary-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-disabled-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --mdc-theme-text-primary-on-light: white;'
+                            + '  --mdc-theme-text-secondary-on-light: white;'
+                            + '  --mdc-theme-text-hint-on-light: white;'
+                            + '  --mdc-theme-text-disabled-on-light: white;'
+                            + '  --mdc-theme-text-icon-on-light:  white;'
+                            + '  --mdc-theme-text-primary-on-dark: white;'
+                            + '  --mdc-theme-text-secondary-on-dark: white;'
+                            + '  --mdc-theme-text-hint-on-dark: white;'
+                            + '  --mdc-theme-text-disabled-on-dark: white;'
+                            + '  --mdc-theme-text-icon-on-dark: white;'
+                            + '}'
+                            + '*:not(i):not(.material-icons):not(.mdc-icon):not(.mdc-button__icon):not(.mdc-icon-button__icon)'
+                            + '{ font-family: ' + appTheme.fontName + ', sans-serif !important '
+                            + '}'
+                            + '.mdc-typography { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--headline1 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--headline2 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--headline3 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--headline4 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--headline5 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--headline6 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--subtitle1 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--subtitle2 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--body1 { font-family: ' + appTheme.fontName + ', sans-serif }, sans-serif'
+                            + '.mdc-typography--body2 { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--caption { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--button { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-typography--overline { font-family: ' + appTheme.fontName + ', sans-serif }'
+                            + '.mdc-theme--primary { color: #6200ee !important; color: var(--mdc-theme-primary, #6200ee) !important; }'
+                            + '.mdc-theme--secondary { color: #018786 !important; color: var(--mdc-theme-secondary, #018786) !important; }'
+                            + '.mdc-theme--background { background-color: #fff; background-color: var(--mdc-theme-background, #fff);}'
+                            + '.mdc-theme--surface { background-color: #fff; background-color: var(--mdc-theme-surface, #fff);}'
+                            + '.mdc-theme--error { color: #b00020 !important; color: var(--mdc-theme-error, #b00020) !important;}'
+                            + '.mdc-theme--on-primary { color: #fff !important; color: var(--mdc-theme-on-primary, #fff) !important;}'
+                            + '.mdc-theme--on-secondary { color: #fff !important; color: var(--mdc-theme-on-secondary, #fff) !important;}'
+                            + '.mdc-theme--on-surface { color: #000 !important; color: var(--mdc-theme-on-surface, #000) !important;}'
+                            + '.mdc-theme--on-error { color: #fff !important; color: var(--mdc-theme-on-error, #fff) !important;}'
+                            + '.mdc-theme--text-primary-on-background { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-background, rgba(0, 0, 0, 0.87)) !important;}'
+                            + '.mdc-theme--text-secondary-on-background { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54)) !important;}'
+                            + '.mdc-theme--text-hint-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-disabled-on-background {color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-icon-on-background { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-background, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-primary-on-light { color: rgba(0, 0, 0, 0.87) !important; color: var(--mdc-theme-text-primary-on-light, rgba(0, 0, 0, 0.87)) !important;}'
+                            + '.mdc-theme--text-secondary-on-light { color: rgba(0, 0, 0, 0.54) !important; color: var(--mdc-theme-text-secondary-on-light, rgba(0, 0, 0, 0.54)) !important;}'
+                            + '.mdc-theme--text-hint-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-hint-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-disabled-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-disabled-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-icon-on-light { color: rgba(0, 0, 0, 0.38) !important; color: var(--mdc-theme-text-icon-on-light, rgba(0, 0, 0, 0.38)) !important;}'
+                            + '.mdc-theme--text-primary-on-dark { color: white !important; color: var(--mdc-theme-text-primary-on-dark, white) !important;}'
+                            + '.mdc-theme--text-secondary-on-dark { color: rgba(255, 255, 255, 0.7) !important; color: var(--mdc-theme-text-secondary-on-dark, rgba(255, 255, 255, 0.7)) !important;}'
+                            + '.mdc-theme--text-hint-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-hint-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--text-disabled-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-disabled-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--text-icon-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-icon-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
+                            + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
+                            + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
+                    styleElement.innerHTML = css;
+                    (document.head || document.body || document).appendChild(styleElement);
 
-            for (var i = 0; i < scripts.length; i++) {
-                var src = scripts[i].src;
-
-                if (src.indexOf('buildfire.js') > 0) {
-                    base = src.replace('/scripts/buildfire.js', '');
-                    break;
-                } else if (src.indexOf('buildfire.min.js') > 0) {
-                    base = src.replace('/scripts/buildfire.min.js', '');
-                    break;
-                }
-                else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
-                    base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
-                    break;
-                }
+                });
             }
 
             if (base[base.length - 1] != "/"){
@@ -965,7 +1064,7 @@ var buildfire = {
 
         },
         /// ref:
-         getById: function (id, tag, callback) {
+        getById: function (id, tag, callback) {
 
             var idType = typeof (id);
             if (idType == "function" && typeof (callback) == "undefined") {
@@ -1047,6 +1146,25 @@ var buildfire = {
                 if (result)buildfire.userData.triggerOnUpdate(result);
                 callback(err, result);
             });
+
+            var hasIndex = false;
+
+            if (obj && obj._buildfire && obj._buildfire.index && Object.keys(obj._buildfire.index)) {
+                var filterKeys = Object.keys(obj._buildfire.index);
+                var validKeys = ['string1', 'date1', 'number1', 'array1', 'text'];
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((validKeys.indexOf(key) > -1) && obj._buildfire.index[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+            }
+                
+            if (!hasIndex) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
         }
         /// ref:
         , bulkInsert: function (arrayObj, tag, userToken, callback) {
@@ -1123,6 +1241,23 @@ var buildfire = {
                 if (result)buildfire.userData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
+
+            if (!search.$text || !search.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(search);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+                }
+            }
         }
         /// ref
         , delete: function (id, tag, userToken, callback) {
@@ -1167,6 +1302,23 @@ var buildfire = {
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
+
+            if (!options.filter.$text || !options.filter.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(options.filter);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+                }
+            }
         }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
@@ -1265,6 +1417,25 @@ var buildfire = {
                 if (result)buildfire.publicData.triggerOnUpdate(result);
                 callback(err, result);
             });
+
+            var hasIndex = false;
+
+            if (obj && obj._buildfire && obj._buildfire.index && Object.keys(obj._buildfire.index)) {
+                var filterKeys = Object.keys(obj._buildfire.index);
+                var validKeys = ['string1', 'date1', 'number1', 'array1', 'text'];
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((validKeys.indexOf(key) > -1) && obj._buildfire.index[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+            }
+                
+            if (!hasIndex) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
         }
         /// ref:
         , bulkInsert: function (arrayObj, tag, callback) {
@@ -1321,6 +1492,23 @@ var buildfire = {
                 if (result)buildfire.publicData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
+
+            if (!search.$text || !search.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(search);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+                }
+            }
         }
         /// ref
         , delete: function (id, tag, callback) {
@@ -1354,10 +1542,30 @@ var buildfire = {
             if (typeof (options) == "undefined") options = {filter: {}};
             if (!options.filter) options.filter = {};
 
+            
+            
             var p = new Packet(null, 'publicData.search', {tag: tag, obj: options});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
+
+            if (!options.filter.$text || !options.filter.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(options.filter);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
+                        // if (key.includes('_buildfire.index') && options.filter[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+                }
+            }
         }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
@@ -1427,6 +1635,25 @@ var buildfire = {
                 if (result)buildfire.appData.triggerOnUpdate(result);
                 callback(err, result);
             });
+
+            var hasIndex = false;
+
+            if (obj && obj._buildfire && obj._buildfire.index && Object.keys(obj._buildfire.index)) {
+                var filterKeys = Object.keys(obj._buildfire.index);
+                var validKeys = ['string1', 'date1', 'number1', 'array1', 'text'];
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((validKeys.indexOf(key) > -1) && obj._buildfire.index[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+            }
+                
+            if (!hasIndex) {
+                console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+            }
         }
         , bulkInsert: function (arrayObj, tag, callback) {
             if (arrayObj.constructor !== Array) {
@@ -1459,6 +1686,23 @@ var buildfire = {
                 if (result)buildfire.appData.triggerOnUpdate(result);
                 if (callback) callback(err, result);
             });
+
+            if (!search.$text || !search.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(search);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+                }
+            }
         }
         , delete: function (id, tag, callback) {
             if (!this._isTagValid(tag, callback)) return;
@@ -1475,6 +1719,23 @@ var buildfire = {
             //auto correct empty string filter
             if (typeof (options) == "undefined") options = {filter: {}};
             if (!options.filter) options.filter = {};
+
+            if (!options.filter.$text || !options.filter.$text.$search) {
+                var hasIndex = false;
+                var filterKeys = Object.keys(options.filter);
+
+                for (var i = 0; i < filterKeys.length; i++) {
+                    var key = filterKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+                }
+            }
 
             var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
             buildfire._sendPacket(p, function (err, result) {
@@ -1513,7 +1774,7 @@ var buildfire = {
             if (typeof callback !== 'function') {
                 callback = console.warn;
             }
-            
+
             callback({ "code": "error", "message": "tag is required for appData, and must be a string" }, null);
 
             return isTagValid;
@@ -1521,6 +1782,66 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
     , imageLib: {
+        get ENUMS() {
+            return {
+                SIZES: {
+                    xxs: 32,
+                    xs: 64,
+                    s: 128,
+                    m: 200,
+                    l: 304,
+                    xl: 416,
+                    xxl: 600,
+                    '720': 720,
+                    '1080': 1080,
+                    '1440': 1440,
+                    get full_width() {
+                        return this.findNearest(1);
+                    },
+                    get half_width() {
+                        return this.findNearest(2);
+                    },
+                    get third_width() {
+                        return this.findNearest(3);
+                    },
+                    get fourth_width() {
+                        return this.findNearest(4);
+                    },
+                    get fifth_width() {
+                        return this.findNearest(5);
+                    },
+                    get sixth_width() {
+                        return this.findNearest(6);
+                    },
+                    findNearest: function (ratio) {
+                        var match = null;
+                        for (var i = 0; i < this.VALID_SIZES.length; i++) {
+                            var size = this.VALID_SIZES[i];
+
+                            if ((window.innerWidth / ratio) < this[size]) {
+                                match = size;
+                                break;
+                            }
+                        }
+                        return this[match];
+                    },
+                    VALID_SIZES: [
+                        'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', //standard
+                        '720', '1080', '1440', //desktop
+                        'full_width', 'half_width', 'third_width', 'quarter_width', 'fifth_width', 'sixth_width' // responsive
+                    ]
+                },
+                ASPECT_RATIOS: {
+                    '1:1': 1,
+                    '4:3': 0.75,
+                    '16:9': 0.5625,
+                    '9:16': 1.77777778,
+                    '11:5': 0.45454545,
+                    '2.39:1': 0.41841004,
+                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '11:5', '2.39:1']
+                }
+            }
+        },
         /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib#buildfireimagelibshowdialogoptions-callback
         showDialog: function (options, callback) {
             var p = new Packet(null, 'imageLib.showDialog', options);
@@ -1528,7 +1849,7 @@ var buildfire = {
         }
         ,isProdImageServer: function(url){
             return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
-            || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+                || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
         }
         //options:{
         // width: integer or 'full'
@@ -1538,18 +1859,18 @@ var buildfire = {
         , resizeImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
-                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
+                var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
+                console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
                 return url;
             }
 
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
-			// Don't pass any value under 1
-			if(ratio < 1){
-				var ratio = 1;
-			}
+            // Don't pass any value under 1
+            if(ratio < 1){
+                var ratio = 1;
+            }
 
             if (!options)
                 options = {width: window.innerWidth};
@@ -1587,6 +1908,22 @@ var buildfire = {
                 var compression = buildfire.imageLib.getCompression(options.compression);
                 var result = '';
 
+                if (options.size && options.aspect) {
+                    if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
+                        var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
+                        console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+                        return url;
+                    }
+                    if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
+                        var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
+                        console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+                        return url;
+                    }
+                    //math.round
+                    options.width = this.ENUMS.SIZES[options.size];
+                    options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
+                }
+                // check for missing size or aspect
                 if (options.width && !options.height) {
                     var size = Math.floor(options.width * ratio);
                     result = root + "width/" + size + "/" + compression + url;
@@ -1612,9 +1949,9 @@ var buildfire = {
         , cropImage: function (url, options, element, callback) {
             if (!url) return null;
             // return unsupported file types
-            if (/.(gif|mp4|mpeg)(?!.)/g.test(url)) {
-                var filetype = /.(gif|mp4|mpeg)(?!.)/g.exec(url)[0];
-                console.warn(filetype + ' files are not supported by imagelib. Returning original URL');
+            if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
+                var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
+                console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
             }
 
@@ -1626,6 +1963,21 @@ var buildfire = {
             }
             if (typeof (options) != "object") {
                 throw ("options not an object");
+            }
+            if (options.size && options.aspect) {
+                if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
+                    var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
+                    console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+                    return url;
+                }
+                if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
+                    var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
+                    console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+                    return url;
+                }
+
+                options.width = this.ENUMS.SIZES[options.size];
+                options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
             }
             if (!options.width && !options.height) {
                 options = { width: 'full', height: 'full' };
@@ -1662,7 +2014,7 @@ var buildfire = {
             if (!element || !src) return;
 
             var path = this._getLocalPath(src);
-            
+
             if (element.tagName === 'IMG') {
                 element.style.setProperty('opacity', '0', 'important');
                 element.src = path;
@@ -1673,9 +2025,10 @@ var buildfire = {
                 }
 
                 element.onerror = function () {
+                    element.src = src;
                     var p = new Packet(null, 'imageCache.download', src);
-                    buildfire._sendPacket(p, function (error, localPath) {
-                        element.src = localPath;
+                    buildfire._sendPacket(p, function () {
+                        if (callback) callback(path);
                     });
                 }
             } else {
@@ -1693,15 +2046,13 @@ var buildfire = {
             }
 
             img.onerror = function () {
-                applyStyle(element);
+                applyStyle(element, src);
                 var p = new Packet(null, 'imageCache.download', src);
                 buildfire._sendPacket(p, function (error, localPath) {
                     if (error) {
-                        applyStyle(element, src);
                         if (callback) callback(src);
                     }
                     window.requestAnimationFrame(function () {
-                        applyStyle(element, localPath);
                         if (callback) callback(localPath);
                     });
                 });
@@ -2285,6 +2636,8 @@ var buildfire = {
 
 };
 
+window.parsedQuerystring = buildfire.parseQueryString();
+buildfire.fid = window.parsedQuerystring.fid;
 buildfire.init();
 
 buildfire.eventManager.add('deviceAppBackgrounded', function () {
@@ -2333,10 +2686,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 
                 if(!disableTheme) {
-                 if(buildfire.isWeb() || !context.liveMode)
-                    buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
-                 else
-                     buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
+                    if(buildfire.isWeb() || !context.liveMode)
+                        buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
+                    else
+                        buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
                 }
             }
         }
@@ -2364,15 +2717,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
             }
         };
     }
-	setTimeout(function(){
+    setTimeout(function(){
         if(!buildfire.options.disableTheme)
             buildfire.appearance._forceCSSRender();
-	}, 1750);
+    }, 1750);
 
 });
-
-buildfire.fid = buildfire.parseQueryString().fid;
-
 
 document.addEventListener("resize", function (event) {
     buildfire.appearance.autosizeContainer();
