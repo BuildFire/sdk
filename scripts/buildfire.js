@@ -1849,7 +1849,9 @@ var buildfire = {
         }
         ,isProdImageServer: function(url){
             return ((url.indexOf("http://imageserver.prod.s3.amazonaws.com") == 0
-                || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0));
+                || url.indexOf("https://imageserver.prod.s3.amazonaws.com") == 0
+                || url.indexOf("https://s3-us-west-2.amazonaws.com/imageserver.prod") == 0
+            ));
         }
         //options:{
         // width: integer or 'full'
@@ -1882,7 +1884,7 @@ var buildfire = {
 
             var root;
 
-            if(buildfire.imageLib.isProdImageServer(url)){
+            /*if(buildfire.imageLib.isProdImageServer(url)){
                 url = url.replace(/^https:\/\//i, 'http://');
                 root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
             }
@@ -1902,8 +1904,11 @@ var buildfire = {
                 else
                     return url;
             }
-            else{
-                var protocol = window.location.protocol == "https:" ? "https:" : "http:";
+            else
+             */
+            {
+                //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
+                var protocol = "https:";
                 var root = protocol + "//czi3m2qn.cloudimg.io/";
                 var compression = buildfire.imageLib.getCompression(options.compression);
                 var result = '';
@@ -1943,7 +1948,6 @@ var buildfire = {
 
                 return result;
             }
-
         }
 
         , cropImage: function (url, options, element, callback) {
@@ -1955,9 +1959,9 @@ var buildfire = {
                 return url;
             }
 
-            if (buildfire.imageLib.isProdImageServer(url)) {
+            /*if (buildfire.imageLib.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
-            }
+            }*/
             if (!options) {
                 options = {};
             }
@@ -1998,7 +2002,8 @@ var buildfire = {
                 ratio = options.disablePixelRatio;
             }
 
-            var protocol = window.location.protocol == "https:" ? "https:" : "http:";
+            //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
+            var protocol = "https:";
             var root = protocol + "//czi3m2qn.cloudimg.io/crop/";
 
             var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
