@@ -644,3 +644,8 @@ html[buildfire] .btn-link-icon::after{
 html[buildfire] .btn-delete-icon::after{
 	top:-2.5px;
 }
+
+.w-100{
+	width: 100%;
+}
+
