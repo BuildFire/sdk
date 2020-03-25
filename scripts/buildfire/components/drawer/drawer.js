@@ -9,6 +9,11 @@ if (typeof (buildfire.components.drawer) == "undefined")
     buildfire.components.drawer = {};
 
 buildfire.components.drawer.openBottomDrawer = function (options, callback) {
-    var p = new Packet(null, 'drawer.openBottomDrawer', options);
+    var p = new Packet(null, 'componentUI.openBottomDrawer', options);
+    buildfire._sendPacket(p, callback);
+};
+
+buildfire.components.drawer.closeDrawer = function (callback) {
+    var p = new Packet(null, 'componentUI.closeDrawer');
     buildfire._sendPacket(p, callback);
 };
