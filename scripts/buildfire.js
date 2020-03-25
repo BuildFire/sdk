@@ -2620,6 +2620,9 @@ var buildfire = {
     input: {
         showTextDialog: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'input.showTextDialog', options), callback);
+        },
+        showListDialog: function (options, callback) {
+            buildfire._sendPacket(new Packet(null, 'input.showListDialog', options), callback);
         }
     },
     imagePreviewer: {
