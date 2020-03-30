@@ -3810,7 +3810,7 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   }
 }
 @media(min-width: 1200px){
-	.bottom-drawer-container{
+	[type="app"] .bottom-drawer-container{
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -3819,17 +3819,17 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 		z-index: 999999999;
 		pointer-events: none;
 	}
-	.bottom-drawer-backdrop{
+	[type="app"] .bottom-drawer-backdrop{
 		pointer-events: all;
 	}
-	.bottom-drawer-holder{
+	[type="app"] .bottom-drawer-holder{
 		pointer-events: none;
 		width: calc(280px + 900px) !important;
     height: 100%;
     margin: 0 auto;
     padding-left: 280px;
 	}
-	.bottom-drawer {
+	[type="app"] .bottom-drawer {
 		pointer-events: all;
 		width: 900px;
 		max-height: 70vh;
