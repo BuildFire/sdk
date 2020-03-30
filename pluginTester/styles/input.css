@@ -458,6 +458,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 }
 
 #listDialog {
+	font-size: 16px;
 	top: 0;
 	right: 0;
 	left: 0;
@@ -468,9 +469,9 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 
 #listDialog .body {
 	width: 80%;
+	font-size: 16px;
 	background-color: #fff;
 	border-radius: 0.5em;
-	padding: 1em;
 }
 
 #listDialog.active {
@@ -482,17 +483,22 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 }
 
 #listDialog .list-header {
-	font-size: 1.5em;
-	color: #000 !important;
-	font-weight: 600;
-	margin: 0.67em 0;
+	margin-top: 0;
+	line-height: normal;
+	font-size: 20px;
+	line-height: 32px;
+	font-weight: bold;
+	letter-spacing: .0125em;
+	display: block;
+	margin: 0;
+	padding: 16px 16px 8px 16px;
 }
 
 #listDialog .button-container {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	padding: 8px 8px 0 8px;
+	padding: 8px;
 }
 
 #listDialog .button-container button {
@@ -511,15 +517,15 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 .input-list [type='radio'] {
 	position: absolute;
 	opacity: 0;
-	left: 1rem;
+	left: 1em;
 	top: 50%;
 	transform: translateY(-50%);
 }
 .input-list [type='radio'] + label {
 	word-break: break-word;
 	position: relative;
-	padding: 1rem;
-	padding-left: 3.5rem;
+	padding: 1em;
+	padding-left: 3.5em;
 	cursor: pointer;
 	display: block;
 	font-size: 14px;
@@ -531,11 +537,11 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 .input-list .selector {
 	background-color: blue;
 	position: absolute;
-	width: 0.625rem;
-	height: 0.625rem;
+	width: 10px;
+	height: 10px;
 	display: block;
 	border-radius: 50%;
-	left: 1.25rem;
+	left: 1.25em;
 	top: 50%;
 	transform: translateY(-50%);
 	transition: background-color 0.2s ease-in-out;
@@ -543,12 +549,12 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 .input-list .selector::before {
 	content: '';
 	position: absolute;
-	width: 1.25rem;
-	height: 1.25rem;
+	width: 18px;
+	height: 18px;
 	display: block;
 	border-radius: 50%;
 	border: 2px solid rgba(128, 128, 128, 0.5);
-	left: -0.325rem;
+	left: -4px;
 	top: 50%;
 	transform: translateY(-50%);
 }
@@ -570,11 +576,11 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 .input-list.checkbox-list [type='checkbox'] + label {
 	word-break: break-word;
 	position: relative;
-	padding: 1em;
+	padding: 16px;
 	padding-left: 3.5em;
 	cursor: pointer;
 	display: block;
-	font-size: 16px;
+	font-size: 14px;
 	transition: background-color 0.3s ease-in-out;
 }
 .input-list.checkbox-list [type='checkbox'] + label:hover {
@@ -582,11 +588,11 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 }
 .input-list.checkbox-list .selector {
 	position: absolute;
-	width: 1.25em;
-	height: 1.25em;
+	width: 18px;
+	height: 18px;
 	display: block;
-	border-radius: 0.25em;
-	left: 1.25em;
+	border-radius: 4px;
+	left: 16px;
 	top: 0;
 	top: 50%;
 	transform: translateY(-50%);
@@ -597,10 +603,10 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 .input-list.checkbox-list .selector::before {
 	content: '';
 	position: absolute;
-	width: 1.25em;
-	height: 1.25em;
+	width: 18px;
+	height: 18px;
 	display: block;
-	border-radius: 0.25em;
+	border-radius: 4px;
 	border: 2px solid rgba(128, 128, 128, 0.5);
 	left: 0;
 	top: 0;
