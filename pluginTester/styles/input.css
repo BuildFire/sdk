@@ -465,6 +465,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	align-items: center;
 	justify-content: center;
 	z-index: 9999999999;
+	pointer-events: none;
 }
 
 #listDialog .body {
@@ -472,6 +473,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	font-size: 16px;
 	background-color: #fff;
 	border-radius: 0.5em;
+	pointer-events: all;
 }
 
 #listDialog.active {
