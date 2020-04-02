@@ -2701,6 +2701,11 @@ nav.menu a.active .active-indicator,
 	pointer-events: none;
 	left: 0;
 }
+html:not([type="app"]) .snackbar-hero{
+	bottom: 0;
+	padding: 32px 52px;
+	width: calc(100% - 0px);
+}
 .snackbar{
 	margin: 0 12px;
 	border-radius: 4px;
@@ -2714,6 +2719,7 @@ nav.menu a.active .active-indicator,
 	transform: scale(.1);
 	pointer-events: auto;
 	transition: opacity .15s cubic-bezier(0,0,.2,1) 0ms,transform .15s cubic-bezier(0,0,.2,1) 0ms,-webkit-transform .15s cubic-bezier(0,0,.2,1) 0ms;
+	background-color: #222;
 }
 .snackbar.open{
 	opacity: 1;
@@ -2727,6 +2733,8 @@ nav.menu a.active .active-indicator,
 	flex: auto;
 	word-break: break-word;
 	padding:14px 16px;
+	margin: 0;
+	color: #fff;
 }
 .snackbar-actions{
 	display: flex;
@@ -3229,6 +3237,9 @@ nav.menu a.active .active-indicator,
 	}
 	[type="app"] .snackbar-hero{
 		left: 0;
+		bottom: calc(16px + env(safe-area-inset-bottom));
+		z-index: 99999999999;
+		padding: 0;
 	}
 	[type="app"] .snackbar-hero.has-footer-menu{
 		/* padding-bottom: 0 !important; */
@@ -3665,7 +3676,7 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 /* Bottom Drawer - New UI components */
 .bottom-drawer-container{
 	position: absolute;
-	z-index: 3;
+	z-index: 99999;
 	pointer-events: none;
 	width: 100%;
 	height: 100%;
@@ -3687,6 +3698,10 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   padding-bottom: calc(1em + env(safe-area-inset-bottom));
   animation: drawer-slide-up .3s ease-in-out forwards;
 }
+html:not([type="app"]) .bottom-drawer{
+	position: absolute;
+	max-height: calc(80% - 4em - env(safe-area-inset-top));
+}
 .bottom-drawer-container.closing .bottom-drawer-backdrop{
 	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
 }
@@ -3704,17 +3719,29 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   opacity: 0;
   animation: bottom-drawer-fade-in .3s ease-in-out forwards;
 }
-.bottom-drawer-header{
-  padding: 1em;
-  display: flex;
-  align-items: center;
+.bottom-drawer-header {
+	padding: 1em;
+	display: flex;
+	align-items: center;
+	background-color: #3ca1f1;
+	color: #fff;
 }
 .bottom-drawer-header .avatar{
   width: 3em;
   height: 3em;
   border-radius: 50%;
   overflow: hidden;
-  margin-right: 1em;
+	margin-right: 1em;
+	flex-shrink: 0;
+}
+.bottom-drawer-header .user-title{
+	margin-top: 0;
+	margin-bottom: 4px;
+	font-weight: bold;
+}
+.bottom-drawer-header .user-subtitle{
+	font-size: 12px;
+	margin-bottom: 0;
 }
 .bottom-drawer-header .avatar img{
   width: 3em;
@@ -3859,6 +3886,7 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   cursor: pointer;
 	transition: background-color ease-in-out .3s;
 	min-height: 3.5em;
+	font-size: 14px;
 }
 .action-list li span:not(.icon){
 	margin-left: 1em;
