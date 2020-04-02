@@ -1651,6 +1651,7 @@ p.info.no-icon:before{
 	opacity: 0;
 	/* left: calc(50vw); */
 	animation: fade-in .5s ease-out .5s forwards;
+	height: 100%;
 }
 @keyframes fade-in {
 	0%{
