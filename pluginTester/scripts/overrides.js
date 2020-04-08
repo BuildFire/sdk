@@ -151,7 +151,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	imageLibCurrentApp.imageLibTemplate = 'https://app.buildfire.com/pages/imageLib/imageLib.html';
 	postMaster.controlPluginAPI.actionItems.templateUrl = 'https://app.buildfire.com/pages/share/actionBuilder.html';
 	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'https://app.buildfire.com/app/pages/templates/actionItemsListDialog.html';
-    postMaster.controlPluginAPI.usersLib.templateUrl = 'https://app.buildfire.com/pages/common/userSearch.html';
+    postMaster.controlPluginAPI.usersLib.templateUrl = 'http://uat-app.buildfire.com/pages/common/userSearch.html';
 	postMaster.controlPluginAPI.pluginInstances.templateUrl = "https://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html";
 	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
 })();
