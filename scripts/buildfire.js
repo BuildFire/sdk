@@ -2624,6 +2624,9 @@ var buildfire = {
     input: {
         showTextDialog: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'input.showTextDialog', options), callback);
+        },
+        showListDialog: function (options, callback) {
+            buildfire._sendPacket(new Packet(null, 'input.showListDialog', options), callback);
         }
     },
     imagePreviewer: {
@@ -2693,8 +2696,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 buildfire.logger.attachRemoteLogger(context.debugTag);
             if (window.location.pathname.indexOf('/widget/') > 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
+                var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
 
-                if(!disableTheme) {
+                if(!disableTheme && !enableMDTheme) {
                     if(buildfire.isWeb() || !context.liveMode)
                         buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
                     else

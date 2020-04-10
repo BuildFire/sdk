@@ -1651,6 +1651,7 @@ p.info.no-icon:before{
 	opacity: 0;
 	/* left: calc(50vw); */
 	animation: fade-in .5s ease-out .5s forwards;
+	height: 100%;
 }
 @keyframes fade-in {
 	0%{
@@ -1949,6 +1950,10 @@ html[buildfire='control'] body{
 .shell-sdk #login .login-holder{
 	position:absolute;
 	border:1px solid #ddd;
+}
+
+.shell-sdk #login .login-holder .btn p {
+	margin: 0;
 }
 
 /* Override Google Language Dropdown UI */
