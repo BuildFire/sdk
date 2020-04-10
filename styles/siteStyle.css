@@ -1952,6 +1952,10 @@ html[buildfire='control'] body{
 	border:1px solid #ddd;
 }
 
+.shell-sdk #login .login-holder .btn p {
+	margin: 0;
+}
+
 /* Override Google Language Dropdown UI */
 .goog-te-gadget{
   	font-family:'Muli', sans-serif !important;
