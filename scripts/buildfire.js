@@ -2536,6 +2536,10 @@ var buildfire = {
             }
 
             return authUrl + "/src/server.js/user/picture?" + qString;
+        },
+        showSeachUsersDialog: function(options,callback){
+            var p = new Packet(null, 'usersLib.showDialog', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
