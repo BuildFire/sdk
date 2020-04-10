@@ -2777,6 +2777,9 @@ html:not([type="app"]) .snackbar-hero{
 	margin-left: auto;
 	padding-bottom: 8px;
 }
+.gdpr-notice{
+	z-index: 9999999991;
+}
 
 @media(min-width: 1200px){
 	[type="app"] #footerMenuParent{
@@ -3724,7 +3727,11 @@ html:not([type="app"]) .bottom-drawer{
 	display: flex;
 	align-items: center;
 	background-color: #3ca1f1;
-	color: #fff;
+	color: #fff !important;
+}
+.bottom-drawer-header p,
+.bottom-drawer-header h4{
+	color: #fff !important;
 }
 .bottom-drawer-header .avatar{
   width: 3em;
