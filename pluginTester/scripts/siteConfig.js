@@ -16,5 +16,5 @@ window.siteConfig = {
 	, keys: {
 		datastoreKey: '123-ASD-TEST'
 	},
-	scope: 'cp'
+	scope: 'sdk'
 };
