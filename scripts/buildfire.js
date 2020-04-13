@@ -2537,7 +2537,7 @@ var buildfire = {
 
             return authUrl + "/src/server.js/user/picture?" + qString;
         },
-        showUsersSeachDialog: function(options,callback){
+        showUsersSearchDialog: function(options,callback){
             var p = new Packet(null, 'usersLib.showSearchDialog', options);
             buildfire._sendPacket(p, callback);
         }
