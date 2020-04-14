@@ -260,7 +260,24 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                     callback(null, user);
                 else
                     return user;
-            }
+            };
+
+            postMaster.controlPluginAPI.deepLink.setData = function (obj, callback) {
+                var url = "app" + window.appContext.currentApp.appId.substring(0, 6) + "://plugin/" + window.appContext.currentPlugin.instanceId;
+                if (obj.data) {
+                    var updateQueryStringParameter = function(uri, key, value) {
+                        var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+                        var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                        if (uri.match(re)) {
+                            return uri.replace(re, '$1' + encodeURIComponent(key) + "=" + encodeURIComponent(value) + '$2');
+                        } else {
+                            return uri + separator + encodeURIComponent(key) + "=" + encodeURIComponent(value);
+                        }
+                    };
+                    url = updateQueryStringParameter(url, "dld", JSON.stringify(obj.data));
+                }
+                callback(null, url);
+            };
         }
     }]
 );
