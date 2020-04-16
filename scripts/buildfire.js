@@ -643,7 +643,6 @@ var buildfire = {
                             + '  --mdc-theme-text-primary-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-secondary-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-disabled-on-background:' + appTheme.colors.bodyText + ';'
-                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-primary-on-light: white;'
                             + '  --mdc-theme-text-secondary-on-light: white;'
                             + '  --mdc-theme-text-hint-on-light: white;'
