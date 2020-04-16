@@ -654,6 +654,7 @@ var buildfire = {
                             + '  --mdc-theme-text-hint-on-dark: white;'
                             + '  --mdc-theme-text-disabled-on-dark: white;'
                             + '  --mdc-theme-text-icon-on-dark: white;'
+                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.icons + ';'
                             + '}'
                             + '*:not(i):not(.material-icons):not(.mdc-icon):not(.mdc-button__icon):not(.mdc-icon-button__icon)'
                             + '{ font-family: ' + appTheme.fontName + ', sans-serif !important '
