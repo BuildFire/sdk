@@ -3227,11 +3227,6 @@ html:not([type="app"]) .snackbar-hero{
     margin-left: 0;
     padding-top: 0;
 	}
-	[type="app"] #accessCode_wrapper {
-		padding: 20vh 0;
-    max-width: 300px;
-    margin: 0 auto;
-	}
 	[type="app"] #accessCode_wrapper input[type=password]{
 		background-color: rgba(150,150,150,.05) !important;
 	}
@@ -3256,11 +3251,6 @@ html:not([type="app"]) .snackbar-hero{
 		max-width: 400px;
 	}
 }
-
-#accessCode_wrapper {
-	padding: 20vh 15vw;
-}
-
 
 /* Onboarding Carousel */
 
