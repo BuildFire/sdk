@@ -49,17 +49,17 @@ html[view="app"] ::-webkit-scrollbar{
 }
 @media(max-width: 1200px){
 	/* Remove Scrollbars */
-	::-webkit-scrollbar,
-	html::-webkit-scrollbar,
-	body::-webkit-scrollbar,
-	html *::-webkit-scrollbar,
-	body *::-webkit-scrollbar{
+	[type="app"] ::-webkit-scrollbar,
+	[type="app"] html::-webkit-scrollbar,
+	[type="app"] body::-webkit-scrollbar,
+	[type="app"] html *::-webkit-scrollbar,
+	[type="app"] body *::-webkit-scrollbar{
 		display: none !important;
 	}
-	html,
-	body,
-	html *,
-	body *{
+	[type="app"] html,
+	[type="app"] body,
+	[type="app"] html *,
+	[type="app"] body *{
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 	}
