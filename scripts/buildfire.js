@@ -123,7 +123,6 @@ var buildfire = {
         buildfire.appearance.insertHTMLAttributes();
 
         buildfire.appearance.attachCSSFiles();
-
     }
     , _whitelistedCommands: [
         "datastore.triggerOnUpdate"
@@ -708,9 +707,34 @@ var buildfire = {
                 base += '/';
             }
 
+            //Remove Scrollbars css
+            {
+                var _sharedStyle = document.createElement('style');
+                _sharedStyle.type = 'text/css';
+                _sharedStyle.innerHTML = 'html[view="app"] ::-webkit-scrollbar{' +
+                    'display:none;}' +
+                    '@media(max-width: 1200px){' +
+                    '/* Remove Scrollbars */' +
+                    '::-webkit-scrollbar,' +
+                    'html::-webkit-scrollbar,' +
+                    'body::-webkit-scrollbar,' +
+                    'html *::-webkit-scrollbar,' +
+                    'body *::-webkit-scrollbar{' +
+                    'display: none !important;' +
+                    '}' +
+                    'html,' +
+                    'body,' +
+                    'html *,' +
+                    'body *{' +
+                    '-ms-overflow-style: none;' +
+                    'scrollbar-width: none;' +
+                    '}' +
+                    '}';
+                (document.head || document.body || document).appendChild(_sharedStyle);
+            }
+
             for (var i = 0; i < files.length; i++)
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
-
         }
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
