@@ -711,21 +711,19 @@ var buildfire = {
             {
                 var _sharedStyle = document.createElement('style');
                 _sharedStyle.type = 'text/css';
-                _sharedStyle.innerHTML = 'html[view="app"] ::-webkit-scrollbar{' +
-                    'display:none;}' +
-                    '@media(max-width: 1200px){' +
+                _sharedStyle.innerHTML = '@media(max-width: 1200px){' +
                     '/* Remove Scrollbars */' +
-                    '::-webkit-scrollbar,' +
-                    'html::-webkit-scrollbar,' +
-                    'body::-webkit-scrollbar,' +
-                    'html *::-webkit-scrollbar,' +
-                    'body *::-webkit-scrollbar{' +
+                    '[buildfire="widget"] ::-webkit-scrollbar,' +
+                    '[buildfire="widget"] html::-webkit-scrollbar,' +
+                    '[buildfire="widget"] body::-webkit-scrollbar,' +
+                    '[buildfire="widget"] html *::-webkit-scrollbar,' +
+                    '[buildfire="widget"] body *::-webkit-scrollbar{' +
                     'display: none !important;' +
                     '}' +
-                    'html,' +
-                    'body,' +
-                    'html *,' +
-                    'body *{' +
+                    '[buildfire="widget"] html,' +
+                    '[buildfire="widget"] body,' +
+                    '[buildfire="widget"] html *,' +
+                    '[buildfire="widget"] body *{' +
                     '-ms-overflow-style: none;' +
                     'scrollbar-width: none;' +
                     '}' +
@@ -2264,8 +2262,6 @@ var buildfire = {
                 }
             }
         }
-
-
     }
     , colorLib: {
         showDialog: function (data, options, onchange, callback) {
@@ -2770,7 +2766,6 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
     console.error('Error: ' + errorMsg, ' Script: ' + url, ' Line: ' + lineNumber
         , ' Column: ' + column, ' StackTrace: ' + errorObj);
 };
-
 
 //IE and old Android Custom Event Fix
 if(typeof(CustomEvent) != "function"){
