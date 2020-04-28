@@ -40,7 +40,7 @@ $app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
             timeDiff = Math.abs(now.getTime() - lastCheckDate.getTime()),
             diffInHours = timeDiff / (1000 * 60 * 60);
 
-        if(diffInHours < 2){
+        if(diffInHours < 24){
             return;
         }
     }
