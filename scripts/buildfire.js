@@ -2634,14 +2634,14 @@ var buildfire = {
         ,getItem: function(key,callback) {
             if(!callback){
                 // let getContext throw if context is not ready and no callback is provided
-                let context = buildfire.getContext();
+                var context = buildfire.getContext();
                 if(context && context.localStorage) {
                     return context.localStorage[key]
                 } else {
                     return;
                 }
             }
-            let context = buildfire.getContext(function(err, context){
+            var context = buildfire.getContext(function(err, context){
                 if (err) {
                     callback(err);
                 } else {

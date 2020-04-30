@@ -41,6 +41,10 @@ body{
 	height:100%;
 	overflow:hidden !important;
 }
+html[wkwebview="true"] {
+	height: 100vh;
+}
+
 html:not([buildfire]){
 	overflow:hidden !important;
 }
@@ -166,6 +170,10 @@ section.showNav #plugin, #plugin.access-code-visible{
 	height: 7vh;
 	width: 100%;
 	z-index: 1;
+}
+
+html[wkwebview="true"] #footerMenuParent{
+	position: fixed;
 }
 
 #footerMenuParent .action-group {
