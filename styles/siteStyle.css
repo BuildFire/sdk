@@ -1651,6 +1651,7 @@ p.info.no-icon:before{
 	opacity: 0;
 	/* left: calc(50vw); */
 	animation: fade-in .5s ease-out .5s forwards;
+	height: 100%;
 }
 @keyframes fade-in {
 	0%{
@@ -1951,6 +1952,10 @@ html[buildfire='control'] body{
 	border:1px solid #ddd;
 }
 
+.shell-sdk #login .login-holder .btn p {
+	margin: 0;
+}
+
 /* Override Google Language Dropdown UI */
 .goog-te-gadget{
   	font-family:'Muli', sans-serif !important;
@@ -2069,3 +2074,120 @@ html.translated-ltr body{
     padding: 8px !important;
     margin-left: 10px !important;
 }
+
+.fixed-table{
+	position: relative;
+}
+.fixed-table .table-header{
+	position: absolute;
+	top: 0;
+	width:100%;
+	height:51px;
+	line-height: 51px;
+	background: #fff;
+	z-index: 5;
+	border-bottom: 1px solid #d8d8d8;
+	font-weight:bold;
+	color: #000;
+}
+
+.fixed-table .table-container{
+	padding-top: 51px;
+}
+
+.fixed-table tbody tr td{
+	border-top:none !important;
+}
+
+.fixed-table .tbl-col{
+	float: left;
+}
+
+.striped-table {
+	border: none;
+}
+.striped-table tbody {
+	color: #000000;
+}
+.striped-table thead tr th {
+	color: #000000;
+	font-weight: bold;
+}
+.striped-table tbody tr td{
+	border-bottom: 1px solid #d8d8d8;
+	border-radius: 4px;
+}
+.striped-table tbody tr td:first-child{
+	border-left:1px solid #d8d8d8;
+}
+.striped-table tbody tr td:last-child{
+	border-right:1px solid #d8d8d8;
+}
+.striped-table .table-action{
+	font-size: 18px;
+	color: #000;
+	margin-right: 20px;
+	cursor: pointer;
+}
+
+.striped-table>tbody>tr:nth-of-type(even){
+
+	background-color: #f9f9f9;
+}
+
+.striped-table .table-action.delete-action:hover{
+	color: #ee4a4a;
+}
+
+.delete-action:hover{
+	color: #ee4a4a;
+}
+
+.table-action{
+	color: #000;
+	cursor: pointer;
+}
+
+.striped-table .no-borders td{ border:none !important; font-weight: bold;}
+
+.constrained-scroll {
+	/* height:500px; */
+	height: 42vh !important;
+	overflow-y: scroll !important;
+}
+
+/* Start of User Search UI */
+.user-search .tags-container {
+	min-width: 180px;
+	max-width: 180px;
+}
+@media (min-width: 1024px) {
+	.user-search .tags-container {
+		min-width: 400px;
+		max-width: 400px;
+	}
+}
+.user-search .not-popup{
+	min-width: 540px;
+	max-width: 540px;
+}
+@media (max-width: 1400px) {
+	.user-search .not-popup {
+		min-width: 456px;
+		max-width: 456px;
+	}
+}
+.user-search .users-dropdown-tags {
+	display: flex;
+	align-items: center;
+}
+.user-search .dropdowns-tags {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.user-search .dropdowns-container {
+	display: flex;
+}
+/* End of User Search UI */
+

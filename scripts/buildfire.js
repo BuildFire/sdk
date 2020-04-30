@@ -645,7 +645,6 @@ var buildfire = {
                             + '  --mdc-theme-text-primary-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-secondary-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-disabled-on-background:' + appTheme.colors.bodyText + ';'
-                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-primary-on-light: white;'
                             + '  --mdc-theme-text-secondary-on-light: white;'
                             + '  --mdc-theme-text-hint-on-light: white;'
@@ -656,6 +655,7 @@ var buildfire = {
                             + '  --mdc-theme-text-hint-on-dark: white;'
                             + '  --mdc-theme-text-disabled-on-dark: white;'
                             + '  --mdc-theme-text-icon-on-dark: white;'
+                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.icons + ';'
                             + '}'
                             + '*:not(i):not(.material-icons):not(.mdc-icon):not(.mdc-button__icon):not(.mdc-icon-button__icon)'
                             + '{ font-family: ' + appTheme.fontName + ', sans-serif !important '
@@ -1839,8 +1839,9 @@ var buildfire = {
                     '16:9': 0.5625,
                     '9:16': 1.77777778,
                     '11:5': 0.45454545,
+                    '4:1': 0.25,
                     '2.39:1': 0.41841004,
-                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '11:5', '2.39:1']
+                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '11:5', '4:1', '2.39:1']
                 }
             }
         },
@@ -2538,6 +2539,10 @@ var buildfire = {
             }
 
             return authUrl + "/src/server.js/user/picture?" + qString;
+        },
+        showUsersSearchDialog: function(options,callback){
+            var p = new Packet(null, 'usersLib.showSearchDialog', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -2681,6 +2686,9 @@ var buildfire = {
     input: {
         showTextDialog: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'input.showTextDialog', options), callback);
+        },
+        showListDialog: function (options, callback) {
+            buildfire._sendPacket(new Packet(null, 'input.showListDialog', options), callback);
         }
     },
     imagePreviewer: {
@@ -2750,8 +2758,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 buildfire.logger.attachRemoteLogger(context.debugTag);
             if (window.location.pathname.indexOf('/widget/') > 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
+                var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
 
-                if(!disableTheme) {
+                if(!disableTheme && !enableMDTheme) {
                     if(buildfire.isWeb() || !context.liveMode)
                         buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
                     else

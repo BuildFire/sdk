@@ -172,6 +172,18 @@
                         </div>
                     </div>
                 </div>
+                <div id="snackbarhero" class="snackbar-hero hide" ng-class="{'has-footer-menu': turnOnFooterMenu}">
+                    <!-- Snackbar needs to be visible a minimum of 4 seconds and a maximum of 10 -->
+                    <div class="snackbar backgroundColorTheme" >
+                        <!-- Add class "open" to "snackbar" to make it visible -->
+                        <!-- Add class "snackbar-stacked" to "snackbar" for multiline text -->
+                        <p class="snackbar-message"></p>
+                        <div class="snackbar-actions">
+                            <button class="btn btn-text snackbar-action"><span class="text-primary"></span></button>
+                            <button class="btn btn-icon dismiss"><span class="icon icon-cross2"></span></button>
+                        </div>
+                    </div>
+                </div>
             </section>
 
         </div>
@@ -187,6 +199,7 @@
 <script type="text/javascript" src="../scripts/angular/ng-map.min.js"></script>
 <script type="text/javascript" src="../scripts/angular/ngAutocomplete.js"></script>
 <script type="text/javascript" src="../scripts/angular/angulargrid.js"></script>
+<script type="text/javascript" src="../scripts/angular/ng-infinite-scroll.min.js"></script>
 <script type="text/javascript" src="scripts/angular/angular-color-picker.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
 <script type="text/javascript" src="scripts/lib/photoswipe.js"></script>
