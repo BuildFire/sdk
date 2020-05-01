@@ -1,8 +1,8 @@
 /**
  * Created by Daniel on 5/23/2015.
  */
-var $app = angular.module('buildfire', ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'ngMap', 'ngAutocomplete','angularGrid','mp.colorPicker','infinite-scroll']);
-$app.config(['$routeProvider', '$sceDelegateProvider','$sceProvider','$httpProvider', function ($routeProvider, $sceDelegateProvider,$sceProvider,$httpProvider) {
+var $app = angular.module('buildfire', ['ngRoute', 'ui.bootstrap', 'ngFileUpload', 'ngMap', 'ngAutocomplete', 'angularGrid', 'mp.colorPicker', 'infinite-scroll']);
+$app.config(['$routeProvider', '$sceDelegateProvider', '$sceProvider', '$httpProvider', function ($routeProvider, $sceDelegateProvider, $sceProvider, $httpProvider) {
     // Completely disable SCE.  For demonstration purposes only!
     // Do not use in new projects.
     $sceProvider.enabled(false);
@@ -22,7 +22,8 @@ $app.config(['$routeProvider', '$sceDelegateProvider','$sceProvider','$httpProvi
                 localStorage.removeItem("user");
                 delete window.currentUser;
                 window.location.hash = '/';
-            }, template: '<i>rerouting...</i>'})
+            }, template: '<i>rerouting...</i>'
+        })
         .otherwise({redirectTo: '/404'})
     ;
     $sceDelegateProvider.resourceUrlWhitelist([
@@ -53,6 +54,7 @@ $app.controller('toastCtrl', ['$scope', function ($scope) {
         if (!$scope.$$phase) $scope.$apply();
         $scope.text = '';
     }
+
     window.toast = function (text, style) {
         __tmrToastClearOut = setTimeout(clear, 5000);
         if ($scope.text && $scope.text != text)
@@ -69,7 +71,7 @@ window.spinner = {
     element: null,
     hideCount: 0,
     hideTimer: null,
-    hide: function(forceHide) {
+    hide: function (forceHide) {
         console.log('hide', {
             forceHide: forceHide,
             hideCount: window.spinner.hideCount,
@@ -85,17 +87,18 @@ window.spinner = {
             if (window.spinner.hideTimer) {
                 clearTimeout(window.spinner.hideTimer);
             }
-        };
+        }
+        ;
     },
-    show: function() {
-        console.log('show', { hideCount: window.spinner.hideCount });
+    show: function () {
+        console.log('show', {hideCount: window.spinner.hideCount});
         if (!window.spinner.element) {
             window.spinner.element = document.getElementById('loading-bar-spinner');
         }
         if (window.spinner.hideCount == 0) {
-            window.spinner.hideTimer = setTimeout(function() {
+            window.spinner.hideTimer = setTimeout(function () {
                 window.spinner.hide(true);
-            },10000);
+            }, 10000);
         }
         window.spinner.hideCount++;
         window.spinner.element.style.display = 'block';
@@ -113,6 +116,19 @@ $app.factory('httpInterceptor', function ($q, $rootScope) {
                 }
             }
             return config;
+        },
+        'responseError': function (e) {
+            if (e.config.bypassInterceptorForStatus == e.status) {
+                // will be handled locally
+                return $q.reject(e);
+            }
+            if (e && e.config && e.config.url && e.config.url.indexOf(window.siteConfig.endPoints.appHost + '/api') > -1) {
+                if (e && (e.status == 401 || e.status == 403)) {
+                    //auth or userToken are not valid .. kick Out the user
+                    window.location.hash = 'login';
+                }
+            }
+            return $q.reject(e);
         }
     };
 });

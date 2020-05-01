@@ -643,7 +643,6 @@ var buildfire = {
                             + '  --mdc-theme-text-primary-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-secondary-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-disabled-on-background:' + appTheme.colors.bodyText + ';'
-                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.bodyText + ';'
                             + '  --mdc-theme-text-primary-on-light: white;'
                             + '  --mdc-theme-text-secondary-on-light: white;'
                             + '  --mdc-theme-text-hint-on-light: white;'
@@ -654,6 +653,7 @@ var buildfire = {
                             + '  --mdc-theme-text-hint-on-dark: white;'
                             + '  --mdc-theme-text-disabled-on-dark: white;'
                             + '  --mdc-theme-text-icon-on-dark: white;'
+                            + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.icons + ';'
                             + '}'
                             + '*:not(i):not(.material-icons):not(.mdc-icon):not(.mdc-button__icon):not(.mdc-icon-button__icon)'
                             + '{ font-family: ' + appTheme.fontName + ', sans-serif !important '
@@ -1837,8 +1837,9 @@ var buildfire = {
                     '16:9': 0.5625,
                     '9:16': 1.77777778,
                     '11:5': 0.45454545,
+                    '4:1': 0.25,
                     '2.39:1': 0.41841004,
-                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '11:5', '2.39:1']
+                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '11:5', '4:1', '2.39:1']
                 }
             }
         },
@@ -2537,7 +2538,7 @@ var buildfire = {
 
             return authUrl + "/src/server.js/user/picture?" + qString;
         },
-        showUsersSeachDialog: function(options,callback){
+        showUsersSearchDialog: function(options,callback){
             var p = new Packet(null, 'usersLib.showSearchDialog', options);
             buildfire._sendPacket(p, callback);
         }
