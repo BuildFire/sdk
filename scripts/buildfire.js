@@ -710,13 +710,9 @@ var buildfire = {
                 base += '/';
             }
 
-            for (var i = 0; i < files.length; i++) {
-                var styleElement = document.createElement('link');
-                styleElement.rel = 'stylesheet';
-                styleElement.href= base + files[i];
-                (document.head || document.body || document).appendChild(styleElement);
-                //document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
-            }
+            for (var i = 0; i < files.length; i++)
+                document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
+
         }
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
@@ -2611,26 +2607,7 @@ var buildfire = {
         },
     }
     , localStorage : {
-
-        // instanceID
         setItem: function(key,value,callback) {
-            if(!callback)callback = function(){};
-
-            if(typeof(value) == "object" )
-                value = JSON.stringify(value);
-
-            buildfire._sendPacket(new Packet(null, 'localStorage.setItem', {key:key,value:value}), callback);
-        }
-        ,getItem: function(key,callback) {
-            if(!callback)throw "missing callback on buildfire.localStorage.getItem";
-            buildfire._sendPacket(new Packet(null, 'localStorage.getItem', key), callback);
-        }
-        ,removeItem: function(key,callback) {
-            if(!callback)throw "missing callback on buildfire.localStorage.removeItem";
-            buildfire._sendPacket(new Packet(null, 'localStorage.removeItem', key), callback);
-        },
-        // instanceID + "_sync_"
-        _syncSetItem: function(key,value,callback) {
             if(!callback)callback = function(err){ if(err) console.error(err) };
 
             if(typeof(value) === "object" )
@@ -2638,15 +2615,15 @@ var buildfire = {
             else
                 value = value + ""; // mimic localStorage behavior. e.g: null is stored as "null"
 
-            buildfire._sendPacket(new Packet(null, 'localStorage.syncSetItem', {key:key,value:value}), callback);
+            buildfire._sendPacket(new Packet(null, 'localStorage.setItem', {key:key,value:value}), callback);
             buildfire.getContext(function(err, context){
                 if (err) {
                     callback(err);
                 } else {
                     if(context) {
                         context.localStorage = context.localStorage || [];
-                        // update local copy so we don't have to sync
-                        context.localStorage[key] = value;
+                       // update local copy so we don't have to sync
+                       context.localStorage[key] = value;
                     }
                     else {
                         callback(null, "no context");
@@ -2654,7 +2631,7 @@ var buildfire = {
                 }
             });
         }
-        ,_syncGetItem: function(key,callback) {
+        ,getItem: function(key,callback) {
             if(!callback){
                 // let getContext throw if context is not ready and no callback is provided
                 var context = buildfire.getContext();
@@ -2678,9 +2655,9 @@ var buildfire = {
             });
             if(context && context.localStorage) return context.localStorage[key];
         }
-        ,_syncRemoveItem: function(key,callback) {
+        ,removeItem: function(key,callback) {
             if(!callback)callback = function(err){ if(err) console.error(err) };
-            buildfire._sendPacket(new Packet(null, 'localStorage.syncRemoveItem', key), callback);
+            buildfire._sendPacket(new Packet(null, 'localStorage.removeItem', key), callback);
             buildfire.getContext(function(err, context){
                 if (err) {
                     callback(err);
@@ -2696,13 +2673,13 @@ var buildfire = {
         }
         ,overrideNativeLocalStorage: function() {
             localStorage.getItem = function (key) {
-                return buildfire.localStorage._syncGetItem(key);
+                return buildfire.localStorage.getItem(key);
             };
             localStorage.setItem = function (key, value) {
-                return buildfire.localStorage._syncSetItem(key, value);
+                return buildfire.localStorage.setItem(key, value);
             };
             localStorage.removeItem = function (key) {
-                return buildfire.localStorage._syncRemoveItem(key);
+                return buildfire.localStorage.removeItem(key);
             };
         }
     },
