@@ -142,6 +142,7 @@ var buildfire = {
         , "services.media.audioPlayer.triggerOnEvent"
         , "auth.triggerOnLogin"
         , "auth.triggerOnLogout"
+        , "auth.triggerOnUpdate"
         , "logger.attachRemoteLogger"
         , "appearance.triggerOnUpdate"
         , "device.triggerOnAppBackgrounded"
@@ -2488,9 +2489,15 @@ var buildfire = {
         },
         onLogout: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
-        }
-        , triggerOnLogout: function (data) {
+        },
+        triggerOnLogout: function (data) {
             return buildfire.eventManager.trigger('authOnLogout', data);
+        },
+        onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
+        },
+        triggerOnUpdate: function (data) {
+            return buildfire.eventManager.trigger('authOnUpdate', data);
         },
         openProfile: function (userId) {
             var p = new Packet(null, 'auth.openProfile', userId);
