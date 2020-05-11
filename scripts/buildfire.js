@@ -2678,6 +2678,23 @@ var buildfire = {
                 }
             });
         }
+        ,clear: function(callback){
+            if(!callback)callback = function(err){ if(err) console.error(err) };
+            buildfire._sendPacket(new Packet(null, 'localStorage.clear', {}), callback);
+            buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context) {
+                        // clear local copy
+                        context.localStorage = [];
+                    }
+                    else {
+                        callback(null, "no context");
+                    }
+                }
+            });
+        }
         ,overrideNativeLocalStorage: function() {
             localStorage.getItem = function (key) {
                 return buildfire.localStorage.getItem(key);
@@ -2687,6 +2704,9 @@ var buildfire = {
             };
             localStorage.removeItem = function (key) {
                 return buildfire.localStorage.removeItem(key);
+            };
+            localStorage.clear = function () {
+                return buildfire.localStorage.clear();
             };
         }
     },
