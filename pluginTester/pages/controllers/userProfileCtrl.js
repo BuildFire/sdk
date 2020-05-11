@@ -97,7 +97,7 @@ $app.controller('userProfileCtrl', [
 						result.result.email = $scope.user.email;
 						$scope.userProfile = result.result;
 						if (result.result.backgroundImage) {
-							if (window.location.indexOf('localhost') > -1) return;
+							if (window.location.href.indexOf('localhost') > -1) return;
 							var cropped = imageTools.cropImage(result.result.backgroundImage, {
 								size: 'full_width',
 								aspect: '16:9',
