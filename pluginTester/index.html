@@ -149,6 +149,7 @@
                                 {{errorMessage}}
                                 <iframe id="widget" ng-src="{{widgetSrc}}" style="height:100%; width:100%;"  ng-style="{'padding-top': showNavigationBar ? '49px' : '0px' }" class="pluginFrame" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
                                 <div id="login" ng-include="'https://app.buildfire.com/app/fragments/auth/auth.html'"></div>
+                                <div id="userProfile" ng-include="'userProfile.html'"></div>
                             </div>
                         </div>
                     </div>
@@ -204,6 +205,8 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
 <script type="text/javascript" src="scripts/lib/photoswipe.js"></script>
 <script type="text/javascript" src="scripts/lib/photoswipe-ui-default.min.js"></script>
+<script type="text/javascript" src="scripts/lib/ng-file-upload-shim.min.js"></script>
+<script type="text/javascript" src="scripts/lib/ng-file-upload.min.js"></script>
 
 <!-- JS -->
 <script type="text/javascript" src="app.js"></script>
@@ -214,6 +217,7 @@
 <script type="text/javascript" src="pages/controllers/apiKeysCtrl.js"></script>
 <script type="text/javascript" src="pages/services/gdprService.js"></script>
 <script type="text/javascript" src="pages/controllers/loginCtrl.js"></script>
+<script type="text/javascript" src="pages/controllers/userProfileCtrl.js"></script>
 
 <script type="text/javascript" src="scripts/framework/app.min.js"></script>
 <script type="text/javascript" src="scripts/framework/web.min.js"></script>

@@ -1,0 +1,256 @@
+<div class="profile-container" ng-controller="userProfileCtrl" ng-show="user!=null">
+	<div class="profile-backdrop" ng-click="close()"></div>
+	<div class="profile-holder">
+		<div class="profile-overlay backgroundColorTheme">
+			<div class="profile-header">
+				<div class="avatar-container">
+					<div class="avatar backgroundColorTheme">
+						<div class="needsclick user-avatar pull-left cursor-pointer" ng-if="editingProfile" name="dvProfileImage" ngf-select ng-model="uploadProfileImage" ngf-pattern="'image/*'" ngf-multiple="false" ngf-accept="'image/*'" accept="image/*" ngf-max-size="10MB" ngf-allow-dir="true"></div>
+
+						<img ngf-src="uploadProfileImage" ng-show="uploadProfileImage!=null" />
+
+						<img ng-src="{{tempUser.imageUrl || user.imageUrl}}" onerror="this.src=window._appRoot+'media/avatar.png'" ng-if="!uploadProfileImage" />
+					</div>
+
+					<button class="btn btn-icon btn-info" ng-if="editingProfile"><span class="icon icon-camera2"></span></button>
+				</div>
+
+				<button class="btn btn-icon close-btn" ng-click="close()"><span class="icon icon-cross2"></span></button>
+
+				<div class="cover-img">
+					<img ngf-src="uploadBackgroundImage" ng-show="uploadBackgroundImage!=null" />
+
+					<img ng-src="{{tempUserProfile.backgroundImage || userProfile.backgroundImage || _appRoot+'media/cover.png'}}" onerror="this.src=window._appRoot+'media/cover.png'" ng-show="!uploadBackgroundImage" />
+				</div>
+
+				<div class="user-info ellipsis">
+					<h4 class="name ellipsis">{{ user.displayName || user.firstName || user.lastName? (user.displayName ? user.displayName : user.firstName+' '+user.lastName) : user.email }}</h4>
+					<div class="badge-list">
+						<div class="badge-icon" ng-repeat="badge in user.badges">
+							<img ng-src="{{badge.imageUrl}}" alt="" />
+						</div>
+						<!-- <div class="badge-icon"><img src="https://www.tryviews.com/wp-content/uploads/2018/12/1495368559287.png" alt="" /></div> -->
+					</div>
+				</div>
+
+				<div class="profile-actions">
+					<button class="btn btn-icon pull-left" ng-click="editProfile()" ng-show="!editingProfile">
+						<span class="icon icon-pencil3"></span>
+					</button>
+					<!-- <button class="btn btn-icon"><span class="icon icon-ellipsis"></span></button> -->
+					<div class="needsclick btn-icon upload-button text-center cursor-pointer" ng-show="editingProfile" name="dvBackgroundImage" ngf-select ng-model="uploadBackgroundImage" ngf-pattern="'image/*'" ngf-multiple="false" ngf-accept="'image/*'" accept="image/*" ngf-max-size="10MB" ngf-allow-dir="true" style="position: absolute; right: 4px;"></div>
+					<button class="btn btn-icon btn-info pull-right" ng-show="editingProfile">
+						<span class="icon icon-camera2"></span>
+					</button>
+				</div>
+			</div>
+
+			<div class="edit-profile-actions backgroundColorTheme" ng-show="editingProfile" style="z-index: 999;">
+				<button class="btn"><span class="text-primary" ng-click="cancelEdit()">Cancel</span></button>
+				<button class="btn btn-primary" ng-click="update()">Save</button>
+			</div>
+			<div class="profile-content load-in-anim">
+				<div ng-if="!showCustomUserProfile" ng-show="!editingProfile">
+					<div class="item location" ng-show="userProfile.location">
+						<h5 class="ellipsis">Location</h5>
+						<p class="ellipsis opacity-eighty">{{userProfile.location}}</p>
+					</div>
+					<div class="item bio padding-top-zero" ng-show="userProfile.bio">
+						<h5 class="ellipsis">Bio</h5>
+						<p class="word-break">{{userProfile.bio}}</p>
+					</div>
+					<div class="item" ng-show="userProfile.email || user.email">
+						<h5 data-translate="emailAddress" class="type">email address</h5>
+
+						<p class="ellipsis text-primary">
+							<a class="text-primary" ng-href="{{'mailto:'+(userProfile.email? userProfile.email : user.email)}}">{{userProfile.email || user.email}}</a>
+						</p>
+					</div>
+					<div class="item" ng-show="userProfile.phone">
+						<h5 data-translate="phoneNumber" class="type">phone number</h5>
+
+						<p class="ellipsis text-primary"><a class="text-primary" ng-href="{{'tel:'+userProfile.phone}}"> {{userProfile.phone}}</a></p>
+					</div>
+					<div class="item" ng-show="userProfile.twitterHandle">
+						<h5 data-translate="twitterHandle" class="type">twitter handle</h5>
+
+						<p class="ellipsis text-primary">
+							<a class="text-primary" ng-click="openUrl('https://twitter.com/'+userProfile.twitterHandle);">{{userProfile.twitterHandle?'@'+userProfile.twitterHandle:''}}</a>
+						</p>
+					</div>
+					<div class="item" ng-show="userProfile.facebookHandle">
+						<h5 data-translate="facebookUrl" class="type">facebook url</h5>
+
+						<p class="ellipsis text-primary">
+							<a class="text-primary" ng-click="openUrl('https://'+userProfile.facebookHandle);">{{userProfile.facebookHandle}}</a>
+						</p>
+					</div>
+					<div class="item" ng-show="userProfile.instagramHandle">
+						<h5 data-translate="instagramHandle" class="type">instagram handle</h5>
+
+						<p class="ellipsis text-primary">
+							<a class="text-primary" ng-click="openUrl('https://instagram.com/'+userProfile.instagramHandle);">{{userProfile.instagramHandle?'@'+userProfile.instagramHandle:''}}</a>
+						</p>
+					</div>
+					<div class="item" ng-show="userProfile.websiteURI">
+						<h5 data-translate="websiteUrl" class="type">website url</h5>
+
+						<p class="ellipsis text-primary">
+							<a class="text-primary" ng-click="openUrl(userProfile.websiteURI);">
+								{{userProfile.websiteURI}}
+							</a>
+						</p>
+					</div>
+				</div>
+				<div class="user-list-items padded padding-top-zero" ng-if="showCustomUserProfile" ng-show="!editingProfile">
+					<div class="clearfix">
+						<div class="padding-left-zero margin-top-ten margin-bottom-twenty">
+							<h4 class="margin-top-five ellipsis">
+								<b>
+									{{ user.displayName || user.firstName || user.lastName? (user.displayName ? user.displayName : user.firstName+' '+user.lastName) : user.email }}
+								</b>
+							</h4>
+						</div>
+						<div class="margin-bottom-twenty" ng-repeat="field in customRegistrationFields | orderBy:'order'" ng-if="field.value && field.viewType !== 'none'">
+							<span ng-bind="field.label" class="text-info"></span>
+							<p class="ellipsis text-primary opacity-eighty" ng-if="field.viewType === 'email'">
+								<a class="text-primary" ng-href="{{'mailto:'+(field.value)}}" ng-bind="field.value"></a>
+							</p>
+							<p class="ellipsis opacity-eighty" ng-if="field.viewType === 'text'" ng-bind="field.displayValue ? field.displayValue : field.value"></p>
+							<p class="opacity-eighty multi-line" ng-if="field.viewType === 'multiline'" ng-bind="field.value"></p>
+						</div>
+					</div>
+				</div>
+
+				<div class="edit-profile" ng-show="editingProfile">
+					<div ng-if="!showCustomUserProfile">
+						<div class="border-none no-span item clearfix">
+							<div class="col-xs-6 padding-left-zero">
+								<input type="text" class="form-control" ng-model="tempUser.firstName" name="txtFirstname" placeholder="{{strings.editProfileFirstName ? strings.editProfileFirstName:'First Name'}}" maxlength="30" required />
+							</div>
+							<div class="col-xs-6 padding-right-zero">
+								<input type="text" class="form-control" ng-model="tempUser.lastName" name="txtLastname" placeholder="{{strings.editProfileLastName ? strings.editProfileLastName:'Last Name'}}" maxlength="30" required />
+							</div>
+						</div>
+
+						<div class="clearfix"></div>
+
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtFirstname.$touched || submitted)&& frmEditUserProfile.txtFirstname.$invalid">
+							<div data-translate="firstNameLessThan30" class="alert alert-sm alert-danger text-center">
+								First Name must be less than 30 characters.
+							</div>
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtLastname.$touched || submitted) && frmEditUserProfile.txtLastname.$invalid">
+							<div data-translate="lastNameLessThan30" class="alert alert-sm alert-danger text-center">
+								Last Name must be less than 30 characters.
+							</div>
+						</div>
+
+						<div class="no-span item">
+							<input type="text" class="form-control" ng-model="tempUserProfile.location" name="txtLocation" data-translate="userProfileLocation" placeholder="Location" maxlength="30" />
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtLocation.$touched || submitted) && frmEditUserProfile.txtLocation.$invalid">
+							<div data-translate="locationLessThan30" class="alert alert-sm alert-danger text-center">
+								Location must be less than 30 characters.
+							</div>
+						</div>
+						<div class="no-span item">
+							<textarea class="form-control" name="txtBio" ng-model="tempUserProfile.bio" placeholder="{{strings.userProfileBio ? strings.userProfileBio:'Bio'}}" maxlength="1024"></textarea>
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtBio.$touched || submitted) && frmEditUserProfile.txtBio.$invalid">
+							<div data-translate="bioLessThan1024" class="alert alert-sm alert-danger text-center">
+								Bio must be less than 1024 characters.
+							</div>
+						</div>
+						<div class="item">
+							<h5 data-translate="userProfileEmailAddress" class="type">email address</h5>
+							<input type="email" class="form-control" name="txtEmail" ng-model="tempUser.email" placeholder="example@example.com" maxlength="100" />
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtEmail.$touched || submitted) && frmEditUserProfile.txtEmail.$invalid">
+							<div data-translate="userProfileValidEmail" class="alert alert-danger alert-sm text-center">
+								Please enter a valid email.
+							</div>
+						</div>
+						<div class="item">
+							<h5 data-translate="userProfilePhone" class="type">phone number</h5>
+							<input type="tel" class="form-control" name="txtPhonenumber" ng-model="tempUserProfile.phone" ng-pattern="/^(\d+-?)+\d+$/" placeholder="5555555555" maxlength="50" />
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtPhonenumber.$touched || submitted) && frmEditUserProfile.txtPhonenumber.$invalid">
+							<div data-translate="userProfilePhoneValid" class="alert alert-danger alert-sm text-center">
+								Please enter a valid phone number.
+							</div>
+						</div>
+						<div class="item">
+							<h5 data-translate="userProfileTwitter" class="type">twitter handle</h5>
+							<input type="text" class="form-control" name="txtTwitter" ng-model="tempUserProfile.twitterHandle" placeholder="example" maxlength="100" />
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtTwitter.$touched || submitted) && frmEditUserProfile.txtTwitter.$invalid">
+							<div data-translate="userProfileTwitterValid" class="alert alert-danger alert-sm text-center">
+								Please enter a valid twitter handle.
+							</div>
+						</div>
+						<div class="item">
+							<h5 data-translate="userProfileFacebook" class="type">facebook url</h5>
+							<input type="text" class="form-control" name="txtFacebook" ng-model="tempUserProfile.facebookHandle" ng-pattern="/(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?/" placeholder="facebook.com/example" maxlength="100" />
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtFacebook.$touched || submitted) && frmEditUserProfile.txtFacebook.$invalid">
+							<div data-translate="userProfileFacebookValid" class="alert alert-danger alert-sm text-center">
+								Please enter a valid facebook url.
+							</div>
+						</div>
+						<div class="item">
+							<h5 data-translate="userProfileInstagram" class="type">instagram handle</h5>
+							<input type="text" class="form-control" name="txtInstagram" ng-model="tempUserProfile.instagramHandle" placeholder="example" maxlength="256" />
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtInstagram.$touched || submitted) && frmEditUserProfile.txtInstagram.$invalid">
+							<div data-translate="userProfileInstagramValid" class="alert alert-danger alert-sm text-center">
+								Please enter a valid instagram handle.
+							</div>
+						</div>
+						<div class="item">
+							<h5 data-translate="userProfileWebsite" class="type">website url</h5>
+							<input class="form-control" name="txtWebsite" ng-model="tempUserProfile.websiteURI" ng-pattern="/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/" placeholder="yourwebsite.com" maxlength="256" />
+						</div>
+						<div class="border-none item padding-top-zero padding-bottom-five clearfix" ng-show="(frmEditUserProfile.txtWebsite.$touched || submitted) && frmEditUserProfile.txtWebsite.$invalid">
+							<div data-translate="userProfileWebsiteValid" class="alert alert-danger alert-sm text-center">
+								Please enter a valid website url.
+							</div>
+						</div>
+					</div>
+					<div ng-if="showCustomUserProfile">
+						<div class="user-list-items padded padding-top-zero" ng-init="initCustomRegistration()">
+							<div class="clearfix">
+								<div class="margin-bottom-twenty" ng-repeat="field in customRegistrationFields | orderBy:'order'">
+									<span ng-bind="field.label" class="text-info"></span>
+									<div ng-if="field.type === 'text'" ng-class="field.containerClass">
+										<input type="text" ng-attr-autocorrect="{{field.autocorrect}}" ng-attr-autocapitalize="{{field.autocapitalize}}" class="form-control inputApp {{field.class}}" ng-class="{ 'has-error': field.error }" name="custom_reg_text_{{field.name}}" ng-model="field.value" ng-blur="field.validate(field.value)" id="custom_reg_text_{{field.name}}" ng-change="field.change(field.value);field.validate(field.value);" maxlength="150" />
+										<ul ng-show="field.suggestions.length" class="list-group inputApp input-suggestions {{field.class}}">
+											<li class="list-group-item" ng-repeat="suggestion in field.suggestions" ng-click="field.selectSuggestion(suggestion)">
+												{{suggestion.description}}
+											</li>
+										</ul>
+										<span class="has-error" ng-bind="field.error"></span>
+									</div>
+									<div ng-if="field.type === 'date'" ng-class="field.containerClass">
+										<input type="date" class="form-control inputApp {{field.class}}" ng-class="{ 'has-error': field.error }" name="custom_reg_text_{{field.name}}" placeholder="{{field.label}}" ng-model="field.value" ng-blur="field.touch(field.value)" id="custom_reg_date_{{field.name}}" ng-change="field.change(field.value)" />
+										<span ng-show="field.info && !field.error" class="has-info text-info" ng-bind="field.info"></span>
+										<span class="has-error" ng-bind="field.error"></span>
+									</div>
+									<div ng-if="field.type === 'textarea'" ng-class="field.containerClass">
+										<textarea class="form-control inputApp {{field.class}}" ng-class="{ 'has-error': field.error }" name="custom_reg_textarea_{{field.name}}" ng-model="field.value" ng-blur="field.validate(field.value)" id="custom_reg_textarea_{{field.name}}" ng-change="field.change(field.value);field.validate(field.value);" maxlength="1024"></textarea>
+										<ul ng-show="field.suggestions.length" class="list-group inputApp input-suggestions {{field.class}}">
+											<li class="list-group-item" ng-repeat="suggestion in field.suggestions" ng-click="field.selectSuggestion(suggestion)">
+												{{suggestion.description}}
+											</li>
+										</ul>
+										<span class="has-error" ng-bind="field.error"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
