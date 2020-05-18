@@ -41,6 +41,10 @@ body{
 	height:100%;
 	overflow:hidden !important;
 }
+html[wkwebview="true"] {
+	height: 100vh;
+}
+
 html:not([buildfire]){
 	overflow:hidden !important;
 }
@@ -166,6 +170,10 @@ section.showNav #plugin, #plugin.access-code-visible{
 	height: 7vh;
 	width: 100%;
 	z-index: 1;
+}
+
+html[wkwebview="true"] #footerMenuParent{
+	position: fixed;
 }
 
 #footerMenuParent .action-group {
@@ -3916,11 +3924,18 @@ html:not([type="app"]) .bottom-drawer{
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100%;
-	z-index: 99999999999;
+	height: 100vh;
+	z-index: 99999999;
 }
 .profile-container .backgroundColorTheme {
 	background-color: #fff;
+}
+.profile-container .profile-holder{
+	position: relative;
+	height: 100vh;
+	overflow-y: auto;
+	pointer-events: none;
+	-webkit-overflow-scrolling: touch;
 }
 .profile-backdrop{
 	background-color: rgba(0, 0, 0, .5);
@@ -3936,11 +3951,15 @@ html:not([type="app"]) .bottom-drawer{
 	width: 100%;
 	bottom: 0;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-	height: calc(100% - 50px - 40px - env(safe-area-inset-top));
+	height: calc(100% - 50px - 40px);
 	display: flex;
 	flex-direction: column;
 	border-radius: 4px 4px 0 0;
 	animation: drawer-slide-up .3s ease-in-out forwards;
+	pointer-events: all;
+}
+html[ios="true"][view="app"] .profile-overlay {
+	height: calc(100% - 50px - 40px - env(safe-area-inset-top));
 }
 .profile-overlay .close-btn{
 	position: absolute;
@@ -3956,6 +3975,7 @@ html:not([type="app"]) .bottom-drawer{
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	flex-shrink: 0;
 }
 .profile-overlay .avatar-container{
 	position: absolute;
@@ -3992,6 +4012,7 @@ html:not([type="app"]) .bottom-drawer{
 }
 .profile-header .avatar-container .btn-info{
 	position: absolute;
+	pointer-events: none;
 	right: -4px;
 	bottom: -4px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -4088,7 +4109,8 @@ html:not([type="app"]) .bottom-drawer{
 	z-index: 2;
 	padding: 4px;
 }
-.profile-overlay .btn-icon {
+.profile-overlay .btn-icon,
+.profile-overlay .btn-has-icon {
 	-webkit-animation: 0s none !important;
 	-webkit-transition: 0s none !important;
 	animation: 0s none !important;
@@ -4105,15 +4127,31 @@ html:not([type="app"]) .bottom-drawer{
 	flex: auto;
 	overflow-y: auto;
 }
+.profile-overlay .profile-content.editing-profile{
+	flex: 0;
+	overflow-y: visible;
+	height: max-content;
+}
 .edit-profile-actions{
 	padding: 0 8px 8px 8px;
 	display: flex;
 	justify-content: flex-end;
 	box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.15);
+	flex-shrink: 0;
+}
+.btn-has-icon{
+	display: flex;
+	align-items: center;
+}
+.btn-has-icon .icon{
+	margin-right: 8px;
 }
 .edit-profile-actions .btn{
 	margin-left: 16px;
 	background-color: transparent;
+}
+.edit-profile-actions .btn-primary{
+	background-color: #09a3ee;
 }
 .profile-content h5{
 	font-weight: bold;
@@ -4134,6 +4172,14 @@ html:not([type="app"]) .bottom-drawer{
 	min-height: inherit;
 	font-size: 14px;
 	color: inherit !important;
+}
+.profile-overlay .edit-profile input[type="text"],
+.profile-overlay .edit-profile input[type="number"],
+.profile-overlay .edit-profile input[type="date"],
+.profile-overlay .edit-profile textarea{
+	padding: 12px 8px;
+	min-height: 48px;
+	display: block;
 }
 .profile-overlay .edit-profile input::placeholder,
 .profile-overlay .edit-profile textarea::placeholder{
@@ -4193,5 +4239,9 @@ html:not([type="app"]) .bottom-drawer{
 	[type="app"] .profile-overlay .profile-content{
 		padding-left: 64px;
 		padding-right: 64px;
+	}
+	[type="app"] .profile-overlay .profile-content.editing-profile{
+		flex: auto;
+		overflow-y: auto;
 	}
 }

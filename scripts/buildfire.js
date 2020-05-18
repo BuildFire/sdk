@@ -123,7 +123,6 @@ var buildfire = {
         buildfire.appearance.insertHTMLAttributes();
 
         buildfire.appearance.attachCSSFiles();
-
     }
     , _whitelistedCommands: [
         "datastore.triggerOnUpdate"
@@ -709,9 +708,32 @@ var buildfire = {
                 base += '/';
             }
 
+            //Remove Scrollbars css
+            {
+                var _sharedStyle = document.createElement('style');
+                _sharedStyle.type = 'text/css';
+                _sharedStyle.innerHTML = '@media(max-width: 1200px){' +
+                    '/* Remove Scrollbars */' +
+                    '[buildfire="widget"] ::-webkit-scrollbar,' +
+                    '[buildfire="widget"] html::-webkit-scrollbar,' +
+                    '[buildfire="widget"] body::-webkit-scrollbar,' +
+                    '[buildfire="widget"] html *::-webkit-scrollbar,' +
+                    '[buildfire="widget"] body *::-webkit-scrollbar{' +
+                    'display: none !important;' +
+                    '}' +
+                    '[buildfire="widget"] html,' +
+                    '[buildfire="widget"] body,' +
+                    '[buildfire="widget"] html *,' +
+                    '[buildfire="widget"] body *{' +
+                    '-ms-overflow-style: none;' +
+                    'scrollbar-width: none;' +
+                    '}' +
+                    '}';
+                (document.head || document.body || document).appendChild(_sharedStyle);
+            }
+
             for (var i = 0; i < files.length; i++)
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
-
         }
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
@@ -2241,8 +2263,6 @@ var buildfire = {
                 }
             }
         }
-
-
     }
     , colorLib: {
         showDialog: function (data, options, onchange, callback) {
@@ -2753,7 +2773,6 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
     console.error('Error: ' + errorMsg, ' Script: ' + url, ' Line: ' + lineNumber
         , ' Column: ' + column, ' StackTrace: ' + errorObj);
 };
-
 
 //IE and old Android Custom Event Fix
 if(typeof(CustomEvent) != "function"){
