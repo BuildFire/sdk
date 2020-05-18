@@ -2643,9 +2643,10 @@ var buildfire = {
                 // let getContext throw if context is not ready and no callback is provided
                 var context = buildfire.getContext();
                 if(context && context.localStorage) {
-                    return context.localStorage[key]
+                    var val = context.localStorage[key];
+                    return val === undefined ? null : val;
                 } else {
-                    return;
+                    return null;
                 }
             }
             var context = buildfire.getContext(function(err, context){
@@ -2653,14 +2654,18 @@ var buildfire = {
                     callback(err);
                 } else {
                     if(context && context.localStorage) {
-                        callback(null, context.localStorage[key]);
+                        var val = context.localStorage[key];
+                        callback(null, val === undefined ? null : val);
                     }
                     else {
-                        callback(null, undefined);
+                        callback(null, null);
                     }
                 }
             });
-            if(context && context.localStorage) return context.localStorage[key];
+            if(context && context.localStorage) {
+                var val = context.localStorage[key];
+                return val === undefined ? null : val;
+            }
         }
         ,removeItem: function(key,callback) {
             if(!callback)callback = function(err){ if(err) console.error(err) };
