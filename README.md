@@ -11,8 +11,8 @@ If you havent setup your environment just yet click here https://github.com/Buil
 
 [Video Tutorial Here](https://www.youtube.com/watch?v=IZcvBZT-zjY&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=1)
 
-## iOS & Android Limitations
-See https://github.com/BuildFire/sdk/wiki/iOS-&-Android-Limitations
+## iOS & Android Guidelines
+See https://github.com/BuildFire/sdk/wiki/iOS-&-Android-Guidelines
 
 ## Plugins
 Plugins are written in HTML and JavaScript with a few restrictions:
