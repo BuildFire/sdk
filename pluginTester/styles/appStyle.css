@@ -1999,11 +1999,12 @@ html[buildfire] body.no-scroll .scrollable{
 	pointer-events: all;
 	background-color: rgba(200,200,200,.2);
 	border: 0;
-	border-radius: 8px;
+	border-radius: 4px;
 	padding: .5em 2.6em;
 	height: auto;
 	font-size: 14px;
 	padding-left: 40px;
+	color: inherit !important;
 }
 .search-container .search-bar:active,
 .search-container .search-bar:focus{
@@ -2012,6 +2013,7 @@ html[buildfire] body.no-scroll .scrollable{
 }
 .search-container .search-bar::placeholder {
 	color: inherit;
+	opacity: .3 !important;
 }
 
 /* Search Page */
@@ -3257,6 +3259,9 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] .snackbar{
 		max-width: 400px;
+	}
+	[type="app"] .onboarding .bg-img img{
+		object-fit: contain;
 	}
 }
 
