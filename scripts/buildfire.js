@@ -124,6 +124,8 @@ var buildfire = {
 
         buildfire.appearance.attachCSSFiles();
 
+        buildfire.localStorage.overrideNativeLocalStorage();
+
     }
     , _whitelistedCommands: [
         "datastore.triggerOnUpdate"
@@ -140,6 +142,7 @@ var buildfire = {
         , "services.media.audioPlayer.triggerOnEvent"
         , "auth.triggerOnLogin"
         , "auth.triggerOnLogout"
+        , "auth.triggerOnUpdate"
         , "logger.attachRemoteLogger"
         , "appearance.triggerOnUpdate"
         , "device.triggerOnAppBackgrounded"
@@ -2486,9 +2489,15 @@ var buildfire = {
         },
         onLogout: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
-        }
-        , triggerOnLogout: function (data) {
+        },
+        triggerOnLogout: function (data) {
             return buildfire.eventManager.trigger('authOnLogout', data);
+        },
+        onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
+        },
+        triggerOnUpdate: function (data) {
+            return buildfire.eventManager.trigger('authOnUpdate', data);
         },
         openProfile: function (userId) {
             var p = new Packet(null, 'auth.openProfile', userId);
@@ -2606,20 +2615,104 @@ var buildfire = {
     }
     , localStorage : {
         setItem: function(key,value,callback) {
-            if(!callback)callback = function(){};
+            if(!callback)callback = function(err){ if(err) console.error(err) };
 
-            if(typeof(value) == "object" )
+            if(typeof(value) === "object" )
                 value = JSON.stringify(value);
+            else
+                value = value + ""; // mimic localStorage behavior. e.g: null is stored as "null"
 
             buildfire._sendPacket(new Packet(null, 'localStorage.setItem', {key:key,value:value}), callback);
+            buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context) {
+                        context.localStorage = context.localStorage || [];
+                       // update local copy so we don't have to sync
+                       context.localStorage[key] = value;
+                    }
+                    else {
+                        callback(null, "no context");
+                    }
+                }
+            });
         }
         ,getItem: function(key,callback) {
-            if(!callback)throw "missing callback on buildfire.localStorage.getItem";
-            buildfire._sendPacket(new Packet(null, 'localStorage.getItem', key), callback);
+            if(!callback){
+                // let getContext throw if context is not ready and no callback is provided
+                var context = buildfire.getContext();
+                if(context && context.localStorage) {
+                    var val = context.localStorage[key];
+                    return val === undefined ? null : val;
+                } else {
+                    return null;
+                }
+            }
+            var context = buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context && context.localStorage) {
+                        var val = context.localStorage[key];
+                        callback(null, val === undefined ? null : val);
+                    }
+                    else {
+                        callback(null, null);
+                    }
+                }
+            });
+            if(context && context.localStorage) {
+                var val = context.localStorage[key];
+                return val === undefined ? null : val;
+            }
         }
         ,removeItem: function(key,callback) {
-            if(!callback)throw "missing callback on buildfire.localStorage.removeItem";
+            if(!callback)callback = function(err){ if(err) console.error(err) };
             buildfire._sendPacket(new Packet(null, 'localStorage.removeItem', key), callback);
+            buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context && context.localStorage) {
+                        delete context.localStorage[key];
+                    }
+                    else {
+                        callback(null, "no context");
+                    }
+                }
+            });
+        }
+        ,clear: function(callback){
+            if(!callback)callback = function(err){ if(err) console.error(err) };
+            buildfire._sendPacket(new Packet(null, 'localStorage.clear', {}), callback);
+            buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context) {
+                        // clear local copy
+                        context.localStorage = [];
+                    }
+                    else {
+                        callback(null, "no context");
+                    }
+                }
+            });
+        }
+        ,overrideNativeLocalStorage: function() {
+            localStorage.getItem = function (key) {
+                return buildfire.localStorage.getItem(key);
+            };
+            localStorage.setItem = function (key, value) {
+                return buildfire.localStorage.setItem(key, value);
+            };
+            localStorage.removeItem = function (key) {
+                return buildfire.localStorage.removeItem(key);
+            };
+            localStorage.clear = function () {
+                return buildfire.localStorage.clear();
+            };
         }
     },
     input: {

@@ -6,11 +6,13 @@ Plugins are components that are added to a BuildFire app (http://buildfire.com) 
 Here is a playlist on how to develop on the plugins using buildfire.js
 https://www.youtube.com/playlist?list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I
 
-##Dev Environment
+## Dev Environment
 If you havent setup your environment just yet click here https://github.com/BuildFire/sdk/wiki/How-to-setup-your-development-environment to get started
 
 [Video Tutorial Here](https://www.youtube.com/watch?v=IZcvBZT-zjY&list=PLnq_waykAGlgsERwxHmGNokE6WIeVeH0I&index=1)
 
+## iOS & Android Guidelines
+See https://github.com/BuildFire/sdk/wiki/iOS-&-Android-Guidelines
 
 ## Plugins
 Plugins are written in HTML and JavaScript with a few restrictions:
