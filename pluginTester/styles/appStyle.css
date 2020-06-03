@@ -1621,6 +1621,13 @@ html[buildfire] body.no-scroll .scrollable{
 	padding: 0 24px;
 }
 
+#richModal .detail-modal .dialog-title {
+	font-size: 1.5em;
+	margin-top: .75em;
+	margin-bottom: 1em;
+	font-weight: 600;
+}
+
 #richModal .detail-modal .rich-content {
 	padding: 8px 24px 20px 24px;
 	overflow-y: scroll;
@@ -1637,8 +1644,9 @@ html[buildfire] body.no-scroll .scrollable{
 #richModal .detail-modal .rich-content h4,
 #richModal .detail-modal .rich-content h5,
 #richModal .detail-modal .rich-content h6,
-#richModal .detail-modal .rich-content p {
-	color: #222;
+#richModal .detail-modal .rich-content p,
+#richModal .detail-modal .rich-content span {
+	color: #222 !important;
 }
 
 #richModal .detail-modal span.subtitle {
@@ -1694,6 +1702,22 @@ html[buildfire] body.no-scroll .scrollable{
 }
 #pluginNav {
 	user-select: none !important;
+}
+
+input[type="text"].md-input,
+input[type="number"].md-input,
+textarea.md-input{
+	padding: 12px 8px;
+	min-height: 48px;
+	display: block;
+	border: 0;
+	background-color: rgba(150,150,150,.1);
+	border-bottom: 1px solid rgba(150,150,150,.3);
+	border-radius: 4px 4px 0 0;
+	height: inherit;
+	font-size: 14px;
+	color: inherit!important;
+	width: 100%;
 }
 
 .iap-items {
@@ -1999,11 +2023,12 @@ html[buildfire] body.no-scroll .scrollable{
 	pointer-events: all;
 	background-color: rgba(200,200,200,.2);
 	border: 0;
-	border-radius: 8px;
+	border-radius: 4px;
 	padding: .5em 2.6em;
 	height: auto;
 	font-size: 14px;
 	padding-left: 40px;
+	color: inherit !important;
 }
 .search-container .search-bar:active,
 .search-container .search-bar:focus{
@@ -2012,6 +2037,7 @@ html[buildfire] body.no-scroll .scrollable{
 }
 .search-container .search-bar::placeholder {
 	color: inherit;
+	opacity: .3 !important;
 }
 
 /* Search Page */
@@ -3258,6 +3284,9 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .snackbar{
 		max-width: 400px;
 	}
+	[type="app"] .onboarding .bg-img img{
+		object-fit: contain;
+	}
 }
 
 /* Onboarding Carousel */
@@ -4126,6 +4155,7 @@ html[ios="true"][view="app"] .profile-overlay {
 	padding-bottom: calc(32px + env(safe-area-inset-bottom));
 	flex: auto;
 	overflow-y: auto;
+	word-break: break-word;
 }
 .profile-overlay .profile-content.editing-profile{
 	flex: 0;
@@ -4244,4 +4274,78 @@ html[ios="true"][view="app"] .profile-overlay {
 		flex: auto;
 		overflow-y: auto;
 	}
+}
+.saving-spinner.spinner-start{
+	position: relative;
+	color: transparent !important;
+	transition: color 0s;
+}
+.saving-spinner::before{
+	content: '';
+	display: block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2px solid rgba(255,255,255,.2);
+	position: absolute;
+	top: calc(50% - 10px);
+	left: calc(50% - 10px);
+	opacity: 0;
+}
+.saving-spinner::after{
+	content: '';
+	display: block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2px solid transparent;
+	border-right: 2px solid #fff;
+	position: absolute;
+	top: calc(50% - 10px);
+	left: calc(50% - 10px);
+	opacity: 0;
+}
+.saving-spinner.spinner-start::before{
+	opacity: 1;
+}
+.saving-spinner.spinner-start::after{
+	opacity: 1;
+	animation: small-spinner .7s linear .1s infinite;
+	-webkit-animation: small-spinner .7s linear .1s infinite;
+}
+@keyframes small-spinner {
+	0%{
+		transform: rotate(0);
+	}
+	100%{
+		transform: rotate(360deg);
+	}
+}
+@keyframes spinner-spin {
+	0%{
+		transform: rotate(0);
+	}
+	100%{
+		transform: rotate(360deg);
+	}
+}
+@-webkit-keyframes small-spinner {
+	0%{
+		-webkit-transform: rotate(0);
+	}
+	100%{
+		-webkit-transform: rotate(360deg);
+	}
+}
+.btn-transparent{
+	background-color: transparent !important;
+	box-shadow: none !important;
+	border: 1px solid transparent;
+	transition: background-color ease-in-out .1s;
+}
+.btn-transparent:hover,
+.btn-transparent:active{
+	background-color: rgba(0, 0, 0, .05) !important;
+	box-shadow: none !important;
+	border: 1px solid transparent;
 }

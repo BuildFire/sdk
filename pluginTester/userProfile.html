@@ -13,11 +13,11 @@
 								ngf-select 
 								ng-model="$parent.uploadProfileImage" 
 								ngf-multiple="false" 
-								ngf-pattern="'.jpeg,.jpg,,.png,!.gif'" 
-								ngf-accept="'image/*,!.gif'" 
-								accept="image/*,!.gif" 
-								ngf-max-size="10MB" 
+								ngf-pattern="'image/*'" 
+								ngf-accept="'image/*'" 
+								accept="image/*" 
 								ngf-allow-dir="true"
+								ngf-validate-fn="validateImage($file, 'profilePhoto')"
 							></div>
 						</form>
 						<img ngf-src="uploadProfileImage" ng-show="uploadProfileImage!=null" />
@@ -25,7 +25,7 @@
 						<img ng-src="{{tempUser.imageUrl || user.imageUrl}}" onerror="this.src=window._appRoot+'media/avatar.png'" ng-if="!uploadProfileImage" />
 					</div>
 
-					<button class="btn btn-icon btn-info" ng-if="editingProfile"><span class="icon icon-camera2"></span></button>
+					<button class="btn btn-icon btn-info" ng-if="editingProfile" ng-disabled="busy"><span class="icon icon-camera2"></span></button>
 				</div>
 				<form name="editProfileCoverImage">
 					<div
@@ -35,11 +35,11 @@
 						ngf-select 
 						ng-model="$parent.uploadBackgroundImage" 
 						ngf-multiple="false" 
-						ngf-pattern="'.jpeg,.jpg,,.png,!.gif'" 
-						ngf-accept="'image/*,!.gif'" 
-						accept="image/*,!.gif" 
-						ngf-max-size="10MB" 
-						ngf-allow-dir="true" 
+						ngf-pattern="'image/*'" 
+						ngf-accept="'image/*'" 
+						accept="image/*" 
+						ngf-allow-dir="true"
+						ngf-validate-fn="validateImage($file, 'coverPhoto')"
 						style="position: absolute; right: 4px; bottom: 4px; z-index: 99999999;"
 					></div>
 				</form>
@@ -61,7 +61,7 @@
 				</div>
 
 				<div class="profile-actions" ng-if="user.userToken">
-					<button class="btn btn-info btn-has-icon pull-left" ng-click="editProfile()" ng-show="!editingProfile">
+					<button class="btn btn-info btn-has-icon btn-transparent" ng-click="editProfile()" ng-show="!editingProfile">
 						<span class="icon icon-pencil3 whiteTheme"></span><span data-translate="editProfile" class="whiteTheme">Edit</span>
 					</button>
 					<!-- <button class="btn btn-icon"><span class="icon icon-ellipsis"></span></button> -->
@@ -73,19 +73,7 @@
 
 			<div class="edit-profile-actions backgroundColorTheme" ng-show="editingProfile" style="z-index: 999;">
 				<button class="btn"><span class="text-primary" ng-click="cancelEdit()">Cancel</span></button>
-				<button class="btn btn-primary" ng-click="update()" ng-disabled="busy">Save</button>
-			</div>
-			<div class="border-none item padding-top-zero padding-bottom-five clearfix"
-			ng-show="editProfileCoverImage.dvBackgroundImage.$invalid">
-					<div  data-translate="coverPhotoLess10mb"  class="alert alert-sm alert-danger text-center">
-							Cover photo must be less than 10mb.
-					</div>
-			</div>
-			<div class="border-none item padding-top-zero padding-bottom-five clearfix"
-						ng-show="editProfileImage.dvProfileImage.$invalid">
-					<div data-translate="profilePhotoLess10mb" class="alert alert-sm alert-danger text-center">
-							Profile photo must be less than 10mb.
-					</div>
+				<button class="btn btn-primary saving-spinner" ng-click="update()" ng-disabled="busy" ng-class="{ 'spinner-start': busy }">Save</button>
 			</div>
 			<div class="profile-content load-in-anim backgroundColorTheme" ng-class="editingProfile? 'editing-profile' : ''">
 				<div ng-if="!showCustomUserProfile" ng-show="!editingProfile">
@@ -261,7 +249,7 @@
 									<span ng-if="field.type !== 'email'" ng-bind="field.label" class="text-info"></span>
 									<div ng-if="field.type === 'text'" ng-class="field.containerClass">
 										<div class="bodyTextTheme">
-											<input type="text" ng-attr-autocorrect="{{field.autocorrect}}" ng-attr-autocapitalize="{{field.autocapitalize}}" class="form-control inputApp {{field.class}}" ng-class="{ 'has-error': field.error }" name="custom_reg_text_{{field.name}}" ng-model="field.value" ng-blur="field.validate(field.value)" id="custom_reg_text_{{field.name}}" ng-change="field.change(field.value);field.validate(field.value);" maxlength="150" ng-disabled="busy" />
+											<input type="text" ng-attr-autocorrect="{{field.autocorrect}}" ng-attr-autocapitalize="{{field.autocapitalize}}" class="form-control inputApp {{field.class}}" ng-class="{ 'has-error': field.error }" name="custom_reg_text_{{field.name}}" ng-model="field.value" ng-blur="field.validate(field.value)" id="custom_reg_text_{{field.name}}" ng-change="enforceMaxLength(field, 150)" maxlength="150" ng-disabled="busy" />
 										</div>
 										<ul ng-show="field.suggestions.length" class="list-group inputApp input-suggestions {{field.class}}">
 											<li class="list-group-item" ng-repeat="suggestion in field.suggestions" ng-click="field.selectSuggestion(suggestion)">
@@ -277,7 +265,7 @@
 									</div>
 									<div ng-if="field.type === 'textarea'" ng-class="field.containerClass">
 										<div class="bodyTextTheme">
-											<textarea class="form-control inputApp {{field.class}}" ng-class="{ 'has-error': field.error }" name="custom_reg_textarea_{{field.name}}" ng-model="field.value" ng-blur="field.validate(field.value)" id="custom_reg_textarea_{{field.name}}" ng-change="field.change(field.value);field.validate(field.value);" maxlength="1024" ng-disabled="busy"></textarea>
+											<textarea class="form-control inputApp {{field.class}}" ng-class="{ 'has-error': field.error }" name="custom_reg_textarea_{{field.name}}" ng-model="field.value" ng-blur="field.validate(field.value)" id="custom_reg_textarea_{{field.name}}" ng-change="enforceMaxLength(field, 1024)" maxlength="1024" ng-disabled="busy"></textarea>
 										</div>
 										<ul ng-show="field.suggestions.length" class="list-group inputApp input-suggestions {{field.class}}">
 											<li class="list-group-item" ng-repeat="suggestion in field.suggestions" ng-click="field.selectSuggestion(suggestion)">
