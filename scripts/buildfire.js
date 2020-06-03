@@ -2571,6 +2571,10 @@ var buildfire = {
         showUsersSearchDialog: function(options,callback){
             var p = new Packet(null, 'usersLib.showSearchDialog', options);
             buildfire._sendPacket(p, callback);
+        },
+        showTagsSearchDialog: function(options,callback){
+            var p = new Packet(null, 'usersLib.showTagsSearchDialog', options);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features

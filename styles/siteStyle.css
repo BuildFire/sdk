@@ -1981,3 +1981,91 @@ html.translated-ltr body{
     padding: 8px !important;
     margin-left: 10px !important;
 }
+
+.fixed-table{
+	position: relative;
+}
+.fixed-table .table-header{
+	position: absolute;
+	top: 0;
+	width:100%;
+	height:51px;
+	line-height: 51px;
+	background: #fff;
+	z-index: 5;
+	border-bottom: 1px solid #d8d8d8;
+	font-weight:bold;
+	color: #000;
+}
+
+.fixed-table .table-container{
+	padding-top: 51px;
+}
+
+.fixed-table tbody tr td{
+	border-top:none !important;
+}
+
+.fixed-table .tbl-col{
+	float: left;
+}
+
+.striped-table {
+	border: none;
+}
+.striped-table tbody {
+	color: #000000;
+}
+.striped-table thead tr th {
+	color: #000000;
+	font-weight: bold;
+}
+.striped-table tbody tr td{
+	border-bottom: 1px solid #d8d8d8;
+	border-radius: 4px;
+}
+.striped-table tbody tr td:first-child{
+	border-left:1px solid #d8d8d8;
+}
+.striped-table tbody tr td:last-child{
+	border-right:1px solid #d8d8d8;
+}
+.striped-table .table-action{
+	font-size: 18px;
+	color: #000;
+	margin-right: 20px;
+	cursor: pointer;
+}
+
+.striped-table>tbody>tr:nth-of-type(even){
+
+	background-color: #f9f9f9;
+}
+
+.striped-table .table-action.delete-action:hover{
+	color: #ee4a4a;
+}
+
+.delete-action:hover{
+	color: #ee4a4a;
+}
+
+.table-action{
+	color: #000;
+	cursor: pointer;
+}
+
+.striped-table .no-borders td{ border:none !important; font-weight: bold;}
+
+.constrained-scroll {
+	/* height:500px; */
+	height: 42vh !important;
+	overflow-y: scroll !important;
+}
+
+.dropdown-toggle-2{
+	display: inline-block;
+	padding: 6px 12px;
+	cursor: pointer;
+}
+
