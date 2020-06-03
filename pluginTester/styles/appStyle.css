@@ -4157,7 +4157,7 @@ html[ios="true"][view="app"] .profile-overlay {
 	overflow-y: auto;
 	word-break: break-word;
 }
-.profile-overlay .profile-content.editing-profile{
+html[view="app"] .profile-overlay .profile-content.editing-profile{
 	flex: 0;
 	overflow-y: visible;
 	height: max-content;
