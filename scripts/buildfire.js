@@ -628,7 +628,7 @@ var buildfire = {
                     && appTheme.fontId !== 'Shadows+into+Light'&& appTheme.fontId !== 'Asap+condensed') {
                         css += '@import url(\'https://fonts.googleapis.com/css?family='+ appTheme.fontName +'\');'
                     }
-                    css +=  ':root {'
+                    css +=  ':root:root {'
                             + '  --mdc-typography-font-family: unquote("' + appTheme.fontName + ', sans-serif");'
                             + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
                             + '  --mdc-theme-secondary:' + appTheme.colors.successTheme + ';'
