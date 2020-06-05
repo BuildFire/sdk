@@ -4167,10 +4167,15 @@ html[view="app"] .profile-overlay {
 html[ios="true"] .profile-overlay .profile-content{
 	padding-bottom: calc(32px + env(safe-area-inset-bottom)) !important;
 }
-html[view="app"] .profile-overlay .profile-content.editing-profile{
+.profile-overlay .profile-content.editing-profile{
 	flex: 0;
 	overflow-y: visible;
 	height: max-content;
+}
+.shell-sdk .profile-overlay .profile-content.editing-profile {
+	flex: auto;
+	overflow-y: auto;
+	word-break: break-word;
 }
 .edit-profile-actions{
 	padding: 0 8px 8px 8px;
