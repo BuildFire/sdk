@@ -2156,38 +2156,9 @@ html.translated-ltr body{
 	overflow-y: scroll !important;
 }
 
-/* Start of User Search UI */
-.user-search .tags-container {
-	min-width: 180px;
-	max-width: 180px;
+.dropdown-toggle-2{
+	display: inline-block;
+	padding: 6px 12px;
+	cursor: pointer;
 }
-@media (min-width: 1024px) {
-	.user-search .tags-container {
-		min-width: 400px;
-		max-width: 400px;
-	}
-}
-.user-search .not-popup{
-	min-width: 540px;
-	max-width: 540px;
-}
-@media (max-width: 1400px) {
-	.user-search .not-popup {
-		min-width: 456px;
-		max-width: 456px;
-	}
-}
-.user-search .users-dropdown-tags {
-	display: flex;
-	align-items: center;
-}
-.user-search .dropdowns-tags {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-.user-search .dropdowns-container {
-	display: flex;
-}
-/* End of User Search UI */
 
