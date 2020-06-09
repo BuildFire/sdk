@@ -3952,6 +3952,15 @@ html:not([type="app"]) .bottom-drawer{
 	transition: transform ease-in-out .2s, opacity ease-in-out .1s, background-color ease-in-out .2s;
 }
 /* User Profile Overlay */
+#userProfile{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	pointer-events: none;
+}
 .profile-container{
 	position: absolute;
 	top: 0;
@@ -3965,13 +3974,15 @@ html:not([type="app"]) .bottom-drawer{
 }
 .profile-container .profile-holder{
 	position: relative;
+	top: 0;
 	height: 100%;
-	overflow-y: visible;
-	pointer-events: none;
+	overflow-y: auto;
+	pointer-events: all;
 	-webkit-overflow-scrolling: touch;
 }
-.profile-container .profile-holder {
-	overflow-y: auto !important;
+.profile-click-catcher{
+	height: calc(90px + env(safe-area-inset-top));
+	pointer-events: all;
 }
 .profile-backdrop{
 	background-color: rgba(0, 0, 0, .5);
@@ -3983,7 +3994,7 @@ html:not([type="app"]) .bottom-drawer{
 	height: 100%;
 }
 .profile-overlay{
-	position: absolute;
+	position: relative;
 	width: 100%;
 	bottom: 0;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
@@ -4169,8 +4180,9 @@ html[ios="true"] .profile-overlay .profile-content{
 }
 .profile-overlay .profile-content.editing-profile{
 	flex: 0;
-	overflow-y: visible;
+	overflow-y: initial;
 	height: max-content;
+	-webkit-overflow-scrolling: auto;
 }
 .shell-sdk .profile-overlay .profile-content.editing-profile {
 	flex: auto;
