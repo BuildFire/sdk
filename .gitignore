@@ -34,5 +34,6 @@ bower_components
 plugins
 !/plugins/myPlugin/
 !/plugins/testPlugin/
+!/scripts/tinymce/plugins/
 package-lock.json
 .DS_Store
