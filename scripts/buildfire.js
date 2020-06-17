@@ -1583,7 +1583,7 @@ var buildfire = {
             }
             else{
                 var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-                var root = protocol + "//apmyztgbko.cloudimg.io/";
+                var root = protocol + "//alnnibitpo.cloudimg.io/";
                 var compression = buildfire.imageLib.getCompression(options.compression);
                 var result = '';
 
@@ -1647,7 +1647,7 @@ var buildfire = {
             }
 
             var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-            var root = protocol + "//apmyztgbko.cloudimg.io/crop/";
+            var root = protocol + "//alnnibitpo.cloudimg.io/crop/";
 
             var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
             var compression = buildfire.imageLib.getCompression(options.compression);
