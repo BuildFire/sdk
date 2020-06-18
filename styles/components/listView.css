@@ -1,0 +1,145 @@
+
+.listViewContainer{
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: 100vh;
+}
+.listViewContainer::-webkit-scrollbar{
+  display: none;
+}
+.listViewContainer.full-width{
+  padding: 0;
+  padding-top: 4rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+}
+.listViewItem{
+    display: flex;
+    align-items: center;
+    min-height: 3.75rem;
+    padding: 0 1rem;
+    padding-right: .5rem;
+    cursor: pointer;
+    transition: background-color ease-in-out .3s;
+}
+.listViewItem:hover,
+.listViewItem:active{
+  background-color: rgba(150,150,150,.05);
+}
+.listViewItem  .listViewItemImg{
+    height: 2.5rem;
+    width: 2.5rem;
+    margin-right: 1rem;
+    overflow: hidden;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+.listViewItem > .listViewItemCopy{
+    flex: auto;
+    padding: .75rem 0;
+}
+.listViewItemImgContainer{
+    flex-shrink: 0;
+}
+.listViewItemToolbar{
+    display: flex;
+    align-items: center;
+}
+.listViewItem .toolbarBadge,
+.listViewItem .toolbarShare{
+    font-size: .75rem;
+    padding: .25rem .5rem;
+    border-radius: 2rem;
+}
+
+.listViewItem .toolbarShare{
+    border-radius: 50%;
+    overflow: hidden;
+}
+.btn-icon,
+button.btn-icon,
+.btn.btn-icon,
+.action-holder span.icon {
+    cursor: pointer;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: .25rem;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.125rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    box-shadow: 0;
+    transition: transform ease-in-out .2s, 
+                opacity ease-in-out .1s, 
+                background-color ease-in-out .2s;
+}
+.action-holder .glyphicon::before{
+    top: 1px;
+    left: 1px;
+    position: relative;
+}
+.btn-icon:hover,
+.action-holder span.icon:hover{
+    background-color:rgba(150,150,150,.1);
+}
+.btn-icon:active,
+.action-holder span.icon:active{
+    opacity: .7;
+    transform: scale(.9);
+}
+.padded{
+    padding: 1rem;
+}
+.margin-0{
+    margin: 0;
+}
+.padded-m{
+    padding: .75rem;
+}
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.word--break {
+    word-break: break-word;
+}
+/* Floating Button */
+.btn-fab{
+    width: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.5rem;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    border: 0;
+    box-shadow: 0 .125rem .5rem rgba(50, 50, 50, 0.3);
+    background-color: #00a1f1;
+    border-radius: 50%;
+    transition: transform ease-in-out .1s, opacity ease-in-out .1s,;
+  }
+  .btn-fab.btn-add span{
+    display: block;
+    width: 1rem;
+    height: .125rem;
+    background-color: #fff;
+    margin-bottom: 0;
+  }
+  .btn-fab.btn-add span::before{
+    display: block;
+    content: '';
+    width: 1rem;
+    height: .125rem;
+    background-color: #fff;
+    margin-bottom: 0;
+    transform: rotate(90deg);
+  }
+  .btn-fab:active{
+      opacity: .9;
+      transform: scale(.95);
+  }
