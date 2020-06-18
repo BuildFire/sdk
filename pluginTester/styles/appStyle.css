@@ -1729,7 +1729,7 @@ textarea.md-input{
 }
 
 .iap-action-items {
-	margin: 12px 0;
+	margin: 20px 0;
 }
 
 .iap-action-items a {
@@ -3961,10 +3961,6 @@ html:not([type="app"]) .bottom-drawer{
 	overflow: hidden;
 	pointer-events: none;
 }
-html[wkwebview="true"][ios="true"] #userProfile {
-	height: 100vh !important;
-	overflow: hidden !important;
-}
 .profile-container{
 	position: absolute;
 	top: 0;
@@ -4384,12 +4380,4 @@ html[ios="true"] .profile-overlay .profile-content{
 	background-color: rgba(0, 0, 0, .05) !important;
 	box-shadow: none !important;
 	border: 1px solid transparent;
-}
-
-/* Utilities */
-.d-block{
-	display: block;
-}
-.word-break{
-	word-break: break-word;
 }
