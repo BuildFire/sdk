@@ -1729,7 +1729,7 @@ textarea.md-input{
 }
 
 .iap-action-items {
-	margin: 20px 0;
+	margin: 12px 0;
 }
 
 .iap-action-items a {
@@ -2231,6 +2231,9 @@ nav.menu a .media{
 	-webkit-transition-duration: 250ms;
 	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 	transition:         all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+html[type="app"][ios="true"][browser="Safari"][view="browser"] #notesDialog{
+  height: 100%;
 }
 
 #notesDialog.active {
@@ -3307,6 +3310,9 @@ html:not([type="app"]) .snackbar-hero{
 	overflow: hidden;
 	white-space: nowrap;
 }
+html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .frame{
+  height: 100%;
+}
 .onboarding .slides {
 	display: inline-block;
 }
@@ -3391,6 +3397,9 @@ html:not([type="app"]) .snackbar-hero{
 	position: absolute;
 	overflow: hidden;
 	z-index: 9999;
+}
+html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
+  height: 100%;
 }
 .onboarding-content{
 	height: 100%;
@@ -3957,7 +3966,7 @@ html:not([type="app"]) .bottom-drawer{
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 	overflow: hidden;
 	pointer-events: none;
 }
@@ -4307,6 +4316,62 @@ html[ios="true"] .profile-overlay .profile-content{
 		overflow-y: auto;
 	}
 }
+
+/* Badge Grid */
+.badges-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: .75rem;
+  grid-row-gap: 1.5rem;
+  padding: 1rem .5rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+}
+.badges-grid .grid-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.badges-grid .user-badge{
+  border-radius: .25rem;
+  width: 4rem;
+  height: 4rem;
+  position: relative;
+}
+.badges-grid .grid-item h5{
+  margin: .75rem 0 .125rem 0;
+  font-weight: bold;
+  word-break: break;
+}
+.badges-grid .user-badge img{
+  border-radius: .25rem;
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  overflow: hidden;
+}
+.user-badge .badge-count{
+  display: block;
+  background-color: rgba(120, 120, 120, 0.5);
+  color: #fff;
+  border-radius: 1rem;
+  position: absolute;
+  top: -.75rem;
+  right: calc(0% - .75rem);
+  padding: .25rem .5rem;
+  text-align: left;
+}
+.caption{
+  font-size: .75rem;
+  opacity: .75;
+  margin: 0;
+}
+@media(min-width: 700px){
+  .badges-grid{
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .saving-spinner.spinner-start{
 	position: relative;
 	color: transparent !important;
@@ -4380,4 +4445,12 @@ html[ios="true"] .profile-overlay .profile-content{
 	background-color: rgba(0, 0, 0, .05) !important;
 	box-shadow: none !important;
 	border: 1px solid transparent;
+}
+
+/* Utilities */
+.d-block{
+	display: block;
+}
+.word-break{
+	word-break: break-word;
 }
