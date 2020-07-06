@@ -124,6 +124,8 @@ var buildfire = {
 
         buildfire.appearance.attachCSSFiles();
 
+        buildfire.localStorage.overrideNativeLocalStorage();
+
     }
     , _whitelistedCommands: [
         "datastore.triggerOnUpdate"
@@ -140,6 +142,7 @@ var buildfire = {
         , "services.media.audioPlayer.triggerOnEvent"
         , "auth.triggerOnLogin"
         , "auth.triggerOnLogout"
+        , "auth.triggerOnUpdate"
         , "logger.attachRemoteLogger"
         , "appearance.triggerOnUpdate"
         , "device.triggerOnAppBackgrounded"
@@ -708,9 +711,32 @@ var buildfire = {
                 base += '/';
             }
 
+            //Remove Scrollbars css
+            {
+                var _sharedStyle = document.createElement('style');
+                _sharedStyle.type = 'text/css';
+                _sharedStyle.innerHTML = '@media(max-width: 1200px){' +
+                    '/* Remove Scrollbars */' +
+                    '[buildfire="widget"] ::-webkit-scrollbar,' +
+                    '[buildfire="widget"] html::-webkit-scrollbar,' +
+                    '[buildfire="widget"] body::-webkit-scrollbar,' +
+                    '[buildfire="widget"] html *::-webkit-scrollbar,' +
+                    '[buildfire="widget"] body *::-webkit-scrollbar{' +
+                    'display: none !important;' +
+                    '}' +
+                    '[buildfire="widget"] html,' +
+                    '[buildfire="widget"] body,' +
+                    '[buildfire="widget"] html *,' +
+                    '[buildfire="widget"] body *{' +
+                    '-ms-overflow-style: none;' +
+                    'scrollbar-width: none;' +
+                    '}' +
+                    '}';
+                (document.head || document.body || document).appendChild(_sharedStyle);
+            }
+
             for (var i = 0; i < files.length; i++)
                 document.write('<link rel="stylesheet" href="' + base + files[i] + '"/>');
-
         }
         , disableFastClickOnLoad:false
         , attachFastClick: function(){
@@ -1837,8 +1863,9 @@ var buildfire = {
                     '16:9': 0.5625,
                     '9:16': 1.77777778,
                     '11:5': 0.45454545,
+                    '4:1': 0.25,
                     '2.39:1': 0.41841004,
-                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '11:5', '2.39:1']
+                    VALID_RATIOS: ['1:1', '4:3', '16:9', '9:16', '11:5', '4:1', '2.39:1']
                 }
             }
         },
@@ -2239,8 +2266,6 @@ var buildfire = {
                 }
             }
         }
-
-
     }
     , colorLib: {
         showDialog: function (data, options, onchange, callback) {
@@ -2485,9 +2510,15 @@ var buildfire = {
         },
         onLogout: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
-        }
-        , triggerOnLogout: function (data) {
+        },
+        triggerOnLogout: function (data) {
             return buildfire.eventManager.trigger('authOnLogout', data);
+        },
+        onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
+        },
+        triggerOnUpdate: function (data) {
+            return buildfire.eventManager.trigger('authOnUpdate', data);
         },
         openProfile: function (userId) {
             var p = new Packet(null, 'auth.openProfile', userId);
@@ -2539,6 +2570,10 @@ var buildfire = {
         },
         showUsersSearchDialog: function(options,callback){
             var p = new Packet(null, 'usersLib.showSearchDialog', options);
+            buildfire._sendPacket(p, callback);
+        },
+        showTagsSearchDialog: function(options,callback){
+            var p = new Packet(null, 'usersLib.showTagsSearchDialog', options);
             buildfire._sendPacket(p, callback);
         }
     }
@@ -2605,20 +2640,104 @@ var buildfire = {
     }
     , localStorage : {
         setItem: function(key,value,callback) {
-            if(!callback)callback = function(){};
+            if(!callback)callback = function(err){ if(err) console.error(err) };
 
-            if(typeof(value) == "object" )
+            if(typeof(value) === "object" )
                 value = JSON.stringify(value);
+            else
+                value = value + ""; // mimic localStorage behavior. e.g: null is stored as "null"
 
             buildfire._sendPacket(new Packet(null, 'localStorage.setItem', {key:key,value:value}), callback);
+            buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context) {
+                        context.localStorage = context.localStorage || [];
+                       // update local copy so we don't have to sync
+                       context.localStorage[key] = value;
+                    }
+                    else {
+                        callback(null, "no context");
+                    }
+                }
+            });
         }
         ,getItem: function(key,callback) {
-            if(!callback)throw "missing callback on buildfire.localStorage.getItem";
-            buildfire._sendPacket(new Packet(null, 'localStorage.getItem', key), callback);
+            if(!callback){
+                // let getContext throw if context is not ready and no callback is provided
+                var context = buildfire.getContext();
+                if(context && context.localStorage) {
+                    var val = context.localStorage[key];
+                    return val === undefined ? null : val;
+                } else {
+                    return null;
+                }
+            }
+            var context = buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context && context.localStorage) {
+                        var val = context.localStorage[key];
+                        callback(null, val === undefined ? null : val);
+                    }
+                    else {
+                        callback(null, null);
+                    }
+                }
+            });
+            if(context && context.localStorage) {
+                var val = context.localStorage[key];
+                return val === undefined ? null : val;
+            }
         }
         ,removeItem: function(key,callback) {
-            if(!callback)throw "missing callback on buildfire.localStorage.removeItem";
+            if(!callback)callback = function(err){ if(err) console.error(err) };
             buildfire._sendPacket(new Packet(null, 'localStorage.removeItem', key), callback);
+            buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context && context.localStorage) {
+                        delete context.localStorage[key];
+                    }
+                    else {
+                        callback(null, "no context");
+                    }
+                }
+            });
+        }
+        ,clear: function(callback){
+            if(!callback)callback = function(err){ if(err) console.error(err) };
+            buildfire._sendPacket(new Packet(null, 'localStorage.clear', {}), callback);
+            buildfire.getContext(function(err, context){
+                if (err) {
+                    callback(err);
+                } else {
+                    if(context) {
+                        // clear local copy
+                        context.localStorage = [];
+                    }
+                    else {
+                        callback(null, "no context");
+                    }
+                }
+            });
+        }
+        ,overrideNativeLocalStorage: function() {
+            localStorage.getItem = function (key) {
+                return buildfire.localStorage.getItem(key);
+            };
+            localStorage.setItem = function (key, value) {
+                return buildfire.localStorage.setItem(key, value);
+            };
+            localStorage.removeItem = function (key) {
+                return buildfire.localStorage.removeItem(key);
+            };
+            localStorage.clear = function () {
+                return buildfire.localStorage.clear();
+            };
         }
     },
     input: {
@@ -2745,7 +2864,6 @@ window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
     console.error('Error: ' + errorMsg, ' Script: ' + url, ' Line: ' + lineNumber
         , ' Column: ' + column, ' StackTrace: ' + errorObj);
 };
-
 
 //IE and old Android Custom Event Fix
 if(typeof(CustomEvent) != "function"){
