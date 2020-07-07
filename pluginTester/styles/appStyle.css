@@ -3266,7 +3266,8 @@ html:not([type="app"]) .snackbar-hero{
     top: 160px;
     left: auto;
     margin-left: 0;
-    padding-top: 0;
+		padding-top: 0;
+		transform: translateX(0) translateY(20vh)
 	}
 	[type="app"] #accessCode_wrapper input[type=password]{
 		background-color: rgba(150,150,150,.05) !important;
@@ -4205,6 +4206,60 @@ html[ios="true"] .profile-overlay .profile-content{
 	box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.15);
 	flex-shrink: 0;
 }
+.editing-profile .tabs-content-holder{
+	display: none !important;
+}
+.edit-profile-actions.profile-tabs{
+	position: relative;
+	padding: 0;
+}
+.edit-profile-actions.profile-tabs .tab{
+	flex: auto;
+	flex-shrink: 0;
+	border: 0;
+	height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+}
+.edit-profile-actions.profile-tabs .active-indicator{
+	width: 50%;
+	height: 2px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transition: transform ease-in-out .2s;
+}
+.edit-profile-actions.profile-tabs .active-indicator.tab-index-1{
+	transform: translateX(100%);
+}
+.profile-overlay .tabs-content-holder{
+	display: flex;
+	flex-wrap: nowrap;
+	overflow: visible;
+	transition: transform ease-in-out .2s;
+	-webkit-transition: transform ease-in-out .2s;
+}
+.profile-overlay .tabs-content-holder.tab-index-1{
+	transform: translateX(-100%);
+	-webkit-transform: translateX(-100%);
+}
+.profile-overlay .tabs-content-holder .tabs-content{
+	width: 100%;
+	flex-shrink: 0;
+	/* transition: opacity ease-in-out .2s;
+	-webkit-transition: opacity ease-in-out .2s; */
+	opacity: 0;
+	height: 0px;
+	overflow: hidden;
+}
+.profile-overlay .tabs-content-holder.tab-index-1 .tabs-content.tab-index-1,
+.profile-overlay .tabs-content-holder.tab-index-0 .tabs-content.tab-index-0{
+	opacity: 1;
+	height: unset;
+	overflow: unset;
+}
 .btn-has-icon{
 	display: flex;
 	align-items: center;
@@ -4316,6 +4371,63 @@ html[ios="true"] .profile-overlay .profile-content{
 		overflow-y: auto;
 	}
 }
+
+/* Badge Grid */
+.badges-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: .75rem;
+  grid-row-gap: 1.5rem;
+  padding: 1rem .5rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+}
+.badges-grid .grid-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.badges-grid .user-badge{
+  border-radius: .25rem;
+  width: 4rem;
+  height: 4rem;
+  position: relative;
+}
+.badges-grid .grid-item h5{
+  margin: .75rem 0 .125rem 0;
+  font-weight: bold;
+  word-break: break;
+}
+.badges-grid .user-badge img{
+  border-radius: .25rem;
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  overflow: hidden;
+}
+.user-badge .badge-count{
+  display: block;
+  background-color: rgba(120, 120, 120, 0.5);
+  color: #fff;
+  border-radius: 1rem;
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  padding: .25rem .5rem;
+	text-align: left;
+	font-size: 12px;
+}
+.caption{
+  font-size: .75rem;
+  opacity: .75;
+  margin: 0;
+}
+@media(min-width: 700px){
+  .badges-grid{
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .saving-spinner.spinner-start{
 	position: relative;
 	color: transparent !important;
