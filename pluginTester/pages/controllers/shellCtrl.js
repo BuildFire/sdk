@@ -24,7 +24,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
                 icons: "#33b3f3",
                 infoTheme: "#33b3f3",
                 primaryTheme: "#00a1f1",
-                successTheme: "#33b3f3",
+                successTheme: "#14cb5d",
                 titleBar: "00a1f1",
                 titleBarTextAndIcons: "#ffffff",
                 warningTheme: "#ffcf40"
