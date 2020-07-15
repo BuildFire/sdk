@@ -2762,9 +2762,11 @@ var buildfire = {
         },
         triggerOnSeekTo: function (data) {
             buildfire.eventManager.trigger('NOTES_SEEK_TO', data, false)
+        },
+        getByItemId: function (options, callback) {
+            buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
         }
     }
-
 };
 
 window.parsedQuerystring = buildfire.parseQueryString();
