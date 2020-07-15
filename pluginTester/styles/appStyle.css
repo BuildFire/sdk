@@ -4398,3 +4398,83 @@ html[ios="true"] .profile-overlay .profile-content{
 .word-break{
 	word-break: break-word;
 }
+
+/* Install PWA Dialog */
+.insall-app-dialog .app-icon{
+	width: 64px;
+	height: 64px;
+	border-radius: 4px;
+	margin: 24px auto;
+	margin-bottom: 40px;
+	overflow: hidden;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+.insall-app-dialog h4{
+	font-size: 20px;
+	line-height: 1.5;
+	word-break: break-word;
+	font-weight: bold;
+	color: #000 !important;
+}
+.insall-app-dialog p{
+	font-size: 14px;
+	word-break: break-word;
+	color: #888 !important;
+}
+.insall-app-dialog .app-icon img{
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.insall-app-dialog .btn-text{
+	text-transform: uppercase;
+	display: block;
+	word-break: break-word;
+	margin-top: 12px;
+	padding: 6px 32px;
+	letter-spacing: .1em;
+}
+.insall-app-dialog .btn-primary{
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+.insall-app-dialog .btn-text.btn-transparent {
+	background-color: transparent !important;
+	text-transform: uppercase;
+	word-break: break-word;
+	color: #555 !important;
+}
+.insall-app-dialog .dialog-footer{
+	height: auto !important;
+	padding: 12px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.insall-app-dialog .dialog-header{
+	display: flex;
+	padding: 12px;
+	padding-bottom: 0;
+}
+.insall-app-dialog .dialog-header h4{
+	font-size: 16px;
+	font-weight: bold;
+}
+.insall-app-dialog .dialog-header .btn.btn-icon{
+	margin: 0;
+	margin-left: auto;
+}
+.insall-app-dialog .dialog-body-container{
+	padding: 16px;
+	text-align: center;
+}
+.dialog-body-container .image-container{
+	width: 54px;
+	height: 54px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #999;
+	margin: 8px auto 0 auto;
+}
