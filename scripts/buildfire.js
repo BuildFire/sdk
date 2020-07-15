@@ -2481,8 +2481,8 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
-        show: function () {
-            buildfire._sendPacket(new Packet(null, 'spinner.show'));
+        show: function (options) {
+            buildfire._sendPacket(new Packet(null, 'spinner.show', options));
         }
         , hide: function () {
             buildfire._sendPacket(new Packet(null, 'spinner.hide'));
