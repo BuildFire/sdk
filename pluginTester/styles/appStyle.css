@@ -3971,6 +3971,10 @@ html:not([type="app"]) .bottom-drawer{
 	overflow: hidden;
 	pointer-events: none;
 }
+html[wkwebview="true"][ios="true"] #userProfile {
+	height: 100vh !important;
+	overflow: hidden !important;
+}
 .profile-container{
 	position: absolute;
 	top: 0;
