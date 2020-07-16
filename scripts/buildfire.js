@@ -631,7 +631,7 @@ var buildfire = {
                     && appTheme.fontId !== 'Shadows+into+Light'&& appTheme.fontId !== 'Asap+condensed') {
                         css += '@import url(\'https://fonts.googleapis.com/css?family='+ appTheme.fontName +'\');'
                     }
-                    css +=  ':root {'
+                    css +=  ':root:root {'
                             + '  --mdc-typography-font-family: unquote("' + appTheme.fontName + ', sans-serif");'
                             + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
                             + '  --mdc-theme-secondary:' + appTheme.colors.successTheme + ';'
@@ -1936,7 +1936,7 @@ var buildfire = {
             {
                 //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
                 var protocol = "https:";
-                var root = protocol + "//czi3m2qn.cloudimg.io/";
+                var root = protocol + "//alnnibitpo.cloudimg.io/";
                 var compression = buildfire.imageLib.getCompression(options.compression);
                 var result = '';
 
@@ -2031,7 +2031,7 @@ var buildfire = {
 
             //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
             var protocol = "https:";
-            var root = protocol + "//czi3m2qn.cloudimg.io/crop/";
+            var root = protocol + "//alnnibitpo.cloudimg.io/crop/";
 
             var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
             var compression = buildfire.imageLib.getCompression(options.compression);
@@ -2485,8 +2485,8 @@ var buildfire = {
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
-        show: function () {
-            buildfire._sendPacket(new Packet(null, 'spinner.show'));
+        show: function (options) {
+            buildfire._sendPacket(new Packet(null, 'spinner.show', options));
         }
         , hide: function () {
             buildfire._sendPacket(new Packet(null, 'spinner.hide'));

@@ -11,8 +11,31 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         };
         $scope.currentUser = window.currentUser;
 
+        const controlDefaultTheme = {
+            appName: '',
+            colors: {
+                backgroundColor: "#ffffff",
+                bodyText: "#5f5f5f",
+                dangerTheme: "#f24965",
+                defaultTheme: "#09a3ee",
+                footerMenuBackgroundColor: "#ffffff",
+                footerMenuIconColor: "#33b3f3",
+                headerText: "#000000",
+                icons: "#33b3f3",
+                infoTheme: "#33b3f3",
+                primaryTheme: "#00a1f1",
+                successTheme: "#14cb5d",
+                titleBar: "00a1f1",
+                titleBarTextAndIcons: "#ffffff",
+                warningTheme: "#ffcf40"
+            },
+            fontId : "Lato",
+            fontName: "Lato"
+        };
+
         $scope.loadWebpackFrames = function(config) {
             postMaster.controlPluginAPI.getContext(null, function(err, context){
+                context.appTheme = controlDefaultTheme;
                 var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
 
@@ -56,6 +79,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
         $scope.loadFrames = function (pluginFolder, config) {
             postMaster.controlPluginAPI.getContext(null, function(err, context){
+                context.appTheme = controlDefaultTheme;
                 var root =  '../plugins/';
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
 
