@@ -38,9 +38,9 @@
             <span ng-if="customTabs.length > 0" ng-click="scrollTabs('right')" class="icon-chevron-right tab-arrow active"></span>
         </div>
        
-        <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
+        <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
                 ng-src="{{currentControl}}"></iframe>
-        <iframe ng-hide="pluginControlIframeVisible" class="non-control-iframe" id="iframeNonControl" sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"
+        <iframe ng-hide="pluginControlIframeVisible" class="non-control-iframe" id="iframeNonControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
                 ng-src="{{currentNonControl}}"></iframe>
     </div>
 </div>

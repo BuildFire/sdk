@@ -90,16 +90,30 @@ window.spinner = {
         }
         ;
     },
-    show: function () {
-        console.log('show', {hideCount: window.spinner.hideCount});
+    show: function(options) {
+        console.log('show', { hideCount: window.spinner.hideCount });
+
         if (!window.spinner.element) {
             window.spinner.element = document.getElementById('loading-bar-spinner');
         }
-        if (window.spinner.hideCount == 0) {
-            window.spinner.hideTimer = setTimeout(function () {
-                window.spinner.hide(true);
-            }, 10000);
+
+        if (!options) options = {};
+
+        var timeout = 10000;
+
+        if (options.timeout && typeof options.timeout == 'number') {
+            if (options.timeout > 60000) options.timeout = 60000;
+            if (options.timeout < 1000) options.timeout = 1000;
+
+            timeout = options.timeout;
         }
+
+        if (window.spinner.hideCount == 0) {
+            window.spinner.hideTimer = setTimeout(function() {
+                window.spinner.hide(true);
+            }, timeout);
+        }
+
         window.spinner.hideCount++;
         window.spinner.element.style.display = 'block';
     }
