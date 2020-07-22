@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		body {
+			padding: 9px 15px;
+			margin: 0;
+		}
+		:root {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			color: #333;
+			font-weight: normal;
+		}
+
+		.crop-or-resize {
+			display: "flex";
+			flex-direction: row;
+		}
+
+		.row {
+			margin-bottom: 1rem;
+		}
+
+		.label {
+			display: inline-block;
+			width: 70px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="crop-or-resize row">
+		<div class="label">Method: </div>
+		<input type="radio" id="resize" name="cropOrResize" value="resize" checked="checked">
+		<label for="resize">Resize</label>
+		<input type="radio" id="crop" name="cropOrResize" value="crop">
+		<label for="crop">Crop</label>
+	</div>
+
+	<div class="fixed-or-responsive row">
+		<div class="label"></div>
+		<input type="radio" id="fixed" name="fixedOrResponsive" value="fixed" checked="checked">
+		<label for="fixed">Fixed</label>
+		<input type="radio" id="responsive" name="fixedOrResponsive" value="responsive">
+		<label for="responsive">Responsive</label>
+	</div>
+
+	<div class="fixed-dropdown row" id="fixedDropdown">
+		<div class="label">Size: </div>
+		<select id="fixedOption">
+			<option value="xxs">xxs (32px)</option>
+			<option value="xs">xs (64px)</option>
+			<option value="s">s (128px)</option>
+			<option value="m">m (200px)</option>
+			<option value="l">l (304px)</option>
+			<option value="xl">xl (416px)</option>
+			<option value="xxl">xxl (600px)</option>
+			<option value="720">720 (720px)</option>
+			<option value="1080">1080 (1080px)</option>
+			<option value="1440">1440 (1440px)</option>
+		</select>
+	</div>
+
+	<div class="responsive-dropdown row" style="display: none;" id="responsiveDropdown">
+		<div class="label">Size: </div>
+		<select id="responsiveOption">
+			<option value="full_width">Full width</option>
+			<option value="half_width">Half width</option>
+			<option value="third_width">Third width</option>
+			<option value="quarter_width">Quarter width</option>
+			<option value="fifth_width">Fifth width</option>
+			<option value="sixth_width">Sixth width</option>
+		</select>
+	</div>
+
+	<div style="display: none;" id="aspectRatio" class="row">
+		<div class="label">Aspect: </div>
+
+		<select id="aspectOption">
+			<option value="1:1">1:1</option>
+			<option value="4:3">4:3</option>
+			<option value="16:9">16:9</option>
+			<option value="9:16">9:16</option>
+			<option value="11:5">11:5</option>
+			<option value="4:1">4:1</option>
+			<option value="2.39:1">2.39:1</option>
+		</select>
+
+	</div>
+
+
+	<script>
+
+		function onChangeResizeCrop(selectedValue) {
+			aspectRatio.style.display = selectedValue === "resize" ? "none" : "block"
+		}
+
+		resize.addEventListener("change", () => onChangeResizeCrop("resize"));
+		crop.addEventListener("change", () => onChangeResizeCrop("crop"));
+
+		function onChangeFixedResponsive(selectedValue) {
+			fixedDropdown.style.display = selectedValue === "fixed" ? "block" : "none";
+			responsiveDropdown.style.display = selectedValue === "responsive" ? "block" : "none";
+		}
+
+		fixed.addEventListener("change", () => onChangeFixedResponsive("fixed"));
+		responsive.addEventListener("change", () => onChangeFixedResponsive("responsive"));
+
+	</script>
+
+</body>
+
+</html>
