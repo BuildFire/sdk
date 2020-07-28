@@ -1073,6 +1073,13 @@ var buildfire = {
             buildfire._sendPacket(p);
         }
     }
+    /// ref:
+    ,userTags: {
+        assignUserTags: function(tags, options, callback) {
+            var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
+            buildfire._sendPacket(p, callback);
+        }
+    }
     /// ref: https://github.com/BuildFire/sdk/wiki/User-Data:-Save-user-data-from-the-widget
     ,userData: {
         get: function (tag, callback) {
