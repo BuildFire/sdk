@@ -3977,6 +3977,16 @@ html:not([type="app"]) .bottom-drawer{
 	overflow: hidden;
 	pointer-events: none;
 }
+
+#notes{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+	pointer-events: none;
+}
 html[wkwebview="true"][ios="true"] #userProfile {
 	height: 100vh !important;
 	overflow: hidden !important;

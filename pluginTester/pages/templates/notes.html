@@ -1,15 +1,108 @@
-<div ng-controller="notesCtrl" id='notesDialog' ng-show="notesShown" ng-class="{active: notesShown ? true : false}">
+<div ng-controller="notesCtrl" id='notesDialog' style="position: fixed;" ng-show="notesShown" ng-class="{active: notesShown ? true : false}">
+  <div class="backdrop" ng-click='close()'></div>
+  <div class="notes-wrapper" ng-class="{'has-footer-menu': turnOnFooterMenu}">
+    <div class="notes-secondary-wrapper backgroundColorTheme">
+
+    
+    
     <nav id="pluginNav" class="navbar navbar-default navbar-fixed-top text-center clearfix">
         <a ng-click='close()' id="btnBack" class="back-btn-icon icon icon-chevron-left"></a>
         <h4 id="appSettingsTitle" data-translate="notes" class="ellipsis">Notes</h4>
         <a class="menu-btn-icon icon" onclick="cpSync.menu.showSideMenu()"></a>
     </nav>
-    <div class='notes-container'>
-      <button ng-click="addNote()">Add</button>
-      <div ng-repeat="note in notes">
-        <h3>{{note.title}}</h3>
-        <h4>{{note.description}}</h4>
-        <p>{{note.timeIndex}}</p>
+
+    <div class="bottom-fixed">
+      <div class="bottom-alerts">
+        <div class="undo-alert btn-info">
+          Note Deleted
+          <a class="text-warning">UNDO</a>
+        </div>
+      </div>
+  
+      <div class="fab-container clearfix" ng-if="pluginOpen">
+        <div class="fab-btn-option footerBackgroundColorTheme" ng-hide="!tempNoteData.timeIndex">
+          <i class="glyphicon glyphicon-play"></i>
+          <label class="custom-checkbox">
+              <input type="checkbox" checked="settings.includeTime" ng-model="settings.includeTime">
+              <span class="checkmark"></span>
+          </label>
+          <p>{{ tempNoteData.timeIndex | timeFormat | date:'mm:ss' }}</p>
+        </div>
+        <a class="fab-btn fab-add btn-primary" ng-click="addNote()"><i class="glyphicon glyphicon-plus"></i></a>
       </div>
     </div>
+    
+    <div class="notes-container page-container slide">
+
+      <div class="notes-in-plugin pos-static" style="width: 100vw;" ng-if="pluginOpen">
+        <div class="plugin-li-content ellipsis">
+          <div class="plugin-content-img">
+            <img ng-if="tempNoteData.imageUrl" style="flex:1;max-width:50px;max-height:50px;" ng-src="{{ tempNoteData.imageUrl | cropImg }}">
+          </div>
+          <!-- <p class="ellipsis"><strong>{{ tempNoteData.title }}</strong></p> -->
+          <p class="ellipsis"><strong ng-bind-html="getItemTitle(tempNoteData)"></strong></p>
+        </div>
+
+        <div class="plugin-li-note ellipsis" ng-repeat="note in notes">
+          <button class="btn btn-primary btn-round btn-icon-text note-time" ng-click="seekTo(note.id, tempNoteData.itemId, instanceId)"  ng-if="!note.timeIndex == false">
+            <span class="glyphicon glyphicon-play btn-primary"></span>{{note.timeIndex | timeFormat | date:'mm:ss'}}
+          </button>
+          <button class="btn btn-round btn-icon-only" ng-if="!note.timeIndex == true" ng-click="editNote(note.id, tempNoteData.itemId, instanceId)">
+              <span class="glyphicon glyphicon-pencil"></span>
+          </button>
+          <p class="ellipsis" ng-click="editNote(note.id, tempNoteData.itemId, instanceId)">{{note.noteText}}</p>
+          <div>
+            <button ng-click="deleteNote(note.id, tempNoteData.itemId, instanceId)"><i class="text-danger icon-cross2"></i></button>
+          </div>
+        </div>   
+        <div class="empty-state" ng-show="!notes.length" ng-class="!notes.length ? 'empty-animate' : ''">
+          <img ng-src="{{ notes_empty }}" onerror="this.src=window._appRoot+'media/ic_bookmark_empty.svg'" alt="empty">
+          <i class="glyphicon glyphicon-edit"></i>
+        </div> 
+      </div>
+
+      <div ng-if="!pluginOpen">
+        <div class="empty-state" ng-show="!notes.length" ng-class="!notes.length ? 'empty-animate' : ''">
+          <img ng-src="{{ notes_empty }}" onerror="this.src=window._appRoot+'media/ic_bookmark_empty.svg'" alt="empty">
+          <i class="glyphicon glyphicon-edit"></i>
+        </div>
+        <div class="plugin-group" ng-repeat="plugin in notes track by $index">
+
+          <div class="plugin-li ellipsis">
+            <div class="plugin-li-img">
+              <img ng-src="{{ plugin.iconUrl | cropImg }}" onerror="this.src=window._appRoot+'media/ic_no_img.png'">
+            </div>
+            <h4 class="plugin-title ellipsis">{{plugin.title}}</h4>
+            <button class="collapse-btn">
+              <i style="display:none" ng-class="{'glyphicon glyphicon-chevron-down' : plugin.show, 'glyphicon glyphicon-chevron-up' : !plugin.show, }" ng-click="toggle($index)"></i>
+            </button>
+          </div>
+
+          <div class="" ng-if="plugin.show">
+              <div ng-repeat="content in plugin.content">
+                <div class="plugin-li-content ellipsis" ng-click="openItem(false, content.itemId, plugin)">
+                  <div class="plugin-content-img">
+                    <img class="plugin-content-img" ng-src="{{ content.imageUrl | cropImg }}" onerror="this.src=window._appRoot+'media/ic_no_img.png'">
+                  </div>
+                  <p class="ellipsis"><strong ng-bind-html="getItemTitle(content)"></strong></p>
+                  <i class="glyphicon glyphicon-chevron-right"></i>
+                </div>
+                <div class="plugin-li-note ellipsis" ng-repeat="note in content.notes">
+                  <button class="btn btn-round btn-icon-only" ng-if="!note.timeIndex == true" ng-click="editNote(note.id, content.itemId, plugin.instanceId)">
+                      <span class="glyphicon glyphicon-pencil"></span>
+                  </button>
+                  <button class="btn btn-primary btn-round btn-icon-text note-time" ng-click="openItem(note.id, content.itemId, plugin)" ng-if="!note.timeIndex == false">
+                    <span class="glyphicon glyphicon-play btn-primary"></span>{{note.timeIndex | timeFormat | date:'mm:ss'}}
+                  </button>
+                  <p class="ellipsis" ng-click="editNote(note.id, content.itemId, plugin.instanceId)">{{note.noteText}}</p>
+                  <div>
+                    <button ng-click="deleteNote(note.id, content.itemId, plugin.instanceId)"><i class="text-danger icon-cross2"></i></button>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  </div>
 </div>
