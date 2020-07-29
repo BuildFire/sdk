@@ -12,8 +12,34 @@ var buildfire = {
     isFileServer: function(url){
         return (url.indexOf("s3.amazonaws.com") !== -1);
     }
-    , isWeb: function(){
-        return (window.location.protocol.indexOf("http") == 0);
+    , isWeb: function(callback){
+        var isWebFromContext = function (context) {
+            if (context && context.device && context.device.platform) {
+                return context.device.platform.toLowerCase() === "web";
+            } else {
+                console.error("context device platform not defined");
+                return (window.location.protocol.indexOf("http") === 0);
+            }
+        };
+        var context = buildfire.getContext(function(err, callbackContext){
+            if(callback){
+                if(err) {
+                    callback(err);
+                } else {
+                    callback(null, isWebFromContext(callbackContext));
+                }
+            }
+        });
+        if(context) {
+            return isWebFromContext(context);
+        } else {
+            if(!callback) {
+                console.warn("context not ready. must use isWeb with callback parameter: function(err, isWebResult)");
+                return (window.location.protocol.indexOf("http") === 0);
+            }
+            // don't return anything if context is not ready but we have a callback
+        }
+
     }
     , logger: {
         attachRemoteLogger:function (tag){
@@ -1071,6 +1097,13 @@ var buildfire = {
         , disableRefresh: function () {
             var p = new Packet(null, "datastore.disableRefresh");
             buildfire._sendPacket(p);
+        }
+    }
+    /// ref:
+    ,userTags: {
+        assignUserTags: function(tags, options, callback) {
+            var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/User-Data:-Save-user-data-from-the-widget
