@@ -2222,7 +2222,7 @@ nav.menu a .media{
 #notesDialog {
 	height: 100vh;
 	background-color: #fff;
-	position: absolute;
+	position: fixed;
 	top: 0;
 	right: 0;
 	left: 0;
@@ -2299,6 +2299,9 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] #notesDialog{
 .plugin-li-note p{
 	padding: 12px 0;
 	flex:auto;
+}
+.notes-in-plugin {
+	width: 100vw;
 }
 .notes-in-plugin .plugin-content-img{
 	width: 40px;
@@ -2403,6 +2406,23 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] #notesDialog{
 .plugin-group{
 	margin-bottom: 16px;
 }
+/* Notes - pluginTester */
+html[type="pluginTester"] #notesParent {
+	height: 100% !important;
+
+}
+html[type="pluginTester"] #notesDialog {
+	height: 100% !important;
+	position: absolute;
+}
+html[type="pluginTester"] #notesDialog .navbar,
+html[type="pluginTester"] #notesDialog .notes-in-plugin {
+	width: 100% !important;
+}
+html[type='pluginTester'] #notesDialog button.btn-primary {
+	background-color: #09a3ee;
+}
+
 /* Custom Checkbox */
 .custom-checkbox {
   display: flex;
@@ -3969,16 +3989,6 @@ html:not([type="app"]) .bottom-drawer{
 }
 /* User Profile Overlay */
 #userProfile{
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100vh;
-	overflow: hidden;
-	pointer-events: none;
-}
-
-#notes{
 	position: absolute;
 	top: 0;
 	left: 0;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="buildfire">
+<html ng-app="buildfire" type="pluginTester">
 <head lang="en">
 
 	<!-- Title & Favicons -->
@@ -152,7 +152,7 @@
                                 <iframe id="widget" ng-src="{{widgetSrc}}" style="height:100%; width:100%;"  ng-style="{'padding-top': showNavigationBar ? '49px' : '0px' }" class="pluginFrame" seamless allowfullscreen sandbox="allow-scripts allow-forms  allow-same-origin allow-popups"></iframe>
                                 <div id="login" ng-include="'https://app.buildfire.com/app/fragments/auth/auth.html'"></div>
                                 <div id="userProfile" ng-include="'https://app.buildfire.com/app/fragments/userProfile/userProfile.html'"></div>
-                                <div ng-include="'pages/templates/notes.html'"></div>
+                                <div id="notesParent" ng-include="'https://app.buildfire.com/app/pages/templates/notes.html'"></div>
                             </div>
                         </div>
                     </div>
