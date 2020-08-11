@@ -432,6 +432,12 @@ var buildfire = {
         , triggerOnPluginOpened: function (data) {
             return buildfire.eventManager.trigger('pluginOpened', data);
         }
+        , getBackNavigationInstance:function (){
+            var qs = buildfire.parseQueryString();
+            if(qs.backnavigationinstance)
+                return qs.backnavigationinstance;
+            return undefined;
+        }
     },
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
     // else it returns "controlIFrame"
