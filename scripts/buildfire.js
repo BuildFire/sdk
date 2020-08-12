@@ -432,9 +432,9 @@ var buildfire = {
         , triggerOnPluginOpened: function (data) {
             return buildfire.eventManager.trigger('pluginOpened', data);
         }
-        , getBackNavigationInstance:function (){
+        , getBackNavigationInstanceId: function () {
             var qs = buildfire.parseQueryString();
-            if(qs.backnavigationinstance)
+            if (qs.backnavigationinstance)
                 return qs.backnavigationinstance;
             return undefined;
         }
