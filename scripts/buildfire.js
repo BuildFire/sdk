@@ -432,6 +432,12 @@ var buildfire = {
         , triggerOnPluginOpened: function (data) {
             return buildfire.eventManager.trigger('pluginOpened', data);
         }
+        , getBackNavigationInstanceId: function () {
+            var qs = buildfire.parseQueryString();
+            if (qs.backnavigationinstance)
+                return qs.backnavigationinstance;
+            return undefined;
+        }
     },
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
     // else it returns "controlIFrame"
@@ -1097,13 +1103,6 @@ var buildfire = {
         , disableRefresh: function () {
             var p = new Packet(null, "datastore.disableRefresh");
             buildfire._sendPacket(p);
-        }
-    }
-    /// ref:
-    ,userTags: {
-        assignUserTags: function(tags, options, callback) {
-            var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
-            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/User-Data:-Save-user-data-from-the-widget
@@ -2611,6 +2610,10 @@ var buildfire = {
         },
         showTagsSearchDialog: function(options,callback){
             var p = new Packet(null, 'usersLib.showTagsSearchDialog', options);
+            buildfire._sendPacket(p, callback);
+        },
+        assignUserTags: function(tags, options, callback) {
+            var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
             buildfire._sendPacket(p, callback);
         }
     }
