@@ -598,7 +598,8 @@ var buildfire = {
                 buildfire._sendPacket(p, function (err, footerMenu) {
                     if (err) {
                         console.error(err);
-                    } else if (footerMenu && footerMenu.settings && !footerMenu.settings.turnOnFooterMenu) {
+                    }
+                    if ((!footerMenu || !footerMenu.settings) || !footerMenu.settings.turnOnFooterMenu) {
                         html.setAttribute('safe-area', 'true');
                     }
                 });
