@@ -40,14 +40,16 @@ buildfire.components.carousel._getDomSelector = function (selector) {
 };
 
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.carousel.editor = function (selector, items) {
+buildfire.components.carousel.editor = function (selector, items, speed, random) {//added
     // carousel editor requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use carousel components");
+    this.settings=(speed)?{speed:speed,random:random}:null;//added
     this.selector = selector;
     this.items = [];
     this.init(selector);
     this.loadItems(items);
 };
+
 
 // Carousel editor methods
 buildfire.components.carousel.editor.prototype = {
@@ -55,6 +57,11 @@ buildfire.components.carousel.editor.prototype = {
     init: function (selector) {
         this.selector = buildfire.components.carousel._getDomSelector(selector);
         this._renderTemplate();
+        if(this.settings){
+            this._appendSettings();
+            this.setSpeed(this.settings.speed);
+            this.setRandom(this.settings.random);
+        }
         this.itemsContainer = this.selector.querySelector(".carousel-items");
         this._initEvents();
     },
@@ -71,10 +78,34 @@ buildfire.components.carousel.editor.prototype = {
     onAddItems: function (items) {
         console.warn("please handle onAddItems", item);
     },
+    onSpeedChange:function (speed){//added
+        console.warn("please handle onSpeedChange", speed);//added
+    },//added
+    onRandomChange:function (random){//added
+        console.warn("please handle onRandomChange", random);//added
+    },//added
     // This will be triggered when you delete an item
     onDeleteItem: function (item, index) {
         console.warn("please handle onDeleteItem", item);
     },
+    setSpeed: function (speed) {//added
+        if(!this.settings)this._appendSettings();//added
+
+        this.settings.speed=(this.speedArray.map(el=>{return el*1000;}).includes(Number(speed)))?speed:this.defaultSettings.speed;//added
+
+        var speedSelect=this.selector.querySelector(".change-speed");//added
+        speedSelect.value=Number(this.settings.speed);//added
+    },//added
+    setRandom: function (random) {//added
+        if(!this.settings)this._appendSettings();
+
+        var textInputArray=["none","one","many"];//allows string input for random value
+        random=(textInputArray.includes(random))?textInputArray.indexOf(random):random;
+        
+        this.settings.random=(this.randomArray.map(el=>{return el.value;}).includes(Number(random)))?random:this.defaultSettings.random;//added
+        var randomSelect=this.selector.querySelector(".change-random");//added
+        randomSelect.value=this.settings.random;//added
+    },//added
     // this method allows you to replace the slider image or append to then if appendItems = true
     loadItems: function (items, appendItems) {
         if (items && items instanceof Array) {
@@ -186,6 +217,81 @@ buildfire.components.carousel.editor.prototype = {
             });
         })(item);
     },
+    _appendSettings: function (){
+        var me=this;
+        me.speedArray = [0,1,2,3,4,5,7,10,15];//added
+        me.randomArray = [{text:"none",value:0},{text:"one image",value:1},{text:"all images",value:2},];//added
+        me.defaultSettings={speed:me.speedArray[5]*1000,random:me.randomArray[0].value};
+
+        if(!me.settings)me.settings={speed:me.defaultSettings.speed,random:me.defaultSettings.random};
+        if(!me.settings.speed)me.settings.speed=me.defaultSettings.speed;
+        if(!me.settings.random)me.settings.random=me.defaultSettings.random;
+
+        var editContainer = document.createElement("div");//added
+
+        var speedDropDown = document.createElement("div");// added
+        var speedDropDownLabel = document.createElement("span");//added
+        var selector =  document.createElement("select");//added
+
+        me.speedArray.forEach(el=>{//added
+            var opt = document.createElement('option');//added
+            opt.value = el*1000;//added
+            opt.innerHTML = el+" sec";//added
+            selector.appendChild(opt);//added
+        });
+
+        var randomDropDown = document.createElement("div");// added
+        var randomDropDownLabel = document.createElement("span");//added
+        var randomSelector =  document.createElement("select");//added
+        
+        me.randomArray.forEach(el=>{//added
+            var opt = document.createElement('option');//added
+            opt.value = el.value;//added
+            opt.innerHTML = el.text;//added
+            randomSelector.appendChild(opt);//added
+        });
+
+        speedDropDown.className="screen layouticon pull-left";//added
+        selector.className="form-control dropdown margin-left-zero change-speed";//added
+        speedDropDownLabel.className="labels pull-left medium";//added
+
+        editContainer.setAttribute("style","margin-left:95px;");//added
+        speedDropDownLabel.setAttribute("style","margin-right:3px; margin-top:6px;");//added
+        selector.setAttribute("style","appearance:auto; font-size: 11px; width:82px ;");//added
+
+        randomDropDown.className="screen layouticon pull-left";//added
+        randomSelector.className="form-control dropdown margin-left-zero change-random";//added
+        randomDropDownLabel.className="labels pull-left medium";//added
+
+        randomDropDownLabel.setAttribute("style","margin-right:3px; margin-left:4px; margin-top:6px;");//added
+        randomSelector.setAttribute("style","appearance:auto; font-size: 11px; width:101px;");//added
+
+        randomDropDownLabel.innerHTML = "Randomize";//added
+
+        speedDropDownLabel.innerHTML = "Speed";//added
+
+        var container = me.selector.querySelector(".settings-container");
+        container.appendChild(editContainer);//added
+
+        editContainer.appendChild(speedDropDownLabel);//added
+        editContainer.appendChild(speedDropDown);//added
+        speedDropDown.appendChild(selector);//added
+
+        editContainer.appendChild(randomDropDownLabel);//added
+        editContainer.appendChild(randomDropDown);//added
+        randomDropDown.appendChild(randomSelector);//added
+        
+        // initialize add new item button
+        var speedSelect=me.selector.querySelector(".change-speed");//added
+        speedSelect.addEventListener("change", function () {//added
+            me.onSpeedChange(speedSelect.options[speedSelect.selectedIndex].value);//added
+        });//added
+        var randomSelect=me.selector.querySelector(".change-random");//added
+        randomSelect.addEventListener("change", function () {//added
+            me.onRandomChange(randomSelect.options[randomSelect.selectedIndex].value);//added
+        });//added
+    }
+    ,
     // render the basic template HTML
     _renderTemplate: function () {
         var componentContainer = document.createElement("div");
@@ -195,11 +301,12 @@ buildfire.components.carousel.editor.prototype = {
         var button = document.createElement("a");
         var sliderContainer = document.createElement("div");
 
+
         componentContainer.className = "item clearfix row";
         componentName.className = "labels col-md-3 padding-right-zero pull-left";
         componentName.innerHTML = "Image Carousel";
         contentContainer.className = "main col-md-9 pull-right";
-        buttonContainer.className = "clearfix";
+        buttonContainer.className = "clearfix settings-container";
         button.className = "btn btn-success pull-left add-new-carousel";
         sliderContainer.className = "carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey";
 
@@ -207,6 +314,7 @@ buildfire.components.carousel.editor.prototype = {
 
         componentContainer.appendChild(componentName);
         buttonContainer.appendChild(button);
+        
         contentContainer.appendChild(buttonContainer);
         contentContainer.appendChild(sliderContainer);
         componentContainer.appendChild(contentContainer);
@@ -217,7 +325,7 @@ buildfire.components.carousel.editor.prototype = {
     _initEvents: function () {
         var me = this;
         var oldIndex = 0;
-        // initialize add new item button
+
         me.selector.querySelector(".add-new-carousel").addEventListener("click", function () {
             me._openImageLib(function (imageUrls) {
                 var newItems = [], currentItem = null;
