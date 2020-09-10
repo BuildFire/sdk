@@ -257,14 +257,14 @@ buildfire.components.carousel.editor.prototype = {
 
         editContainer.setAttribute("style","margin-left:95px;");//added
         speedDropDownLabel.setAttribute("style","margin-right:3px; margin-top:6px;");//added
-        selector.setAttribute("style","appearance:auto; font-size: 11px; width:82px ;");//added
+        selector.setAttribute("style","appearance:auto; font-size: 11px; width:82px ; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
         randomDropDown.className="screen layouticon pull-left";//added
         randomSelector.className="form-control dropdown margin-left-zero change-random";//added
         randomDropDownLabel.className="labels pull-left medium";//added
 
         randomDropDownLabel.setAttribute("style","margin-right:3px; margin-left:4px; margin-top:6px;");//added
-        randomSelector.setAttribute("style","appearance:auto; font-size: 11px; width:101px;");//added
+        randomSelector.setAttribute("style","appearance:auto; font-size: 11px; width:101px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
         randomDropDownLabel.innerHTML = "Randomize";//added
 
