@@ -51,7 +51,7 @@
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
 	position: relative;
 	z-index: 10;
-	background-color: #2e3441;
+	background-color: #09a3ee;
 }
 
 html[ios='true'][view='app'][storyboard-launch-images='true'] #gifDialog .gifapi-nav,
@@ -335,14 +335,17 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	background: transparent;
 }
 
-[type='app'] #inputDialog .inputapi-nav-flex button .btn-txt.secondary {
+[type='app'] #inputDialog .inputapi-nav-flex button .btn-txt.secondary,
+[type='pluginTester'] #inputDialog .inputapi-nav-flex button .btn-txt.secondary {
 	display: none !important;
 }
-[type='app'] #inputDialog .inputapi-nav-flex button .btn-txt.primary {
+[type='app'] #inputDialog .inputapi-nav-flex button .btn-txt.primary,
+[type='pluginTester'] #inputDialog .inputapi-nav-flex button .btn-txt.primary {
 	display: block !important;
 }
 
-[type='app'] #inputDialog .secondary {
+[type='app'] #inputDialog .secondary,
+[type='pluginTester'] #inputDialog .secondary {
 	display: none !important;
 }
 
@@ -474,14 +477,20 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	background-color: #fff;
 	border-radius: 0.5em;
 	pointer-events: all;
+	box-shadow: 0 8px 16px rgba(128, 128, 128, 0.5);
 }
 
 #listDialog.active {
 	display: flex !important;
+	position: absolute;
 }
 
 #listDialog .input-list {
 	font-size: 16px;
+}
+
+#listDialog .input-list .input-list-item * {
+	pointer-events: none;
 }
 
 #listDialog .list-header {
@@ -514,6 +523,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	margin-left: 8px;
 	border-radius: 4px;
 	border: none;
+	background-color: transparent;
 }
 
 .input-list [type='radio'] {

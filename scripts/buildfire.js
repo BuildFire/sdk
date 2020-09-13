@@ -432,6 +432,12 @@ var buildfire = {
         , triggerOnPluginOpened: function (data) {
             return buildfire.eventManager.trigger('pluginOpened', data);
         }
+        , getBackNavigationInstanceId: function () {
+            var qs = buildfire.parseQueryString();
+            if (qs.backnavigationinstance)
+                return qs.backnavigationinstance;
+            return undefined;
+        }
     },
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
     // else it returns "controlIFrame"
@@ -592,7 +598,8 @@ var buildfire = {
                 buildfire._sendPacket(p, function (err, footerMenu) {
                     if (err) {
                         console.error(err);
-                    } else if (footerMenu && footerMenu.settings && !footerMenu.settings.turnOnFooterMenu) {
+                    }
+                    if ((!footerMenu || !footerMenu.settings) || !footerMenu.settings.turnOnFooterMenu) {
                         html.setAttribute('safe-area', 'true');
                     }
                 });
