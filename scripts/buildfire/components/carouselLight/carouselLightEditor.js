@@ -266,6 +266,7 @@ buildfire.components.carousel.editor.prototype = {
         randomDropDownLabel.setAttribute("style","margin-right:3px; margin-left:4px; margin-top:6px;");//added
         randomSelector.setAttribute("style","appearance:auto; font-size: 11px; width:101px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
+
         randomDropDownLabel.innerHTML = "Randomize";//added
 
         speedDropDownLabel.innerHTML = "Speed";//added
