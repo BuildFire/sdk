@@ -40,10 +40,10 @@ buildfire.components.carousel._getDomSelector = function (selector) {
 };
 
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.carousel.editor = function (selector, items, speed, random) {//added
+buildfire.components.carousel.editor = function (selector, items, speed, order, display) {//added
     // carousel editor requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use carousel components");
-    this.settings=(speed)?{speed:speed,random:random}:null;//added
+    this.settings=(speed)?{speed:speed,order:order,display:display}:null;//added
     this.selector = selector;
     this.items = [];
     this.init(selector);
@@ -59,8 +59,9 @@ buildfire.components.carousel.editor.prototype = {
         this._renderTemplate();
         if(this.settings){
             this._appendSettings();
-            this.setSpeed(this.settings.speed);
-            this.setRandom(this.settings.random);
+            this.setOptionSpeed(this.settings.speed);
+            this.setOptionOrder(this.settings.order);
+            this.setOptionDisplay(this.settings.display);
         }
         this.itemsContainer = this.selector.querySelector(".carousel-items");
         this._initEvents();
@@ -78,33 +79,45 @@ buildfire.components.carousel.editor.prototype = {
     onAddItems: function (items) {
         console.warn("please handle onAddItems", item);
     },
-    onSpeedChange:function (speed){//added
-        console.warn("please handle onSpeedChange", speed);//added
+    onOptionSpeedChange:function (speed){//added
+        console.warn("please handle onOptionSpeedChange", speed);//added
     },//added
-    onRandomChange:function (random){//added
-        console.warn("please handle onRandomChange", random);//added
+    onOptionOrderChange:function (order){//added
+        console.warn("please handle onOptionOrderChange", order);//added
+    },//added
+    onOptioDisplayChange:function (display){//added
+        console.warn("please handle onOptioDisplayChange", display);//added
     },//added
     // This will be triggered when you delete an item
     onDeleteItem: function (item, index) {
         console.warn("please handle onDeleteItem", item);
     },
-    setSpeed: function (speed) {//added
+    setOptionSpeed: function (speed) {//added
         if(!this.settings)this._appendSettings();//added
 
-        this.settings.speed=(this.speedArray.map(el=>{return el*1000;}).includes(Number(speed)))?speed:this.defaultSettings.speed;//added
+        speed=(this.speedArray.map(el=>{return el.text;}).includes(speed))?this.speedArray.find(el=>el.text==speed).value:speed;
+        this.settings.speed=(this.speedArray.map(el=>{return el.value;}).includes(Number(speed)))?speed:this.defaultSettings.speed;//added
 
         var speedSelect=this.selector.querySelector(".change-speed");//added
         speedSelect.value=Number(this.settings.speed);//added
     },//added
-    setRandom: function (random) {//added
+    setOptionOrder: function (order) {//added
         if(!this.settings)this._appendSettings();
 
-        var textInputArray=["none","one","many"];//allows string input for random value
-        random=(textInputArray.includes(random))?textInputArray.indexOf(random):random;
-        
-        this.settings.random=(this.randomArray.map(el=>{return el.value;}).includes(Number(random)))?random:this.defaultSettings.random;//added
-        var randomSelect=this.selector.querySelector(".change-random");//added
-        randomSelect.value=this.settings.random;//added
+        order=(this.orderArray.map(el=>{return el.text;}).includes(order))?this.orderArray.find(el=>el.text==order).value:order;
+        this.settings.order=(this.orderArray.map(el=>{return el.value;}).includes(Number(order)))?order:this.defaultSettings.order;//added
+
+        var orderSelect=this.selector.querySelector(".change-random");//added
+        orderSelect.value=Number(this.settings.order);//added
+    },//added
+    setOptionDisplay: function (display) {//added
+        if(!this.settings)this._appendSettings();
+
+        display=(this.displayArray.map(el=>{return el.text;}).includes(display))?this.displayArray.find(el=>el.text==display).value:display;
+        this.settings.display=(this.displayArray.map(el=>{return el.value;}).includes(Number(display)))?display:this.defaultSettings.display;//added
+
+        var displaySelect=this.selector.querySelector(".change-display");//added
+        displaySelect.value=Number(this.settings.display);//added
     },//added
     // this method allows you to replace the slider image or append to then if appendItems = true
     loadItems: function (items, appendItems) {
@@ -219,13 +232,18 @@ buildfire.components.carousel.editor.prototype = {
     },
     _appendSettings: function (){
         var me=this;
-        me.speedArray = [0,1,2,3,4,5,7,10,15];//added
-        me.randomArray = [{text:"none",value:0},{text:"one image",value:1},{text:"all images",value:2},];//added
-        me.defaultSettings={speed:me.speedArray[5]*1000,random:me.randomArray[0].value};
+        me.speedArray = [{text:'still',value:0},{text:'1 sec',value:1000},{text:'2 sec',value:2000},{text:'3 sec',value:3000},
+        {text:'4 sec',value:4000},{text:'5 sec',value:5000},{text:'7 sec',value:7000},{text:'10 sec',value:10000},{text:'15 sec',value:15000}];
+        me.orderArray = [{text:"in order",value:0},{text:"random",value:1}];//added
+        me.displayArray = [{text:"all images",value:0},{text:"one image",value:1}];//added
 
-        if(!me.settings)me.settings={speed:me.defaultSettings.speed,random:me.defaultSettings.random};
+        me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value};
+
+        if(!me.settings)me.settings={speed:me.defaultSettings.speed,order:me.defaultSettings.order,display:me.defaultSettings.display};
+
         if(!me.settings.speed)me.settings.speed=me.defaultSettings.speed;
-        if(!me.settings.random)me.settings.random=me.defaultSettings.random;
+        if(!me.settings.order)me.settings.order=me.defaultSettings.order;
+        if(!me.settings.display)me.settings.display=me.defaultSettings.display;
 
         var editContainer = document.createElement("div");//added
 
@@ -235,39 +253,59 @@ buildfire.components.carousel.editor.prototype = {
 
         me.speedArray.forEach(el=>{//added
             var opt = document.createElement('option');//added
-            opt.value = el*1000;//added
-            opt.innerHTML = el+" sec";//added
+            opt.value = el.value;//added
+            opt.innerHTML = el.text;//added
             selector.appendChild(opt);//added
         });
 
-        var randomDropDown = document.createElement("div");// added
-        var randomDropDownLabel = document.createElement("span");//added
-        var randomSelector =  document.createElement("select");//added
+        var orderDropDown = document.createElement("div");// added
+        var orderDropDownLabel = document.createElement("span");//added
+        var orderSelector =  document.createElement("select");//added
         
-        me.randomArray.forEach(el=>{//added
+        me.orderArray.forEach(el=>{//added
             var opt = document.createElement('option');//added
             opt.value = el.value;//added
             opt.innerHTML = el.text;//added
-            randomSelector.appendChild(opt);//added
+            orderSelector.appendChild(opt);//added
+        });
+
+        var displayDropDown = document.createElement("div");// added
+        var displayDropDownLabel = document.createElement("span");//added
+        var displaySelector =  document.createElement("select");//added
+        
+        me.displayArray.forEach(el=>{//added
+            var opt = document.createElement('option');//added
+            opt.value = el.value;//added
+            opt.innerHTML = el.text;//added
+            displaySelector.appendChild(opt);//added
         });
 
         speedDropDown.className="screen layouticon pull-left";//added
         selector.className="form-control dropdown margin-left-zero change-speed";//added
         speedDropDownLabel.className="labels pull-left medium";//added
 
-        editContainer.setAttribute("style","margin-left:95px;");//added
-        speedDropDownLabel.setAttribute("style","margin-right:3px; margin-top:6px;");//added
-        selector.setAttribute("style","appearance:auto; font-size: 11px; width:82px ; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
+        editContainer.setAttribute("style","margin-left:96px;");//added
+        speedDropDownLabel.setAttribute("style","margin-right:4px; margin-top:6px;");//added
+        selector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:64px ; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
-        randomDropDown.className="screen layouticon pull-left";//added
-        randomSelector.className="form-control dropdown margin-left-zero change-random";//added
-        randomDropDownLabel.className="labels pull-left medium";//added
+        orderDropDown.className="screen layouticon pull-left";//added
+        orderSelector.className="form-control dropdown margin-left-zero change-random";//added
+        orderDropDownLabel.className="labels pull-left medium";//added
 
-        randomDropDownLabel.setAttribute("style","margin-right:3px; margin-left:4px; margin-top:6px;");//added
-        randomSelector.setAttribute("style","appearance:auto; font-size: 11px; width:101px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
+        orderDropDownLabel.setAttribute("style","margin-right:4px; margin-left:5px; margin-top:6px;");//added
+        orderSelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:72px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
 
-        randomDropDownLabel.innerHTML = "Randomize";//added
+        displayDropDown.className="screen layouticon pull-left";//added
+        displaySelector.className="form-control dropdown margin-left-zero change-display";//added
+        displayDropDownLabel.className="labels pull-left medium";//added
+
+        displayDropDownLabel.setAttribute("style","margin-right:4px; margin-left:5px; margin-top:6px;");//added
+        displaySelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:86px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
+
+        displayDropDownLabel.innerHTML = "Display";//added
+
+        orderDropDownLabel.innerHTML = "Order";//added
 
         speedDropDownLabel.innerHTML = "Speed";//added
 
@@ -278,18 +316,26 @@ buildfire.components.carousel.editor.prototype = {
         editContainer.appendChild(speedDropDown);//added
         speedDropDown.appendChild(selector);//added
 
-        editContainer.appendChild(randomDropDownLabel);//added
-        editContainer.appendChild(randomDropDown);//added
-        randomDropDown.appendChild(randomSelector);//added
+        editContainer.appendChild(orderDropDownLabel);//added
+        editContainer.appendChild(orderDropDown);//added
+        orderDropDown.appendChild(orderSelector);//added
+
+        editContainer.appendChild(displayDropDownLabel);//added
+        editContainer.appendChild(displayDropDown);//added
+        displayDropDown.appendChild(displaySelector);//added
         
         // initialize add new item button
         var speedSelect=me.selector.querySelector(".change-speed");//added
         speedSelect.addEventListener("change", function () {//added
-            me.onSpeedChange(speedSelect.options[speedSelect.selectedIndex].value);//added
+            me.onOptionSpeedChange(speedSelect.options[speedSelect.selectedIndex].value);//added
         });//added
         var randomSelect=me.selector.querySelector(".change-random");//added
         randomSelect.addEventListener("change", function () {//added
-            me.onRandomChange(randomSelect.options[randomSelect.selectedIndex].value);//added
+            me.onOptionOrderChange(randomSelect.options[randomSelect.selectedIndex].value);//added
+        });//added
+        var displaySelect=me.selector.querySelector(".change-display");//added
+        displaySelect.addEventListener("change", function () {//added
+            me.onOptionDisplayChange(displaySelect.options[displaySelect.selectedIndex].value);//added
         });//added
     }
     ,
