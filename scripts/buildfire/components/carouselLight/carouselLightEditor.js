@@ -232,10 +232,10 @@ buildfire.components.carousel.editor.prototype = {
     },
     _appendSettings: function (){
         var me=this;
-        me.speedArray = [{text:'still',value:0},{text:'1 sec',value:1000},{text:'2 sec',value:2000},{text:'3 sec',value:3000},
+        me.speedArray = [{text:'Still',value:0},{text:'1 sec',value:1000},{text:'2 sec',value:2000},{text:'3 sec',value:3000},
         {text:'4 sec',value:4000},{text:'5 sec',value:5000},{text:'7 sec',value:7000},{text:'10 sec',value:10000},{text:'15 sec',value:15000}];
-        me.orderArray = [{text:"in order",value:0},{text:"random",value:1}];//added
-        me.displayArray = [{text:"all images",value:0},{text:"one image",value:1}];//added
+        me.orderArray = [{text:"In order",value:0},{text:"Random",value:1}];//added
+        me.displayArray = [{text:"All images",value:0},{text:"One image",value:1}];//added
 
         me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value};
 
@@ -284,15 +284,15 @@ buildfire.components.carousel.editor.prototype = {
         selector.className="form-control dropdown margin-left-zero change-speed";//added
         speedDropDownLabel.className="labels pull-left medium";//added
 
-        editContainer.setAttribute("style","margin-left:96px;");//added
-        speedDropDownLabel.setAttribute("style","margin-right:4px; margin-top:6px;");//added
+        editContainer.setAttribute("style","margin-left:94px;");//added
+        speedDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-top:7px;");//added
         selector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:64px ; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
         orderDropDown.className="screen layouticon pull-left";//added
         orderSelector.className="form-control dropdown margin-left-zero change-random";//added
         orderDropDownLabel.className="labels pull-left medium";//added
 
-        orderDropDownLabel.setAttribute("style","margin-right:4px; margin-left:5px; margin-top:6px;");//added
+        orderDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-left:5px; margin-top:7px;");//added
         orderSelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:72px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
 
@@ -300,7 +300,7 @@ buildfire.components.carousel.editor.prototype = {
         displaySelector.className="form-control dropdown margin-left-zero change-display";//added
         displayDropDownLabel.className="labels pull-left medium";//added
 
-        displayDropDownLabel.setAttribute("style","margin-right:4px; margin-left:5px; margin-top:6px;");//added
+        displayDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-left:5px; margin-top:7px;");//added
         displaySelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:86px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
         displayDropDownLabel.innerHTML = "Display";//added
