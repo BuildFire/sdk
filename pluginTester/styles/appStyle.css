@@ -3424,6 +3424,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 	position: absolute;
 	overflow: hidden;
 	z-index: 9999;
+	background-color: #fff;
 }
 html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
   height: 100%;
@@ -4055,7 +4056,7 @@ html[view="app"] .profile-overlay {
 	z-index: 2;
 }
 .profile-header{
-	margin: 8px;
+	margin: 4px;
 	position: relative;
 	display: flex;
 	height: 220px;
@@ -4080,11 +4081,13 @@ html[view="app"] .profile-overlay {
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 	border-radius: 50%;
 	overflow: hidden;
+	-webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 .profile-header .avatar .user-avatar{
 	width: 100%;
 	height: 100%;
 	position: absolute;
+	z-index: 1;
 }
 .profile-header .avatar::before{
 	content: '';
@@ -4186,6 +4189,7 @@ html[view="app"] .profile-overlay {
 	border-radius: 4px;
 	background: rgba(34,34,36,.5);
 	background: linear-gradient(0deg, rgba(34,34,36,0.7) 0%, rgba(34,34,36,0.3) 100%);
+	z-index: 1;
 }
 .profile-header .profile-actions {
 	position: absolute;
