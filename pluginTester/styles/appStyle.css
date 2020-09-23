@@ -3424,6 +3424,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 	position: absolute;
 	overflow: hidden;
 	z-index: 9999;
+	background-color: #fff;
 }
 html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
   height: 100%;
