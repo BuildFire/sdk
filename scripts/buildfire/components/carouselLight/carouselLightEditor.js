@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use carousel components");
 
