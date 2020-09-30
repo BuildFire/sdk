@@ -30,7 +30,7 @@ Plugins consists of three major components:
   * Design
   * Settings
 * the Widget
-* **The Resources** 
+* **the Resources** 
   * **Note** :This folder is only meant for plugin configuration resource like default widget icon, widget hero image and media files.** You can replace those two files if you need by overriding the default hero image and default icon image and **you can add extra images to showcase you plugin in the control panel market place and attract new users by filling the images paths and types in the `media` property in  `plugin.json`**.
 
 
