@@ -1,27 +1,33 @@
 .login-holder {
+  overflow: hidden;
   position: absolute;
-  top: 0px;
+  top: 0;
   width: 100%;
   height: 100%;
   z-index: 8;
-  padding-bottom: 80px;
   font-family: Helvetica, Sans-Serif, Arial;
-background:#fff;
+  background:#fff;
+  -webkit-overflow-scrolling: touch;
 }
 
 .login-holder .login.content {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
-  width: 100%;
   height: 100%;
-  padding: 130px 12px 15px !important;
   z-index: 9;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
   overflow: auto;
+}
+.login-holder a:not(.input-icon){
+  padding: 8px 2px;
 }
 
 .login-holder .login.content .form {
   padding-bottom: 15px;
+}
+.login-holder .login-section .form-main{
+  height: 100%;
 }
 
 .login-holder .login.content .form .form-control {
@@ -50,14 +56,14 @@ background:#fff;
 }
 
 .login-holder .moreoptions {
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
 .login-holder .moreoptions a {
   display: inline-block;
   width: 44px;
   height: 44px;
-  margin: 10px 10px -2px;
+  margin: 10px;
   border-radius: 100%;
 }
 
@@ -76,6 +82,16 @@ background:#fff;
   background-size: 100% 100%;
 }
 
+.login-holder .moreoptions a.google {
+  background: no-repeat center center;
+  background-size: 100% 100%;
+}
+
+.login-holder .moreoptions a.apple {
+  background: no-repeat center center;
+  background-size: 100% 100%;
+}
+
 .login-holder .form.login,
 .login-holder .form.registration,
 .login-holder .form.forgotpassword,
@@ -84,16 +100,48 @@ background:#fff;
   margin: 0 auto;
 }
 
-.login {
-margin-top: 20px;
+.login-holder .login-section {
+  margin-top: 50px;
+  margin-top: calc(constant(safe-area-inset-top) + 40px); /* iOS 11.0 */
+  margin-top: calc(env(safe-area-inset-top) + 50px); /* iOS 11.2 */
+  height: calc(100% - env(safe-area-inset-top) - 50px);
+  /* overflow-y: auto; */
+}
+.login.login-no-img .logo-container-wrapper{
+  display: none;
+}
+.login.login-no-img .login.content{
+  display: flex;
+  flex-direction: column;
+  padding-top: 0 !important;
+}
+.login.login-no-img .login.content .content-wrapper{
+  margin: auto 0;
+  padding-bottom: 24px !important;
 }
 
-.login-holder input:not([type=submit]) {
+.login-holder input:not([type=submit]), .login-holder textarea {
   background-color: transparent !important;
-  border-radius: 0;
+  border-radius: 4px 4px 0 0;
   border: none;
-  border-bottom: 1px solid #E1E1E5;
+  border-bottom: 1px solid rgba(50, 50, 50, .5);
   margin-top: 35px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: background-color .2s ease-out;
+}
+.login-holder input:not([type=submit]):active, 
+.login-holder textarea:active{
+  background-color: rgba(50, 50, 50, .1) !important;
+} 
+.login-holder textarea:active,
+.login-holder textarea:focus{
+  border-bottom: 1px solid rgba(50, 50, 50, .5);
+}
+
+.login-holder textarea {
+  min-height:40px;
+  resize:none;
 }
 
 .login-holder .btn {
@@ -105,11 +153,12 @@ margin-top: 20px;
 
 .login-holder .forgot-password {
   font-size: 13px;
-  margin-top: 15px;
+  /* margin-top: 15px; */
 }
 
 .login-holder .input {
   position: relative;
+  margin-top: 32px !important;
 }
 
 .login-holder .input .input-icon {
@@ -117,15 +166,13 @@ margin-top: 20px;
 }
 
 .login-holder .bottom-info {
-  position: absolute;
+  position: relative;
   bottom: 10px;
   left: 0;
   width: 100%;
-  padding: 0 20px 30px;
+  padding-top: 20px;
   font-size: 14px;
-  bottom: env(safe-area-inset-bottom);
-  bottom: const(safe-area-inset-bottom);
-  margin-bottom: 10px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
 }
 
 .login-holder .bottom-info  p {
@@ -135,11 +182,13 @@ margin-top: 20px;
 .login-holder .logo-container-wrapper {
   max-width: 400px;
   margin: 0 auto;
-  position: absolute;
-  top: 60px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
   right: 0;
   left: 0;
-  height: 100px;
+  display: none;
 }
 
 .login-holder .logo-container {
@@ -149,9 +198,6 @@ margin-top: 20px;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  position: absolute;
-  top: 50% !important;
-  transform: translateY(-50%);
   left: 0;
   right: 0;
   z-index: 10;
@@ -171,11 +217,9 @@ margin-top: 20px;
   margin-top: 0;
 }
 
-.login-holder .form.forgotpassword {
-  margin-top: 44px;
-}
 
-.login-holder .cancel-link {
+.login-holder .cancel-link,
+.login-holder .sso-back.input {
   position: absolute;
   top: 16px;
   left: 12px;
@@ -198,31 +242,92 @@ margin-top: 20px;
   line-height: 1.5;
   color: #FC0107;
 }
+@media (max-height: 569px) {
+  .login-holder input:not([type=submit]) {
+    margin-top: 24px;
+  }
+  .login-holder .moreoptions a {
+    width: 32px;
+    height: 32px;
+  }
+  .login-holder .login.content {
+    padding: 0 !important;
+  }
+  .login-holder .bottom-info {
+    position: relative;
+    padding: 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    /* margin-bottom: 16px; */
+  }
+  .login-holder .logo-container-wrapper{
+    position: relative;
+    top: auto !important;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+  .login-holder .logo-container {
+    position: relative;
+    top: auto !important;
+    transform: translateY(0);
+  }
+  .login-holder 
+  .form.forgotpassword, 
+  .login-holder .form.login, 
+  .login-holder .form.registration, 
+  .login-holder .form.resetpassword,
+  .login-holder .register-options {
+    max-width: 300px;
+    width: calc(100% - 48px);
+  }
+  .login-holder .form.forgotpassword{
+    margin-top: 0;
+  }
+   #login .bottom-info {
+    display: block;
+  }
+  .login-holder input:not([type=submit]),
+  .login-holder textarea {
+    margin: 0;
+  }
+
+  .login-holder .login.custom-registration .field-label-container {
+    padding-bottom: 20px;
+    margin-top: 0px;
+  }
+  
+  #login .moreoptions {
+    display: block;
+  }
+}
+
 .background-screen {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 2;
-      background-size: cover !important;
-      background-position: center !important;
-  }
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  background-size: cover !important;
+  background-position: center !important;
+}
 .gradient-screen {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 1;
-  }
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
 .gdpr-notice {
-      z-index: 99999999;
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+  z-index: 99999999;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 .gdpr-notice .gdpr-scroller {
   position: absolute;
@@ -245,22 +350,85 @@ margin-top: 20px;
   padding: 10px 0 !important;
   text-align: center !important;
   z-index: 10;
+}
+
+html[ios="true"][view="app"][storyboard-launch-images="true"] .gdpr-notice .close-gdpr {
   padding-bottom: env(safe-area-inset-bottom) !important;
   padding-bottom: const(safe-area-inset-bottom) !important;
 }
+
 .gdpr-checkboxes {
   text-align: left;
   margin-top: 15px;
 }
 .gdpr-checkboxes input {
-  margin: 10px 0 !important;
+  margin-top: 0 !important;
+  margin-left: 4px;
+  padding: 8px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  transition: opacity .2s ease-in-out;
+  opacity: 0;
+  position: absolute;
+  /* margin: 10px 0 !important; */
 }
 .gdpr-checkboxes label {
-  vertical-align: middle;
-  padding-left: 10px;
-}
-.gdpr-checkboxes .group {
+  padding: 8px 8px 8px 32px;
+  margin-bottom: 0;
   display: block;
+  transition: opacity .2s ease-in-out;
+  position: relative;
+  font-size: 12px;
+  max-width: 100% !important;
+}
+.gdpr-checkboxes label::before{
+  content: '';
+  background-color: rgba(100, 100, 100, .3);
+  border: 1px solid rgba(180,180,180,.4);
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 10px;
+  /* padding-left: 10px; */
+}
+.gdpr-checkboxes input:checked + label::after{
+  content: "\e013";
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  color: rgba(20, 20, 20, .9);
+  position: absolute;
+  left: 3px;
+  top: 13px;
+  font-size: 12px !important;
+}
+.gdpr-checkboxes input:checked + label::before{
+  background-color: rgba(180,180,180,.5);
+}
+
+.gdpr-checkboxes .group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.gdpr-checkboxes .group .feedback-messages{
+  flex-basis: 100%;
+}
+.custom-registration .gdpr-checkboxes .group .checkbox-group{
+  display: flex;
+  align-items: center;
+}
+.custom-registration .gdpr-checkboxes .has-error + .feedback-messages{
+  margin-left: 32px;
+  display: block;
+  font-size: 12px;
 }
 .vertical-padding {
   padding: 10px 0;
@@ -272,4 +440,205 @@ html[type='app'] .modal .modal-dialog {
 }
 .login-holder .btn p {
   color: #fff !important;
+}
+.login-holder .btn-primary p {
+  margin: 0;
+}
+
+.login-holder .custom-registration .input-icon.input-post-icon {
+  right: 4px;
+  left: auto !important;
+}
+
+.login-holder .custom-registration .small-login-field .input-icon {
+  margin-left: 50%;
+}
+.login-holder .custom-registration .input .small-login-field span.has-error{
+  text-align: right;
+  display: block;
+}
+.login-holder .custom-registration .input span.has-error, .login-holder .custom-registration .input span.has-info{
+  display: block;
+  text-align: left;
+  margin-left: 13px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5em;
+  margin-top: 8px;
+}
+
+.login-holder .custom-registration .small-login-field input {
+  margin-left: 50%;
+  width: 50%;
+}
+
+.login-holder .custom-registration .field-label-container {
+  text-align: left !important;
+  padding-bottom: 5px;
+  margin-top: 20px;
+}
+
+.login-holder .custom-registration .field-label {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  display: block !important;
+  text-align: left;
+}
+
+.login-holder .custom-registration label {
+  max-width: 90%;
+}
+
+.login-holder .gdpr-checkboxes {
+  margin-top: 30px;
+}
+
+.login-holder .gdpr-checkboxes .group {
+  margin-bottom: 8px;
+}
+/*
+.login-holder .external-registration-form,
+.login-holder .custom-registration {
+  -webkit-overflow-scrolling: touch;
+}
+ */
+
+ /* sso */
+ .externalRegistration{
+   height: 100vh;
+   width: 100vw;
+   position: absolute;
+   z-index: 10;
+   top: 0;
+   left: 0;
+ }
+ .sso-iframe-holder{
+  padding-top: calc(50px + env(safe-area-inset-top));
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  height: 100% !important;
+  width: 100% !important;
+ }
+ #frmExternalRegistrationForm {
+  padding-top: 0 !important;
+  border:none;
+  position: relative;
+  top:0;
+}
+
+.login-holder .sso-back.input {
+	position: absolute;
+	width: 57px;
+	height: 35px;
+	z-index: 99999999999;
+	display: none;
+}
+.login-holder .btn-primary{
+  display: block;
+  min-width: 100%;
+}
+.accessCode .btn-primary{
+  display: inline-block;
+  max-width: 240px;
+}
+
+
+.navbar.sso-navbar {
+	/* display: none; */
+	z-index: 2000;
+}
+.register-options{
+  max-width: 300px;
+  margin: 1rem auto;
+}
+.register-options .btn{
+  display: flex;
+  font-size: 14px;
+  padding: 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+.register-options .btn:hover{
+  opacity: .75;
+}
+.register-options .btn:active{
+  opacity: .5;
+}
+.register-options .btn img{
+  width: 1.75em;
+  height: 1.75em;
+  margin: 0 .75em;
+  object-fit: cover;
+}
+.register-options .btn span{
+  flex: auto;
+  margin-right: 2.75em;
+  padding: .5em 
+  0;
+}
+.register-options .btn-apple{
+  background-color: #000 !important;
+}
+.register-options .btn-apple span{
+  color: #fff !important;
+}
+.register-options .btn-apple.apple-white{
+  background-color: #fff !important;
+  border: 1px solid #000 !important;
+}
+.register-options .btn-apple.apple-white span{
+  color: #000 !important;
+}
+.register-options .btn-fb{
+  background-color: #537BBD !important;
+  color: #fff !important;
+}
+.register-options .btn-fb span{
+  color: #fff !important;
+}
+.register-options .btn-twitter{
+  background-color: #78CDF0 !important;
+  color: #fff !important;
+}
+.register-options .btn-twitter span{
+  color: #fff !important;
+}
+.register-options .btn-google{
+  background-color: #fff;
+  border: 1px solid rgba(50,50,50,.5) !important;
+}
+.register-options .btn-google span{
+  color: #000 !important;
+}
+.register-options .register-divider{
+  max-width: 200px;
+  height: 1px;
+  margin: 16px auto 28px auto;
+  background-color: rgba(50,50,50,.2);
+}
+
+
+@media(min-width: 1200px){
+  [type="app"] #pluginNav.navbar.sso-navbar {
+    position: absolute !important;
+    height: 70px !important;
+    z-index: 2000;
+  }
+  [type="app"] .sso-iframe-holder{
+    overflow: auto;
+    padding-top: calc(70px + env(safe-area-inset-top));
+    height: 100vh;
+  }
+}
+.login-holder .sso-back.input.form-loaded,
+.login-holder .sso-back.input.form-failed,
+.login-holder .navbar.sso-navbar.form-loaded,
+.login-holder .navbar.sso-navbar.form-failed {
+	display: initial;
 }
