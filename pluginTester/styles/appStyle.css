@@ -30,7 +30,6 @@ label{
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	line-height: 1.5;
 }
 
 html,
@@ -415,7 +414,7 @@ nav.menu a p {
 	margin:3px 0 0;
 	max-width:100%;
 	font-size:2.5vh;
-	line-height:2;
+	line-height:1.2em;
 }
 
 nav.menu a.notifications {
@@ -1417,10 +1416,6 @@ html[buildfire] body.no-scroll .scrollable{
 	-webkit-overflow-scrolling:touch !important;
 	height:100% !important;
 	width:100% !important;
-}
-
-.hideFrame {
-	visibility: hidden !important;
 }
 
 /* Modal */
