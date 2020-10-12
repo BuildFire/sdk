@@ -365,7 +365,7 @@ function getNotRatedUI(container) {
     }
 }
 
-function injectRatings(options = {}, callback) {
+function injectRatings(options = {}) {
     let elements = options.elements;
     if (typeof elements === "undefined")
         elements = document.querySelectorAll("[data-rating-id]");
@@ -392,7 +392,6 @@ function injectRatings(options = {}, callback) {
             options.summary = summary;
 
             injectAverageRating(elements[index], ratingId, options);
-            typeof callback === "function" && callback();
         });
     });
 }
@@ -894,80 +893,86 @@ function createStarsUI(container, averageRating, hideAverage) {
     }
 }
 
-function injectRatingComponent(container, ratingId, userId, options) {
-    container.innerHTML = "";
-    let ratings = document.createElement("div");
-    ratings.className = "ratings";
+function injectRatingComponent(container, ratingId, options) {
+    buildfire.auth.getCurrentUser((err, loggedInUser) => {
+        let userId = loggedInUser ? loggedInUser._id : undefined;
 
-    let ratingsHead = document.createElement("div");
-    ratingsHead.className = "ratings-head";
+        container.innerHTML = "";
+        let ratings = document.createElement("div");
+        ratings.className = "ratings";
 
-    let ratingsText = document.createElement("div");
-    ratingsText.className = "ratings-text primary-color";
-    ratingsText.innerText = "Ratings";
+        let ratingsHead = document.createElement("div");
+        ratingsHead.className = "ratings-head";
 
-    let viewAllButton = document.createElement("div");
-    viewAllButton.className = "view-all-button";
-    viewAllButton.innerText = "View All";
-    viewAllButton.addEventListener("click", () => {
-        openRatingsScreen(ratingId);
-    });
+        let ratingsText = document.createElement("div");
+        ratingsText.className = "ratings-text primary-color";
+        ratingsText.innerText = "Ratings";
 
-    ratingsHead.appendChild(ratingsText);
-    ratingsHead.appendChild(viewAllButton);
-
-    let reviewsContainer = document.createElement("div");
-    reviewsContainer.className = "reviews-container";
-
-    let addRatingButton = document.createElement("div");
-    addRatingButton.className = "add-rating-button";
-    addRatingButton.innerText = "+ ADD RATING";
-    addRatingButton.addEventListener("click", () => {
-        openAddRatingScreen(ratingId, options, (err, rating) => {
-            getSummary();
+        let viewAllButton = document.createElement("div");
+        viewAllButton.className = "view-all-button";
+        viewAllButton.innerText = "View All";
+        viewAllButton.addEventListener("click", () => {
+            openRatingsScreen(ratingId);
         });
-    });
 
-    ratings.appendChild(ratingsHead);
-    ratings.appendChild(reviewsContainer);
-    ratings.appendChild(addRatingButton);
+        ratingsHead.appendChild(ratingsText);
+        ratingsHead.appendChild(viewAllButton);
 
-    const getSummary = () => {
-        Summaries.search(
+        let reviewsContainer = document.createElement("div");
+        reviewsContainer.className = "reviews-container";
+
+        let addRatingButton = document.createElement("div");
+        addRatingButton.className = "add-rating-button";
+        addRatingButton.innerText = "+ ADD RATING";
+        addRatingButton.addEventListener("click", () => {
+            openAddRatingScreen(ratingId, options, (err, rating) => {
+                getSummary();
+            });
+        });
+
+        ratings.appendChild(ratingsHead);
+        ratings.appendChild(reviewsContainer);
+
+        if (userId)
+            ratings.appendChild(addRatingButton);
+
+        const getSummary = () => {
+            Summaries.search(
+                {
+                    filter: {
+                        "_buildfire.index.string1": ratingId,
+                    },
+                },
+                (err, summaries) => {
+                    if (err) return console.err(err);
+
+                    if (!summaries || !summaries[0] || summaries[0].count === 0) {
+                        return getNotRatedUI(reviewsContainer);
+                    }
+
+                    let averageRating = summaries[0].total / summaries[0].count;
+                    createStarsUI(reviewsContainer, averageRating, true);
+                }
+            );
+        };
+
+        Ratings.search(
             {
                 filter: {
                     "_buildfire.index.string1": ratingId,
+                    "_buildfire.index.array1": userId,
                 },
             },
-            (err, summaries) => {
-                if (err) return console.err(err);
-
-                if (!summaries || !summaries[0] || summaries[0].count === 0) {
-                    return getNotRatedUI(reviewsContainer);
-                }
-
-                let averageRating = summaries[0].total / summaries[0].count;
-                createStarsUI(reviewsContainer, averageRating, true);
+            (err, ratings) => {
+                if (err) return console.error(err);
+                if (ratings && ratings[0]) addRatingButton.innerText = "EDIT RATING";
             }
         );
-    };
 
-    Ratings.search(
-        {
-            filter: {
-                "_buildfire.index.string1": ratingId,
-                "_buildfire.index.array1": userId,
-            },
-        },
-        (err, ratings) => {
-            if (err) return console.error(err);
-            if (ratings && ratings[0]) addRatingButton.innerText = "EDIT RATING";
-        }
-    );
+        getSummary();
 
-    getSummary();
-
-    container.appendChild(ratings);
+        container.appendChild(ratings);
+    })
 }
 
 function addControlsToRating(ratingElement) {
