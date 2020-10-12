@@ -173,6 +173,7 @@ class Ratings {
         buildfire.appData.delete(rating.id, Ratings.TAG, (err, record) => {
             if (err) return callback(err);
             Summaries.deleteRating(rating, (err, data) => {
+                buildfire.messaging.sendMessageToControl({ type: "ratings" });
                 return callback(null, { rating, summary: data });
             });
         });
@@ -200,6 +201,7 @@ class Ratings {
                 if (!shouldUpdateSummary) return callback(null, rating);
 
                 Summaries.deleteRating(rating, (err, data) => {
+                    buildfire.messaging.sendMessageToControl({ type: "ratings" });
                     return callback(null, rating);
                 });
             }
@@ -352,6 +354,7 @@ class Summaries {
 }
 
 const FULL_STAR = "&#9733;";
+const ADMIN_TAG = "bf_ratings_admin";
 
 function getNotRatedUI(container) {
     for (let i = 0; i < 5; i++) {
@@ -410,7 +413,7 @@ function injectAverageRating(container, ratingId, options) {
 
     if (options && options.summary) {
         let averageRating = options.summary.total / options.summary.count;
-        createStarsUI(container, averageRating, options.hideAverage)
+        createStarsUI(container, averageRating, options.hideAverage);
     } else {
         Summaries.search(filters, (err, summaries) => {
             if (err) return console.error(err);
@@ -419,8 +422,8 @@ function injectAverageRating(container, ratingId, options) {
             }
 
             let averageRating = summaries[0].total / summaries[0].count;
-            createStarsUI(container, averageRating, options && options.hideAverage)
-        })
+            createStarsUI(container, averageRating, options && options.hideAverage);
+        });
     }
 
 }
@@ -788,29 +791,47 @@ function openRatingsScreen(ratingId) {
 
     emptyState.appendChild(leaveReviewButton);
 
-    Ratings.search(
-        {
-            filter: {
-                "_buildfire.index.string1": ratingId,
-                "_buildfire.index.number1": 1,
+
+    checkIfUserIsAdmin((isAdmin) => {
+        console.log(isAdmin)
+        Ratings.search(
+            {
+                filter: {
+                    "_buildfire.index.string1": ratingId,
+                    "_buildfire.index.number1": 1,
+                },
             },
-        },
-        (err, ratings) => {
-            if (err) return console.error(err);
+            (err, ratings) => {
+                if (err) return console.error(err);
 
-            if (ratings.length === 0) {
-                container.appendChild(emptyState);
+                if (ratings.length === 0) {
+                    container.appendChild(emptyState);
+                }
+
+                ratings.forEach((rating) => {
+                    let ratingUI = createRatingUI(rating);
+                    if (isAdmin) {
+                        addControlsToRating(ratingUI)
+                    }
+                    container.appendChild(ratingUI);
+                });
+
+                document.body.appendChild(container);
+                buildfire.spinner.hide();
             }
+        );
+    })
+}
 
-            ratings.forEach((rating) => {
-                let ratingUI = createRatingUI(rating);
-                container.appendChild(ratingUI);
-            });
-
-            document.body.appendChild(container);
-            buildfire.spinner.hide();
-        }
-    );
+function checkIfUserIsAdmin(cb) {
+    buildfire.auth.getCurrentUser((err, loggedInUser) => {
+        if (err || !loggedInUser || !loggedInUser.tags) return cb(true);
+        Object.keys(loggedInUser.tags).forEach(appId => {
+            let tagIndex = loggedInUser.tags[appId].findIndex(tagObject => tagObject.tagName == ADMIN_TAG);
+            if (tagIndex != -1) return cb(true);
+        })
+        return cb(false);
+    })
 }
 
 function getTimeAgo(date) {
@@ -844,10 +865,11 @@ function closeRatingsScreen() {
 
 function createStarsUI(container, averageRating, hideAverage) {
     container.innerHTML = "";
+    container.classList.add("flex-center")
     for (let i = 1; i < 6; i++) {
         let star = document.createElement("span");
-        star.innerHTML = FULL_STAR
-        star.className = "full-star"
+        star.innerHTML = FULL_STAR;
+        star.className = "full-star";
 
         if (i > averageRating && i === Math.trunc(averageRating) + 1) {
             star.innerHTML = `<span style="opacity: 0.3">${FULL_STAR}</span>`;
@@ -881,7 +903,7 @@ function injectRatingComponent(container, ratingId, userId, options) {
     ratingsHead.className = "ratings-head";
 
     let ratingsText = document.createElement("div");
-    ratingsText.className = "ratings-text";
+    ratingsText.className = "ratings-text primary-color";
     ratingsText.innerText = "Ratings";
 
     let viewAllButton = document.createElement("div");
@@ -938,7 +960,6 @@ function injectRatingComponent(container, ratingId, userId, options) {
             },
         },
         (err, ratings) => {
-            console.log("HERE", ratings, userId)
             if (err) return console.error(err);
             if (ratings && ratings[0]) addRatingButton.innerText = "EDIT RATING";
         }
