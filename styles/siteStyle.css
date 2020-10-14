@@ -2096,3 +2096,11 @@ html.translated-ltr body{
 .tab-arrow:last-of-type{
 	border-left: 1px solid #ddd;
 }
+
+#pluginControlHeaderTabs {
+	overflow: scroll;
+}
+
+#pluginControlHeaderTabs .nav {
+	width: fit-content;
+}
