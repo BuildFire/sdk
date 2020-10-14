@@ -2097,5 +2097,5 @@ html.translated-ltr body{
 }
 
 #pluginControlHeaderTabs .nav {
-	width: fit-content;
+	overflow: visible;
 }
