@@ -2094,8 +2094,14 @@ html.translated-ltr body{
 
 #pluginControlHeaderTabs {
 	overflow: scroll;
+	-ms-overflow-style: none;
+	scrollbar-width: none
 }
 
 #pluginControlHeaderTabs .nav {
 	overflow: visible;
+}
+
+#pluginControlHeaderTabs::-webkit-scrollbar {
+	display: none;
 }
