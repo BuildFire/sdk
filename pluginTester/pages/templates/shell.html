@@ -5,15 +5,7 @@
         <a href="#/login" ng-hide="currentUser" class="pull-right">Login</a>
         <a href="#/logout" ng-show="currentUser" class="pull-right">Logout</a>
     </div>
-    <div class="secondary-container layout padded clearfix">
-        <div class="item clearfix row" ng-hide="pluginConfig.control.removeHeader">
-            <ol class="breadcrumb labels col-md-12 padding-right-zero pull-left">
-                <li ng-repeat="breadcrumb in breadcrumbs" ng-class="{'active':$last}">
-                    <a ng-if="!$last" href="" ng-click="popHistoryItem($event, breadcrumb)">{{breadcrumb.label}}</a>
-                    <span class="ellipsis" ng-if="$last" ng-bind="breadcrumb.label"></span>
-                </li>
-            </ol>
-        </div>
+    <div class="secondary-container layout padded clearfix padding-top-zero">
 
         <div ng-class="{'has-custom-tabs' : customTabs.length > 0}" class="arrows-tabs-container">
             <span ng-if="customTabs.length > 7" ng-click="scrollTabs('left')" class="icon-chevron-left tab-arrow"></span>
@@ -36,6 +28,15 @@
                 </div>
             </div>
             <span ng-if="customTabs.length > 7" ng-click="scrollTabs('right')" class="icon-chevron-right tab-arrow active"></span>
+        </div>
+
+        <div class="item clearfix row padding-top-twenty" ng-hide="pluginConfig.control.removeHeader">
+            <ol class="breadcrumb labels col-md-12 padding-right-zero pull-left">
+                <li ng-repeat="breadcrumb in breadcrumbs" ng-class="{'active':$last}">
+                    <a ng-if="!$last" href="" ng-click="popHistoryItem($event, breadcrumb)">{{breadcrumb.label}}</a>
+                    <span class="ellipsis" ng-if="$last" ng-bind="breadcrumb.label"></span>
+                </li>
+            </ol>
         </div>
        
         <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"

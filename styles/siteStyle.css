@@ -362,6 +362,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	border-left: 0;
 	border-right: 0;
 	font-size: 14px;
+	padding: 12px 16px;
 	/* font-family: 'Conv_apercu_bold'; */
 	/* font-weight: normal; */
 	color: black!important;
@@ -2074,7 +2075,6 @@ html.translated-ltr body{
 .arrows-tabs-container{
 	display: flex;
 	align-items: center;
-	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	margin: 0 -20px;
 }
@@ -2083,18 +2083,13 @@ html.translated-ltr body{
 	margin-right: auto;
 }
 .tab-arrow{
-	height: 40px;
-	width: 32px;
+	height: 48px;
+	width: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-}
-.tab-arrow:first-of-type{
-	border-right: 1px solid #ddd;
-}
-.tab-arrow:last-of-type{
-	border-left: 1px solid #ddd;
+	background-color: #fff;
 }
 
 #pluginControlHeaderTabs {
