@@ -16,8 +16,8 @@
         </div>
 
         <div ng-class="{'has-custom-tabs' : customTabs.length > 0}" class="arrows-tabs-container">
-            <span ng-if="customTabs.length > 0" ng-click="scrollTabs('left')" class="icon-chevron-left tab-arrow"></span>
-            <div class="overflow-hidden w-100">
+            <span ng-if="customTabs.length > 7" ng-click="scrollTabs('left')" class="icon-chevron-left tab-arrow"></span>
+            <div class="overflow-hidden w-100 tabs-container">
                 <div id="pluginControlHeaderTabs">
                     <ul class="nav nav-tabs nav-justified" ng-hide="pluginConfig.control.removeHeader">
                         <li ng-if="contentSrc">
@@ -35,7 +35,7 @@
                     </ul>
                 </div>
             </div>
-            <span ng-if="customTabs.length > 0" ng-click="scrollTabs('right')" class="icon-chevron-right tab-arrow active"></span>
+            <span ng-if="customTabs.length > 7" ng-click="scrollTabs('right')" class="icon-chevron-right tab-arrow active"></span>
         </div>
        
         <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"

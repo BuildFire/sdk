@@ -352,6 +352,8 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .nav-tabs {
 	border: 1px solid #ddd !important;
 	flex-shrink: 0;
+	border-top: 0 !important;
+	border-bottom: 0 !important;
 }
 .nav-tabs > li > a,
 .nav-tabs.nav-justified > li > a {
@@ -2069,3 +2071,28 @@ html.translated-ltr body{
 	cursor: pointer;
 }
 
+.arrows-tabs-container{
+	display: flex;
+	align-items: center;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	margin: 0 -20px;
+}
+.tabs-container{
+	margin-left: auto;
+	margin-right: auto;
+}
+.tab-arrow{
+	height: 40px;
+	width: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+.tab-arrow:first-of-type{
+	border-right: 1px solid #ddd;
+}
+.tab-arrow:last-of-type{
+	border-left: 1px solid #ddd;
+}
