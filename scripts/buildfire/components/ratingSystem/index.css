@@ -40,11 +40,11 @@
 
 .cancel-rating-button {
   cursor: pointer;
-  color: red;
+  color: #ccc;
   position: absolute;
   top: 0;
-  left: 0;
-  font-size: 1.2rem;
+  right: 0;
+  font-size: 1.5rem;
 }
 
 .add-rating-header {
@@ -177,10 +177,6 @@
   font-weight: bold;
 }
 
-.rating-time-ago {
-  margin-left: 1rem;
-}
-
 .rating-review-text {
   margin-bottom: 1rem;
 }
@@ -201,6 +197,7 @@
 
 .stars-span {
   color: #fcb040;
+  width: fit-content;
 }
 
 .rating-stars div {

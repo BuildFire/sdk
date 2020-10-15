@@ -3,6 +3,8 @@ if (typeof buildfire == "undefined")
 
 if (typeof buildfire.components == "undefined") buildfire.components = {};
 
+if (typeof (buildfire.components.popup) == "undefined") console.error("You need to load buildfire pop up component first https://github.com/BuildFire/sdk/wiki/Popup-Component");
+
 class Rating {
     constructor(record = {}) {
         if (!record.data) record.data = {};
@@ -355,7 +357,38 @@ class Summaries {
 
 const FULL_STAR = "&#9733;";
 const ADMIN_TAG = "bf_ratings_admin";
-
+// const defaultOptions = {
+//     enableImages: true,
+//     translations: {
+//         "ratings": "Ratings",
+//         "addRating": "Add Rating",
+//         "updateRating": "Update Rating",
+//         "leaveAReview": "Leave a review",
+//         "writeAComment": "Write a comment",
+//         "basedOn": "Based on",
+//         "review": "Review",
+//         "reviews": "Reviews",
+//         "viewAll": "View All",
+//         "overallRating": "Overall rating",
+//         "emptyStateText": "No reivews yet. Be the first to leave a review!"
+//     }
+// }
+const defaultOptions = {
+    enableImages: true,
+    translations: {
+        "ratings": "Rejtinzi",
+        "addRating": "Dodaj rejting",
+        "updateRating": "Uredi rejting",
+        "leaveAReview": "Ostavi recenziju",
+        "writeAComment": "Napisi komentar",
+        "basedOn": "Bazirano na",
+        "review": "recenzija",
+        "reviews": "recenzije",
+        "viewAll": "Vidi sve",
+        "overallRating": "Prosjecna ocjena",
+        "emptyStateText": "Nema recenzija, budi prvi koji"
+    }
+}
 function getNotRatedUI(container) {
     for (let i = 0; i < 5; i++) {
         let star = document.createElement("span");
@@ -387,8 +420,8 @@ function injectRatings(options = {}) {
 
         ratingIds.forEach((ratingId, index) => {
             let summary = summaries.find((s) => s.ratingId === ratingId);
-            if (!summary) options.notRated = true;
 
+            options.notRated = !summary;
             options.summary = summary;
 
             injectAverageRating(elements[index], ratingId, options);
@@ -399,6 +432,8 @@ function injectRatings(options = {}) {
 function injectAverageRating(container, ratingId, options) {
     if (!container) return console.error(`Container not found in DOM`);
     container.innerHTML = "";
+
+    console.log(container, ratingId, options);
 
     const filters = {
         filter: {
@@ -412,6 +447,7 @@ function injectAverageRating(container, ratingId, options) {
 
     if (options && options.summary) {
         let averageRating = options.summary.total / options.summary.count;
+        console.log(averageRating);
         createStarsUI(container, averageRating, options.hideAverage);
     } else {
         Summaries.search(filters, (err, summaries) => {
@@ -424,12 +460,11 @@ function injectAverageRating(container, ratingId, options) {
             createStarsUI(container, averageRating, options && options.hideAverage);
         });
     }
-
 }
 
 function openAddRatingScreen(
     ratingId,
-    options = { enableImages: true, headerText: "Leave a review" },
+    options = defaultOptions,
     callback = () => { }
 ) {
     buildfire.auth.getCurrentUser((err, loggedInUser) => {
@@ -445,7 +480,7 @@ function openAddRatingScreen(
         Ratings.findRatingByUser(ratingId, loggedInUser._id, (err, rating) => {
             buildfire.navigation.onBackButtonClick = () => {
                 closeAddRatingScreen();
-                buildfire.navigation.restoreBackButtonClick();
+                // buildfire.navigation.restoreBackButtonClick();
             };
             if (rating && !rating.isActive) {
                 let container = document.createElement("div");
@@ -476,6 +511,10 @@ function openAddRatingScreen(
 
             let backDrop = document.createElement("div");
             backDrop.className = "add-rating-screen";
+            backDrop.addEventListener("click", (e) => {
+                if (e.target.className == "add-rating-screen")
+                    closeAddRatingScreen();
+            })
 
             let container = document.createElement("div");
             container.className = "add-rating-screen-content";
@@ -485,21 +524,21 @@ function openAddRatingScreen(
 
             let cancelButton = document.createElement("div");
             cancelButton.className = "cancel-rating-button";
-            cancelButton.innerText = "Cancel";
+            cancelButton.innerText = "✕";
             cancelButton.addEventListener("click", () => {
                 closeAddRatingScreen();
             });
 
             let title = document.createElement("div");
             title.className = "add-rating-title";
-            title.innerText = rating.id ? "Update Rating" : "Add Rating";
+            title.innerText = rating.id ? options?.translations?.updateRating || defaultOptions.translations.updateRating : options?.translations?.addRating || defaultOptions.translations.addRating;
 
             header.appendChild(cancelButton);
             header.appendChild(title);
 
             let subtitle = document.createElement("div");
             subtitle.className = "add-rating-subtitle";
-            subtitle.innerText = options.headerText;
+            subtitle.innerText = options?.translations?.leaveAReview || defaultOptions.translations.leaveAReview;
 
             let updateStarsUI = () => {
                 for (let i = 0; i < 5; i++) {
@@ -525,10 +564,10 @@ function openAddRatingScreen(
             const openTextDialog = () => {
                 buildfire.input.showTextDialog(
                     {
-                        placeholder: "Write a review...",
+                        placeholder: options?.translations?.writeAComment || defaultOptions.translations.writeAComment,
                         saveText: "Save",
                         defaultValue:
-                            textArea.innerText !== "Write a review..."
+                            textArea.innerText !== options?.translations?.writeAComment || defaultOptions.translations.writeAComment
                                 ? textArea.innerText
                                 : "",
                         attachments: {
@@ -551,12 +590,12 @@ function openAddRatingScreen(
             let updateTextAreaUI = () => {
                 textArea.innerText = rating.comment
                     ? rating.comment
-                    : "Write a review...";
+                    : options?.translations?.writeAComment || defaultOptions.translations.writeAComment;
             };
 
             let textAreaSubtitle = document.createElement("div");
             textAreaSubtitle.className = "add-rating-subtitle";
-            textAreaSubtitle.innerText = "Write a comment:";
+            textAreaSubtitle.innerText = options?.translations?.writeAComment || defaultOptions.translations.writeAComment;
 
             let textArea = document.createElement("div");
             textArea.className = "text-area";
@@ -600,7 +639,7 @@ function openAddRatingScreen(
 
             let submitButton = document.createElement("div");
             submitButton.className = "submit-button";
-            submitButton.innerText = rating.id ? "Update Rating" : "Add Rating";
+            submitButton.innerText = rating.id ? options?.translations?.updateRating || defaultOptions.translations.updateRating : options?.translations?.addRating || defaultOptions.translations.addRating;
             submitButton.addEventListener("click", () => {
                 if (rating.id) {
                     Ratings.set(originalRating, rating, (err, updatedRating) => {
@@ -625,8 +664,8 @@ function openAddRatingScreen(
             container.appendChild(imagesContainer);
 
             container.appendChild(submitButton);
-
             backDrop.appendChild(container);
+
             document.body.appendChild(backDrop);
 
             updateImagesUI();
@@ -688,7 +727,7 @@ function createRatingUI(rating) {
 
     let ratingTime = document.createElement("span");
     ratingTime.className = "rating-time-ago";
-    ratingTime.innerHTML = getTimeAgo(new Date(rating.createdOn));
+    ratingTime.innerHTML = formatTime(new Date(rating.createdOn));
 
     stars.appendChild(starsSpan);
     stars.appendChild(ratingTime);
@@ -731,7 +770,7 @@ function createRatingUI(rating) {
     return container;
 }
 
-function openRatingsScreen(ratingId) {
+function openRatingsScreen(ratingId, options) {
     let container = document.createElement("div");
     container.className = "ratings-screen";
 
@@ -744,7 +783,7 @@ function openRatingsScreen(ratingId) {
     let header = document.createElement("div");
     header.className = "ovarall-rating-container";
     let headerTitle = document.createElement("h5");
-    headerTitle.innerText = "Overall rating";
+    headerTitle.innerText = options?.translations?.overallRating || defaultOptions.translations.overallRating;
     headerTitle.style.fontWeight = 400;
     header.appendChild(headerTitle);
 
@@ -770,7 +809,7 @@ function openRatingsScreen(ratingId) {
 
             createStarsUI(overallRating, total / count, true);
 
-            headerSubtitle.innerText = "Based on " + count + " Reviews";
+            headerSubtitle.innerText = `${options?.translations?.basedOn || defaultOptions.translations.basedOn} ${count} ${options?.translations?.reviews || defaultOptions.translations.reviews}`;
         }
     );
 
@@ -778,11 +817,11 @@ function openRatingsScreen(ratingId) {
     emptyState.className = "empty-state-container";
 
     let emptyStateText = document.createElement("h5");
-    emptyStateText.innerText = "No reivews yet. Be the first to leave a review!";
+    emptyStateText.innerText = options?.translations?.emptyStateText || defaultOptions.translations.emptyStateText;
     emptyState.appendChild(emptyStateText);
 
     let leaveReviewButton = document.createElement("div");
-    leaveReviewButton.innerText = "Leave a review";
+    leaveReviewButton.innerText = options?.translations?.leaveAReview || defaultOptions.translations.leaveAReview;
     leaveReviewButton.addEventListener("click", () => {
         closeRatingsScreen();
         openAddRatingScreen(ratingId);
@@ -792,7 +831,6 @@ function openRatingsScreen(ratingId) {
 
 
     checkIfUserIsAdmin((isAdmin) => {
-        console.log(isAdmin)
         Ratings.search(
             {
                 filter: {
@@ -824,7 +862,7 @@ function openRatingsScreen(ratingId) {
 
 function checkIfUserIsAdmin(cb) {
     buildfire.auth.getCurrentUser((err, loggedInUser) => {
-        if (err || !loggedInUser || !loggedInUser.tags) return cb(true);
+        if (err || !loggedInUser || !loggedInUser.tags) return cb(false);
         Object.keys(loggedInUser.tags).forEach(appId => {
             let tagIndex = loggedInUser.tags[appId].findIndex(tagObject => tagObject.tagName == ADMIN_TAG);
             if (tagIndex != -1) return cb(true);
@@ -833,7 +871,8 @@ function checkIfUserIsAdmin(cb) {
     })
 }
 
-function getTimeAgo(date) {
+function formatTime(date) {
+    return new Date(date).toLocaleDateString();
     let seconds = Math.floor((new Date() - date) / 1000);
 
     let interval = Math.floor(seconds / 31536000);
@@ -906,13 +945,13 @@ function injectRatingComponent(container, ratingId, options) {
 
         let ratingsText = document.createElement("div");
         ratingsText.className = "ratings-text primary-color";
-        ratingsText.innerText = "Ratings";
+        ratingsText.innerText = options?.translations?.ratings || defaultOptions.translations.ratings;
 
         let viewAllButton = document.createElement("div");
         viewAllButton.className = "view-all-button";
-        viewAllButton.innerText = "View All";
+        viewAllButton.innerText = options?.translations?.viewAll || defaultOptions.translations.viewAll;
         viewAllButton.addEventListener("click", () => {
-            openRatingsScreen(ratingId);
+            openRatingsScreen(ratingId, options);
         });
 
         ratingsHead.appendChild(ratingsText);
@@ -923,7 +962,7 @@ function injectRatingComponent(container, ratingId, options) {
 
         let addRatingButton = document.createElement("div");
         addRatingButton.className = "add-rating-button";
-        addRatingButton.innerText = "+ ADD RATING";
+        addRatingButton.innerText = "+ " + (options?.translations?.addRating || defaultOptions.translations.addRating);
         addRatingButton.addEventListener("click", () => {
             openAddRatingScreen(ratingId, options, (err, rating) => {
                 getSummary();
@@ -965,7 +1004,7 @@ function injectRatingComponent(container, ratingId, options) {
             },
             (err, ratings) => {
                 if (err) return console.error(err);
-                if (ratings && ratings[0]) addRatingButton.innerText = "EDIT RATING";
+                if (ratings && ratings[0]) addRatingButton.innerText = options?.translations?.updateRating || defaultOptions.translations.updateRating;
             }
         );
 
