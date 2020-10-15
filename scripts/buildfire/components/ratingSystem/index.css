@@ -19,7 +19,6 @@
 
 .add-rating-screen-content {
   border-radius: 10px;
-  background-color: white;
   padding: 2rem 3rem;
   width: 80%;
   display: flex;
@@ -139,14 +138,12 @@
   width: 100vw;
   height: 100vh;
   z-index: 20;
-  background-color: white;
 }
 
 .ratings-screen-rating {
   display: flex;
   flex-direction: column;
   z-index: 20;
-  background-color: white;
   padding: 2rem 2rem 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -175,6 +172,9 @@
 .rating-user-display-name {
   font-size: 1.5rem;
   font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .rating-review-text {
@@ -276,13 +276,6 @@
   margin-left: 1rem;
 }
 
-.ratings-stars-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-
 .ratings {
   display: flex;
   padding: 10px 20px;
@@ -309,15 +302,19 @@
   letter-spacing: 1rem;
 }
 
-.view-all-button {
+.edit-rating-button {
+  margin-left: 1rem;
   font-size: 1.3rem;
   cursor: pointer;
 }
 
 .add-rating-button {
   margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
   font-size: 1.3rem;
   cursor: pointer;
+  width: fit-content;
 }
 
 .ratings-text {
