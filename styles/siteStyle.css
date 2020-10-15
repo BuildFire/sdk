@@ -352,6 +352,8 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 .nav-tabs {
 	border: 1px solid #ddd !important;
 	flex-shrink: 0;
+	border-top: 0 !important;
+	border-bottom: 0 !important;
 }
 .nav-tabs > li > a,
 .nav-tabs.nav-justified > li > a {
@@ -360,6 +362,7 @@ nav ul.menu li .parent.has-children li a.has-badge p.text{
 	border-left: 0;
 	border-right: 0;
 	font-size: 14px;
+	padding: 12px 16px;
 	/* font-family: 'Conv_apercu_bold'; */
 	/* font-weight: normal; */
 	color: black!important;
@@ -2069,3 +2072,36 @@ html.translated-ltr body{
 	cursor: pointer;
 }
 
+.arrows-tabs-container{
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid #ddd;
+	margin: 0 -20px;
+}
+.tabs-container{
+	margin-left: auto;
+	margin-right: auto;
+}
+.tab-arrow{
+	height: 48px;
+	width: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	background-color: #fff;
+}
+
+#pluginControlHeaderTabs {
+	overflow: scroll;
+	-ms-overflow-style: none;
+	scrollbar-width: none
+}
+
+#pluginControlHeaderTabs .nav {
+	overflow: visible;
+}
+
+#pluginControlHeaderTabs::-webkit-scrollbar {
+	display: none;
+}
