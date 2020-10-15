@@ -3,6 +3,8 @@ if (typeof buildfire == "undefined")
 
 if (typeof buildfire.components == "undefined") buildfire.components = {};
 
+if (typeof (buildfire.components.popup) == "undefined") console.error("You need to load buildfire pop up component first https://github.com/BuildFire/sdk/wiki/Popup-Component");
+
 class Rating {
     constructor(record = {}) {
         if (!record.data) record.data = {};
@@ -355,7 +357,22 @@ class Summaries {
 
 const FULL_STAR = "&#9733;";
 const ADMIN_TAG = "bf_ratings_admin";
-
+const defaultOptions = {
+    enableImages: true,
+    translations: {
+        "ratings": "Ratings",
+        "addRating": "Add Rating",
+        "updateRating": "Update Rating",
+        "leaveAReview": "Leave a review",
+        "writeAComment": "Write a comment",
+        "basedOn": "Based on",
+        "review": "Review",
+        "reviews": "Reviews",
+        "viewAll": "View All",
+        "overallRating": "Overall rating",
+        "emptyStateText": "No reivews yet. Be the first to leave a review!"
+    }
+};
 function getNotRatedUI(container) {
     for (let i = 0; i < 5; i++) {
         let star = document.createElement("span");
@@ -365,7 +382,7 @@ function getNotRatedUI(container) {
     }
 }
 
-function injectRatings(options = {}, callback) {
+function injectRatings(options = defaultOptions) {
     let elements = options.elements;
     if (typeof elements === "undefined")
         elements = document.querySelectorAll("[data-rating-id]");
@@ -387,12 +404,11 @@ function injectRatings(options = {}, callback) {
 
         ratingIds.forEach((ratingId, index) => {
             let summary = summaries.find((s) => s.ratingId === ratingId);
-            if (!summary) options.notRated = true;
 
+            options.notRated = !summary;
             options.summary = summary;
 
             injectAverageRating(elements[index], ratingId, options);
-            typeof callback === "function" && callback();
         });
     });
 }
@@ -401,10 +417,16 @@ function injectAverageRating(container, ratingId, options) {
     if (!container) return console.error(`Container not found in DOM`);
     container.innerHTML = "";
 
+    console.log(container, ratingId, options);
+
     const filters = {
         filter: {
             "_buildfire.index.string1": ratingId,
         },
+    };
+
+    const reRender = () => {
+        injectAverageRating(container, ratingId, options);
     };
 
     if (options.notRated) {
@@ -413,7 +435,8 @@ function injectAverageRating(container, ratingId, options) {
 
     if (options && options.summary) {
         let averageRating = options.summary.total / options.summary.count;
-        createStarsUI(container, averageRating, options.hideAverage);
+        console.log(averageRating);
+        createStarsUI(container, averageRating, options, ratingId, reRender);
     } else {
         Summaries.search(filters, (err, summaries) => {
             if (err) return console.error(err);
@@ -422,15 +445,14 @@ function injectAverageRating(container, ratingId, options) {
             }
 
             let averageRating = summaries[0].total / summaries[0].count;
-            createStarsUI(container, averageRating, options && options.hideAverage);
+            createStarsUI(container, averageRating, options && options, ratingId, reRender);
         });
     }
-
 }
 
 function openAddRatingScreen(
     ratingId,
-    options = { enableImages: true, headerText: "Leave a review" },
+    options = defaultOptions,
     callback = () => { }
 ) {
     buildfire.auth.getCurrentUser((err, loggedInUser) => {
@@ -442,11 +464,11 @@ function openAddRatingScreen(
                 }
             );
         }
-
         Ratings.findRatingByUser(ratingId, loggedInUser._id, (err, rating) => {
+            let currentBackBehavior = buildfire.navigation.onBackButtonClick;
             buildfire.navigation.onBackButtonClick = () => {
                 closeAddRatingScreen();
-                buildfire.navigation.restoreBackButtonClick();
+                buildfire.navigation.onBackButtonClick = currentBackBehavior;
             };
             if (rating && !rating.isActive) {
                 let container = document.createElement("div");
@@ -477,30 +499,37 @@ function openAddRatingScreen(
 
             let backDrop = document.createElement("div");
             backDrop.className = "add-rating-screen";
+            backDrop.addEventListener("click", (e) => {
+                if (e.target.className == "add-rating-screen") {
+                    closeAddRatingScreen();
+                    buildfire.navigation.onBackButtonClick = currentBackBehavior;
+                }
+            });
 
             let container = document.createElement("div");
-            container.className = "add-rating-screen-content";
+            container.className = "add-rating-screen-content backgroundColorTheme";
 
             let header = document.createElement("div");
             header.className = "add-rating-header";
 
             let cancelButton = document.createElement("div");
             cancelButton.className = "cancel-rating-button";
-            cancelButton.innerText = "Cancel";
+            cancelButton.innerHTML = "&#10005;";
             cancelButton.addEventListener("click", () => {
                 closeAddRatingScreen();
+                buildfire.navigation.onBackButtonClick = currentBackBehavior;
             });
 
             let title = document.createElement("div");
             title.className = "add-rating-title";
-            title.innerText = rating.id ? "Update Rating" : "Add Rating";
+            title.innerText = rating.id ? (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating : (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
 
             header.appendChild(cancelButton);
             header.appendChild(title);
 
             let subtitle = document.createElement("div");
             subtitle.className = "add-rating-subtitle";
-            subtitle.innerText = options.headerText;
+            subtitle.innerText = (options && options.translations && options.translations.leaveAReview) || defaultOptions.translations.leaveAReview;
 
             let updateStarsUI = () => {
                 for (let i = 0; i < 5; i++) {
@@ -526,10 +555,10 @@ function openAddRatingScreen(
             const openTextDialog = () => {
                 buildfire.input.showTextDialog(
                     {
-                        placeholder: "Write a review...",
+                        placeholder: (options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment,
                         saveText: "Save",
                         defaultValue:
-                            textArea.innerText !== "Write a review..."
+                            textArea.innerText !== ((options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment)
                                 ? textArea.innerText
                                 : "",
                         attachments: {
@@ -552,12 +581,12 @@ function openAddRatingScreen(
             let updateTextAreaUI = () => {
                 textArea.innerText = rating.comment
                     ? rating.comment
-                    : "Write a review...";
+                    : (options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment;
             };
 
             let textAreaSubtitle = document.createElement("div");
             textAreaSubtitle.className = "add-rating-subtitle";
-            textAreaSubtitle.innerText = "Write a comment:";
+            textAreaSubtitle.innerText = (options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment;
 
             let textArea = document.createElement("div");
             textArea.className = "text-area";
@@ -601,17 +630,19 @@ function openAddRatingScreen(
 
             let submitButton = document.createElement("div");
             submitButton.className = "submit-button";
-            submitButton.innerText = rating.id ? "Update Rating" : "Add Rating";
+            submitButton.innerText = rating.id ? (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating : (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
             submitButton.addEventListener("click", () => {
                 if (rating.id) {
                     Ratings.set(originalRating, rating, (err, updatedRating) => {
                         closeAddRatingScreen();
+                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         buildfire.messaging.sendMessageToControl({ type: "ratings" });
                         callback(err, updatedRating);
                     });
                 } else {
                     Ratings.add(rating, (err, addedRating) => {
                         closeAddRatingScreen();
+                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         buildfire.messaging.sendMessageToControl({ type: "ratings" });
                         callback(err, addedRating);
                     });
@@ -626,8 +657,8 @@ function openAddRatingScreen(
             container.appendChild(imagesContainer);
 
             container.appendChild(submitButton);
-
             backDrop.appendChild(container);
+
             document.body.appendChild(backDrop);
 
             updateImagesUI();
@@ -639,13 +670,12 @@ function openAddRatingScreen(
 
 function closeAddRatingScreen() {
     let addRatingScreen = document.querySelector(".add-rating-screen");
-    if (!addRatingScreen) return buildfire.navigation.restoreBackButtonClick();
+    if (!addRatingScreen) return;
 
     document.body.removeChild(addRatingScreen);
-    buildfire.navigation.restoreBackButtonClick();
 }
 
-function createRatingUI(rating) {
+function createRatingUI(rating, editRatingButton, options) {
     let container = document.createElement("div");
     container.className = "ratings-screen-rating";
     container.id = rating.id;
@@ -677,6 +707,11 @@ function createRatingUI(rating) {
         rating.user && rating.user.displayName
             ? rating.user.displayName
             : "Unknown User";
+
+    if (editRatingButton) {
+        userName.appendChild(editRatingButton);
+    }
+
     nameAndStars.appendChild(userName);
 
     let stars = document.createElement("div");
@@ -685,11 +720,11 @@ function createRatingUI(rating) {
 
     let starsSpan = document.createElement("span");
     starsSpan.className = "stars-span";
-    createStarsUI(starsSpan, Number(rating.rating), true);
+    createStarsUI(starsSpan, Number(rating.rating), { hideAverage: true });
 
     let ratingTime = document.createElement("span");
     ratingTime.className = "rating-time-ago";
-    ratingTime.innerHTML = getTimeAgo(new Date(rating.createdOn));
+    ratingTime.innerHTML = formatTime(new Date(rating.createdOn));
 
     stars.appendChild(starsSpan);
     stars.appendChild(ratingTime);
@@ -732,20 +767,23 @@ function createRatingUI(rating) {
     return container;
 }
 
-function openRatingsScreen(ratingId) {
+function openRatingsScreen(ratingId, options, reRenderComponent) {
     let container = document.createElement("div");
-    container.className = "ratings-screen";
+    container.id = "ratingsScreenContainer";
+    container.className = "ratings-screen backgroundColorTheme";
 
     buildfire.spinner.show();
 
+    let currentBackBehavior = buildfire.navigation.onBackButtonClick;
     buildfire.navigation.onBackButtonClick = () => {
         closeRatingsScreen();
+        buildfire.navigation.onBackButtonClick = currentBackBehavior;
     };
 
     let header = document.createElement("div");
     header.className = "ovarall-rating-container";
     let headerTitle = document.createElement("h5");
-    headerTitle.innerText = "Overall rating";
+    headerTitle.innerText = (options && options.translations && options.translations.overallRating) || defaultOptions.translations.overallRating;
     headerTitle.style.fontWeight = 400;
     header.appendChild(headerTitle);
 
@@ -755,7 +793,18 @@ function openRatingsScreen(ratingId) {
     let overallRating = document.createElement("div");
     overallRating.className = "overall-rating-stars";
     header.appendChild(overallRating);
+
     container.appendChild(header);
+
+    let myRating = document.createElement("div");
+    container.appendChild(myRating);
+
+    let emptyState = document.createElement("div");
+    emptyState.className = "empty-state-container";
+
+    let emptyStateText = document.createElement("h5");
+    emptyStateText.innerText = (options && options.translations && options.translations.emptyStateText) || defaultOptions.translations.emptyStateText;
+    emptyState.appendChild(emptyStateText);
 
     Summaries.search(
         {
@@ -765,95 +814,104 @@ function openRatingsScreen(ratingId) {
         },
         (err, summaries) => {
             if (err) return console.error(err);
-            if (!summaries[0]) return getNotRatedUI(overallRating);
+            if (!summaries[0]) {
+                getNotRatedUI(overallRating);
+                return container.appendChild(emptyState);
+            }
 
             const { count, total } = summaries[0];
 
-            createStarsUI(overallRating, total / count, true);
+            createStarsUI(overallRating, total / count, { hideAverage: true });
 
-            headerSubtitle.innerText = "Based on " + count + " Reviews";
+            headerSubtitle.innerText = `${(options && options.translations && options.translations.basedOn) || defaultOptions.translations.basedOn} ${count} ${(options && options.translations && options.translations.reviews) || defaultOptions.translations.reviews}`;
         }
     );
 
-    let emptyState = document.createElement("div");
-    emptyState.className = "empty-state-container";
+    checkIfUserIsAdmin((user, isAdmin) => {
+        // Find review by current user
+        Ratings.findRatingByUser(ratingId, user._id, (err, rating) => {
+            if (err) return console.error(err);
 
-    let emptyStateText = document.createElement("h5");
-    emptyStateText.innerText = "No reivews yet. Be the first to leave a review!";
-    emptyState.appendChild(emptyStateText);
-
-    let leaveReviewButton = document.createElement("div");
-    leaveReviewButton.innerText = "Leave a review";
-    leaveReviewButton.addEventListener("click", () => {
-        closeRatingsScreen();
-        openAddRatingScreen(ratingId);
-    });
-
-    emptyState.appendChild(leaveReviewButton);
-
-
-    checkIfUserIsAdmin((isAdmin) => {
-        console.log(isAdmin)
+            if (!rating) {
+                let addRatingButton = document.createElement("div");
+                addRatingButton.className = "add-rating-button primaryTheme";
+                addRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
+                addRatingButton.addEventListener("click", () => {
+                    openAddRatingScreen(ratingId, options, () => {
+                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
+                        reRender();
+                        reRenderComponent();
+                        injectRatings({ hideAverage: true });
+                    });
+                });
+                header.appendChild(addRatingButton);
+            } else {
+                const editRatingButton = document.createElement("div");
+                editRatingButton.className = "edit-rating-button primaryTheme";
+                editRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating;
+                editRatingButton.addEventListener("click", () => {
+                    openAddRatingScreen(ratingId, options, () => {
+                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
+                        reRender();
+                        reRenderComponent();
+                        injectRatings({ hideAverage: true });
+                    });
+                });
+                let ratingUI = createRatingUI(rating, editRatingButton, options);
+                if (isAdmin) {
+                    addControlsToRating(ratingUI);
+                }
+                myRating.appendChild(ratingUI);
+            }
+        }
+        );
+        // Find reviews by other users
         Ratings.search(
             {
                 filter: {
                     "_buildfire.index.string1": ratingId,
                     "_buildfire.index.number1": 1,
+                    "_buildfire.index.array1": {
+                        "$ne": user._id
+                    },
                 },
             },
             (err, ratings) => {
                 if (err) return console.error(err);
 
-                if (ratings.length === 0) {
-                    container.appendChild(emptyState);
-                }
-
                 ratings.forEach((rating) => {
                     let ratingUI = createRatingUI(rating);
                     if (isAdmin) {
-                        addControlsToRating(ratingUI)
+                        addControlsToRating(ratingUI);
                     }
                     container.appendChild(ratingUI);
                 });
-
+                const ratingsScreenContainer = document.getElementById("ratingsScreenContainer");
+                if (ratingsScreenContainer) document.body.removeChild(ratingsScreenContainer);
                 document.body.appendChild(container);
                 buildfire.spinner.hide();
             }
         );
-    })
+    });
+
+    const reRender = () => {
+        openRatingsScreen(ratingId, options);
+    };
 }
 
 function checkIfUserIsAdmin(cb) {
     buildfire.auth.getCurrentUser((err, loggedInUser) => {
-        if (err || !loggedInUser || !loggedInUser.tags) return cb(true);
+        if (err || !loggedInUser || !loggedInUser.tags) return cb(loggedInUser, false);
         Object.keys(loggedInUser.tags).forEach(appId => {
             let tagIndex = loggedInUser.tags[appId].findIndex(tagObject => tagObject.tagName == ADMIN_TAG);
-            if (tagIndex != -1) return cb(true);
-        })
-        return cb(false);
-    })
+            if (tagIndex != -1) return cb(loggedInUser, true);
+        });
+        return cb(loggedInUser, false);
+    });
 }
 
-function getTimeAgo(date) {
-    let seconds = Math.floor((new Date() - date) / 1000);
-
-    let interval = Math.floor(seconds / 31536000);
-
-    if (interval > 1) return interval + " years ago";
-    interval = Math.floor(seconds / 2592000);
-
-    if (interval > 1) return interval + " months ago";
-    interval = Math.floor(seconds / 86400);
-
-    if (interval > 1) return interval + " days ago";
-    interval = Math.floor(seconds / 3600);
-
-    if (interval > 1) return interval + " hours ago";
-    interval = Math.floor(seconds / 60);
-
-    if (interval > 1) return interval + " minutes ago";
-
-    return Math.floor(seconds) + " seconds ago";
+function formatTime(date) {
+    return new Date(date).toLocaleDateString();
 }
 
 function closeRatingsScreen() {
@@ -863,9 +921,10 @@ function closeRatingsScreen() {
     buildfire.navigation.restoreBackButtonClick();
 }
 
-function createStarsUI(container, averageRating, hideAverage) {
+function createStarsUI(container, averageRating, options, ratingId, reRender) {
+    const { hideAverage, showRatingsOnClick } = options;
     container.innerHTML = "";
-    container.classList.add("flex-center")
+    container.classList.add("flex-center");
     for (let i = 1; i < 6; i++) {
         let star = document.createElement("span");
         star.innerHTML = FULL_STAR;
@@ -892,45 +951,27 @@ function createStarsUI(container, averageRating, hideAverage) {
 
         container.appendChild(averageRatingSpan);
     }
+
+    if (showRatingsOnClick) {
+        container.addEventListener("click", () => {
+            openRatingsScreen(ratingId, options, reRender);
+        });
+    }
 }
 
-function injectRatingComponent(container, ratingId, userId, options) {
+function injectRatingComponent(container, ratingId, options) {
     container.innerHTML = "";
     let ratings = document.createElement("div");
     ratings.className = "ratings";
 
-    let ratingsHead = document.createElement("div");
-    ratingsHead.className = "ratings-head";
-
-    let ratingsText = document.createElement("div");
-    ratingsText.className = "ratings-text primary-color";
-    ratingsText.innerText = "Ratings";
-
-    let viewAllButton = document.createElement("div");
-    viewAllButton.className = "view-all-button";
-    viewAllButton.innerText = "View All";
-    viewAllButton.addEventListener("click", () => {
-        openRatingsScreen(ratingId);
-    });
-
-    ratingsHead.appendChild(ratingsText);
-    ratingsHead.appendChild(viewAllButton);
-
     let reviewsContainer = document.createElement("div");
     reviewsContainer.className = "reviews-container";
 
-    let addRatingButton = document.createElement("div");
-    addRatingButton.className = "add-rating-button";
-    addRatingButton.innerText = "+ ADD RATING";
-    addRatingButton.addEventListener("click", () => {
-        openAddRatingScreen(ratingId, options, (err, rating) => {
-            getSummary();
-        });
+    ratings.addEventListener("click", () => {
+        openRatingsScreen(ratingId, options, reRender);
     });
 
-    ratings.appendChild(ratingsHead);
     ratings.appendChild(reviewsContainer);
-    ratings.appendChild(addRatingButton);
 
     const getSummary = () => {
         Summaries.search(
@@ -947,27 +988,18 @@ function injectRatingComponent(container, ratingId, userId, options) {
                 }
 
                 let averageRating = summaries[0].total / summaries[0].count;
-                createStarsUI(reviewsContainer, averageRating, true);
+                createStarsUI(reviewsContainer, averageRating, { hideAverage: true });
             }
         );
     };
 
-    Ratings.search(
-        {
-            filter: {
-                "_buildfire.index.string1": ratingId,
-                "_buildfire.index.array1": userId,
-            },
-        },
-        (err, ratings) => {
-            if (err) return console.error(err);
-            if (ratings && ratings[0]) addRatingButton.innerText = "EDIT RATING";
-        }
-    );
-
     getSummary();
 
     container.appendChild(ratings);
+
+    const reRender = () => {
+        injectRatingComponent(container, ratingId, options);
+    };
 }
 
 function addControlsToRating(ratingElement) {
