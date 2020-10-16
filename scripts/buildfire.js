@@ -333,6 +333,7 @@ var buildfire = {
         }
         , navigateToSocialWall: function (pluginData, callback) {
             var pluginIds = {
+                'communityWall': 'b15c62f2-7a99-48dc-a37a-e42d46bd3289',
                 'social2.0': '697f1612-8208-4870-93f9-555c65103578',
                 'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
             };
@@ -342,12 +343,15 @@ var buildfire = {
             if (!pluginData) {
                 pluginData = {};
             }
-
-            navigate(pluginData, pluginIds['social2.0'], function (error) {
+            navigate(pluginData, pluginIds['communityWall'], function (error) {
                 if (!error) return callback(null, {status: 'completed'});
 
-                navigate(pluginData, pluginIds['social'], callback);
-            });
+                navigate(pluginData, pluginIds['social2.0'], function (error) {
+                    if (!error) return callback(null, {status: 'completed'});
+    
+                    navigate(pluginData, pluginIds['social'], callback);
+                });
+            })
 
             function navigate(data, pluginId, cb) {
                 data.pluginId = pluginId;
