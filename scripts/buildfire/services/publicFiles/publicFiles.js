@@ -25,6 +25,21 @@ buildfire.services.publicFiles.showDialog = function(options,onProgress ,onCompl
     buildfire._sendPacket(p, callback);
 };
 
+buildfire.services.publicFiles.getFile = function (options, callback) {
+    var p = new Packet(null, 'publicFiles.getFileUrl', options);
+    buildfire._sendPacket(p, callback);
+}
+
+buildfire.services.publicFiles.modifyPermissions = function (options, callback) {
+    var p = new Packet(null, 'publicFiles.modifyPermissions', options);
+    buildfire._sendPacket(p, callback);
+}
+
+buildfire.services.publicFiles.deleteFile = function (options, callback) {
+    var p = new Packet(null, 'publicFiles.deleteFile', options);
+    buildfire._sendPacket(p, callback);
+}
+
 buildfire.services.publicFiles._triggerOnProgress = function (data) {
     buildfire.eventManager.trigger('publicFilesOnProgress', data);
 }
