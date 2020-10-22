@@ -25,7 +25,7 @@ buildfire.services.publicFiles.showDialog = function(options,onProgress ,onCompl
     buildfire._sendPacket(p, callback);
 };
 
-buildfire.services.publicFiles.getFile = function (options, callback) {
+buildfire.services.publicFiles.getFileUrl = function (options, callback) {
     var p = new Packet(null, 'publicFiles.getFileUrl', options);
     buildfire._sendPacket(p, callback);
 }
