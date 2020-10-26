@@ -358,7 +358,6 @@ class Summaries {
 const FULL_STAR = "&#9733;";
 const ADMIN_TAG = "bf_ratings_admin";
 const defaultOptions = {
-    enableImages: true,
     translations: {
         "ratings": "Ratings",
         "addRating": "Add Rating",
@@ -417,8 +416,6 @@ function injectAverageRating(container, ratingId, options) {
     if (!container) return console.error(`Container not found in DOM`);
     container.innerHTML = "";
 
-    console.log(container, ratingId, options);
-
     const filters = {
         filter: {
             "_buildfire.index.string1": ratingId,
@@ -429,25 +426,42 @@ function injectAverageRating(container, ratingId, options) {
         injectAverageRating(container, ratingId, options);
     };
 
-    if (options.notRated) {
-        return getNotRatedUI(container);
-    }
-
     if (options && options.summary) {
         let averageRating = options.summary.total / options.summary.count;
-        console.log(averageRating);
         createStarsUI(container, averageRating, options, ratingId, reRender);
     } else {
         Summaries.search(filters, (err, summaries) => {
             if (err) return console.error(err);
             if (!summaries || !summaries[0] || summaries[0].count === 0) {
-                return getNotRatedUI(container);
+                summaries = [{ total: 0, count: 1 }]
             }
 
             let averageRating = summaries[0].total / summaries[0].count;
-            createStarsUI(container, averageRating, options && options, ratingId, reRender);
+
+            createStarsUI(container, averageRating, options, ratingId, reRender);
         });
     }
+}
+
+function applyStyling() {
+    let styleRatings = document.getElementById("style-ratings");
+    if (styleRatings) styleRatings.parentElement.removeChild(styleRatings);
+
+    styleRatings = document.createElement("style");
+
+    buildfire.appearance.getAppTheme((err, theme) => {
+        const { backgroundColor, primaryTheme } = theme.colors;
+        styleRatings.innerHTML = `
+            .backgroundColorTheme {
+                background-color: ${backgroundColor} !important;
+            }
+
+            .primaryTheme {
+                color: ${primaryTheme} !important;
+            }
+        `
+        document.head.appendChild(styleRatings);
+    })
 }
 
 function openAddRatingScreen(
@@ -944,7 +958,7 @@ function createStarsUI(container, averageRating, options, ratingId, reRender) {
         }
         container.appendChild(star);
     }
-    if (!hideAverage) {
+    if (!hideAverage && averageRating > 0) {
         let averageRatingSpan = document.createElement("span");
         averageRatingSpan.className = "average-rating";
         averageRatingSpan.innerText = averageRating.toFixed(1);
@@ -953,6 +967,7 @@ function createStarsUI(container, averageRating, options, ratingId, reRender) {
     }
 
     if (showRatingsOnClick) {
+        container.style.cursor = "pointer";
         container.addEventListener("click", () => {
             openRatingsScreen(ratingId, options, reRender);
         });
@@ -1069,3 +1084,5 @@ buildfire.components.ratingSystem = {
     openAddRatingScreen,
     openRatingsScreen,
 };
+
+applyStyling();
