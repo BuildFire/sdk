@@ -358,6 +358,8 @@ class Summaries {
 const FULL_STAR = "&#9733;";
 const ADMIN_TAG = "bf_ratings_admin";
 const defaultOptions = {
+    hideAverage: true,
+    showRatingsOnClick: true,
     translations: {
         "ratings": "Ratings",
         "addRating": "Add Rating",
@@ -390,7 +392,7 @@ function injectRatings(options = defaultOptions) {
     if (typeof ratingIds === "undefined")
         ratingIds = Array.from(elements).map((element) => element.dataset.ratingId);
 
-    if(options.pluginLevel === true){
+    if (options.pluginLevel === true) {
         let instanceId = buildfire.getContext().instanceId;
         ratingIds = ratingIds.map(id => `${id}-${instanceId}`)
     }
@@ -428,6 +430,7 @@ function injectAverageRating(container, ratingId, options) {
     };
 
     const reRender = () => {
+        delete options.summary;
         injectAverageRating(container, ratingId, options);
     };
 
@@ -657,6 +660,7 @@ function openAddRatingScreen(
                         buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         buildfire.messaging.sendMessageToControl({ type: "ratings" });
                         callback(err, updatedRating);
+                        buildfire.components.ratingSystem.onRating(updatedRating)
                     });
                 } else {
                     Ratings.add(rating, (err, addedRating) => {
@@ -664,6 +668,7 @@ function openAddRatingScreen(
                         buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         buildfire.messaging.sendMessageToControl({ type: "ratings" });
                         callback(err, addedRating);
+                        buildfire.components.ratingSystem.onRating(addedRating)
                     });
                 }
             });
@@ -860,7 +865,6 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                         buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         reRender();
                         reRenderComponent();
-                        injectRatings({ hideAverage: true });
                     });
                 });
                 header.appendChild(addRatingButton);
@@ -873,7 +877,6 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                         buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         reRender();
                         reRenderComponent();
-                        injectRatings({ hideAverage: true });
                     });
                 });
                 let ratingUI = createRatingUI(rating, editRatingButton, options);
@@ -914,7 +917,7 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
     });
 
     const reRender = () => {
-        openRatingsScreen(ratingId, options);
+        openRatingsScreen(ratingId, options, reRenderComponent);
     };
 }
 
@@ -979,15 +982,16 @@ function createStarsUI(container, averageRating, options, ratingId, reRender) {
     }
 }
 
-function injectRatingComponent(container, ratingId, options) {
+function injectRatingComponent(container, ratingId, options = defaultOptions) {
     container.innerHTML = "";
     let ratings = document.createElement("div");
     ratings.className = "ratings";
 
     let reviewsContainer = document.createElement("div");
     reviewsContainer.className = "reviews-container";
+    let originalRatingId = ratingId;
 
-    if(options.pluginLevel === true){
+    if (options.pluginLevel === true) {
         let instanceId = buildfire.getContext().instanceId;
         ratingId = `${ratingId}-${instanceId}`;
     }
@@ -1009,11 +1013,11 @@ function injectRatingComponent(container, ratingId, options) {
                 if (err) return console.err(err);
 
                 if (!summaries || !summaries[0] || summaries[0].count === 0) {
-                    return getNotRatedUI(reviewsContainer);
+                    summaries = [{ total: 0, count: 1 }]
                 }
 
                 let averageRating = summaries[0].total / summaries[0].count;
-                createStarsUI(reviewsContainer, averageRating, { hideAverage: true });
+                createStarsUI(reviewsContainer, averageRating, { hideAverage: true }, ratingId, reRender);
             }
         );
     };
@@ -1023,7 +1027,7 @@ function injectRatingComponent(container, ratingId, options) {
     container.appendChild(ratings);
 
     const reRender = () => {
-        injectRatingComponent(container, ratingId, options);
+        injectRatingComponent(container, originalRatingId, options);
     };
 }
 
@@ -1088,11 +1092,16 @@ function addControlsToRating(ratingElement) {
     ratingElement.appendChild(controls);
 }
 
+function onRating() {
+
+}
+
 buildfire.components.ratingSystem = {
     injectRatings,
     injectRatingComponent,
     openAddRatingScreen,
     openRatingsScreen,
+    onRating
 };
 
 applyStyling();
