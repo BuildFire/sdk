@@ -390,6 +390,11 @@ function injectRatings(options = defaultOptions) {
     if (typeof ratingIds === "undefined")
         ratingIds = Array.from(elements).map((element) => element.dataset.ratingId);
 
+    if(options.pluginLevel === true){
+        let instanceId = buildfire.getContext().instanceId;
+        ratingIds = ratingIds.map(id => `${id}-${instanceId}`)
+    }
+
     const filters = {
         filter: {
             "_buildfire.index.string1": {
@@ -981,6 +986,11 @@ function injectRatingComponent(container, ratingId, options) {
 
     let reviewsContainer = document.createElement("div");
     reviewsContainer.className = "reviews-container";
+
+    if(options.pluginLevel === true){
+        let instanceId = buildfire.getContext().instanceId;
+        ratingId = `${ratingId}-${instanceId}`;
+    }
 
     ratings.addEventListener("click", () => {
         openRatingsScreen(ratingId, options, reRender);
