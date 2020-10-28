@@ -4627,3 +4627,17 @@ html[ios="true"] .profile-overlay .profile-content{
 	border: 1px solid #999;
 	margin: 8px auto 0 auto;
 }
+
+@media(max-width: 1200px){
+	#pluginContainer{
+		height: 100vh;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		pointer-events: none;
+	}
+	#plugin.slide{
+		pointer-events: all;
+	} 
+}
