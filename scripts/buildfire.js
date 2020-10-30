@@ -40,6 +40,33 @@ var buildfire = {
             // don't return anything if context is not ready but we have a callback
         }
 
+    }, ratingSystem: {
+        inject: function (name) {
+            if (typeof (buildfire.components) == "undefined" || typeof (buildfire.components.popup) == "undefined" && typeof (buildfire.components.ratingSystem) == "undefined") {
+                loadScript('../../../../scripts/buildfire/components/popup/popup.js', function (err) {
+                    loadScript('../../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
+                        var head = document.head;
+                        var link = document.createElement('link');
+                        link.rel = 'stylesheet';
+                        link.type = 'text/css';
+                        link.href = '../../../../scripts/buildfire/components/ratingSystem/index.min.css';
+                        head.appendChild(link);
+                        console.log('loaded components');
+                        buildfire.components.ratingSystem.injectRatingComponent(document.getElementById(name), name);
+                    });
+                });
+            } else buildfire.components.ratingSystem.injectRatingComponent(document.getElementById(name), name);
+
+            function loadScript(url, callback) {
+                var head = document.head;
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = url;
+                script.onreadystatechange = callback;
+                script.onload = callback;
+                head.appendChild(script);
+            }
+        }
     }
     , logger: {
         attachRemoteLogger:function (tag){
