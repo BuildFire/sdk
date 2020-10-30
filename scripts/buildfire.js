@@ -40,7 +40,7 @@ var buildfire = {
             // don't return anything if context is not ready but we have a callback
         }
 
-    }, rating: {
+    }, ratingSystem: {
         inject: function (name) {
             if (typeof (buildfire.components) == "undefined" || typeof (buildfire.components.popup) == "undefined" && typeof (buildfire.components.ratingSystem) == "undefined") {
                 loadScript('../../../../scripts/buildfire/components/popup/popup.js', function (err) {
