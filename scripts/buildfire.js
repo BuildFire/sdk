@@ -42,6 +42,7 @@ var buildfire = {
 
     }, ratingSystem: {
         inject: function (name) {
+            if(buildfire.fid !== 'widget') return;
             if (typeof (buildfire.components) == "undefined" || typeof (buildfire.components.popup) == "undefined" && typeof (buildfire.components.ratingSystem) == "undefined") {
                 loadScript('../../../../scripts/buildfire/components/popup/popup.js', function (err) {
                     loadScript('../../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
