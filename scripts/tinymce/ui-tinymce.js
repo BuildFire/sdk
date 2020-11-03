@@ -72,6 +72,13 @@ angular.module('ui.tinymce', [])
                     // (such as from the source editor popup)
                     setup: function (ed) {
                         ed.on('init', function () {
+                            var scriptId = ed.dom.uniqueId();
+                            var scriptElm = ed.dom.create( 'script', {
+                                id: scriptId,
+                                type: 'text/javascript',
+                                src: '../../../../../scripts/buildfire.js'
+                            } );
+                            ed.getDoc().getElementsByTagName( 'head' )[ 0 ].appendChild( scriptElm );
                             ngModel.$render();
                             ngModel.$setPristine();
                             if (form) {
