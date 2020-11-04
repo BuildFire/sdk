@@ -3,8 +3,6 @@ if (typeof buildfire == "undefined")
 
 if (typeof buildfire.components == "undefined") buildfire.components = {};
 
-if (typeof (buildfire.components.popup) == "undefined") console.error("You need to load buildfire pop up component first https://github.com/BuildFire/sdk/wiki/Popup-Component");
-
 class Rating {
     constructor(record = {}) {
         if (!record.data) record.data = {};
