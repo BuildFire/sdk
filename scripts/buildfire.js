@@ -41,22 +41,20 @@ var buildfire = {
         }
 
     }, ratingSystem: {
-        inject: function (name) {
-            if(buildfire.fid !== 'widget') return;
-            if (typeof (buildfire.components) == "undefined" || typeof (buildfire.components.popup) == "undefined" && typeof (buildfire.components.ratingSystem) == "undefined") {
-                loadScript('../../../../scripts/buildfire/components/popup/popup.js', function (err) {
-                    loadScript('../../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
-                        var head = document.head;
-                        var link = document.createElement('link');
-                        link.rel = 'stylesheet';
-                        link.type = 'text/css';
-                        link.href = '../../../../scripts/buildfire/components/ratingSystem/index.min.css';
-                        head.appendChild(link);
-                        console.log('loaded components');
-                        buildfire.components.ratingSystem.injectRatingComponent(document.getElementById(name), name);
-                    });
+        inject: function () {
+            if (buildfire.fid !== 'widget') return;
+            if (typeof (buildfire.components) == "undefined" || typeof (buildfire.components.ratingSystem) == "undefined") {
+                loadScript('../../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
+                    var head = document.head;
+                    var link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.type = 'text/css';
+                    link.href = '../../../../scripts/buildfire/components/ratingSystem/index.min.css';
+                    head.appendChild(link);
+                    console.log('loaded components 3');
+                    buildfire.components.ratingSystem.injectRatings();
                 });
-            } else buildfire.components.ratingSystem.injectRatingComponent(document.getElementById(name), name);
+            } else buildfire.components.ratingSystem.injectRatings();
 
             function loadScript(url, callback) {
                 var head = document.head;
