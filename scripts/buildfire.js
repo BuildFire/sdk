@@ -42,14 +42,14 @@ var buildfire = {
 
     }, ratingSystem: {
         inject: function () {
-            if (buildfire.fid !== 'widget') return;
+            if (typeof buildfire === 'undefined') return;
             if (typeof (buildfire.components) == "undefined" || typeof (buildfire.components.ratingSystem) == "undefined") {
-                loadScript('../../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
+                loadScript('../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
                     var head = document.head;
                     var link = document.createElement('link');
                     link.rel = 'stylesheet';
                     link.type = 'text/css';
-                    link.href = '../../../../scripts/buildfire/components/ratingSystem/index.min.css';
+                    link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
                     head.appendChild(link);
                     console.log('loaded components 3');
                     buildfire.components.ratingSystem.injectRatings();
