@@ -16,3 +16,6 @@
 .mce-tinymce.mce-container.mce-panel { border: 1px solid #bbb; }
 .mce-edit-area.mce-container.mce-panel.mce-stack-layout-item { border-left: 0; border-right: 0;}
 
+body {
+    position: relative;
+}
