@@ -1,31 +1,25 @@
 
 tinymce.PluginManager.add("rating", function (editor, url) {
-  let onNodeSelected = (e) => {
-    if (!editor.selection.isCollapsed()) return;
-    if (!e || !e.element) return
-    let ratingComponent;
-    if (e && e.element) {
-      if (e.element.dataset && e.element.className == "rating-system-tinymce") {
-        ratingComponent = e.element;
+  editor.on('keydown', function (e) {
+    if (e.keyCode == 13) {
+      let currentNode = tinymce.activeEditor.selection.getNode();
+      let ratingComponent;
+      if (currentNode.dataset && currentNode.className == "rating-system-tinymce") {
+        ratingComponent = currentNode;
+      } else if (currentNode.nodeName == "SPAN" && currentNode.parentElement && currentNode.parentElement.className == "rating-system-tinymce") {
+        ratingComponent = currentNode.parentElement;
       }
-      if (e.element.nodeName == "SPAN" && e.element.parentElement && e.element.parentElement.className == "rating-system-tinymce") {
-        ratingComponent = e.element.parentElement;
-      }
-    }
-    if (ratingComponent) {
-      if (ratingComponent.nextElementSibling) {
-        editor.selection.select(ratingComponent.nextElementSibling, true);
-        editor.selection.collapse(true);
-      } else {
+      if (ratingComponent) {
+        e.preventDefault();
+        let br = editor.dom.create("br");
+        editor.dom.insertAfter(br, ratingComponent)
         let el = editor.dom.create("p");
         editor.dom.insertAfter(el, ratingComponent)
         editor.selection.select(el, true);
         editor.selection.collapse(true);
       }
     }
-  }
-  editor.on("NodeChange", onNodeSelected)
-  editor.on('click', onNodeSelected);
+  });
   editor.addButton("rating", {
     text: "Rating",
     icon: false,
@@ -51,8 +45,8 @@ tinymce.PluginManager.add("rating", function (editor, url) {
               editor.insertContent(
                 `<img src="trigger_errorasd" onerror="typeof buildfire !== 'undefined' && buildfire.ratingSystem.inject()" style="display: none">
                                   <div class="rating-system-tinymce" data-rating-id="${val}" style="text-align: center;" data-mce-style="text-align: center;">
-                                  <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
-                              </div><br>`
+                                      &#9733;&#9733;&#9733;&#9733;&#9733;
+                                  </div><br>`
               );
               modal.close();
             }

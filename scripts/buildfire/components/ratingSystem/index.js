@@ -419,7 +419,28 @@ function injectRatings(options = defaultOptions) {
 
 function injectAverageRating(container, ratingId, options) {
     if (!container) return console.error(`Container not found in DOM`);
-    container.innerHTML = "";
+
+    let wysiwygContent = null;
+    if (container.innerHTML.includes("★★★★★")) {
+        let wrapper = container;
+        if (container && container.children && container.children[0] && container.children[0].tagName === "SPAN") {
+            wrapper = container.children[0];
+        }
+        console.log({ wrapper, innerHTML: wrapper.innerHTML })
+        let content = wrapper.innerHTML.split("★★★★★")
+        let style = wrapper.style;
+        console.log({ style })
+        wysiwygContent = {
+            beforeStars: content[0],
+            afterStars: content[1],
+            style
+        }
+        console.log("HERE", wysiwygContent)
+    }
+
+    container.innerHTML = wysiwygContent ? wysiwygContent.beforeStars : "";
+
+    if (wysiwygContent) options.wysiwygContent = wysiwygContent;
 
     const filters = {
         filter: {
@@ -943,8 +964,7 @@ function closeRatingsScreen() {
 
 function createStarsUI(container, averageRating, options, ratingId, reRender) {
     const { hideAverage, showRatingsOnClick } = options;
-    container.innerHTML = "";
-    container.classList.add("flex-center");
+    // container.innerHTML = "";
     for (let i = 1; i < 6; i++) {
         let star = document.createElement("span");
         star.innerHTML = FULL_STAR;
@@ -970,6 +990,13 @@ function createStarsUI(container, averageRating, options, ratingId, reRender) {
         averageRatingSpan.innerText = averageRating.toFixed(1);
 
         container.appendChild(averageRatingSpan);
+    }
+
+    if (options && options.wysiwygContent) {
+        container.innerHTML += options.wysiwygContent.afterStars;
+        if(options.wysiwygContent.style) {
+            container.style = container.style.cssText + options.wysiwygContent.style.cssText;
+        }
     }
 
     if (showRatingsOnClick) {
