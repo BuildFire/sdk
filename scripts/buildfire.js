@@ -2833,6 +2833,11 @@ var buildfire = {
         getByItemId: function (options, callback) {
             buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
         }
+    },
+    userActivity: {
+        processUserEvent: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'userActivity.processUserEvent', options), callback);
+        }
     }
 };
 
@@ -2866,6 +2871,24 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
     stopVideos(iframes, videos);
 
 }, true);
+
+
+(function () {
+    var processedClick = false;
+    var handleEvent = function(eventType, event){
+        if (!processedClick) {
+            processedClick = true;
+            setTimeout(function(){ processedClick = false; }, 1000);
+            buildfire.userActivity.processUserEvent({ type: eventType });
+        }
+    };
+    document.addEventListener("click", function(e) {
+        handleEvent("click", e);
+    });
+    document.addEventListener("touchstart", function(e) {
+        handleEvent("touchstart", e);
+    });
+})();
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
