@@ -2883,10 +2883,14 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
         }
     };
     document.addEventListener("click", function(e) {
-        handleEvent("click", e);
+        setTimeout(function(){
+            handleEvent("click", e);
+        });
     });
     document.addEventListener("touchstart", function(e) {
-        handleEvent("touchstart", e);
+        setTimeout(function(){
+            handleEvent("touchstart", e);
+        });
     });
 })();
 
