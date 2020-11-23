@@ -2877,7 +2877,7 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
         if (!processedClick) {
             processedClick = true;
             setTimeout(function(){ processedClick = false; }, 1000);
-            buildfire.userActivity.processUserEvent({ type: eventType });
+            buildfire.auth.keepSessionAlive({ type: eventType });
         }
     };
     document.addEventListener("click", function(e) {
