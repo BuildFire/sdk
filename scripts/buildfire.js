@@ -2642,6 +2642,9 @@ var buildfire = {
         assignUserTags: function(tags, options, callback) {
             var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
             buildfire._sendPacket(p, callback);
+        },
+        keepSessionAlive: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'auth.keepSessionAlive', options), callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -2866,6 +2869,28 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
     stopVideos(iframes, videos);
 
 }, true);
+
+
+(function () {
+    var processedClick = false;
+    var handleEvent = function(eventType, event){
+        if (!processedClick) {
+            processedClick = true;
+            setTimeout(function(){ processedClick = false; }, 1000);
+            buildfire.auth.keepSessionAlive({ type: eventType });
+        }
+    };
+    document.addEventListener("click", function(e) {
+        setTimeout(function(){
+            handleEvent("click", e);
+        });
+    });
+    document.addEventListener("touchstart", function(e) {
+        setTimeout(function(){
+            handleEvent("touchstart", e);
+        });
+    });
+})();
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
