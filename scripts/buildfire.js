@@ -2642,6 +2642,9 @@ var buildfire = {
         assignUserTags: function(tags, options, callback) {
             var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
             buildfire._sendPacket(p, callback);
+        },
+        keepSessionAlive: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'auth.keepSessionAlive', options), callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -2832,11 +2835,6 @@ var buildfire = {
         },
         getByItemId: function (options, callback) {
             buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
-        }
-    },
-    userActivity: {
-        processUserEvent: function(options, callback) {
-            buildfire._sendPacket(new Packet(null, 'userActivity.processUserEvent', options), callback);
         }
     }
 };
