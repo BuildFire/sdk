@@ -290,6 +290,25 @@ nav.menuLeft.active{
 	right: 0 !important;
 }
 
+nav.menu .background-screen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  background-size: cover !important;
+  background-position: center !important;
+}
+nav.menu .gradient-screen {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+
 nav.menu a{
 	display:block;
 	width:100%;
@@ -342,6 +361,7 @@ nav.menu a.username p {
 	bottom: 0;
 	left: 0;
 	right: 0;
+	z-index: 999;
 }
 .menu-body-container.no-search {
 	/* fallback */
@@ -3128,6 +3148,12 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] nav.menu .menu-shadow{
 		display: none;
 	}
+	[type="app"] nav.menu .gradient-screen{
+		display: none;
+	}
+	[type="app"] nav.menu .background-screen{
+		display: none;
+	}
 	[type="app"] .menu-body-container{
 		pointer-events: none !important;
     width: calc(280px + 900px + -2px);
@@ -4629,6 +4655,168 @@ html[ios="true"] .profile-overlay .profile-content{
 }
 
 @media(max-width: 1200px){
+	/* Blur Animation - Side Menu */
+	body.blur-animation nav#menuNav.blur-animation{
+		transform: scale(0.1) translateX(0);
+		opacity: 0;
+		right: 0 !important;
+		pointer-events: none;
+		background-color: rgba(255, 255, 255, .2) !important;
+	}
+	body.blur-animation nav#menuNav.blur-animation.active{
+		pointer-events: all;
+		animation: sm-blur-animation .5s ease forwards;
+	}
+	body.blur-animation nav#menuNav.blur-animation{
+		animation: sm-blur-animation-close .5s ease-in-out forwards;
+	}
+	body.blur-animation nav#menuNav.blur-animation.active .gradient-screen {
+		opacity: .5;
+	}
+
+	body.blur-animation nav#menuNav.blur-animation.active .background-screen {
+		opacity: .5;
+		filter: blur(10px);
+	}
+
+	/* #appBody.blur-animation, */
+	body.blur-animation.has-menu #appBody,
+	body.blur-animation.has-menu #login,
+	body.blur-animation.has-menu #footerMenuParent{
+		animation: plugin-blur-animation .4s ease-in-out forwards;
+	}
+	/* #appBody.blur-animation.closing, */
+	body.blur-animation.closing #appBody {
+		animation: plugin-blur-animation-close .4s ease-in-out forwards;
+	}
+	@keyframes plugin-blur-animation{
+		0%{
+			filter: blur(0);
+			/* transform: scale(1); */
+		}
+		100%{
+			filter: blur(20px);
+			/* transform: scale(1.05); */
+		}
+	}
+	@keyframes plugin-blur-animation-close{
+		0%{
+			filter: blur(20px);
+			/* transform: scale(1.05); */
+		}
+		100%{
+			filter: blur(0);
+			/* transform: scale(1); */
+		}
+	}
+	@keyframes sm-blur-animation{
+		0%{
+			opacity: 0;
+			filter: blur(10px);
+			transform: scale(0.1) translateX(0);
+		}
+		50%{
+			opacity: 0;
+		}
+		100%{
+			opacity: 1;
+			filter: blur(0);
+			transform: scale(1) translateX(0);
+		}
+	}
+	@keyframes sm-blur-animation-close{
+		0%{
+			opacity: 1;
+			filter: blur(0);
+			transform: scale(1) translateX(0);
+		}
+		30%{
+			opacity: 0;
+		}
+		100%{
+			opacity: 0;
+			filter: blur(10px);
+			transform: scale(0.1) translateX(0);
+		}
+	}
+	/* Blur Animation - Side Menu - END */
+
+	/* Fade In Animation - Side Menu */
+	body.fade-in-animation nav#menuNav{
+		transform: scale(0.1) translateX(0);
+		opacity: 0;
+		right: 0 !important;
+		pointer-events: none !important;
+		animation: sm-fade-in-animation-close .4s ease-in-out forwards;
+	}
+	body.fade-in-animation nav#menuNav.active{
+		pointer-events: all !important;
+		animation: sm-fade-in-animation .3s ease forwards;
+		/* display: block; */
+	}
+	body.fade-in-animation nav#menuNav *{
+		pointer-events: none !important;
+	}
+	body.fade-in-animation nav#menuNav.active *{
+		pointer-events: auto !important;
+	}
+	body.fade-in-animation nav#menuNav .menu-body-container{
+		opacity: 0;
+		filter: blur(10px);
+		transform: scale(1.5) translateX(0);
+	}
+	body.fade-in-animation nav#menuNav.active .menu-body-container{
+		animation: sm-fade-content-animation .2s ease forwards;
+	}
+	body.fade-in-animation nav#menuNav.active .menu-close-container{
+		pointer-events: none !important;
+	}
+	@keyframes sm-fade-content-animation{
+		0%{
+			opacity: 0;
+			filter: blur(10px);
+			transform: scale(1.5) translateX(0);
+		}
+		50%{
+			opacity: 0;
+		}
+		100%{
+			opacity: 1;
+			filter: blur(0);
+			transform: scale(1) translateX(0);
+		}
+	}
+	@keyframes sm-fade-in-animation{
+		0%{
+			opacity: 0;
+			filter: blur(10px);
+			transform: scale(1.5) translateX(0);
+		}
+		50%{
+			opacity: 0;
+		}
+		100%{
+			opacity: 1;
+			filter: blur(0);
+			transform: scale(1) translateX(0);
+		}
+	}
+	@keyframes sm-fade-in-animation-close{
+		0%{
+			opacity: 1;
+			filter: blur(0);
+			transform: scale(1) translateX(0);
+		}
+		30%{
+			opacity: 0;
+		}
+		100%{
+			opacity: 0;
+			filter: blur(10px);
+			transform: scale(1.5) translateX(0);
+		}
+	}
+	/* Fade In Animation - Side Menu END*/
 	#pluginContainer{
 		height: 100vh;
 		position: absolute;
