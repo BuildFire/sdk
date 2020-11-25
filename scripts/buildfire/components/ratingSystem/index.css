@@ -31,6 +31,11 @@
   font-weight: bold;
 }
 
+span.rating-time-ago {
+    font-size: 14px !important;
+    opacity: 0.6;
+}
+
 .add-rating-subtitle {
   margin-top: 10px;
   width: 100%;
@@ -158,7 +163,6 @@
 }
 
 .rating-name-and-stars {
-  font-size: ;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -171,11 +175,12 @@
 }
 
 .rating-user-display-name {
-  font-size: 15px;
+  font-size: 15px !important;
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 22px;
 }
 
 .rating-review-text {
@@ -236,12 +241,21 @@
 }
 
 .overall-rating-stars {
-  font-size: 40px;
+  font-size: 40px !important;
   color: #fcb040;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.ovarall-rating-container span {
+  font-size: 40px !important;
+}
+
+.stars-span span {
+  font-size: 14px !important;
+
 }
 
 .delete-button {
@@ -301,7 +315,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 40px;
+  font-size: 40px !important;
   height: 40px;
   color: #fcb040;
   margin-top: 10px;

@@ -381,14 +381,20 @@ function getNotRatedUI(container) {
     }
 }
 
-function injectRatings(options = defaultOptions) {
+function injectRatings(options = defaultOptions, callback) {
     let elements = options.elements;
     if (typeof elements === "undefined")
         elements = document.querySelectorAll("[data-rating-id]");
 
     let ratingIds = options.ratingIds;
     if (typeof ratingIds === "undefined")
-        ratingIds = Array.from(elements).map((element) => element.dataset.ratingId);
+        ratingIds = Array.from(elements).map((element, index) => {
+            let id = element.dataset.ratingId;
+            if (id.includes("tinymce") && !element.innerHTML.includes("\u2605 \u2605 \u2605 \u2605 \u2605")) {
+                return undefined;
+            }
+            return id;
+        });
 
     if (options.pluginLevel === true) {
         let instanceId = buildfire.getContext().instanceId;
@@ -407,10 +413,14 @@ function injectRatings(options = defaultOptions) {
         if (err) return console.error(err);
 
         ratingIds.forEach((ratingId, index) => {
+            if (!ratingId) return;
             let summary = summaries.find((s) => s.ratingId === ratingId);
 
             options.notRated = !summary;
             options.summary = summary;
+
+            options.onBackButtonClick = buildfire.navigation.onBackButtonClick;
+            options.callback = callback;
 
             injectAverageRating(elements[index], ratingId, options);
         });
@@ -419,32 +429,37 @@ function injectRatings(options = defaultOptions) {
 
 function injectAverageRating(container, ratingId, options) {
     if (!container) return console.error(`Container not found in DOM`);
-    container.innerHTML = "";
-
+    let containerClone = container.cloneNode(true);
     const filters = {
         filter: {
             "_buildfire.index.string1": ratingId,
         },
     };
 
+    let isFromWysiwyg = container.innerHTML.split("\u2605 \u2605 \u2605 \u2605 \u2605").length == 2;
+
     const reRender = () => {
         delete options.summary;
+        container.innerHTML = containerClone.innerHTML;
         injectAverageRating(container, ratingId, options);
     };
 
     if (options && options.summary) {
         let averageRating = options.summary.total / options.summary.count;
-        createStarsUI(container, averageRating, options, ratingId, reRender);
+        createStarsUI(container, averageRating, options, ratingId, reRender, isFromWysiwyg);
     } else {
         Summaries.search(filters, (err, summaries) => {
             if (err) return console.error(err);
+
             if (!summaries || !summaries[0] || summaries[0].count === 0) {
                 summaries = [{ total: 0, count: 1 }]
             }
 
+            options.summary = summaries[0];
+
             let averageRating = summaries[0].total / summaries[0].count;
 
-            createStarsUI(container, averageRating, options, ratingId, reRender);
+            createStarsUI(container, averageRating, options, ratingId, reRender, isFromWysiwyg);
         });
     }
 }
@@ -521,8 +536,7 @@ function openAddRatingScreen(
             backDrop.className = "add-rating-screen";
             backDrop.addEventListener("click", (e) => {
                 if (e.target.className == "add-rating-screen") {
-                    closeAddRatingScreen();
-                    buildfire.navigation.onBackButtonClick = currentBackBehavior;
+                    buildfire.navigation.onBackButtonClick();
                 }
             });
 
@@ -537,7 +551,6 @@ function openAddRatingScreen(
             cancelButton.innerHTML = "&#10005;";
             cancelButton.addEventListener("click", () => {
                 closeAddRatingScreen();
-                buildfire.navigation.onBackButtonClick = currentBackBehavior;
             });
 
             let title = document.createElement("div");
@@ -654,18 +667,19 @@ function openAddRatingScreen(
             submitButton.addEventListener("click", () => {
                 if (rating.id) {
                     Ratings.set(originalRating, rating, (err, updatedRating) => {
-                        closeAddRatingScreen();
-                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
+                        buildfire.navigation.onBackButtonClick();
                         buildfire.messaging.sendMessageToControl({ type: "ratings" });
                         callback(err, updatedRating);
+                        if (options.callback) options.callback(err, updatedRating);
                         buildfire.components.ratingSystem.onRating(updatedRating)
                     });
                 } else {
                     Ratings.add(rating, (err, addedRating) => {
+                        buildfire.navigation.onBackButtonClick();
                         closeAddRatingScreen();
-                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         buildfire.messaging.sendMessageToControl({ type: "ratings" });
                         callback(err, addedRating);
+                        if (options.callback) options.callback(err, addedRating);
                         buildfire.components.ratingSystem.onRating(addedRating)
                     });
                 }
@@ -783,6 +797,14 @@ function createRatingUI(rating, editRatingButton, options) {
             size: "m",
             aspect: "1:1",
         });
+        image.addEventListener("click", () => {
+            const options = {
+                images: rating.images,
+                index: i
+            };
+
+            buildfire.imagePreviewer.show(options, callback)
+        })
         ratingImages.appendChild(image);
     }
 
@@ -796,10 +818,10 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 
     buildfire.spinner.show();
 
-    let currentBackBehavior = buildfire.navigation.onBackButtonClick;
     buildfire.navigation.onBackButtonClick = () => {
+        if (options.callback) options.callback(undefined, null)
         closeRatingsScreen();
-        buildfire.navigation.onBackButtonClick = currentBackBehavior;
+        buildfire.navigation.onBackButtonClick = options.onBackButtonClick;
     };
 
     let header = document.createElement("div");
@@ -807,9 +829,12 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
     let headerTitle = document.createElement("h5");
     headerTitle.innerText = (options && options.translations && options.translations.overallRating) || defaultOptions.translations.overallRating;
     headerTitle.style.fontWeight = 400;
+    headerTitle.style.fontSize = "14px";
     header.appendChild(headerTitle);
 
     let headerSubtitle = document.createElement("h6");
+    headerSubtitle.style.fontSize = "12px";
+    headerSubtitle.style.fontWeight = "normal";
     header.appendChild(headerSubtitle);
 
     let overallRating = document.createElement("div");
@@ -860,7 +885,6 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                 addRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
                 addRatingButton.addEventListener("click", () => {
                     openAddRatingScreen(ratingId, options, () => {
-                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         reRender();
                         reRenderComponent();
                     });
@@ -872,7 +896,6 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                 editRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating;
                 editRatingButton.addEventListener("click", () => {
                     openAddRatingScreen(ratingId, options, () => {
-                        buildfire.navigation.onBackButtonClick = currentBackBehavior;
                         reRender();
                         reRenderComponent();
                     });
@@ -921,7 +944,15 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 
 function checkIfUserIsAdmin(cb) {
     buildfire.auth.getCurrentUser((err, loggedInUser) => {
-        if (err || !loggedInUser || !loggedInUser.tags) return cb(loggedInUser, false);
+        if (err || !loggedInUser) {
+            return buildfire.auth.login(
+                { allowCancel: true, showMenu: true },
+                (err, user) => {
+                    if (user) return checkIfUserIsAdmin(cb);
+                }
+            );
+        }
+        if (!loggedInUser.tags) return cb(loggedInUser, false);
         Object.keys(loggedInUser.tags).forEach(appId => {
             let tagIndex = loggedInUser.tags[appId].findIndex(tagObject => tagObject.tagName == ADMIN_TAG);
             if (tagIndex != -1) return cb(loggedInUser, true);
@@ -938,13 +969,39 @@ function closeRatingsScreen() {
     let ratingsScreen = document.querySelector(".ratings-screen");
 
     document.body.removeChild(ratingsScreen);
-    buildfire.navigation.restoreBackButtonClick();
 }
 
-function createStarsUI(container, averageRating, options, ratingId, reRender) {
+function createStarsUI(container, averageRating, options, ratingId, reRender, isFromWysiwyg) {
     const { hideAverage, showRatingsOnClick } = options;
-    container.innerHTML = "";
-    container.classList.add("flex-center");
+
+    let content, containerStylesWysiwyg;
+
+    if (!isFromWysiwyg) {
+        container.innerHTML = "";
+        container.classList.add("flex-center");
+    } else {
+        content = container.innerHTML;
+        content = content.split("\u2605 \u2605 \u2605 \u2605 \u2605")
+
+        if (container.children && container.children[0]) {
+            containerStylesWysiwyg = container.children[0].style;
+            // override appStyles.css
+            if (containerStylesWysiwyg.color) {
+                let style = document.createElement("style");
+                style.innerHTML = `
+                    span.full-star {
+                        color: ${containerStylesWysiwyg.color} !important;
+                    }
+
+                    span.full-star span {
+                        color: ${containerStylesWysiwyg.color} !important;
+                    }
+                `;
+                document.body.appendChild(style)
+            }
+        }
+        container.innerHTML = "";
+    }
     for (let i = 1; i < 6; i++) {
         let star = document.createElement("span");
         star.innerHTML = FULL_STAR;
@@ -977,6 +1034,18 @@ function createStarsUI(container, averageRating, options, ratingId, reRender) {
         container.addEventListener("click", () => {
             openRatingsScreen(ratingId, options, reRender);
         });
+    }
+
+    if (isFromWysiwyg) {
+        if (content) {
+            container.innerHTML = content[0] + container.innerHTML + content[1];
+        }
+        if (containerStylesWysiwyg) {
+            container.style = container.style.cssText + containerStylesWysiwyg.cssText;
+            if (container.children && container.children[0]) {
+                container.children[0].style = container.style.cssText + containerStylesWysiwyg.cssText;
+            }
+        }
     }
 }
 
