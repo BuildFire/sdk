@@ -985,6 +985,20 @@ function createStarsUI(container, averageRating, options, ratingId, reRender, is
 
         if (container.children && container.children[0]) {
             containerStylesWysiwyg = container.children[0].style;
+            // override appStyles.css
+            if (containerStylesWysiwyg.color) {
+                let style = document.createElement("style");
+                style.innerHTML = `
+                    span.full-star {
+                        color: ${containerStylesWysiwyg.color} !important;
+                    }
+
+                    span.full-star span {
+                        color: ${containerStylesWysiwyg.color} !important;
+                    }
+                `;
+                document.body.appendChild(style)
+            }
         }
         container.innerHTML = "";
     }
