@@ -33,50 +33,6 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             fontName: "Lato"
         };
 
-        $scope.loadWebpackFrames = function(config) {
-            postMaster.controlPluginAPI.getContext(null, function(err, context){
-                context.appTheme = controlDefaultTheme;
-                var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
-                var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
-
-                if (config.control.settings.enabled) {
-                    $scope.currentControl = $scope.settingsSrc = root + '/control/settings/index.html?fid=controlSettings&' + contextQueryParameter;
-                }
-
-                if (config.control.design.enabled) {
-                    $scope.currentControl = $scope.designSrc = root + '/control/design/index.html?fid=controlDesign&' + contextQueryParameter;
-                }
-
-                if (config.control.content.enabled) {
-                    $scope.currentControl = $scope.contentSrc = root + '/control/content/index.html?fid=controlContent&' + contextQueryParameter;
-                }
-
-                $scope.pluginControlIframeVisible = true;
-
-                if(config.control.customTabs && config.control.customTabs.length) {
-                    for(var i = 0 ; i < config.control.customTabs.length; i++) {
-                        var tab = config.control.customTabs[i];
-                        if(tab && tab.url) {
-                            if(tab.url.indexOf('//') != 0 && tab.url.indexOf('http://') != 0 && tab.url.indexOf('https://') != 0) {
-                                var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/';
-                                // strip leading '/' if any
-                                var customTabUrl = tab.url.indexOf("/") == 0 ? tab.url.substr(1) : tab.url;
-                                var contextSeparator = customTabUrl.indexOf('?') > -1 ? '&' : '?';
-                                customTabUrl += contextSeparator + contextQueryParameter;
-                                tab.controlUrl = $sce.trustAsResourceUrl(root + customTabUrl);
-                            } else {
-                                tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
-                            }
-                        }
-                    }
-                    $scope.customTabs = config.control.customTabs;
-                }
-
-                if (!$scope.$$phase)
-                    $scope.$apply();
-            });
-        };
-
         $scope.loadFrames = function (pluginRoot, config) {
             postMaster.controlPluginAPI.getContext(null, function(err, context){
                 context.appTheme = controlDefaultTheme;
