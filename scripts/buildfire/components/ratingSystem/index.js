@@ -390,7 +390,7 @@ function injectRatings(options = defaultOptions, callback) {
     if (typeof ratingIds === "undefined")
         ratingIds = Array.from(elements).map((element, index) => {
             let id = element.dataset.ratingId;
-            if (id.includes("tinymce") && !element.innerHTML.includes("★ ★ ★ ★ ★")) {
+            if (id.includes("tinymce") && !element.innerHTML.includes("\u2605 \u2605 \u2605 \u2605 \u2605")) {
                 return undefined;
             }
             return id;
@@ -436,7 +436,7 @@ function injectAverageRating(container, ratingId, options) {
         },
     };
 
-    let isFromWysiwyg = container.innerHTML.split("★ ★ ★ ★ ★").length == 2;
+    let isFromWysiwyg = container.innerHTML.split("\u2605 \u2605 \u2605 \u2605 \u2605").length == 2;
 
     const reRender = () => {
         delete options.summary;
@@ -981,7 +981,7 @@ function createStarsUI(container, averageRating, options, ratingId, reRender, is
         container.classList.add("flex-center");
     } else {
         content = container.innerHTML;
-        content = content.split("★ ★ ★ ★ ★")
+        content = content.split("\u2605 \u2605 \u2605 \u2605 \u2605")
 
         if (container.children && container.children[0]) {
             containerStylesWysiwyg = container.children[0].style;
