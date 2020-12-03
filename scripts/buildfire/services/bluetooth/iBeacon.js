@@ -61,6 +61,9 @@ buildfire.services.bluetooth.iBeacon = {
         var p = new Packet(null, 'iBeacon.isLocationEnabled');
         buildfire._sendPacket(p, callback);
     }
+    ,locationEnabled: function (result) {
+        console.log('iBeacon.onLocationEnabledResult', result);
+    }
     ,debugNotifications: {
         enable: function (callback) {
             var p = new Packet(null, 'iBeacon.debugNotifications.enable');
@@ -77,4 +80,7 @@ if(buildfire._whitelistedCommands) {
     buildfire._whitelistedCommands.push('services.bluetooth.iBeacon.onRegionEntered');
     buildfire._whitelistedCommands.push('services.bluetooth.iBeacon.onRegionExited');
     buildfire._whitelistedCommands.push('services.bluetooth.iBeacon.onRangingUpdate');
+
+    buildfire._whitelistedCommands.push('services.bluetooth.iBeacon.locationEnabled');
+    buildfire._whitelistedCommands.push('services.bluetooth.iBeacon.monitoredRegions');
 }
