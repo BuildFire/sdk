@@ -29,6 +29,10 @@ buildfire.services.bluetooth.iBeacon = {
         var p = new Packet(null, 'iBeacon.stopBeaconMonitor', beaconRegion);
         buildfire._sendPacket(p, callback);
     }
+    ,getMonitoredRegions: function (callback) {
+        var p = new Packet(null, 'iBeacon.getMonitoredRegions');
+        buildfire._sendPacket(p, callback);
+    }
 
     ,startRanging:function(beaconRegion, callback){
         var p = new Packet(null, 'iBeacon.startBeaconRanging', beaconRegion);
@@ -38,6 +42,11 @@ buildfire.services.bluetooth.iBeacon = {
         var p = new Packet(null, 'iBeacon.stopBeaconRanging', beaconRegion);
         buildfire._sendPacket(p, callback);
     }
+    ,getRangedRegions: function (callback) {
+        var p = new Packet(null, 'iBeacon.getRangedRegions');
+        buildfire._sendPacket(p, callback);
+    }
+
     ,onRegionEntered: function(err,beaconRegion){
         console.log('iBeacon.onRegionEntered', JSON.stringify(beaconRegion));
     }
@@ -46,6 +55,21 @@ buildfire.services.bluetooth.iBeacon = {
     }
     ,onRangingUpdate: function(err,beaconRegion){
         console.log('iBeacon.onRangingUpdate', JSON.stringify(beaconRegion));
+    }
+
+    ,isLocationEnabled: function (callback) {
+        var p = new Packet(null, 'iBeacon.isLocationEnabled');
+        buildfire._sendPacket(p, callback);
+    }
+    ,debugNotifications: {
+        enable: function (callback) {
+            var p = new Packet(null, 'iBeacon.debugNotifications.enable');
+            buildfire._sendPacket(p, callback);
+        },
+        disable: function (callback) {
+            var p = new Packet(null, 'iBeacon.debugNotifications.disable');
+            buildfire._sendPacket(p, callback);
+        }
     }
 };
 
