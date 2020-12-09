@@ -2569,13 +2569,13 @@ var buildfire = {
                 }
             };
             
-            buildfire.appData.search(searchOptions, "$bf_deeplinks", function(err, result){
+            buildfire.appData.search(searchOptions, "$$_deeplinks", function(err, result){
                 if(err) console.log(err);
                 if(result && result.length > 0) {
                     var foundDeeplink = result[0];
-                    buildfire.appData.update(foundDeeplink.id, "$bf_deeplinks", callback);
+                    buildfire.appData.update(foundDeeplink.id, "$$_deeplinks", callback);
                 } else {
-                    buildfire.appData.insert(deeplinkData, "$bf_deeplinks", false, callback);
+                    buildfire.appData.insert(deeplinkData, "$$_deeplinks", false, callback);
                 }
             });
         },
@@ -2587,10 +2587,10 @@ var buildfire = {
                     "_buildfire.index.string1" : instanceId
                 }
             }
-            buildfire.appData.search(searchOptions,"$bf_deeplinks", callback);
+            buildfire.appData.search(searchOptions,"$$_deeplinks", callback);
         },
         unregisterDeeplink : function(recordId, callback) {
-            buildfire.appData.delete(recordId,"$bf_deeplinks", callback);
+            buildfire.appData.delete(recordId,"$$_deeplinks", callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
