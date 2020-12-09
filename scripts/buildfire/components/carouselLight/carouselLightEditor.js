@@ -43,7 +43,7 @@ buildfire.components.carousel._getDomSelector = function (selector) {
 buildfire.components.carousel.editor = function (selector, items, speed, order, display) {//added
     // carousel editor requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use carousel components");
-    this.settings=(speed)?{speed:speed,order:order,display:display}:null;//added
+   // this.settings=(speed)?{speed:speed,order:order,display:display}:null;//added
     this.selector = selector;
     this.items = [];
     this.init(selector);
@@ -57,12 +57,7 @@ buildfire.components.carousel.editor.prototype = {
     init: function (selector) {
         this.selector = buildfire.components.carousel._getDomSelector(selector);
         this._renderTemplate();
-        if(this.settings){
-            this._appendSettings();
-            this.setOptionSpeed(this.settings.speed);
-            this.setOptionOrder(this.settings.order);
-            this.setOptionDisplay(this.settings.display);
-        }
+        this._appendSettings();
         this.itemsContainer = this.selector.querySelector(".carousel-items");
         this._initEvents();
     },
@@ -80,44 +75,38 @@ buildfire.components.carousel.editor.prototype = {
         console.warn("please handle onAddItems", item);
     },
     onOptionSpeedChange:function (speed){//added
-        console.warn("please handle onOptionSpeedChange", speed);//added
+       // console.warn("please handle onOptionSpeedChange", speed);//added
     },//added
     onOptionOrderChange:function (order){//added
-        console.warn("please handle onOptionOrderChange", order);//added
+       // console.warn("please handle onOptionOrderChange", order);//added
     },//added
-    onOptioDisplayChange:function (display){//added
-        console.warn("please handle onOptioDisplayChange", display);//added
+    onOptionDisplayChange:function (display){//added
+        //console.warn("please handle onOptioDisplayChange", display);//added
     },//added
     // This will be triggered when you delete an item
     onDeleteItem: function (item, index) {
         console.warn("please handle onDeleteItem", item);
     },
     setOptionSpeed: function (speed) {//added
-        if(!this.settings)this._appendSettings();//added
-
-        speed=(this.speedArray.map(el=>{return el.text;}).includes(speed))?this.speedArray.find(el=>el.text==speed).value:speed;
-        this.settings.speed=(this.speedArray.map(el=>{return el.value;}).includes(Number(speed)))?speed:this.defaultSettings.speed;//added
-
-        var speedSelect=this.selector.querySelector(".change-speed");//added
-        speedSelect.value=Number(this.settings.speed);//added
+       if(this.state && this.state.Speed)
+       {
+           this.state.Speed = Number(speed);
+           this._saveState();
+       }
     },//added
     setOptionOrder: function (order) {//added
-        if(!this.settings)this._appendSettings();
-
-        order=(this.orderArray.map(el=>{return el.text;}).includes(order))?this.orderArray.find(el=>el.text==order).value:order;
-        this.settings.order=(this.orderArray.map(el=>{return el.value;}).includes(Number(order)))?order:this.defaultSettings.order;//added
-
-        var orderSelect=this.selector.querySelector(".change-random");//added
-        orderSelect.value=Number(this.settings.order);//added
+        if(this.state && this.state.Order)
+        {
+            this.state.Order = Number(order);
+            this._saveState();
+        }
     },//added
     setOptionDisplay: function (display) {//added
-        if(!this.settings)this._appendSettings();
-
-        display=(this.displayArray.map(el=>{return el.text;}).includes(display))?this.displayArray.find(el=>el.text==display).value:display;
-        this.settings.display=(this.displayArray.map(el=>{return el.value;}).includes(Number(display)))?display:this.defaultSettings.display;//added
-
-        var displaySelect=this.selector.querySelector(".change-display");//added
-        displaySelect.value=Number(this.settings.display);//added
+        if(this.state && this.state.Display )
+        {
+            this.state.Display = Number(display);
+            this._saveState();
+        }
     },//added
     // this method allows you to replace the slider image or append to then if appendItems = true
     loadItems: function (items, appendItems) {
@@ -230,113 +219,159 @@ buildfire.components.carousel.editor.prototype = {
             });
         })(item);
     },
+    _saveState: function (){
+        let saveObj={
+            settings:{speed:this.state.Speed,order:this.state.Order,display:this.state.Display},
+            text:{visible:this.state.Visible,position:this.state.Positions,alignment:this.state.Alignment}};
+        buildfire.datastore.save(saveObj, 'carouselSettings',function(err,data){
+            if(err)
+                console.log('there was a problem saving your data');
+        });
+    },
     _appendSettings: function (){
         var me=this;
-        me.speedArray = [{text:'Still',value:0},{text:'1 sec',value:1000},{text:'2 sec',value:2000},{text:'3 sec',value:3000},
-        {text:'4 sec',value:4000},{text:'5 sec',value:5000},{text:'7 sec',value:7000},{text:'10 sec',value:10000},{text:'15 sec',value:15000}];
-        me.orderArray = [{text:"In order",value:0},{text:"Random",value:1}];//added
-        me.displayArray = [{text:"All images",value:0},{text:"One image",value:1}];//added
 
-        me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value};
+        me.control={
+            "Settings":{
+                "Speed":[{"text":"Still","value":0},{"text":"1 sec","value":1000},{"text":"2 sec","value":2000},
+                    {"text":"3 sec","value":3000},{"text":"4 sec","value":4000},{"text":"5 sec","value":5000},{"text":"7 sec","value":7000},
+                    {"text":"10 sec","value":10000},{"text":"15 sec","value":15000}],
+                "Order":[{"text":"In order","value":0},{"text":"Random","value":1}],
+                "Display":[{"text":"All images","value":0},{"text":"One image","value":1}]
+            },
+            "Hover Text":{
+                "Visible":false,
+                "Positions":[{"text":"Top","value":0},{"text":"Middle","value":1},{"text":"Bottom","value":2}],
+                "Alignment":[{"text":"Left","value":0},{"text":"Center","value":1},{"text":"Right","value":2}]}
+        };
+        buildfire.datastore.get('carouselSettings',function(err,response){
+            if(err || !response || !response.data || !response.data.settings || !response.data.text){
+                me.state={"Speed":me.control.Settings.Speed[5].value,"Order":me.control.Settings.Order[0].value,"Display":me.control.Settings.Display[0].value,
+                "Visible":me.control["Hover Text"].Visible,"Positions":me.control["Hover Text"].Positions[1].value,"Alignment":me.control["Hover Text"].Alignment[1].value
+                };
+            }else{
+                me.state={"Speed":response.data.settings.speed,"Order":response.data.settings.order,"Display":response.data.settings.display,
+                "Visible":response.data.text.visible,"Positions":response.data.text.position,"Alignment":response.data.text.alignment
+                };
+            }
+            Object.keys(me.control).forEach(attribute => {
+                var controlDropDown = document.createElement("div");// added
+                controlDropDown.className="dropdown";
+                controlDropDown.setAttribute("style","overflow: unset; display: inline-block; margin-left: 10px;");//added
+                var btn = document.createElement("button"); 
+                btn.className="btn btn-default dropdown-toggle";
+                btn.innerHTML = attribute+"&#160;"; 
 
-        if(!me.settings)me.settings={speed:me.defaultSettings.speed,order:me.defaultSettings.order,display:me.defaultSettings.display};
+                var dropDownIcon = document.createElement("span");
+                dropDownIcon.className = "caret";
+                btn.appendChild(dropDownIcon);
+                controlDropDown.appendChild(btn);//added
 
-        if(!me.settings.speed)me.settings.speed=me.defaultSettings.speed;
-        if(!me.settings.order)me.settings.order=me.defaultSettings.order;
-        if(!me.settings.display)me.settings.display=me.defaultSettings.display;
 
-        var editContainer = document.createElement("div");//added
+                var controlDropDownMenu = document.createElement("ul");
+                controlDropDownMenu.className="dropdown-menu";
+                controlDropDownMenu.setAttribute("style","min-width: 0px !important; overflow: unset; margin-top: 0px;");
 
-        var speedDropDown = document.createElement("div");// added
-        var speedDropDownLabel = document.createElement("span");//added
-        var selector =  document.createElement("select");//added
+                var clickFields=[];
+                var clickOptions=[];
 
-        me.speedArray.forEach(el=>{//added
-            var opt = document.createElement('option');//added
-            opt.value = el.value;//added
-            opt.innerHTML = el.text;//added
-            selector.appendChild(opt);//added
+                var sideBarHidden="min-width: 130px !important;top: 0; left: 100%;  margin-top: -1px;";
+                var sideBarVisible="display: block;"+sideBarHidden;
+                var subMenuStyleEnabled="overflow: unset; margin-top: 0px;";
+                var subMenuStyleDisabled=subMenuStyleEnabled+" opacity:0.2;";
+                Object.keys(me.control[attribute]).forEach(key => {
+                    let controlElement = document.createElement("li");
+                    let controlLabel = document.createElement("a");
+                    controlElement.appendChild(controlLabel);
+
+                    if(typeof me.control[attribute][key] === "boolean"){
+                        controlLabel.innerHTML=((me.state.Visible)?"<span>&#10004;</span>&#160;&#160;"+key:"Hidden");
+                        clickFields.push({attribute:attribute,name:key,label:controlLabel,showObj:null,list:false});
+                    }
+                    else{
+                        controlLabel.innerHTML=key;
+                        let controlIcon = document.createElement("span");
+                        controlIcon.className = "caret";
+                        controlIcon.setAttribute("style",`float:right; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); 
+                        -o-transform: rotate(-90deg); -ms-transform: rotate(-90deg); transform: rotate(-90deg);`);    
+                        controlLabel.appendChild(controlIcon);
+                        controlElement.className="dropdown-submenu "+key;
+                        controlElement.setAttribute("style",(me.state.Visible||Object.keys(me.control)[1]!=attribute)?subMenuStyleEnabled:subMenuStyleDisabled);
+                        let controlList = document.createElement("ul");
+                        controlList.className="dropdown-menu";
+                        controlList.setAttribute("style",sideBarHidden);
+                        me.control[attribute][key].forEach(el=>{//added
+                            let opt = document.createElement('li');//added
+                            let optA = document.createElement('a');
+                            optA.innerHTML = ((el.value==me.state[key])?"<span>&#10004;</span> ":"&#160;&#160;")+el.text;//added
+                            clickOptions.push({key:key,text:el.text,value:el.value,element:optA});
+                            opt.appendChild(optA);
+                            controlList.appendChild(opt);//added
+                        });
+                        controlElement.appendChild(controlList);
+                        clickFields.push({attribute:attribute,name:key,label:controlLabel,showObj:controlList,list:true});
+                    }
+                    controlDropDownMenu.appendChild(controlElement);
+
+                });
+
+                clickFields.forEach((el,index)=>{
+                    let first=clickFields[(clickFields.length+index+1)%clickFields.length]
+                    ,second=clickFields[(clickFields.length+index+2)%clickFields.length];
+                    if(el.list){
+                        el.label.addEventListener('click', function(e) {
+                            if(me.state.Visible||Object.keys(me.control)[1]!=el.attribute){
+                                el.showObj.setAttribute("style",sideBarVisible);//added
+                                first.showObj.setAttribute("style",sideBarHidden);
+                                second.showObj.setAttribute("style",sideBarHidden);
+                            }
+                        });
+                    }else{
+                        el.label.addEventListener('click', function(e) {
+                            me.state.Visible=!me.state.Visible;
+                            el.label.innerHTML=(me.state.Visible)?"<span>&#10004;</span>&#160;&#160;"+el.name:"Hidden";
+
+                            first.showObj.setAttribute("style",sideBarHidden);
+                            second.showObj.setAttribute("style",sideBarHidden);
+
+                            let firstSubMenu=me.selector.querySelector("."+first.name),
+                            secondSubMenu=me.selector.querySelector("."+second.name);
+                            firstSubMenu.setAttribute("style",(me.state.Visible)?subMenuStyleEnabled:subMenuStyleDisabled);
+                            secondSubMenu.setAttribute("style",(me.state.Visible)?subMenuStyleEnabled:subMenuStyleDisabled);
+                            me._saveState();
+                        });
+                    }
+                });
+
+                clickOptions.forEach(option=>{
+                    option.element.addEventListener('click', function(e) {
+                        let findLast = clickOptions.find(element => element.key == option.key && element.value == me.state[option.key]);
+                        if(findLast)findLast.element.innerHTML="&#160;&#160;"+findLast.text;
+                        option.element.innerHTML="<span>&#10004;</span> "+option.text;
+                        me.state[option.key] = option.value;
+                        me._saveState();
+                    })
+                });
+
+                controlDropDown.appendChild(controlDropDownMenu);
+                var container = me.selector.querySelector(".settings-container");
+                container.appendChild(controlDropDown);//added
+
+                controlDropDown.addEventListener('mouseleave', function(e) {
+                    if (controlDropDown.classList.contains('open')) {
+                        controlDropDown.classList.remove('open');
+                        clickFields.forEach(el=>{
+                            if(el.showObj)el.showObj.setAttribute("style",sideBarHidden);
+                        });
+                    }
+                })
+                controlDropDown.addEventListener('mouseenter', function(e) {
+                    if (!controlDropDown.classList.contains('open')) {
+                        controlDropDown.classList.add('open'); 
+                    } 
+                })
+            });
         });
-
-        var orderDropDown = document.createElement("div");// added
-        var orderDropDownLabel = document.createElement("span");//added
-        var orderSelector =  document.createElement("select");//added
-        
-        me.orderArray.forEach(el=>{//added
-            var opt = document.createElement('option');//added
-            opt.value = el.value;//added
-            opt.innerHTML = el.text;//added
-            orderSelector.appendChild(opt);//added
-        });
-
-        var displayDropDown = document.createElement("div");// added
-        var displayDropDownLabel = document.createElement("span");//added
-        var displaySelector =  document.createElement("select");//added
-        
-        me.displayArray.forEach(el=>{//added
-            var opt = document.createElement('option');//added
-            opt.value = el.value;//added
-            opt.innerHTML = el.text;//added
-            displaySelector.appendChild(opt);//added
-        });
-
-        speedDropDown.className="screen layouticon pull-left";//added
-        selector.className="form-control dropdown margin-left-zero change-speed";//added
-        speedDropDownLabel.className="labels pull-left medium";//added
-
-        editContainer.setAttribute("style","margin-left:94px;");//added
-        speedDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-top:7px;");//added
-        selector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:64px ; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
-
-        orderDropDown.className="screen layouticon pull-left";//added
-        orderSelector.className="form-control dropdown margin-left-zero change-random";//added
-        orderDropDownLabel.className="labels pull-left medium";//added
-
-        orderDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-left:5px; margin-top:7px;");//added
-        orderSelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:72px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
-
-
-        displayDropDown.className="screen layouticon pull-left";//added
-        displaySelector.className="form-control dropdown margin-left-zero change-display";//added
-        displayDropDownLabel.className="labels pull-left medium";//added
-
-        displayDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-left:5px; margin-top:7px;");//added
-        displaySelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:86px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
-
-        displayDropDownLabel.innerHTML = "Display";//added
-
-        orderDropDownLabel.innerHTML = "Order";//added
-
-        speedDropDownLabel.innerHTML = "Speed";//added
-
-        var container = me.selector.querySelector(".settings-container");
-        container.appendChild(editContainer);//added
-
-        editContainer.appendChild(speedDropDownLabel);//added
-        editContainer.appendChild(speedDropDown);//added
-        speedDropDown.appendChild(selector);//added
-
-        editContainer.appendChild(orderDropDownLabel);//added
-        editContainer.appendChild(orderDropDown);//added
-        orderDropDown.appendChild(orderSelector);//added
-
-        editContainer.appendChild(displayDropDownLabel);//added
-        editContainer.appendChild(displayDropDown);//added
-        displayDropDown.appendChild(displaySelector);//added
-        
-        // initialize add new item button
-        var speedSelect=me.selector.querySelector(".change-speed");//added
-        speedSelect.addEventListener("change", function () {//added
-            me.onOptionSpeedChange(speedSelect.options[speedSelect.selectedIndex].value);//added
-        });//added
-        var randomSelect=me.selector.querySelector(".change-random");//added
-        randomSelect.addEventListener("change", function () {//added
-            me.onOptionOrderChange(randomSelect.options[randomSelect.selectedIndex].value);//added
-        });//added
-        var displaySelect=me.selector.querySelector(".change-display");//added
-        displaySelect.addEventListener("change", function () {//added
-            me.onOptionDisplayChange(displaySelect.options[displaySelect.selectedIndex].value);//added
-        });//added
     }
     ,
     // render the basic template HTML
