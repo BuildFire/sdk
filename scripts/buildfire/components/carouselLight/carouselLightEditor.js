@@ -43,7 +43,7 @@ buildfire.components.carousel._getDomSelector = function (selector) {
 buildfire.components.carousel.editor = function (selector, items, speed, order, display) {//added
     // carousel editor requires Sortable.js
     if (typeof (Sortable) == "undefined") throw ("please add Sortable first to use carousel components");
-   // this.settings=(speed)?{speed:speed,order:order,display:display}:null;//added
+    // this.settings=(speed)?{speed:speed,order:order,display:display}:null;//added
     this.selector = selector;
     this.items = [];
     this.init(selector);
@@ -74,13 +74,13 @@ buildfire.components.carousel.editor.prototype = {
     onAddItems: function (items) {
         console.warn("please handle onAddItems", item);
     },
-    onOptionSpeedChange:function (speed){//added
-       // console.warn("please handle onOptionSpeedChange", speed);//added
+    onOptionSpeedChange: function (speed) {//added
+        // console.warn("please handle onOptionSpeedChange", speed);//added
     },//added
-    onOptionOrderChange:function (order){//added
-       // console.warn("please handle onOptionOrderChange", order);//added
+    onOptionOrderChange: function (order) {//added
+        // console.warn("please handle onOptionOrderChange", order);//added
     },//added
-    onOptionDisplayChange:function (display){//added
+    onOptionDisplayChange: function (display) {//added
         //console.warn("please handle onOptioDisplayChange", display);//added
     },//added
     // This will be triggered when you delete an item
@@ -88,22 +88,19 @@ buildfire.components.carousel.editor.prototype = {
         console.warn("please handle onDeleteItem", item);
     },
     setOptionSpeed: function (speed) {//added
-       if(this.state && this.state.Speed)
-       {
-           this.state.Speed = Number(speed);
-           this._saveState();
-       }
+        if (this.state && this.state.Speed) {
+            this.state.Speed = Number(speed);
+            this._saveState();
+        }
     },//added
     setOptionOrder: function (order) {//added
-        if(this.state && this.state.Order)
-        {
+        if (this.state && this.state.Order) {
             this.state.Order = Number(order);
             this._saveState();
         }
     },//added
     setOptionDisplay: function (display) {//added
-        if(this.state && this.state.Display )
-        {
+        if (this.state && this.state.Display) {
             this.state.Display = Number(display);
             this._saveState();
         }
@@ -126,7 +123,7 @@ buildfire.components.carousel.editor.prototype = {
     append: function (items) {
         if (!items)
             return;
-        else if (!(items instanceof Array) && typeof(items) == "object")
+        else if (!(items instanceof Array) && typeof (items) == "object")
             items = [items];
 
         this.loadItems(items, true);
@@ -169,7 +166,7 @@ buildfire.components.carousel.editor.prototype = {
         editButton.className = "text-primary text";
         deleteButton.className = "btn-icon btn-delete-icon btn-danger transition-third";
 
-        image.src = buildfire.components.carousel._resizeImage(item.iconUrl, {width: 80, height: 40});
+        image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
         title.innerHTML = item.title;
         editButton.innerHTML = (item.action && item.action != "noAction") ? "Edit Action/Link" : "Add Action/Link";
 
@@ -219,48 +216,52 @@ buildfire.components.carousel.editor.prototype = {
             });
         })(item);
     },
-    _saveState: function (){
-        let saveObj={
-            settings:{speed:this.state.Speed,order:this.state.Order,display:this.state.Display},
-            text:{visible:this.state.Visible,position:this.state.Positions,alignment:this.state.Alignment}};
-        buildfire.datastore.save(saveObj, 'carouselSettings',function(err,data){
-            if(err)
+    _saveState: function () {
+        let saveObj = {
+            settings: { speed: this.state.Speed, order: this.state.Order, display: this.state.Display },
+            text: { visible: this.state.Visible, position: this.state.Positions, alignment: this.state.Alignment }
+        };
+        buildfire.datastore.save(saveObj, 'carouselSettings', function (err, data) {
+            if (err)
                 console.log('there was a problem saving your data');
         });
     },
-    _appendSettings: function (){
-        var me=this;
+    _appendSettings: function () {
+        var me = this;
 
-        me.control={
-            "Settings":{
-                "Speed":[{"text":"Still","value":0},{"text":"1 sec","value":1000},{"text":"2 sec","value":2000},
-                    {"text":"3 sec","value":3000},{"text":"4 sec","value":4000},{"text":"5 sec","value":5000},{"text":"7 sec","value":7000},
-                    {"text":"10 sec","value":10000},{"text":"15 sec","value":15000}],
-                "Order":[{"text":"In order","value":0},{"text":"Random","value":1}],
-                "Display":[{"text":"All images","value":0},{"text":"One image","value":1}]
+        me.control = {
+            "Settings": {
+                "Speed": [{ "text": "Still", "value": 0 }, { "text": "1 sec", "value": 1000 }, { "text": "2 sec", "value": 2000 },
+                { "text": "3 sec", "value": 3000 }, { "text": "4 sec", "value": 4000 }, { "text": "5 sec", "value": 5000 }, { "text": "7 sec", "value": 7000 },
+                { "text": "10 sec", "value": 10000 }, { "text": "15 sec", "value": 15000 }],
+                "Order": [{ "text": "In order", "value": 0 }, { "text": "Random", "value": 1 }],
+                "Display": [{ "text": "All images", "value": 0 }, { "text": "One image", "value": 1 }]
             },
-            "Hover Text":{
-                "Visible":false,
-                "Positions":[{"text":"Top","value":0},{"text":"Middle","value":1},{"text":"Bottom","value":2}],
-                "Alignment":[{"text":"Left","value":0},{"text":"Center","value":1},{"text":"Right","value":2}]}
+            "Hover Text": {
+                "Visible": false,
+                "Positions": [{ "text": "Top", "value": 0 }, { "text": "Middle", "value": 1 }, { "text": "Bottom", "value": 2 }],
+                "Alignment": [{ "text": "Left", "value": 0 }, { "text": "Center", "value": 1 }, { "text": "Right", "value": 2 }]
+            }
         };
-        buildfire.datastore.get('carouselSettings',function(err,response){
-            if(err || !response || !response.data || !response.data.settings || !response.data.text){
-                me.state={"Speed":me.control.Settings.Speed[5].value,"Order":me.control.Settings.Order[0].value,"Display":me.control.Settings.Display[0].value,
-                "Visible":me.control["Hover Text"].Visible,"Positions":me.control["Hover Text"].Positions[1].value,"Alignment":me.control["Hover Text"].Alignment[1].value
+        buildfire.datastore.get('carouselSettings', function (err, response) {
+            if (err || !response || !response.data || !response.data.settings || !response.data.text) {
+                me.state = {
+                    "Speed": me.control.Settings.Speed[5].value, "Order": me.control.Settings.Order[0].value, "Display": me.control.Settings.Display[0].value,
+                    "Visible": me.control["Hover Text"].Visible, "Positions": me.control["Hover Text"].Positions[1].value, "Alignment": me.control["Hover Text"].Alignment[1].value
                 };
-            }else{
-                me.state={"Speed":response.data.settings.speed,"Order":response.data.settings.order,"Display":response.data.settings.display,
-                "Visible":response.data.text.visible,"Positions":response.data.text.position,"Alignment":response.data.text.alignment
+            } else {
+                me.state = {
+                    "Speed": response.data.settings.speed, "Order": response.data.settings.order, "Display": response.data.settings.display,
+                    "Visible": response.data.text.visible, "Positions": response.data.text.position, "Alignment": response.data.text.alignment
                 };
             }
             Object.keys(me.control).forEach(attribute => {
                 var controlDropDown = document.createElement("div");// added
-                controlDropDown.className="dropdown";
-                controlDropDown.setAttribute("style","overflow: unset; display: inline-block; margin-left: 10px;");//added
-                var btn = document.createElement("button"); 
-                btn.className="btn btn-default dropdown-toggle";
-                btn.innerHTML = attribute+"&#160;"; 
+                controlDropDown.className = "dropdown";
+                controlDropDown.setAttribute("style", "overflow: unset; display: inline-block; margin-left: 10px;");//added
+                var btn = document.createElement("button");
+                btn.className = "btn btn-default dropdown-toggle";
+                btn.innerHTML = attribute + "&#160;";
 
                 var dropDownIcon = document.createElement("span");
                 dropDownIcon.className = "caret";
@@ -269,85 +270,85 @@ buildfire.components.carousel.editor.prototype = {
 
 
                 var controlDropDownMenu = document.createElement("ul");
-                controlDropDownMenu.className="dropdown-menu";
-                controlDropDownMenu.setAttribute("style","min-width: 0px !important; overflow: unset; margin-top: 0px;");
+                controlDropDownMenu.className = "dropdown-menu";
+                controlDropDownMenu.setAttribute("style", "min-width: 0px !important; overflow: unset; margin-top: 0px;");
 
-                var clickFields=[];
-                var clickOptions=[];
+                var clickFields = [];
+                var clickOptions = [];
 
-                var sideBarHidden="min-width: 130px !important;top: 0; left: 100%;  margin-top: -1px;";
-                var sideBarVisible="display: block;"+sideBarHidden;
-                var subMenuStyleEnabled="overflow: unset; margin-top: 0px;";
-                var subMenuStyleDisabled=subMenuStyleEnabled+" opacity:0.2;";
+                var sideBarHidden = "min-width: 130px !important;top: 0; left: 100%;  margin-top: -1px;";
+                var sideBarVisible = "display: block;" + sideBarHidden;
+                var subMenuStyleEnabled = "overflow: unset; margin-top: 0px;";
+                var subMenuStyleDisabled = subMenuStyleEnabled + " opacity:0.2;";
                 Object.keys(me.control[attribute]).forEach(key => {
                     let controlElement = document.createElement("li");
                     let controlLabel = document.createElement("a");
                     controlElement.appendChild(controlLabel);
 
-                    if(typeof me.control[attribute][key] === "boolean"){
-                        controlLabel.innerHTML=((me.state.Visible)?"<span>&#10004;</span>&#160;&#160;"+key:"Hidden");
-                        clickFields.push({attribute:attribute,name:key,label:controlLabel,showObj:null,list:false});
+                    if (typeof me.control[attribute][key] === "boolean") {
+                        controlLabel.innerHTML = ((me.state.Visible) ? "<span>&#10004;</span>&#160;&#160;" + key : "Visible");
+                        clickFields.push({ attribute: attribute, name: key, label: controlLabel, showObj: null, list: false });
                     }
-                    else{
-                        controlLabel.innerHTML=key;
+                    else {
+                        controlLabel.innerHTML = key;
                         let controlIcon = document.createElement("span");
                         controlIcon.className = "caret";
-                        controlIcon.setAttribute("style",`float:right; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); 
-                        -o-transform: rotate(-90deg); -ms-transform: rotate(-90deg); transform: rotate(-90deg);`);    
+                        controlIcon.setAttribute("style", `float:right; -webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); 
+                        -o-transform: rotate(-90deg); -ms-transform: rotate(-90deg); transform: rotate(-90deg);`);
                         controlLabel.appendChild(controlIcon);
-                        controlElement.className="dropdown-submenu "+key;
-                        controlElement.setAttribute("style",(me.state.Visible||Object.keys(me.control)[1]!=attribute)?subMenuStyleEnabled:subMenuStyleDisabled);
+                        controlElement.className = "dropdown-submenu " + key;
+                        controlElement.setAttribute("style", (me.state.Visible || Object.keys(me.control)[1] != attribute) ? subMenuStyleEnabled : subMenuStyleDisabled);
                         let controlList = document.createElement("ul");
-                        controlList.className="dropdown-menu";
-                        controlList.setAttribute("style",sideBarHidden);
-                        me.control[attribute][key].forEach(el=>{//added
+                        controlList.className = "dropdown-menu";
+                        controlList.setAttribute("style", sideBarHidden);
+                        me.control[attribute][key].forEach(el => {//added
                             let opt = document.createElement('li');//added
                             let optA = document.createElement('a');
-                            optA.innerHTML = ((el.value==me.state[key])?"<span>&#10004;</span> ":"&#160;&#160;")+el.text;//added
-                            clickOptions.push({key:key,text:el.text,value:el.value,element:optA});
+                            optA.innerHTML = ((el.value == me.state[key]) ? "<span>&#10004;</span> " : "&#160;&#160;") + el.text;//added
+                            clickOptions.push({ key: key, text: el.text, value: el.value, element: optA });
                             opt.appendChild(optA);
                             controlList.appendChild(opt);//added
                         });
                         controlElement.appendChild(controlList);
-                        clickFields.push({attribute:attribute,name:key,label:controlLabel,showObj:controlList,list:true});
+                        clickFields.push({ attribute: attribute, name: key, label: controlLabel, showObj: controlList, list: true });
                     }
                     controlDropDownMenu.appendChild(controlElement);
 
                 });
 
-                clickFields.forEach((el,index)=>{
-                    let first=clickFields[(clickFields.length+index+1)%clickFields.length]
-                    ,second=clickFields[(clickFields.length+index+2)%clickFields.length];
-                    if(el.list){
-                        el.label.addEventListener('click', function(e) {
-                            if(me.state.Visible||Object.keys(me.control)[1]!=el.attribute){
-                                el.showObj.setAttribute("style",sideBarVisible);//added
-                                first.showObj.setAttribute("style",sideBarHidden);
-                                second.showObj.setAttribute("style",sideBarHidden);
+                clickFields.forEach((el, index) => {
+                    let first = clickFields[(clickFields.length + index + 1) % clickFields.length]
+                        , second = clickFields[(clickFields.length + index + 2) % clickFields.length];
+                    if (el.list) {
+                        el.label.addEventListener('click', function (e) {
+                            if (me.state.Visible || Object.keys(me.control)[1] != el.attribute) {
+                                el.showObj.setAttribute("style", sideBarVisible);//added
+                                first.showObj.setAttribute("style", sideBarHidden);
+                                second.showObj.setAttribute("style", sideBarHidden);
                             }
                         });
-                    }else{
-                        el.label.addEventListener('click', function(e) {
-                            me.state.Visible=!me.state.Visible;
-                            el.label.innerHTML=(me.state.Visible)?"<span>&#10004;</span>&#160;&#160;"+el.name:"Hidden";
+                    } else {
+                        el.label.addEventListener('click', function (e) {
+                            me.state.Visible = !me.state.Visible;
+                            el.label.innerHTML = (me.state.Visible) ? "<span>&#10004;</span>&#160;&#160;" + el.name : "Visible";
 
-                            first.showObj.setAttribute("style",sideBarHidden);
-                            second.showObj.setAttribute("style",sideBarHidden);
+                            first.showObj.setAttribute("style", sideBarHidden);
+                            second.showObj.setAttribute("style", sideBarHidden);
 
-                            let firstSubMenu=me.selector.querySelector("."+first.name),
-                            secondSubMenu=me.selector.querySelector("."+second.name);
-                            firstSubMenu.setAttribute("style",(me.state.Visible)?subMenuStyleEnabled:subMenuStyleDisabled);
-                            secondSubMenu.setAttribute("style",(me.state.Visible)?subMenuStyleEnabled:subMenuStyleDisabled);
+                            let firstSubMenu = me.selector.querySelector("." + first.name),
+                                secondSubMenu = me.selector.querySelector("." + second.name);
+                            firstSubMenu.setAttribute("style", (me.state.Visible) ? subMenuStyleEnabled : subMenuStyleDisabled);
+                            secondSubMenu.setAttribute("style", (me.state.Visible) ? subMenuStyleEnabled : subMenuStyleDisabled);
                             me._saveState();
                         });
                     }
                 });
 
-                clickOptions.forEach(option=>{
-                    option.element.addEventListener('click', function(e) {
+                clickOptions.forEach(option => {
+                    option.element.addEventListener('click', function (e) {
                         let findLast = clickOptions.find(element => element.key == option.key && element.value == me.state[option.key]);
-                        if(findLast)findLast.element.innerHTML="&#160;&#160;"+findLast.text;
-                        option.element.innerHTML="<span>&#10004;</span> "+option.text;
+                        if (findLast) findLast.element.innerHTML = "&#160;&#160;" + findLast.text;
+                        option.element.innerHTML = "<span>&#10004;</span> " + option.text;
                         me.state[option.key] = option.value;
                         me._saveState();
                     })
@@ -357,18 +358,18 @@ buildfire.components.carousel.editor.prototype = {
                 var container = me.selector.querySelector(".settings-container");
                 container.appendChild(controlDropDown);//added
 
-                controlDropDown.addEventListener('mouseleave', function(e) {
+                controlDropDown.addEventListener('mouseleave', function (e) {
                     if (controlDropDown.classList.contains('open')) {
                         controlDropDown.classList.remove('open');
-                        clickFields.forEach(el=>{
-                            if(el.showObj)el.showObj.setAttribute("style",sideBarHidden);
+                        clickFields.forEach(el => {
+                            if (el.showObj) el.showObj.setAttribute("style", sideBarHidden);
                         });
                     }
                 })
-                controlDropDown.addEventListener('mouseenter', function(e) {
+                controlDropDown.addEventListener('mouseenter', function (e) {
                     if (!controlDropDown.classList.contains('open')) {
-                        controlDropDown.classList.add('open'); 
-                    } 
+                        controlDropDown.classList.add('open');
+                    }
                 })
             });
         });
@@ -396,7 +397,7 @@ buildfire.components.carousel.editor.prototype = {
 
         componentContainer.appendChild(componentName);
         buttonContainer.appendChild(button);
-        
+
         contentContainer.appendChild(buttonContainer);
         contentContainer.appendChild(sliderContainer);
         componentContainer.appendChild(contentContainer);
@@ -455,7 +456,7 @@ buildfire.components.carousel.editor.prototype = {
     },
     // a wrapper method over buildfire showDialog
     _openActionItem: function (item, callback) {
-        buildfire.actionItems.showDialog(item, {showIcon: true, allowNoAction: true}, function (err, actionItem) {
+        buildfire.actionItems.showDialog(item, { showIcon: true, allowNoAction: true }, function (err, actionItem) {
             if (err)
                 console.error("Error getting item details: ", err);
             else {
@@ -467,7 +468,7 @@ buildfire.components.carousel.editor.prototype = {
     },
     // a wrapper method over buildfire imageLib showDialog
     _openImageLib: function (callback) {
-        buildfire.imageLib.showDialog({multiSelect: true, showIcons: false}, function (err, result) {
+        buildfire.imageLib.showDialog({ multiSelect: true, showIcons: false }, function (err, result) {
             if (err)
                 console.error("Error getting images: ", err);
             else
