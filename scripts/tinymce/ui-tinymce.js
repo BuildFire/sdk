@@ -93,11 +93,11 @@ angular.module('ui.tinymce', [])
                         });
                         
                         ed.on('click', function (e) {
-                            if (e.target.type == 'button' && e.target.dataset.actionItem) {
-                                ed.selection.select(e.target)
+                            if (e.target.type == 'button' && e.target.dataset.execute) {
+                                ed.selection.select(e.target);
                                 tinymce.activeEditor.plugins.addbutton
-                                .render(e.target.innerText, e.target.classList[1], JSON.parse(unescape(e.target.dataset.actionItem)));
-                            }
+                                .render(e.target.innerText, e.target.classList[1], JSON.parse(unescape(e.target.dataset.execute)));
+                            } 
                         });
 
                         // Update model on change
