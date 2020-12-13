@@ -2540,6 +2540,60 @@ var buildfire = {
         generateUrl: function (params, callback) {
             var p = new Packet(null, 'shortLinks.generate', params);
             buildfire._sendPacket(p, callback);
+        },
+         registerDeeplink : function(options, callback) {
+            options = options || {};
+            var context = buildfire.getContext();
+            var pluginId = context.pluginId;
+            var instanceId = context.instanceId;
+            var deeplinkId = (options.id || new Date().toISOString()).toLowerCase();
+            var deeplinkName = options.name || "";
+            var recordId = deeplinkId + instanceId;
+            var appDataTag = '$$deeplinks';
+            var searchOptions = {
+                filter : {
+                    "_buildfire.index.string1" : instanceId,
+                    "_buildfire.index.array1.string1" : deeplinkId
+                }
+            };
+            var deeplinkData = {
+                id : recordId,
+                name : deeplinkName,
+                queryString : options.queryString || "",
+                pluginInstanceId : instanceId,
+                pluginTypeId : pluginId,
+                _buildfire : {
+                    index : {
+                        string1 : instanceId,
+                        text :deeplinkName,
+                        array1 : [{string1 : deeplinkId}]
+                    }
+                }
+            };
+            
+            buildfire.appData.search(searchOptions, appDataTag, function(err, result){
+                if(err) console.log(err);
+                if(result && result.length > 0) {
+                    var foundDeeplink = result[0];
+                    buildfire.appData.update(foundDeeplink.id, appDataTag, callback);
+                } else {
+                    buildfire.appData.insert(deeplinkData, appDataTag, false, callback);
+                }
+            });
+        },
+        getAllDeeplinks : function(options, callback) {
+            options = options || {};
+            var instanceId = buildfire.getContext().instanceId;
+            var searchOptions = {
+                pageSize : options.pageSize,
+                filter: {
+                    "_buildfire.index.string1" : instanceId
+                }
+            }
+            buildfire.appData.search(searchOptions,"$$deeplinks", callback);
+        },
+        unregisterDeeplink : function(recordId, callback) {
+            buildfire.appData.delete(recordId,"$$deeplinks", callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
