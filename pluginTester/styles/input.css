@@ -357,11 +357,14 @@ html[type="pluginTester"] #gif-backdrop {
 
 @media (min-width: 1200px) {
 	/* Input Dialog */
+	[type='app'] #input-backdrop {
+		z-index: 9999999 !important
+	}
 	[type='app'] #inputDialog {
-		z-index: 999999999 !important;
+		z-index: 99999999 !important
 	}
 	[type='app'] #gifDialog {
-		z-index: 9999999999 !important;
+		z-index: 999999999 !important;
 		padding-top: calc(68px + 8px);
 		padding-bottom: 16px;
 		pointer-events: none;
