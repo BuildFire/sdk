@@ -8,6 +8,21 @@ if (typeof (buildfire.components) == "undefined")
 if (typeof (buildfire.components.carousel) == "undefined")
     buildfire.components.carousel = {};
 
+var myObjects = new Array();
+var defaultCarousel = {
+    settings: { speed: 5000, order: 0, display: 0 },
+    text: { visible: false, background: true, fontSize: 24, position: 1, alignment: 1 },
+};
+var defaultCarouselImages = [{
+    "action": "noAction",
+    "iconUrl": "http://buildfire.imgix.net/b55ee984-a8e8-11e5-88d3-124798dea82d/7ef5f050-134f-11e6-bd0b-2511d1715baa.jpeg",
+    "title": "image"
+}, {
+    "action": "noAction",
+    "iconUrl": "http://buildfire.imgix.net/b55ee984-a8e8-11e5-88d3-124798dea82d/7e028fa0-134f-11e6-b7ce-51a0b9ba84fd.jpg",
+    "title": "image"
+}];
+
 (function () {
     var scripts = document.getElementsByTagName('script');
     var carouselScriptSrc = null;
@@ -42,36 +57,54 @@ if (typeof (buildfire.components.carousel) == "undefined")
     else {
         throw ("carousellight components not found");
     }
+
+    setInterval(function () {
+        myObjects.forEach(el => {
+            if (el.control && el.control.settings.display == 0 && el.config && el.config.items && el.config.items.length > 1)
+                if (el.control.settings.speed > 0) {
+                    el.on = el.on + 1;
+                    if ((el.on * 1000) >= el.control.settings.speed) {
+                        el.on = 0;
+                        if (el.lorySlider)
+                            el.lorySlider.next();
+                    }
+                }
+        });
+    }, 1000);
 })();
 
 // This is the class that will be used in the mobile
 //{selector:selector, items:items, layout:layout, speed:speed}
 buildfire.components.carousel.view = function (options) {
-    if (options.items && options.items.length > 0) {
-        /*
-         if more than one image add carousel else add image directly to the carousel container
-         */
-        this._loadSettings(options, () => {
+    if (typeof options.name === "string") {
+        if (/^[a-zA-Z]+$/.test(options.name)) {
+            if (options.name.length < 20)
+                this.name = options.name;
+            else throw "Carousel name is too long!";
+        } else throw "Carousel name must contain only letters!";
+    };
+    this._loadSettings(options, () => {
+        let send = this;
+        if (options.items && options.items.length > 0) {
             this._createCarousel(options);
-        });
-    } else {
-        options.selector.style.display = "none";
-    }
+        }
+        if (send.selector) {
+            send.on = 0;
+            myObjects = myObjects.filter(e => e.selector !== options.selector).map(el => { el.on = 0; return el; });
+            myObjects.push(send);
+        }
+    });
 
 };
 
 // Carousel view methods
 buildfire.components.carousel.view.prototype = {
     mergeSettings: function (options) {
-        // var interval = (!this.control || !this.control.settings || !this.control.settings.speed) ? 5000: this.control.settings.speed;
-        // var loopInterval = (!this.control || !this.control.settings || this.control.settings.speed > 0) ? true : false;
         var settings = {
             selector: '.js_percentage',
             items: [],
             layout: null,
-            speed: 200,
-            // loop: loopInterval,
-            // autoInterval: interval
+            speed: defaultCarousel.settings.speed,
         };
         var userSttings = options;
         for (var attrname in userSttings) {
@@ -120,27 +153,24 @@ buildfire.components.carousel.view.prototype = {
         }
     },
     _applySlider: function () {
-        //if (!this.lorySlider) {
         this.lorySlider = lory(this.config.selector, {
             classNameSlideContainer: this.config.classNameSlideContainer || "js_slides",
             classNameFrame: this.config.classNameFrame || 'js_frame',
             ease: 'ease',
             rewindSpeed: 600,//ms
-            slideSpeed: this.config.speed,//ms
+            slideSpeed: 200,//ms
             slidesToScroll: this.config.slidesToScroll || 1,
             infinite: this.config.infinite || 1,
             enableMouseEvents: true
         });
-        //}
-
-        this._moveTimer();
     },
     _renderHTMLItems: function (callback) {
         var self = this;
 
-        while (this.selector.firstChild) {
-            this.selector.removeChild(this.selector.firstChild);
-        }
+        if (this.selector)
+            while (this.selector.firstChild) {
+                this.selector.removeChild(this.selector.firstChild);
+            }
 
         this.sliderFrame = document.createElement('div');
         ['loryFrame', 'js_frame'].forEach(function (cname) {
@@ -185,87 +215,121 @@ buildfire.components.carousel.view.prototype = {
         }
     },
     _getHoverTextStyles: function (callback) {
-        var spanStyle, textStyle;
-        buildfire.appearance.getAppTheme((err, theme) => {
-            let text = "white";
-            /*if (!err && theme.colors && theme.colors.backgroundColor)
-                background = theme.colors.backgroundColor;
-            if (!err && theme.colors && theme.colors.bodyText)
-                text = theme.colors.bodyText;*/
-            spanStyle = `position: absolute; width:100%;`;
-            textStyle = `height:13px; opacity:0.6; font-size:100%; padding:3.5% 2% 3.5% 2%; max-width: 95% !important; display: inline-block; 
-            border-radius: 5px; text-overflow: ellipsis; overflow: hidden; color:`+ text + `;`;
+        var background, gradient, spanStyle, textStyle;
+        background = { position: "absolute", width: "100%", height: "100%" };
+        spanStyle = { position: "absolute", width: "100%" };
+        textStyle = {
+            height: (this.control.text.fontSize) + "px", width: "95%", padding: (this.control.text.fontSize / 1.5) + "px 2% " + (this.control.text.fontSize / 1.5) + "px 2%", maxWidth: "95% !important"
+            , display: "inline-block", borderRadius: "5px", textOverflow: "ellipsis", overflow: "hidden", color: "white", fontSize: this.control.text.fontSize + "px"
+        };
 
-            if (this.control.text.alignment == 0) { spanStyle += " text-align:left; left:3%;"; textStyle += " text-align:left;"; }
-            else if (this.control.text.alignment == 2) { spanStyle += " text-align:right; right:3%;"; textStyle += " text-align:right;"; }
-            else { spanStyle += " text-align:center;"; textStyle += " text-align:center;"; }
+        if (this.control.text.alignment == 0) { spanStyle.textAlign = "left"; spanStyle.left = "3%"; textStyle.textAlign = "left"; }
+        else if (this.control.text.alignment == 2) { spanStyle.textAlign = "right"; spanStyle.right = "3%"; textStyle.textAlign = "right"; }
+        else { spanStyle.textAlign = "center"; textStyle.textAlign = "center"; }
 
-            if (this.control.text.position == 0) { spanStyle += " top:calc(2% + 8px);"; textStyle += " background-image:linear-gradient(black, #7f7f7f);" }
-            else if (this.control.text.position == 2) { spanStyle += " bottom:calc(2% + 8px);"; textStyle += " background-image:linear-gradient(#7f7f7f, black);" }
-            else { spanStyle += " top:calc(50% - 8px);"; textStyle += " background-image:linear-gradient(#7f7f7f, black, #7f7f7f);"; }
-
-            if (!this.control.text.visible) spanStyle += " visibility:hidden;"
-            else spanStyle += " visibility:visible;"
-            callback({ span: spanStyle, text: textStyle });
-        });
-    },
-    _moveTimer: function () {
-        if (this.control.settings.display != 0 || this.control.settings.speed ==0 ) {
-            if (this.timerInterval) {
-                clearInterval(this.timerInterval);
-                this.timerInterval = null;
-            }
+        if (this.control.text.position == 0) {
+            spanStyle.top = "calc(2% + 8px)";
+            gradient = " background-image:linear-gradient(to top,rgba(255,0,0,0), black);background-image:-webkit-linear-gradient(to top,rgba(255,0,0,0), black);background-image:-moz-linear-gradient(to top,rgba(255,0,0,0), black);background-image:-o-linear-gradient(to top,rgba(255,0,0,0), black);"
         }
-        if (this.control.settings.display == 0 && this.control.settings.speed !=0 && this.config.items && this.config.items.length > 1) {
-            var self = this;
-            if (this.timerInterval) {
-                clearInterval(this.timerInterval);
-                this.timerInterval = null;
-            }
-
-            this.timerInterval = setInterval(function () {
-                self.lorySlider.next();
-            }, this.control.settings.speed);
+        else if (this.control.text.position == 2) {
+            spanStyle.bottom = "calc(2% + 8px)";
+            gradient = " background-image:linear-gradient(to bottom,rgba(255,0,0,0), black);background-image:-webkit-linear-gradient(to bottom,rgba(255,0,0,0), black);background-image:-moz-linear-gradient(to bottom,rgba(255,0,0,0), black);background-image:-o-linear-gradient(to bottom,rgba(255,0,0,0), black);"
         }
+        else {
+            spanStyle.top = "calc(50% - " + (this.control.text.fontSize / 1.5) + "px)";
+            background.backgroundColor = "rgba(0,0,0,0.5)";
+        }
+
+        if (!this.control.text.visible) background.visibility = "hidden";
+        else background.visibility = "visible";
+
+        if (!this.control.text.background) background.background = "none";
+        callback({ background: background, gradient: gradient, span: spanStyle, text: textStyle });
     },
     _loadSettings: function (options, callback) {
-        let me = this;
-        buildfire.datastore.get('carouselSettings', function (err, response) {
-            if (err || !response || !response.data || !response.data.text)
-                response = {
-                    data: {
-                        settings: { speed: 5000, order: 0, display: 0 },
-                        text: { visible: false, position: 1, alignment: 1 }
+        var me = this;
+        var filter, saving = false;
+        if ((!options.name || 0 === options.name.length)) filter = {};
+        else { filter = { filter: { "$json.name": options.name } }; saving = true; }
+        buildfire.datastore.search(filter, 'carouselSettings', function (err, response) {
+            var first = response[0];
+            if (err || !first || !first.data || !first.data.text) {
+                buildfire.datastore.getWithDynamicData((err, obj) => {
+                    if (err || !obj || !obj.data || !obj.data.content) {
+                        first = {
+                            data: defaultCarousel
+                        };
+                    } else {
+                        first = {
+                            data: {
+                                settings: {
+                                    speed: (!obj.data.content.speed) ? defaultCarousel.settings.speed : obj.data.content.speed,
+                                    order: (!obj.data.content.order) ? defaultCarousel.settings.order : obj.data.content.order,
+                                    display: (!obj.data.content.display) ? defaultCarousel.settings.display : obj.data.content.display
+                                },
+                                text: defaultCarousel.text
+                            }
+                        };
                     }
-                };
-            me.control = response.data;
-            callback();
+                    if (first && first.data && first.data.items && saving) options.items = first.data.items;
+                    else if (saving) {
+                        first.data.items = defaultCarouselImages;
+                        options.items = first.data.items;
+                    }
+                    me.control = first.data;
+                    callback();
+                });
+            } else {
+                if (first && first.data && first.data.items && saving) options.items = first.data.items;
+                me.control = first.data;
+                callback();
+            }
         });
         if (!me.store)
             me.store = buildfire.datastore.onUpdate(function (event) {
-                if (event.tag == "carouselSettings") {
+                if (event.tag == "carouselSettings" && (event.data.name == me.name || me.name.length == 0)) {
                     me.control = event.data;
-                    var container = document.getElementsByClassName("textContainer");
-                    var text = document.getElementsByClassName("containerText");
+                    let textBCRS = "textBCRS" + ((me.name) ? me.name : ""),
+                        textCCRS = "textCCRS" + ((me.name) ? me.name : ""),
+                        containerTCRS = "containerTCRS" + ((me.name) ? me.name : "");
+                    var background = document.getElementsByClassName(textBCRS);
+                    var container = document.getElementsByClassName(textCCRS);
+                    var text = document.getElementsByClassName(containerTCRS);
                     if (event.data.text.visible) {
                         me._getHoverTextStyles(styles => {
+                            for (let el of background) {
+                                el.setAttribute("style", styles.gradient);
+                                Object.assign(el.style, styles.background);
+                            }
                             for (let el of container) {
                                 el.style.visibility = "visible";
-                                el.setAttribute("style", styles.span);
+                                Object.assign(el.style, styles.span);
                             }
                             for (let el of text)
-                                el.setAttribute("style", styles.text);
+                                Object.assign(el.style, styles.text);
                         });
                     } else {
-                        for (let el of container)
+                        for (let el of background)
                             el.style.visibility = "hidden";
                     }
-
-                    me.config.autoInterval = me.control.settings.speed;
-                    me.config.loop = (me.control.settings.speed > 0);
-                    me._createCarousel(me.config);
-                    // me._moveTimer();
-                } else buildfire.datastore.onUpdate(event);
+                    if (me.name && me.name.length != 0) {
+                        if (event.data && event.data.items && me.name && me.name.length != 0 && me.config) me.config.items = event.data.items;
+                        if (me.config) me.config.selector.innerHTML = "";
+                        if ((me.name && me.name.length != 0 && event.data.items && event.data.items.length > 0) || (!me.name || me.name.length == 0)) {
+                            if (me.config) {
+                                me.config.selector.style.display = "block";
+                                me._createCarousel(me.config);
+                            }
+                        } else {
+                            if (me.config) {
+                                me.config.items = [];
+                                me.config.selector.style.display = "none";
+                            }
+                        }
+                    }
+                    myObjects = myObjects.filter(e => e.selector !== me.config.selector).map(el => { el.on = 0; return el; });
+                    myObjects.push(me);
+                }
             }, true);
 
     },
@@ -330,7 +394,7 @@ buildfire.components.carousel.view.prototype = {
             else { carouselImages = [carouselImages[index + 1]]; sendIndex = index + 1; }
             self.lastImage = carouselImages;
             var isHome = buildfire.getFrameType() === 'LAUNCHER_PLUGIN';
-            var storagePlace = (isHome) ? "carouselLastImageHome" : "carouselLastImage";
+            var storagePlace = (isHome) ? "carouselLastImageHome" + ((self.name) ? self.name : "") : "carouselLastImage" + ((self.name) ? self.name : "");
             buildfire.localStorage.setItem(storagePlace, sendIndex, function (e, r) {
                 self.config.selector.innerHTML = '';
                 self._setOneImage(carouselImages[0]);
@@ -340,7 +404,7 @@ buildfire.components.carousel.view.prototype = {
     },
     _setByOrderAndDisplay: function (items) {
         var isHome = buildfire.getFrameType() === 'LAUNCHER_PLUGIN';
-        var storagePlace = (isHome) ? "carouselLastImageHome" : "carouselLastImage";
+        var storagePlace = (isHome) ? "carouselLastImageHome" + ((this.name) ? this.name : "") : "carouselLastImage" + ((this.name) ? this.name : "");
         var self = this;
         if (self.changeTimer) clearInterval(self.changeTimer);
         if (self.control.settings.order == 0 && self.control.settings.display == 1 && items.length > 0) {//order one image
@@ -376,16 +440,25 @@ buildfire.components.carousel.view.prototype = {
         return items;
     },
     _addTextToItem: function (item, slide) {
+        var me = this;
         this._getHoverTextStyles((styles) => {
+            var background = document.createElement("span");
+            let textBCRS = "textBCRS" + ((me.control.name) ? me.control.name : ""),
+                textCCRS = "textCCRS" + ((me.control.name) ? me.control.name : ""),
+                containerTCRS = "containerTCRS" + ((me.control.name) ? me.control.name : "");
+            background.setAttribute("style", styles.gradient);
+            Object.assign(background.style, styles.background);
+            background.classList = textBCRS;
             var container = document.createElement("span");
-            container.setAttribute("style", styles.span);
-            container.classList = "textContainer";
+            Object.assign(container.style, styles.span);
+            container.classList = textCCRS;
             var text = document.createElement("a");
-            text.classList = "containerText";
-            text.setAttribute("style", styles.text);
+            text.classList = containerTCRS;
+            Object.assign(text.style, styles.text);
             text.innerHTML = item.title;
             container.appendChild(text);
-            slide.appendChild(container);
+            background.appendChild(container);
+            slide.appendChild(background);
         });
     },
     _createCarousel: function (options) {
@@ -396,7 +469,7 @@ buildfire.components.carousel.view.prototype = {
         if (options.items.length > 1) {
             this._initDimensions(this.config.layout);
             this.init();
-        } else {
+        } else if (options.items.length == 1) {
             this._setOneImage(options.items[0]);
         }
         this.config.items = itemCopy;
