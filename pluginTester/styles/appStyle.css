@@ -4819,3 +4819,9 @@ html[ios="true"] .profile-overlay .profile-content{
 		pointer-events: all;
 	} 
 }
+.powered-by {
+	margin-bottom : 20px;
+}
+.powered-by p {
+	font-size: 12px !important;
+} 
