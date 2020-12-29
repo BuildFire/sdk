@@ -42,7 +42,11 @@ $app.run(function () {
     if (user) {
         window.currentUser = JSON.parse(user);
     }
-    var appUser = localStorage.getItem("AUTH_CURRENT_USER");
+    var appUser;
+    if(window.appContext && window.appContext.currentApp && window.appContext.currentApp.appId) {
+        var appId = window.appContext.currentApp.appId;
+        appUser = localStorage.getItem(appId + "-AUTH_CURRENT_USER");
+    }
     if (appUser) {
         window.currentAppUser = JSON.parse(appUser);
     }

@@ -1557,7 +1557,6 @@ html[buildfire] body.no-scroll .scrollable{
 }
 
 #richModal .detail-modal {
-  background: #FFF !important;
   z-index: 100;
   width: 90vw;
   margin: 0 auto;
@@ -1567,7 +1566,7 @@ html[buildfire] body.no-scroll .scrollable{
   position: absolute;
   left: 0;
 	right: 0;
-	box-shadow: 0 11px 15px -7px rgba(0,0,0,.2), 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12);
+	box-shadow: 1px -2px 4px -1px rgb(216 216 216 / 16%), 0px 0px 8px 3px rgb(171 171 171 / 16%), 0px -1px 46px 8px rgb(185 185 185 / 4%);
 }
 
 #richModal.fullScreen .detail-modal{
@@ -1643,9 +1642,9 @@ html[buildfire] body.no-scroll .scrollable{
 #richModal .detail-modal h1 {
 	font-size: 1.5em;
 	margin: 24px 0 0 0;
-	color: #000 !important;
 	font-weight: 600;
 	padding: 0 24px;
+	overflow-wrap: break-word;
 }
 
 #richModal .detail-modal .dialog-title {
@@ -1663,26 +1662,13 @@ html[buildfire] body.no-scroll .scrollable{
 	overflow-wrap: break-word;
 }
 
-
-#richModal .detail-modal .rich-content,
-#richModal .detail-modal .rich-content h1,
-#richModal .detail-modal .rich-content h2,
-#richModal .detail-modal .rich-content h3,
-#richModal .detail-modal .rich-content h4,
-#richModal .detail-modal .rich-content h5,
-#richModal .detail-modal .rich-content h6,
-#richModal .detail-modal .rich-content p,
-#richModal .detail-modal .rich-content span {
-	color: #222 !important;
-}
-
 #richModal .detail-modal span.subtitle {
 	font-size: .92em;
-  display: block;
-  margin: 0 0;
+  	display: block;
+  	margin: 0 0;
 	padding: 0  24px;
 	padding-bottom: 12px;
-  color: #777 !important;
+	opacity: 0.7;
 }
 
 #richModal .detail-modal .button-container {
@@ -1691,6 +1677,7 @@ html[buildfire] body.no-scroll .scrollable{
 	align-items: center;
 	justify-content: flex-end;
 	padding: 8px;
+	flex-wrap: wrap;
 }
 
 #richModal .detail-modal button {
@@ -1708,7 +1695,7 @@ html[buildfire] body.no-scroll .scrollable{
 #richModal .detail-modal button.dismiss-button {
 	color: #999999;
 	border: none;
-	background: #fff;
+	background: none;
 }
 
 #richModal,
@@ -1720,7 +1707,10 @@ html[buildfire] body.no-scroll .scrollable{
 #richModal .detail-modal button.action-button {
 	color: #2080fb;
 	border: none;
-	background: #fff;
+	background: none;
+	overflow-wrap: break-word;
+	max-width : 80%;
+
 }
 
 .item-disabled {
@@ -4829,3 +4819,9 @@ html[ios="true"] .profile-overlay .profile-content{
 		pointer-events: all;
 	} 
 }
+.powered-by {
+	margin-bottom : 20px;
+}
+.powered-by p {
+	font-size: 12px !important;
+} 

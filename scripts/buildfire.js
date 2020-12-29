@@ -342,8 +342,7 @@ var buildfire = {
          * Navigate To plugin
          * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title ,queryString: to pass to next plugin}
          */
-        navigateTo: function (pluginData) {
-
+        navigateTo: function (pluginData, callback) {
             if(pluginData.pluginTypeId && !pluginData.pluginId)
                 pluginData.pluginId=pluginData.pluginTypeId;
 
@@ -355,7 +354,7 @@ var buildfire = {
                 folderName: pluginData.folderName,
                 queryString: pluginData.queryString
             });
-            buildfire._sendPacket(p);
+            buildfire._sendPacket(p, callback);
         }
         , navigateToSocialWall: function (pluginData, callback) {
             var pluginIds = {
