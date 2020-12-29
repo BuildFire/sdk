@@ -9,11 +9,11 @@ if (typeof (buildfire.components.carousel) == "undefined")
     buildfire.components.carousel = {};
 
 var myObjects = new Array();
-var defaultCarousel = {
+const defaultCarousel = {
     settings: { speed: 5000, order: 0, display: 0 },
     text: { visible: false, background: true, fontSize: 24, position: 1, alignment: 1 },
 };
-var defaultCarouselImages = [{
+const defaultCarouselImages = [{
     "action": "noAction",
     "iconUrl": "http://buildfire.imgix.net/b55ee984-a8e8-11e5-88d3-124798dea82d/7ef5f050-134f-11e6-bd0b-2511d1715baa.jpeg",
     "title": "image"
@@ -67,8 +67,8 @@ var defaultCarouselImages = [{
                         el.on = 0;
                         if (el.lorySlider)
                             el.lorySlider.next();
+                        }
                     }
-                }
         });
     }, 1000);
 })();
@@ -77,11 +77,9 @@ var defaultCarouselImages = [{
 //{selector:selector, items:items, layout:layout, speed:speed}
 buildfire.components.carousel.view = function (options) {
     if (typeof options.name === "string") {
-        if (/^[a-zA-Z]+$/.test(options.name)) {
-            if (options.name.length < 20)
-                this.name = options.name;
-            else throw "Carousel name is too long!";
-        } else throw "Carousel name must contain only letters!";
+        if (options.name.length < 20)
+            this.name = options.name;
+        else throw "Carousel name is too long!";
     };
     this._loadSettings(options, () => {
         let send = this;
@@ -327,6 +325,7 @@ buildfire.components.carousel.view.prototype = {
                             }
                         }
                     }
+                    me.on=0;
                     myObjects = myObjects.filter(e => e.selector !== me.config.selector).map(el => { el.on = 0; return el; });
                     myObjects.push(me);
                 }

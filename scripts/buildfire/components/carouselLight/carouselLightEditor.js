@@ -8,7 +8,7 @@ if (typeof (buildfire.components) == "undefined")
 if (typeof (buildfire.components.carousel) == "undefined")
     buildfire.components.carousel = {};
 
-var defaultCarouselImages = [{
+const defaultCarouselImages = [{
     "action": "noAction",
     "iconUrl": "http://buildfire.imgix.net/b55ee984-a8e8-11e5-88d3-124798dea82d/7ef5f050-134f-11e6-bd0b-2511d1715baa.jpeg",
     "title": "image"
@@ -81,11 +81,9 @@ buildfire.components.carousel.getPlaceHolders = function (name, callback) {
 // This is the class that will be used in the plugin content, design, or settings sections
 buildfire.components.carousel.editor = function (selector, items, name) {//added
     if (typeof name === "string") {
-        if (/^[a-zA-Z]+$/.test(name)) {
-            if (name.length < 20)
-                this.name = name;
-            else throw "Carousel name is too long!";
-        } else throw "Carousel name must contain only letters!";
+        if (name.length < 20)
+            this.name = name;
+        else throw "Carousel name is too long!";
     };
     this.saveImages = (typeof name === "string");
     // carousel editor requires Sortable.js
@@ -285,14 +283,14 @@ buildfire.components.carousel.editor.prototype = {
                 "Order": [{ "text": "In order", "value": 0 }, { "text": "Random", "value": 1 }],
                 "Display": [{ "text": "All images", "value": 0 }, { "text": "One image", "value": 1 }]
             },
-            "Hover Text": {
+            "Overlay Text": {
                 "Visible": false,
                 "Font Size": [{ "text": "11px", "value": 11 }, { "text": "12px", "value": 12 },
                 { "text": "14px", "value": 14 }, { "text": "18px", "value": 18 }, { "text": "24px", "value": 24 }, { "text": "30px", "value": 30 }, { "text": "36px", "value": 36 }, { "text": "48px", "value": 48 }
                     , { "text": "60px", "value": 60 }, { "text": "72px", "value": 72 }],
                 "Positions": [{ "text": "Top", "value": 0 }, { "text": "Middle", "value": 1 }, { "text": "Bottom", "value": 2 }],
                 "Alignment": [{ "text": "Left", "value": 0 }, { "text": "Center", "value": 1 }, { "text": "Right", "value": 2 }],
-                "Background": true
+                "Overlay Color": true
             }
         };
         var filter;
@@ -371,8 +369,8 @@ buildfire.components.carousel.editor.prototype = {
                 controlElement.appendChild(controlLabel);
 
                 if (typeof me.control[attribute][key] === "boolean") {
-                    if (key == "Visible") controlLabel.innerHTML = ((me.state.Visible) ? "<span>&#10004;</span>&#160;&#160;" + key : key);
-                    if (key == "Background") {
+                    if (key == Object.keys(me.control["Overlay Text"])[0]) controlLabel.innerHTML = ((me.state.Visible) ? "<span>&#10004;</span>&#160;&#160;" + key : key);
+                    if (key == Object.keys(me.control["Overlay Text"])[4]) {
                         controlLabel.innerHTML = ((me.state.Background) ? "<span>&#10004;</span>&#160;&#160;" + key : key);
                         controlLabel.style.opacity = (me.state.Visible) ? 1 : 0.2;
                     }
