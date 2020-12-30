@@ -2553,6 +2553,7 @@ var buildfire = {
             if(!options.queryString) {
                 return callback('Missing deeplink queryString', null);
             };
+            var _self = this;
              buildfire.getContext(function(err, context) {
                 if(err) {
                     callback(err, null);
@@ -2562,16 +2563,8 @@ var buildfire = {
                         var instanceId = context.instanceId;
                         var deeplinkId = options.id;
                         var deeplinkName = options.name;
-                        var recordId = instanceId +  deeplinkId;
                         var appDataTag = '$$deeplinks';
-                        var searchOptions = {
-                            filter : {
-                                "_buildfire.index.string1" : instanceId,
-                                "_buildfire.index.array1.string1" : deeplinkId
-                            }
-                        };
                         var deeplinkData = {
-                            id : recordId,
                             name : deeplinkName,
                             queryString : options.queryString,
                             pluginInstanceId : instanceId,
@@ -2584,9 +2577,9 @@ var buildfire = {
                                 }
                             }
                         };
-                        
-                        buildfire.appData.search(searchOptions, appDataTag, function(err, result){
-                            if(err) console.log(err);
+
+                        _self.getDeeplink(deeplinkId, function(err, result) {
+                            if(err) return callback(err, null);
                             if(result && result.length > 0) {
                                 var foundDeeplink = result[0];
                                 buildfire.appData.update(foundDeeplink.id, appDataTag, callback);
@@ -2600,6 +2593,26 @@ var buildfire = {
                 }
             });
           
+        },
+        getDeeplink : function(deeplinkId, callback) {
+            buildfire.getContext(function(err, context) {
+                if(err) return callback(err, null);
+                if(context && context.instanceId) {
+                    var instanceId = context.instanceId;
+                    var searchOptions = {
+                        filter : {
+                            "_buildfire.index.string1" : instanceId,
+                            "_buildfire.index.array1.string1" : deeplinkId
+                        }
+                    };
+                    buildfire.appData.search(searchOptions, '$$deeplinks', function(err, result) {
+                        if(err) return callback(err, null);
+                        callback(null, result);
+                    })
+                } else {
+                    callback('no context', null);
+                }
+            })
         },
         getAllDeeplinks : function(options, callback) {
             options = options || {};
@@ -2623,31 +2636,15 @@ var buildfire = {
             })
           
         },
-        unregisterDeeplink : function(id, callback) {
-            buildfire.getContext(function(err,context) {
-                if(err) {
-                    callback(err, null);
+        unregisterDeeplink : function(deeplinkId, callback) {
+            this.getDeeplink(deeplinkId, function(err, result) {
+                if(err) return callback(err, null);
+                if(result && result.length > 0) {
+                    var foundDeeplink = result[0];
+                    
+                    buildfire.appData.delete(foundDeeplink.id, "$$deeplinks", callback);
                 } else {
-                    if(context && context.instanceId) {
-                        var appDataTag = '$$deeplinks';
-                        var searchOptions = {
-                            filter : {
-                                id : id
-                            }
-                        };
-                        buildfire.appData.search(searchOptions, appDataTag, function(err, result) {
-                            if(err) return callback(err, null);
-                            console.log(result);
-                            if(result && result.length) {
-                                var foundDeeplink = result[0];
-                                buildfire.appData.delete(foundDeeplink.id, appDataTag, callback);
-                            } else {
-                                callback('no results found for this deeplink id', null);
-                            }
-                        })
-                    } else {
-                        callback('no context', null);
-                    }
+                    callback('no result found for this deeplink id', null);
                 }
             })
         }
