@@ -2562,7 +2562,7 @@ var buildfire = {
                         var instanceId = context.instanceId;
                         var deeplinkId = options.id;
                         var deeplinkName = options.name;
-                        var recordId = deeplinkId + instanceId;
+                        var recordId = instanceId +  deeplinkId;
                         var appDataTag = '$$deeplinks';
                         var searchOptions = {
                             filter : {
@@ -2608,7 +2608,7 @@ var buildfire = {
                     callback(err, null);
                 } else {
                     if(context && context.instanceId && context.pluginId) {
-                        var instanceId = buildfire.getContext().instanceId;
+                        var instanceId = context.instanceId;
                         var searchOptions = {
                             pageSize : options.pageSize,
                             filter: {
@@ -2624,7 +2624,32 @@ var buildfire = {
           
         },
         unregisterDeeplink : function(id, callback) {
-            buildfire.appData.delete(id,"$$deeplinks", callback);
+            buildfire.getContext(function(err,context) {
+                if(err) {
+                    callback(err, null);
+                } else {
+                    if(context && context.instanceId) {
+                        var appDataTag = '$$deeplinks';
+                        var searchOptions = {
+                            filter : {
+                                id : id
+                            }
+                        };
+                        buildfire.appData.search(searchOptions, appDataTag, function(err, result) {
+                            if(err) return callback(err, null);
+                            console.log(result);
+                            if(result && result.length) {
+                                var foundDeeplink = result[0];
+                                buildfire.appData.delete(foundDeeplink.id, appDataTag, callback);
+                            } else {
+                                callback('no results found for this deeplink id', null);
+                            }
+                        })
+                    } else {
+                        callback('no context', null);
+                    }
+                }
+            })
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
