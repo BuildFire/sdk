@@ -2542,16 +2542,16 @@ var buildfire = {
         },
          registerDeeplink : function(options, callback) {
             if(!options) {
-                callback('Missing options parameter', null);
+                return callback('Missing options parameter', null);
             };
             if(!options.id)  {
-                callback('Missing deeplink id',null);
+                return callback('Missing deeplink id',null);
             }
             if(!options.name) {
-                callback('Missing deeplink name', null);
+                return callback('Missing deeplink name', null);
             };
             if(!options.queryString) {
-                callback('Missing deeplink queryString', null);
+                return callback('Missing deeplink queryString', null);
             };
              buildfire.getContext(function(err, context) {
                 if(err) {
