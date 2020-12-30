@@ -63,7 +63,7 @@ angular.module('ui.tinymce', [])
                     content_css: '../../../../../scripts/buildfire/components/ratingSystem/index.css',
                     menu: {
                         edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall' },
-                        insert: { title: 'Insert', items: 'link image | media  | code' },
+                        insert: { title: 'Insert', items: 'media actions | code' },
                         view   : { title : 'View'  , items : 'preview' },
                         format : { title : 'Format', items : 'bold italic underline strikethrough superscript subscript | removeformat' },
                     },
@@ -128,7 +128,7 @@ angular.module('ui.tinymce', [])
                 // element to be present in DOM before instantiating editor when
                 // re-rendering directive
                 $timeout(function () {
-                    options.plugins = "preview , image,code,media,link ,textcolor colorpicker";
+                    options.plugins = "preview,code,media,textcolor,colorpicker,actions";
                     tinymce.init(options);
                     toggleDisable(scope.$eval(attrs.ngDisabled));
                 });
