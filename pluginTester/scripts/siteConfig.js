@@ -8,7 +8,7 @@ window.siteConfig = {
 		pluginHost : "http://s3-us-west-2.amazonaws.com/pluginserver.prod/plugins",
         socialHost : "https://social.buildfire.com",
         pushV2: "https://push2.buildfire.com",
-        publicFilesHost : "https://datastore.buildfire.com",
+        publicFilesHost : "https://publicfiles.buildfire.com",
 		searchEngineHost : 'https://public.buildfire.com/1.0',
         creditSystemHost : 'https://public.buildfire.com/1.0',
         stripeHost: 'https://public.buildfire.com/1.0'

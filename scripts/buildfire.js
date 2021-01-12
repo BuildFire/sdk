@@ -342,8 +342,7 @@ var buildfire = {
          * Navigate To plugin
          * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title ,queryString: to pass to next plugin}
          */
-        navigateTo: function (pluginData) {
-
+        navigateTo: function (pluginData, callback) {
             if(pluginData.pluginTypeId && !pluginData.pluginId)
                 pluginData.pluginId=pluginData.pluginTypeId;
 
@@ -355,7 +354,7 @@ var buildfire = {
                 folderName: pluginData.folderName,
                 queryString: pluginData.queryString
             });
-            buildfire._sendPacket(p);
+            buildfire._sendPacket(p, callback);
         }
         , navigateToSocialWall: function (pluginData, callback) {
             var pluginIds = {
@@ -2540,6 +2539,114 @@ var buildfire = {
         generateUrl: function (params, callback) {
             var p = new Packet(null, 'shortLinks.generate', params);
             buildfire._sendPacket(p, callback);
+        },
+         registerDeeplink : function(options, callback) {
+            if(!options) {
+                return callback('Missing options parameter', null);
+            };
+            if(!options.id)  {
+                return callback('Missing deeplink id',null);
+            }
+            if(!options.name) {
+                return callback('Missing deeplink name', null);
+            };
+            if(!options.queryString) {
+                return callback('Missing deeplink queryString', null);
+            };
+            var _self = this;
+             buildfire.getContext(function(err, context) {
+                if(err) {
+                    callback(err, null);
+                } else {
+                    if(context && context.instanceId && context.pluginId) {
+                        var pluginId = context.pluginId;
+                        var instanceId = context.instanceId;
+                        var deeplinkId = options.id;
+                        var deeplinkName = options.name;
+                        var appDataTag = '$$deeplinks';
+                        var deeplinkData = {
+                            name : deeplinkName,
+                            queryString : options.queryString,
+                            pluginInstanceId : instanceId,
+                            pluginTypeId : pluginId,
+                            _buildfire : {
+                                index : {
+                                    string1 : instanceId,
+                                    text :deeplinkName,
+                                    array1 : [{string1 : deeplinkId}]
+                                }
+                            }
+                        };
+
+                        _self.getDeeplink(deeplinkId, function(err, result) {
+                            if(err) return callback(err, null);
+                            if(result && result.length > 0) {
+                                var foundDeeplink = result[0];
+                                buildfire.appData.update(foundDeeplink.id, appDataTag, callback);
+                            } else {
+                                buildfire.appData.insert(deeplinkData, appDataTag, false, callback);
+                            }
+                        });
+                    } else {
+                        callback('no context', null);
+                    }
+                }
+            });
+          
+        },
+        getDeeplink : function(deeplinkId, callback) {
+            buildfire.getContext(function(err, context) {
+                if(err) return callback(err, null);
+                if(context && context.instanceId) {
+                    var instanceId = context.instanceId;
+                    var searchOptions = {
+                        filter : {
+                            "_buildfire.index.string1" : instanceId,
+                            "_buildfire.index.array1.string1" : deeplinkId
+                        }
+                    };
+                    buildfire.appData.search(searchOptions, '$$deeplinks', function(err, result) {
+                        if(err) return callback(err, null);
+                        callback(null, result);
+                    })
+                } else {
+                    callback('no context', null);
+                }
+            })
+        },
+        getAllDeeplinks : function(options, callback) {
+            options = options || {};
+            buildfire.getContext(function(err, context) {
+                if(err) {
+                    callback(err, null);
+                } else {
+                    if(context && context.instanceId && context.pluginId) {
+                        var instanceId = context.instanceId;
+                        var searchOptions = {
+                            pageSize : options.pageSize,
+                            filter: {
+                                "_buildfire.index.string1" : instanceId
+                            }
+                        }
+                        buildfire.appData.search(searchOptions,"$$deeplinks", callback);
+                    } else {
+                        callback('no context', null);
+                    }
+                }
+            })
+          
+        },
+        unregisterDeeplink : function(deeplinkId, callback) {
+            this.getDeeplink(deeplinkId, function(err, result) {
+                if(err) return callback(err, null);
+                if(result && result.length > 0) {
+                    var foundDeeplink = result[0];
+                    
+                    buildfire.appData.delete(foundDeeplink.id, "$$deeplinks", callback);
+                } else {
+                    callback('no result found for this deeplink id', null);
+                }
+            })
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
@@ -2642,6 +2749,9 @@ var buildfire = {
         assignUserTags: function(tags, options, callback) {
             var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
             buildfire._sendPacket(p, callback);
+        },
+        keepSessionAlive: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'auth.keepSessionAlive', options), callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -2866,6 +2976,28 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
     stopVideos(iframes, videos);
 
 }, true);
+
+
+(function () {
+    var processedClick = false;
+    var handleEvent = function(eventType, event){
+        if (!processedClick) {
+            processedClick = true;
+            setTimeout(function(){ processedClick = false; }, 1000);
+            buildfire.auth.keepSessionAlive({ type: eventType });
+        }
+    };
+    document.addEventListener("click", function(e) {
+        setTimeout(function(){
+            handleEvent("click", e);
+        });
+    });
+    document.addEventListener("touchstart", function(e) {
+        setTimeout(function(){
+            handleEvent("touchstart", e);
+        });
+    });
+})();
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
