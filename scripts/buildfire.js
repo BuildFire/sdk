@@ -2580,8 +2580,8 @@ var buildfire = {
 
                         _self.getDeeplink(options.id, function(err, result) {
                             if(err) return callback(err, null);
-                            if(result && result.length > 0) {
-                                buildfire.appData.update(result[0].id, deeplinkItem, '$$deeplinks', callback);
+                            if(result) {
+                                buildfire.appData.update(result.id, deeplinkItem, '$$deeplinks', callback);
                             } else {
                                 buildfire.appData.insert(deeplinkItem, '$$deeplinks', false, callback);
                             }
@@ -2602,7 +2602,14 @@ var buildfire = {
                             "_buildfire.index.array1.string1" : deeplinkId
                         }
                     };
-                    buildfire.appData.search(searchOptions, '$$deeplinks', callback)
+                    buildfire.appData.search(searchOptions, '$$deeplinks', function(err, result) {
+                        if(err) return callback(err, null);
+                        if(result) { 
+                            callback(null, result[0]);
+                        } else {
+                            callback(null, null);
+                        }
+                    })
                 } else {
                     callback('no context', null);
                 }
@@ -2632,8 +2639,8 @@ var buildfire = {
         unregisterDeeplink : function(deeplinkId, callback) {
             this.getDeeplink(deeplinkId, function(err, result) {
                 if(err) return callback(err, null);
-                if(result && result.length > 0) {                    
-                    buildfire.appData.delete(result[0].id, '$$deeplinks', callback);
+                if(result) {                    
+                    buildfire.appData.delete(result.id, '$$deeplinks', callback);
                 } else {
                     callback('no result found for this deeplink id', null);
                 }
