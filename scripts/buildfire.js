@@ -2554,12 +2554,13 @@ var buildfire = {
                 return callback('Missing deeplink deeplinkData', null);
             };
 
-            buildfire.getContext((err, context) => {
+            var _self = this;
+            buildfire.getContext(function(err, context) {
                 if(err) {
                     callback(err, null);
                 } else {
                     if(context && context.instanceId && context.pluginId) {
-                        let deeplinkItem = {
+                        var deeplinkItem = {
                             name: options.name,
                             deeplinkId: options.id,
                             imageUrl: options.imageUrl,
@@ -2577,7 +2578,7 @@ var buildfire = {
                             }
                         };
 
-                        this.getDeeplink(options.id, function(err, result) {
+                        _self.getDeeplink(options.id, function(err, result) {
                             if(err) return callback(err, null);
                             if(result && result.length > 0) {
                                 buildfire.appData.update(result[0].id, deeplinkItem, '$$deeplinks', callback);
