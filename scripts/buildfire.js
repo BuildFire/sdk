@@ -2565,8 +2565,6 @@ var buildfire = {
                             deeplinkId: options.id,
                             imageUrl: options.imageUrl,
                             deeplinkData: options.deeplinkData,
-                            actionTextLabel: options.actionTextLabel,
-                            hideActionText: options.hideActionText,
                             pluginInstanceId: context.instanceId,
                             pluginTypeId: context.pluginId,
                             _buildfire: {
