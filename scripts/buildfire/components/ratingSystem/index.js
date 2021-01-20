@@ -1006,6 +1006,7 @@ function createStarsUI(container, averageRating, options, ratingId, reRender, is
         container.classList.add("flex-center");
     } else {
         content = container.innerHTML;
+        if(content.includes("full-star")) return;
         content = content.split("\u2605 \u2605 \u2605 \u2605 \u2605")
 
         if (container.children && container.children[0]) {
