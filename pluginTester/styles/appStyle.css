@@ -1283,8 +1283,10 @@ html[ios="true"][view="app"] nav.menu .menu-shadow {
 }
 
 /* iPhone X, Xr, Xs and Xs Max*/
-@media only screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2) {
+@media only
+screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
+screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3) {
 
 	/* iOS Transparent Nav */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
@@ -1344,6 +1346,9 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 		padding-bottom: calc(env(safe-area-inset-bottom) + 30px);
 	}
 
+	[ios=true][view=app][storyboard-launch-images=true] #plugin.has-footer-menu .notification-plugin{
+		padding-bottom: 0px !important;
+	}
 
 	[ios="true"][view="app"][storyboard-launch-images="true"] .notification-item p:first-child{
 		padding-top: 10px !important;
