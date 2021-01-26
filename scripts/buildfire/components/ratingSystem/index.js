@@ -389,7 +389,10 @@ function injectRatings(options = defaultOptions, callback) {
         elements = document.querySelectorAll("[data-rating-id]");
 
     for (let i = 0; i < elements.length; i++) {
-        elements[i].replaceWith(elements[i].cloneNode(true))   
+        let oldElement = elements[i];
+        let newElement = elements[i].cloneNode(true);
+
+        if(oldElement.parentNode) oldElement.parentNode.replaceChild(newElement, oldElement);
     }
 
     elements = document.querySelectorAll("[data-rating-id]");
