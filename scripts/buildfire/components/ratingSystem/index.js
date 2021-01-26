@@ -388,6 +388,12 @@ function injectRatings(options = defaultOptions, callback) {
     if (typeof elements === "undefined")
         elements = document.querySelectorAll("[data-rating-id]");
 
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].replaceWith(elements[i].cloneNode(true))   
+    }
+
+    elements = document.querySelectorAll("[data-rating-id]");
+
     let ratingIds = options.ratingIds;
     if (typeof ratingIds === "undefined")
         ratingIds = Array.from(elements).map((element, index) => {
