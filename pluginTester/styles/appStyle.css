@@ -4823,6 +4823,9 @@ html[ios="true"] .profile-overlay .profile-content{
 	#plugin.slide{
 		pointer-events: all;
 	} 
+	body.blur-animation nav#menuNav.blur-animation:not(.active) {
+        display: none;
+    } 
 }
 .powered-by {
 	margin-bottom : 20px;
