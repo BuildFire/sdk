@@ -2384,6 +2384,71 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
     },
+    dialog: {
+        alert: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.alert', options);
+            buildfire._sendPacket(p, function () {
+                if (callback)
+                    return callback(null);
+            });
+        },
+        confirm: function (options, callback) {
+            if (!options.confirmButtonText) {
+                options.confirmButtonText = "Confirm";
+            }
+            var p = new Packet(null, 'dialogAPI.confirm', options);
+            buildfire._sendPacket(p, function (err, result) {
+                if (callback && err && err.selectedButton) {
+                    if (result.selectedButton.text == options.confirmButtonText) {
+                        return callback(null, true);
+                    } else {
+                        return callback(null, false);
+                    }
+                } else if (typeof result !== "undefined") {
+                    return callback(null, result);
+                }
+            });
+        },
+        show: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.show', options);
+    
+            var actionButtonCallbacks = new Object();
+    
+            if (options.actionButtons && options.actionButtons.length) {
+                options.actionButtons.forEach(function (button) {
+                    actionButtonCallbacks[button.text] = button.action;
+                    delete button.action;
+                })
+            }
+            buildfire._sendPacket(p, function (err, result) {
+                if (result && result.selectedButton) {
+                    var action = actionButtonCallbacks[result.selectedButton.text];
+                    if (action)
+                        action();
+                    result.selectedButton.action = action;
+                    callback && callback(err, result.selectedButton);
+                } else {
+                    callback && callback(err);
+                }
+            });
+        },
+        toast: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.toast', options);
+            var actionButton = new Object();
+            if (options.actionButton && options.actionButton.action) {
+                actionButton = Object.assign(actionButton, options.actionButton);
+                delete options.actionButton.action;
+            }
+            buildfire._sendPacket(p, function (err, actionClicked) {
+                if (actionClicked) {
+                    actionButton.action && actionButton.action();
+                    callback && callback(err, actionButton);
+                } else {
+                    callback && callback(err, null);
+                }
+            });
+        }
+    },
     bookmarks: {
         add: function(options, callback) {
             var p = new Packet(null, 'bookmarkAPI.add', options);
