@@ -2845,7 +2845,7 @@ html:not([type="app"]) .snackbar-hero{
 	font-size: 14px !important;
 }
 .snackbar .btn.dismiss:not(:only-of-type):last-of-type{
-	margin-left: 8px;
+	margin-left: 0px;
 }
 .snackbar.snackbar-stacked{
 	flex-direction: column;
