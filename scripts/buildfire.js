@@ -1,4 +1,4 @@
-//"use strict";
+//"use strict"; FARUK
 
 function Packet(id, cmd, data) {
     this.id = id ? id : new Date().toISOString() + Math.random();
@@ -2348,6 +2348,7 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
             //make it compatible with app, cp and the old versions
             if(options && options.buttonName && !options.okButton){
                 options.okButton = {text: options.buttonName};
@@ -2356,6 +2357,7 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , confirm: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
             //make it compatible with app, cp and the old versions
             if (options && options.buttonLabels) {
                 if (!options.confirmButton) {
@@ -2380,6 +2382,7 @@ var buildfire = {
             var p = new Packet(null, 'notificationsAPI.vibrate', options);
             buildfire._sendPacket(p, callback);
         }, showDialog: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
             var p = new Packet(null, 'notificationsAPI.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
@@ -2397,17 +2400,7 @@ var buildfire = {
                 options.confirmButtonText = "Confirm";
             }
             var p = new Packet(null, 'dialogAPI.confirm', options);
-            buildfire._sendPacket(p, function (err, result) {
-                if (callback && err && err.selectedButton) {
-                    if (result.selectedButton.text == options.confirmButtonText) {
-                        return callback(null, true);
-                    } else {
-                        return callback(null, false);
-                    }
-                } else if (typeof result !== "undefined") {
-                    return callback(null, result);
-                }
-            });
+            buildfire._sendPacket(p, callback);
         },
         show: function (options, callback) {
             var p = new Packet(null, 'dialogAPI.show', options);
