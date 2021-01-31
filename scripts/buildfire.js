@@ -1,4 +1,4 @@
-//"use strict"; FARUK
+//"use strict";
 
 function Packet(id, cmd, data) {
     this.id = id ? id : new Date().toISOString() + Math.random();
