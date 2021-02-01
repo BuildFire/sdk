@@ -49,6 +49,7 @@ buildfire.components.carousel._getDomSelector = function (selector) {
     throw "selector is not a valid DOM element nor string selector";
 };
 
+
 buildfire.components.carousel.deleteData = function (name, callback) {
     if ((!name || 0 === name.length)) callback(null, null);
     var filter = { filter: { "$json.name": name } };
@@ -78,10 +79,11 @@ buildfire.components.carousel.getPlaceHolders = function (name, callback) {
     });
 }
 
+
 // This is the class that will be used in the plugin content, design, or settings sections
 buildfire.components.carousel.editor = function (selector, items, name) {//added
     if (typeof name === "string") {
-        if (name.length < 20)
+        if (name.length < 50)
             this.name = name;
         else throw "Carousel name is too long!";
     };
@@ -143,6 +145,7 @@ buildfire.components.carousel.editor.prototype = {
     },//added
     // this method allows you to replace the slider image or append to then if appendItems = true
     loadItems: function (items, appendItems) {
+        this._changeEditBackground(items);
         if (items && items instanceof Array) {
             if (!appendItems && this.items.length !== 0) {
                 // here we want to remove any existing items since the user of the component don't want to append items
@@ -250,6 +253,7 @@ buildfire.components.carousel.editor.prototype = {
                     me.onDeleteItem(item, itemIndex);
                     if (me.saveImages) me._saveState();
                 }
+                me._changeEditBackground(me.items);
             });
         })(item);
     },
@@ -303,16 +307,16 @@ buildfire.components.carousel.editor.prototype = {
                     if (err || !obj || !obj.data || !obj.data.content) {
                         me.state = {
                             "Speed": me.control.Settings.Speed[5].value, "Order": me.control.Settings.Order[0].value, "Display": me.control.Settings.Display[0].value,
-                            "Visible": me.control["Hover Text"].Visible, "Background": me.control["Hover Text"].Background, "Positions": me.control["Hover Text"].Positions[1].value, "Alignment": me.control["Hover Text"].Alignment[1].value,
-                            "Font Size": me.control["Hover Text"]["Font Size"][4].value
+                            "Visible": me.control["Overlay Text"].Visible, "Background": me.control["Overlay Text"].Background, "Positions": me.control["Overlay Text"].Positions[1].value, "Alignment": me.control["Overlay Text"].Alignment[1].value,
+                            "Font Size": me.control["Overlay Text"]["Font Size"][4].value
                         };
                     } else {
                         me.state = {
                             "Speed": (!obj.data.content.speed) ? me.control.Settings.Speed[5].value : obj.data.content.speed
                             , "Order": (!obj.data.content.order) ? me.control.Settings.Order[0].value : obj.data.content.order,
                             "Display": (!obj.data.content.display) ? me.control.Settings.Display[0].value : obj.data.content.display,
-                            "Visible": me.control["Hover Text"].Visible, "Background": me.control["Hover Text"].Background, "Positions": me.control["Hover Text"].Positions[1].value, "Alignment": me.control["Hover Text"].Alignment[1].value,
-                            "Font Size": me.control["Hover Text"]["Font Size"][4].value
+                            "Visible": me.control["Overlay Text"].Visible, "Background": me.control["Overlay Text"].Background, "Positions": me.control["Overlay Text"].Positions[1].value, "Alignment": me.control["Overlay Text"].Alignment[1].value,
+                            "Font Size": me.control["Overlay Text"]["Font Size"][4].value
                         };
                     }
                     me.myId = "none";
@@ -475,29 +479,54 @@ buildfire.components.carousel.editor.prototype = {
                 }
             })
         });
+    },
+    _changeEditBackground(items){
+        if (items.length == 0){
+            this.itemsContainer.style.height="200px";
+            this.itemsContainer.style.background="#eef0f0";
+            this.itemsContainer.style.width="97%";
+            this.itemsContainer.innerHTML="";
+            var text=document.createElement("p");
+            text.setAttribute("style","position: absolute; left: 34%; top: 48%; font-size:16px; margin:inherit;");
+            text.setAttribute("id","clearText");
+            text.innerHTML="Add an image to start";
+            this.clearElement=text;
+            this.itemsContainer.appendChild(text);
+        }else{
+            if(this.clearElement)this.clearElement.remove();
+            this.itemsContainer.style.height="inherit";
+            this.itemsContainer.style.background="white";
+            this.itemsContainer.style.width="100%";
+        }
     }
     ,
     // render the basic template HTML
     _renderTemplate: function () {
         var componentContainer = document.createElement("div");
-        var componentName = document.createElement("span");
         var contentContainer = document.createElement("div");
         var buttonContainer = document.createElement("div");
         var button = document.createElement("a");
         var sliderContainer = document.createElement("div");
 
+        if (!this.name || !this.name.length){
+            var componentName = document.createElement("span");
+            componentName.className = "labels col-md-3 padding-right-zero pull-left";
+            componentName.innerHTML = "Image Carousel";
+        }
 
         componentContainer.className = "item clearfix row";
-        componentName.className = "labels col-md-3 padding-right-zero pull-left";
-        componentName.innerHTML = "Image Carousel";
-        contentContainer.className = "main col-md-9 pull-right";
+        contentContainer.className = "main";
         buttonContainer.className = "clearfix settings-container";
         button.className = "btn btn-success pull-left add-new-carousel";
-        sliderContainer.className = "carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey";
+        sliderContainer.className = "carousel-items draggable-list-view margin-top-twenty border-radius-four border-grey";
 
         button.innerHTML = "Add Image";
 
-        componentContainer.appendChild(componentName);
+        if (!this.name || !this.name.length){
+            componentContainer.appendChild(componentName);
+            contentContainer.className += " col-md-9 pull-right";
+
+        }
         buttonContainer.appendChild(button);
 
         contentContainer.appendChild(buttonContainer);

@@ -73,11 +73,20 @@ const defaultCarouselImages = [{
     }, 1000);
 })();
 
+
+buildfire.components.carousel.renderWWG = function (name) {
+    let child=document.querySelectorAll('[data-carousel="'+name+'"]')[0];
+    let el = document.createElement('div');
+    child.parentNode.replaceChild(el, child);
+    new buildfire.components.carousel.view({selector: el,loop: 0,infinite:false,autoInterval:5000,name:name});
+}
+
+
 // This is the class that will be used in the mobile
 //{selector:selector, items:items, layout:layout, speed:speed}
 buildfire.components.carousel.view = function (options) {
     if (typeof options.name === "string") {
-        if (options.name.length < 20)
+        if (options.name.length < 50)
             this.name = options.name;
         else throw "Carousel name is too long!";
     };
@@ -176,6 +185,7 @@ buildfire.components.carousel.view.prototype = {
         });
 
         this.slideContainer = document.createElement('ul');
+        this.slideContainer.setAttribute('style','text-align: initial !important;');
         ['lorySlides', 'js_slides'].forEach(function (cname) {
             self.slideContainer.classList.add(cname);
         });
@@ -285,7 +295,7 @@ buildfire.components.carousel.view.prototype = {
         });
         if (!me.store)
             me.store = buildfire.datastore.onUpdate(function (event) {
-                if (event.tag == "carouselSettings" && (event.data.name == me.name || me.name.length == 0)) {
+                if (event.tag == "carouselSettings" && (event.data.name == me.name || (me.name && me.name.length == 0))) {
                     me.control = event.data;
                     let textBCRS = "textBCRS" + ((me.name) ? me.name : ""),
                         textCCRS = "textCCRS" + ((me.name) ? me.name : ""),
