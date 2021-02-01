@@ -24,20 +24,7 @@ tinymce.PluginManager.add("collage", function (editor, url) {
                         text: "Add Images",
                         classes: 'widget btn primary',
                         onclick: function () {
-                            const modal = editor.windowManager.getWindows()[0];
-  
-                            function getElementById(id) {
-                                return modal.getContentWindow().document.getElementById(id);
-                            }
-                            let val = getElementById('data_id').value.trim();
-                            val = escape(val);
-                            editor.insertContent(
-                                `<img src="trigger_errorasd" onerror="typeof buildfire !== 'undefined' && buildfire.ratingSystem.inject()" style="display: none">
-                                    <p data-rating-id="${val}-tinymce" style="text-align: center;" data-mce-style="text-align: center;">
-                                        &#9733; &#9733; &#9733; &#9733; &#9733;
-                                    </p><br>
-                                `
-                            );
+
                             modal.close();
                         }
                     },
