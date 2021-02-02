@@ -105,6 +105,8 @@ class Ratings {
         if (!rating.user || !rating.user._id)
             return callback(new Error("User must be logged in"));
 
+        if (!rating.rating) return;
+
         // Check if there is an existing rating from this user
         Ratings.search(
             {
@@ -386,6 +388,15 @@ function injectRatings(options = defaultOptions, callback) {
     if (typeof elements === "undefined")
         elements = document.querySelectorAll("[data-rating-id]");
 
+    for (let i = 0; i < elements.length; i++) {
+        let oldElement = elements[i];
+        let newElement = elements[i].cloneNode(true);
+
+        if(oldElement.parentNode) oldElement.parentNode.replaceChild(newElement, oldElement);
+    }
+
+    elements = document.querySelectorAll("[data-rating-id]");
+
     let ratingIds = options.ratingIds;
     if (typeof ratingIds === "undefined")
         ratingIds = Array.from(elements).map((element, index) => {
@@ -479,6 +490,10 @@ function applyStyling() {
 
             .primaryTheme {
                 color: ${primaryTheme} !important;
+            }
+
+            .submit-button {
+                background-color: ${primaryTheme};
             }
         `
         document.head.appendChild(styleRatings);
@@ -577,6 +592,11 @@ function openAddRatingScreen(
                 let star = document.createElement("div");
                 star.id = "stars" + i;
                 star.addEventListener("click", function () {
+                    let submitButton = document.querySelector(".submit-button");
+                    if (submitButton && submitButton.disabled) {
+                        submitButton.disabled = false;
+                        submitButton.classList.remove("disabled");
+                    }
                     rating.rating = i + 1;
                     updateStarsUI();
                 });
@@ -663,8 +683,13 @@ function openAddRatingScreen(
 
             let submitButton = document.createElement("div");
             submitButton.className = "submit-button";
+            if (!rating.rating) {
+                submitButton.disabled = true;
+                submitButton.classList.add("disabled");
+            }
             submitButton.innerText = rating.id ? (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating : (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
             submitButton.addEventListener("click", () => {
+                if (submitButton.disabled) return;
                 if (rating.id) {
                     Ratings.set(originalRating, rating, (err, updatedRating) => {
                         buildfire.navigation.onBackButtonClick();
@@ -708,6 +733,11 @@ function closeAddRatingScreen() {
     let addRatingScreen = document.querySelector(".add-rating-screen");
     if (!addRatingScreen) return;
 
+    let addRatingButton = document.querySelector(".add-rating-button");
+    if (addRatingButton) addRatingButton.disabled = false;
+
+    let editRatingButton = document.querySelector(".edit-rating-button");
+    if (editRatingButton) editRatingButton.disabled = false;
     document.body.removeChild(addRatingScreen);
 }
 
@@ -884,6 +914,8 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                 addRatingButton.className = "add-rating-button primaryTheme";
                 addRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
                 addRatingButton.addEventListener("click", () => {
+                    if (addRatingButton.disabled) return;
+                    addRatingButton.disabled = true;
                     openAddRatingScreen(ratingId, options, () => {
                         reRender();
                         reRenderComponent();
@@ -895,6 +927,8 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                 editRatingButton.className = "edit-rating-button primaryTheme";
                 editRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating;
                 editRatingButton.addEventListener("click", () => {
+                    if (editRatingButton.disabled) return;
+                    editRatingButton.disabled = true;
                     openAddRatingScreen(ratingId, options, () => {
                         reRender();
                         reRenderComponent();
@@ -981,6 +1015,7 @@ function createStarsUI(container, averageRating, options, ratingId, reRender, is
         container.classList.add("flex-center");
     } else {
         content = container.innerHTML;
+        if(content.includes("full-star")) return;
         content = content.split("\u2605 \u2605 \u2605 \u2605 \u2605")
 
         if (container.children && container.children[0]) {
