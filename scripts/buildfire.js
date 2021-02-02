@@ -2597,6 +2597,110 @@ var buildfire = {
         generateUrl: function (params, callback) {
             var p = new Packet(null, 'shortLinks.generate', params);
             buildfire._sendPacket(p, callback);
+        },
+        registerDeeplink : function(options, callback) {
+            if(!options) {
+                return callback('Missing options parameter', null);
+            };
+            if(!options.id)  {
+                return callback('Missing deeplink id', null);
+            }
+            if(!options.name) {
+                return callback('Missing deeplink name', null);
+            };
+            if(!options.deeplinkData) {
+                return callback('Missing deeplink deeplinkData', null);
+            };
+
+            var _self = this;
+            buildfire.getContext(function(err, context) {
+                if(err) {
+                    callback(err, null);
+                } else {
+                    if(context && context.instanceId && context.pluginId) {
+                        var deeplinkItem = {
+                            name: options.name,
+                            deeplinkId: options.id,
+                            imageUrl: options.imageUrl,
+                            deeplinkData: options.deeplinkData,
+                            pluginInstanceId: context.instanceId,
+                            pluginTypeId: context.pluginId,
+                            _buildfire: {
+                                index: {
+                                    string1: context.instanceId,
+                                    text: options.name,
+                                    array1: [{string1: options.id}]
+                                }
+                            }
+                        };
+
+                        _self.getDeeplink(options.id, function(err, result) {
+                            if(err) return callback(err, null);
+                            if(result) {
+                                buildfire.appData.update(result.id, deeplinkItem, '$$deeplinks', callback);
+                            } else {
+                                buildfire.appData.insert(deeplinkItem, '$$deeplinks', false, callback);
+                            }
+                        });
+                    } else {
+                        callback('no context', null);
+                    }
+                }
+            });  
+        },
+        getDeeplink : function(deeplinkId, callback) {
+            buildfire.getContext(function(err, context) {
+                if(err) return callback(err, null);
+                if(context && context.instanceId) {
+                    var searchOptions = {
+                        filter : {
+                            "_buildfire.index.string1" : context.instanceId,
+                            "_buildfire.index.array1.string1" : deeplinkId
+                        }
+                    };
+                    buildfire.appData.search(searchOptions, '$$deeplinks', function(err, result) {
+                        if(err) return callback(err, null);
+                        if(result) { 
+                            callback(null, result[0]);
+                        } else {
+                            callback(null, null);
+                        }
+                    })
+                } else {
+                    callback('no context', null);
+                }
+            })
+        },
+        getAllDeeplinks : function(options, callback) {
+            options = options || {};
+            buildfire.getContext(function(err, context) {
+                if(err) {
+                    callback(err, null);
+                } else {
+                    if(context && context.instanceId) {
+                        var searchOptions = {
+                            pageSize : options.pageSize,
+                            filter: {
+                                "_buildfire.index.string1" : context.instanceId
+                            }
+                        }
+                        buildfire.appData.search(searchOptions, '$$deeplinks', callback);
+                    } else {
+                        callback('no context', null);
+                    }
+                }
+            })
+          
+        },
+        unregisterDeeplink : function(deeplinkId, callback) {
+            this.getDeeplink(deeplinkId, function(err, result) {
+                if(err) return callback(err, null);
+                if(result) {                    
+                    buildfire.appData.delete(result.id, '$$deeplinks', callback);
+                } else {
+                    callback('no result found for this deeplink id', null);
+                }
+            })
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
