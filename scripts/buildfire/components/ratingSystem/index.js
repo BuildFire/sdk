@@ -854,6 +854,11 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
         buildfire.navigation.onBackButtonClick = options.onBackButtonClick;
     };
 
+    let closeButton = document.createElement("div");
+    closeButton.className = "rating-cp-close-button";
+    closeButton.innerHTML = "&#10005";
+    container.appendChild(closeButton);
+
     let header = document.createElement("div");
     header.className = "ovarall-rating-container";
     let headerTitle = document.createElement("h5");

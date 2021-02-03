@@ -143,6 +143,7 @@ span.rating-time-ago {
   width: 100vw;
   height: 100vh;
   z-index: 20;
+  overflow-y: scroll;
 }
 
 .ratings-screen-rating {
@@ -188,7 +189,7 @@ span.rating-time-ago {
 }
 
 .rating-review-images {
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   display: flex;
 }
@@ -343,4 +344,12 @@ span.rating-time-ago {
 
 .ratings-text {
   font-size: 20px;
+}
+
+.rating-cp-close-button {
+  cursor: pointer;
+  position: fixed;
+  right: 0;
+  top: 20px;
+  z-index: 100;
 }
