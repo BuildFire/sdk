@@ -392,7 +392,7 @@ function injectRatings(options = defaultOptions, callback) {
         let oldElement = elements[i];
         let newElement = elements[i].cloneNode(true);
 
-        if(oldElement.parentNode) oldElement.parentNode.replaceChild(newElement, oldElement);
+        if (oldElement.parentNode) oldElement.parentNode.replaceChild(newElement, oldElement);
     }
 
     elements = document.querySelectorAll("[data-rating-id]");
@@ -854,10 +854,16 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
         buildfire.navigation.onBackButtonClick = options.onBackButtonClick;
     };
 
-    let closeButton = document.createElement("div");
-    closeButton.className = "rating-cp-close-button";
-    closeButton.innerHTML = "&#10005";
-    container.appendChild(closeButton);
+    if (buildfire.getContext().type == "control") {
+        let closeButton = document.createElement("div");
+        closeButton.className = "rating-cp-close-button";
+        closeButton.innerHTML = "&#10005";
+        closeButton.addEventListener("click", () => {
+            if (options.callback) options.callback(undefined, null)
+            closeRatingsScreen();
+        })
+        container.appendChild(closeButton);
+    }
 
     let header = document.createElement("div");
     header.className = "ovarall-rating-container";
@@ -1020,7 +1026,7 @@ function createStarsUI(container, averageRating, options, ratingId, reRender, is
         container.classList.add("flex-center");
     } else {
         content = container.innerHTML;
-        if(content.includes("full-star")) return;
+        if (content.includes("full-star")) return;
         content = content.split("\u2605 \u2605 \u2605 \u2605 \u2605")
 
         if (container.children && container.children[0]) {
