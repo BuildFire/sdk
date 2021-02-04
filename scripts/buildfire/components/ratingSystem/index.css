@@ -349,7 +349,7 @@ span.rating-time-ago {
 .rating-cp-close-button {
   cursor: pointer;
   position: fixed;
-  right: 0;
+  right: 20px;
   top: 20px;
   z-index: 100;
 }

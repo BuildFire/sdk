@@ -774,7 +774,7 @@ function createRatingUI(rating, editRatingButton, options) {
             ? rating.user.displayName
             : "Unknown User";
 
-    if (editRatingButton) {
+    if (editRatingButton && buildfire.getContext().type !== "control") {
         userName.appendChild(editRatingButton);
     }
 
@@ -932,7 +932,9 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                         reRenderComponent();
                     });
                 });
-                header.appendChild(addRatingButton);
+                if (buildfire.getContext().type !== "control") {
+                    header.appendChild(addRatingButton);
+                }
             } else {
                 const editRatingButton = document.createElement("div");
                 editRatingButton.className = "edit-rating-button primaryTheme";
