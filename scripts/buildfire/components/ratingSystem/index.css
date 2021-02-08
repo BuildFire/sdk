@@ -179,7 +179,7 @@ span.rating-time-ago {
   font-size: 15px !important;
   font-weight: bold;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   height: 22px;
 }
