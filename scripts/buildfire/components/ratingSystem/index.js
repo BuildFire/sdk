@@ -493,7 +493,7 @@ function applyStyling() {
                 color: ${primaryTheme} !important;
             }
 
-            .submit-button {
+            .submit-rating-button {
                 color: ${primaryTheme};
             }
         `
@@ -611,7 +611,7 @@ function openAddRatingScreen(
                 let star = document.createElement("div");
                 star.id = "stars" + i;
                 star.addEventListener("click", function () {
-                    let submitButton = document.querySelector(".submit-button");
+                    let submitButton = document.querySelector(".submit-rating-button");
                     if (submitButton && submitButton.disabled) {
                         submitButton.disabled = false;
                         submitButton.classList.remove("disabled");
@@ -710,7 +710,7 @@ function openAddRatingScreen(
             };
 
             let submitButton = document.createElement("div");
-            submitButton.className = "submit-button";
+            submitButton.className = "submit-rating-button";
             if (!rating.rating) {
                 submitButton.disabled = true;
                 submitButton.classList.add("disabled");

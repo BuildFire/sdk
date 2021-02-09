@@ -229,7 +229,7 @@ span.rating-time-ago {
   margin-right: 0;
 }
 
-.submit-button {
+.submit-rating-button {
   padding: 8px 12px;
   text-transform: uppercase;
   font-weight: 700;
@@ -242,7 +242,7 @@ span.rating-time-ago {
   margin-top: 16px;
 }
 
-.submit-button.disabled {
+.submit-rating-button.disabled {
   opacity: 0.5;
   cursor: normal;
 }
