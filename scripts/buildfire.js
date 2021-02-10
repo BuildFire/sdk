@@ -2541,6 +2541,11 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         },
         registerDeeplink : function(options, callback) {
+            if (!callback) {
+                callback = function(err) {
+                    if(err) console.error(err);
+                };
+            };
             if(!options) {
                 return callback('Missing options parameter', null);
             };
@@ -2591,6 +2596,9 @@ var buildfire = {
             });  
         },
         getDeeplink : function(deeplinkId, callback) {
+            if(!callback) {
+                return console.error('Missing callback parameter');
+            };
             buildfire.getContext(function(err, context) {
                 if(err) return callback(err, null);
                 if(context && context.instanceId) {
@@ -2611,9 +2619,12 @@ var buildfire = {
                 } else {
                     callback('no context', null);
                 }
-            })
+            });
         },
         getAllDeeplinks : function(options, callback) {
+            if(!callback) {
+                return console.error('Missing callback parameter');
+            };
             options = options || {};
             buildfire.getContext(function(err, context) {
                 if(err) {
@@ -2631,10 +2642,14 @@ var buildfire = {
                         callback('no context', null);
                     }
                 }
-            })
-          
+            }); 
         },
         unregisterDeeplink : function(deeplinkId, callback) {
+            if (!callback) {
+                callback = function(err) {
+                    if(err) console.error(err);
+                };
+            }
             this.getDeeplink(deeplinkId, function(err, result) {
                 if(err) return callback(err, null);
                 if(result) {                    
@@ -2642,7 +2657,7 @@ var buildfire = {
                 } else {
                     callback('no result found for this deeplink id', null);
                 }
-            })
+            });
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
