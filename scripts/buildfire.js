@@ -2543,7 +2543,7 @@ var buildfire = {
         registerDeeplink : function(options, callback) {
             if (!callback) {
                 callback = function(err) {
-                    console.error(err);
+                    if(err) console.error(err);
                 };
             };
             if(!options) {
@@ -2647,7 +2647,7 @@ var buildfire = {
         unregisterDeeplink : function(deeplinkId, callback) {
             if (!callback) {
                 callback = function(err) {
-                    console.error(err);
+                    if(err) console.error(err);
                 };
             }
             this.getDeeplink(deeplinkId, function(err, result) {
