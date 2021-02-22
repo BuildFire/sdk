@@ -2348,6 +2348,7 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
             //make it compatible with app, cp and the old versions
             if(options && options.buttonName && !options.okButton){
                 options.okButton = {text: options.buttonName};
@@ -2356,6 +2357,7 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , confirm: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
             //make it compatible with app, cp and the old versions
             if (options && options.buttonLabels) {
                 if (!options.confirmButton) {
@@ -2380,8 +2382,64 @@ var buildfire = {
             var p = new Packet(null, 'notificationsAPI.vibrate', options);
             buildfire._sendPacket(p, callback);
         }, showDialog: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
             var p = new Packet(null, 'notificationsAPI.showDialog', options);
             buildfire._sendPacket(p, callback);
+        }
+    },
+    dialog: {
+        alert: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.alert', options);
+            buildfire._sendPacket(p, function () {
+                if (callback)
+                    return callback(null);
+            });
+        },
+        confirm: function (options, callback) {
+            if (!options.confirmButtonText) {
+                options.confirmButtonText = "Confirm";
+            }
+            var p = new Packet(null, 'dialogAPI.confirm', options);
+            buildfire._sendPacket(p, callback);
+        },
+        show: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.show', options);
+    
+            var actionButtonCallbacks = new Object();
+    
+            if (options.actionButtons && options.actionButtons.length) {
+                options.actionButtons.forEach(function (button) {
+                    actionButtonCallbacks[button.text] = button.action;
+                    delete button.action;
+                })
+            }
+            buildfire._sendPacket(p, function (err, result) {
+                if (result && result.selectedButton) {
+                    var action = actionButtonCallbacks[result.selectedButton.text];
+                    if (action)
+                        action();
+                    result.selectedButton.action = action;
+                    callback && callback(err, result.selectedButton);
+                } else {
+                    callback && callback(err);
+                }
+            });
+        },
+        toast: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.toast', options);
+            var actionButton = new Object();
+            if (options.actionButton && options.actionButton.action) {
+                actionButton = Object.assign(actionButton, options.actionButton);
+                delete options.actionButton.action;
+            }
+            buildfire._sendPacket(p, function (err, actionClicked) {
+                if (actionClicked) {
+                    actionButton.action && actionButton.action();
+                    callback && callback(err, actionButton);
+                } else {
+                    callback && callback(err, null);
+                }
+            });
         }
     },
     bookmarks: {
