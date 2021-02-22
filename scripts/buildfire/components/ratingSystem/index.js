@@ -366,6 +366,7 @@ const defaultOptions = {
         "updateRating": "Update Rating",
         "leaveAReview": "Leave a review",
         "writeAComment": "Write a comment",
+        "writeHere": "Write here...",
         "basedOn": "Based on",
         "review": "Review",
         "reviews": "Reviews",
@@ -392,7 +393,7 @@ function injectRatings(options = defaultOptions, callback) {
         let oldElement = elements[i];
         let newElement = elements[i].cloneNode(true);
 
-        if(oldElement.parentNode) oldElement.parentNode.replaceChild(newElement, oldElement);
+        if (oldElement.parentNode) oldElement.parentNode.replaceChild(newElement, oldElement);
     }
 
     elements = document.querySelectorAll("[data-rating-id]");
@@ -492,12 +493,38 @@ function applyStyling() {
                 color: ${primaryTheme} !important;
             }
 
-            .submit-button {
-                background-color: ${primaryTheme};
+            .submit-rating-button {
+                color: ${primaryTheme};
             }
         `
         document.head.appendChild(styleRatings);
     })
+}
+
+
+function loadIcons() {
+    console.log("LOADING ICONS");
+    let url = "";
+    if (buildfire.getContext().type == "control") {
+        url = "../../../../styles/siteIcons.css";
+    } else {
+        url = "../../../styles/siteIcons.css";
+    }
+
+    function areIconsLoaded() {
+        let links = document.getElementsByTagName('link');
+        for (let i = 0; i < links.length; i++) {
+            if (links[i].href == url) return true;
+        }
+        return false;
+    }
+
+    if (!areIconsLoaded()) {
+        let iconsScript = document.createElement("link");
+        iconsScript.href = url;
+        iconsScript.rel = "stylesheet";
+        document.head.appendChild(iconsScript);
+    }
 }
 
 function openAddRatingScreen(
@@ -505,6 +532,7 @@ function openAddRatingScreen(
     options = defaultOptions,
     callback = () => { }
 ) {
+
     buildfire.auth.getCurrentUser((err, loggedInUser) => {
         if (err || !loggedInUser) {
             return buildfire.auth.login(
@@ -561,18 +589,9 @@ function openAddRatingScreen(
             let header = document.createElement("div");
             header.className = "add-rating-header";
 
-            let cancelButton = document.createElement("div");
-            cancelButton.className = "cancel-rating-button";
-            cancelButton.innerHTML = "&#10005;";
-            cancelButton.addEventListener("click", () => {
-                closeAddRatingScreen();
-            });
-
             let title = document.createElement("div");
             title.className = "add-rating-title";
             title.innerText = rating.id ? (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating : (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
-
-            header.appendChild(cancelButton);
             header.appendChild(title);
 
             let subtitle = document.createElement("div");
@@ -592,7 +611,7 @@ function openAddRatingScreen(
                 let star = document.createElement("div");
                 star.id = "stars" + i;
                 star.addEventListener("click", function () {
-                    let submitButton = document.querySelector(".submit-button");
+                    let submitButton = document.querySelector(".submit-rating-button");
                     if (submitButton && submitButton.disabled) {
                         submitButton.disabled = false;
                         submitButton.classList.remove("disabled");
@@ -601,30 +620,31 @@ function openAddRatingScreen(
                     updateStarsUI();
                 });
                 star.innerHTML = FULL_STAR;
-                star.style.color = "#fcb040";
+                star.className = "primaryTheme";
                 ratingStars.appendChild(star);
             }
 
-            const openTextDialog = () => {
+            const openTextDialog = (e) => {
+                e.preventDefault();
                 buildfire.input.showTextDialog(
                     {
                         placeholder: (options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment,
                         saveText: "Save",
-                        defaultValue:
-                            textArea.innerText !== ((options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment)
-                                ? textArea.innerText
-                                : "",
+                        defaultValue: textAreaInput.value,
                         attachments: {
                             images: {
                                 enable: true,
                                 multiple: true,
                             },
                         },
+                        defaultAttachments: {
+                            images: rating.images
+                        }
                     },
                     (e, response) => {
                         if (e || response.cancelled) return;
                         rating.comment = response.results[0].textValue;
-                        rating.images = [...rating.images, ...response.results[0].images];
+                        rating.images = response.results[0].images;
                         updateTextAreaUI();
                         updateImagesUI();
                     }
@@ -632,18 +652,26 @@ function openAddRatingScreen(
             };
 
             let updateTextAreaUI = () => {
-                textArea.innerText = rating.comment
-                    ? rating.comment
-                    : (options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment;
+                textAreaInput.value = rating.comment || "";
             };
 
-            let textAreaSubtitle = document.createElement("div");
-            textAreaSubtitle.className = "add-rating-subtitle";
-            textAreaSubtitle.innerText = (options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment;
+            // let textArea = document.createElement("div");
+            // textArea.className = "text-area";
 
-            let textArea = document.createElement("div");
-            textArea.className = "text-area";
-            textArea.addEventListener("click", openTextDialog);
+            let textAreaContainer = document.createElement("div");
+            textAreaContainer.className = "text-area-container";
+
+            let textAreaLabel = document.createElement("label");
+            textAreaLabel.className = "text-area-label";
+            textAreaLabel.innerHTML = (options && options.translations && options.translations.writeAComment) || defaultOptions.translations.writeAComment;
+            textAreaContainer.appendChild(textAreaLabel);
+
+            let textAreaInput = document.createElement("textarea");
+            textAreaInput.className = "text-area-input";
+            textAreaInput.disabled = true;
+            textAreaInput.placeholder = (options && options.translations && options.translations.writeHere) || defaultOptions.translations.writeHere;
+            textAreaContainer.appendChild(textAreaInput);
+            textAreaContainer.addEventListener("click", openTextDialog);
 
             let imagesContainer = document.createElement("images");
             imagesContainer.className = "review-images-container";
@@ -661,9 +689,12 @@ function openAddRatingScreen(
 
                     let deleteImageButton = document.createElement("div");
                     deleteImageButton.className = "review-image-delete";
-                    deleteImageButton.innerHTML = "✖";
+                    deleteImageButton.innerHTML = "&#10006;";
                     deleteImageButton.style.background = "red";
                     deleteImageButton.style.color = "white";
+                    deleteImageButton.addEventListener("click", () => {
+                        removeImage(index);
+                    })
 
                     let image = document.createElement("img");
                     image.className = "review-image";
@@ -673,16 +704,13 @@ function openAddRatingScreen(
                     });
                     imageContainer.appendChild(image);
                     imageContainer.appendChild(deleteImageButton);
-                    imageContainer.addEventListener("click", () => {
-                        removeImage(index);
-                    });
 
                     imagesContainer.appendChild(imageContainer);
                 });
             };
 
             let submitButton = document.createElement("div");
-            submitButton.className = "submit-button";
+            submitButton.className = "submit-rating-button";
             if (!rating.rating) {
                 submitButton.disabled = true;
                 submitButton.classList.add("disabled");
@@ -713,8 +741,7 @@ function openAddRatingScreen(
             container.appendChild(header);
             container.appendChild(subtitle);
             container.appendChild(ratingStars);
-            container.appendChild(textAreaSubtitle);
-            container.appendChild(textArea);
+            container.appendChild(textAreaContainer);
             container.appendChild(imagesContainer);
 
             container.appendChild(submitButton);
@@ -768,13 +795,13 @@ function createRatingUI(rating, editRatingButton, options) {
     header.appendChild(nameAndStars);
 
     let userName = document.createElement("div");
-    userName.className = "rating-user-display-name";
+    userName.className = "rating-user-display-name primaryTheme";
     userName.innerText =
         rating.user && rating.user.displayName
             ? rating.user.displayName
             : "Unknown User";
 
-    if (editRatingButton) {
+    if (editRatingButton && buildfire.getContext().type !== "control") {
         userName.appendChild(editRatingButton);
     }
 
@@ -833,7 +860,9 @@ function createRatingUI(rating, editRatingButton, options) {
                 index: i
             };
 
-            buildfire.imagePreviewer.show(options, callback)
+
+
+            buildfire.imagePreviewer.show(options, () => { })
         })
         ratingImages.appendChild(image);
     }
@@ -848,14 +877,34 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 
     buildfire.spinner.show();
 
+    loadIcons();
+
     buildfire.navigation.onBackButtonClick = () => {
         if (options.callback) options.callback(undefined, null)
         closeRatingsScreen();
         buildfire.navigation.onBackButtonClick = options.onBackButtonClick;
     };
 
+    if (buildfire.getContext().type == "control") {
+        let closeButton = document.createElement("span");
+        closeButton.className = "icon icon-chevron-left";
+        closeButton.id = "closeButton";
+        closeButton.addEventListener("click", () => {
+            if (options.callback) options.callback(undefined, null)
+            closeRatingsScreen();
+        })
+        container.appendChild(closeButton);
+    }
+
     let header = document.createElement("div");
     header.className = "ovarall-rating-container";
+
+    if (buildfire.getContext().type !== "control") {
+        header.classList.add("shadow");
+    } else {
+        header.classList.add("border");
+    }
+
     let headerTitle = document.createElement("h5");
     headerTitle.innerText = (options && options.translations && options.translations.overallRating) || defaultOptions.translations.overallRating;
     headerTitle.style.fontWeight = 400;
@@ -921,7 +970,9 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
                         reRenderComponent();
                     });
                 });
-                header.appendChild(addRatingButton);
+                if (buildfire.getContext().type !== "control") {
+                    header.appendChild(addRatingButton);
+                }
             } else {
                 const editRatingButton = document.createElement("div");
                 editRatingButton.className = "edit-rating-button primaryTheme";
@@ -1015,7 +1066,7 @@ function createStarsUI(container, averageRating, options, ratingId, reRender, is
         container.classList.add("flex-center");
     } else {
         content = container.innerHTML;
-        if(content.includes("full-star")) return;
+        if (content.includes("full-star")) return;
         content = content.split("\u2605 \u2605 \u2605 \u2605 \u2605")
 
         if (container.children && container.children[0]) {
