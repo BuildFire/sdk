@@ -356,27 +356,55 @@ var buildfire = {
             });
             buildfire._sendPacket(p, callback);
         }
-        , navigateToSocialWall: function (pluginData, callback) {
-            var pluginIds = {
-                'social2.0': '697f1612-8208-4870-93f9-555c65103578',
-                'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
-            };
+        , navigateToSocialWall: function (options, callback) {
             if (!callback) {
                 callback = console.warn;
             }
-            if (!pluginData) {
-                pluginData = {};
+            if (!options) {
+                options = {};
             }
-
-            navigate(pluginData, pluginIds['social2.0'], function (error) {
+            if(options.wallUserIds) {
+                var wid = options.wallUserIds.sort().reverse().join('');                
+                if(options.queryString) {
+                    options.queryString += "&wid=" + wid;
+                } else {
+                    options.queryString = "wid=" + wid;
+                }
+            }
+            var predefinedPluginIds = {
+                'community': "b15c62f2-7a99-48dc-a37a-e42d46bd3289",
+                'premium_social': '697f1612-8208-4870-93f9-555c65103578',
+                'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
+            };
+            var orderedPluginIds = [];
+            options.pluginTypeOrder = options.pluginTypeOrder && options.pluginTypeOrder.length ? options.pluginTypeOrder : [
+                'community',
+                'premium_social',
+                'social'
+            ];
+            for (var orderIndex = 0; orderIndex < options.pluginTypeOrder.length; orderIndex++) {
+                if (!predefinedPluginIds[options.pluginTypeOrder[orderIndex]]) {
+                    return callback ("unknown plugin " + options.pluginTypeOrder[orderIndex]);
+                }
+                orderedPluginIds.push(predefinedPluginIds[options.pluginTypeOrder[orderIndex]]);
+            }
+            navigate(options, orderedPluginIds[0], function (error) {
                 if (!error) return callback(null, {status: 'completed'});
-
-                navigate(pluginData, pluginIds['social'], callback);
+                if (orderedPluginIds[1]) {
+                    navigate(options, orderedPluginIds[1], function (error) {
+                        if (!error) return callback(null, {status: 'completed'});
+                        if (orderedPluginIds[2]) {
+                            navigate(options, orderedPluginIds[2], callback);
+                        } else {
+                            callback(error);
+                        }
+                    });
+                } else {
+                    callback(error);
+                }
             });
-
             function navigate(data, pluginId, cb) {
                 data.pluginId = pluginId;
-
                 var p = new Packet(null, 'navigation.navigateTo', {
                     pluginId: data.pluginId,
                     instanceId: data.instanceId,
