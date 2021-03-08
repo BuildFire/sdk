@@ -2348,7 +2348,7 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
-            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.com/BuildFire/sdk/wiki/How-to-use-Dialogs");
             //make it compatible with app, cp and the old versions
             if(options && options.buttonName && !options.okButton){
                 options.okButton = {text: options.buttonName};
@@ -2357,7 +2357,7 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , confirm: function (options, callback) {
-            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.com/BuildFire/sdk/wiki/How-to-use-Dialogs");
             //make it compatible with app, cp and the old versions
             if (options && options.buttonLabels) {
                 if (!options.confirmButton) {
@@ -2382,7 +2382,7 @@ var buildfire = {
             var p = new Packet(null, 'notificationsAPI.vibrate', options);
             buildfire._sendPacket(p, callback);
         }, showDialog: function (options, callback) {
-            console.warn("Notifications api is deprecated. Please use dialog api. https://github.buildfire.com/sdk/wiki/")
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.com/BuildFire/sdk/wiki/How-to-use-Dialogs");
             var p = new Packet(null, 'notificationsAPI.showDialog', options);
             buildfire._sendPacket(p, callback);
         }
