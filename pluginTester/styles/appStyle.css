@@ -1283,10 +1283,8 @@ html[ios="true"][view="app"] nav.menu .menu-shadow {
 }
 
 /* iPhone X, Xr, Xs and Xs Max*/
-@media only
-screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
-screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3) {
+@media only screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2) {
 
 	/* iOS Transparent Nav */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
@@ -1346,9 +1344,6 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 		padding-bottom: calc(env(safe-area-inset-bottom) + 30px);
 	}
 
-	[ios=true][view=app][storyboard-launch-images=true] #plugin.has-footer-menu .notification-plugin{
-		padding-bottom: 0px !important;
-	}
 
 	[ios="true"][view="app"][storyboard-launch-images="true"] .notification-item p:first-child{
 		padding-top: 10px !important;
@@ -2777,7 +2772,7 @@ nav.menu a.active .active-indicator,
 .snackbar-hero{
 	position: absolute;
 	width: 100%;
-	z-index: 99999999999;
+	z-index: 2;
 	bottom: calc(16px + env(safe-area-inset-bottom));
 	pointer-events: none;
 	left: 0;
@@ -2845,7 +2840,7 @@ html:not([type="app"]) .snackbar-hero{
 	font-size: 14px !important;
 }
 .snackbar .btn.dismiss:not(:only-of-type):last-of-type{
-	margin-left: 0px;
+	margin-left: 8px;
 }
 .snackbar.snackbar-stacked{
 	flex-direction: column;
@@ -4079,13 +4074,6 @@ html[view="app"] .profile-overlay {
 	top: 0;
 	z-index: 2;
 }
-.profile-overlay .user-profile-menu {
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 3;
-	padding: 1.5rem;
-}
 .profile-header{
 	margin: 4px;
 	position: relative;
@@ -4830,76 +4818,4 @@ html[ios="true"] .profile-overlay .profile-content{
 	#plugin.slide{
 		pointer-events: all;
 	} 
-	body.blur-animation nav#menuNav.blur-animation:not(.active) {
-        display: none;
-    } 
-}
-.powered-by {
-	margin-bottom : 20px;
-}
-.powered-by p {
-	font-size: 12px !important;
-}
-
-.dropdown-icon {
-	font-size: 2rem;
-	display: inline-block;
-}
-
-button.list-group-item {
-    width: 100%;
-	text-align: left;
-	border: 0;
-}
-
-.clicked-dropdown {
-	animation: clicked-dropdown-animation .3s ease-in-out forwards;
-}
-
-.not-clicked-dropdown {
-	animation: not-clicked-dropdown-animation .3s ease-in-out forwards;
-}
-
-@keyframes clicked-dropdown-animation{
-	0%{
-		transform: rotate(0deg);
-	}
-	
-	100%{
-		transform: rotate(90deg);
-	}
-}
-
-@keyframes not-clicked-dropdown-animation{
-	0%{
-		transform: rotate(90deg);
-	}
-	
-	100%{
-		transform: rotate(0deg);
-	}	
-}
-
-.shown-dropdown {
-	max-width: 90vw;
-	display: block;
-	opacity: 1;
-	animation: show-dropdown-menu .3s ease-in-out forwards;
-}
-
-.hidden-dropdown {
-	display: none;
-}
-
-@keyframes show-dropdown-menu{
-	0%{
-		display: none;
-		opacity: 0;
-	}
-	
-	100%{
-		display: block;
-		opacity: 1;
-	}
-	
 }
