@@ -1392,6 +1392,9 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.search-container{
 		padding-bottom: 0 !important;
 	}
+	[ios="true"][view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
+		padding-bottom: 0px !important;
+	}
 	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent .action-group {
 		border-bottom: 	1px solid rgba(193, 193, 193, .47)
 	}
@@ -2775,7 +2778,7 @@ nav.menu a.active .active-indicator,
 }
 
 .snackbar-hero{
-	position: absolute;
+	position: fixed;
 	width: 100%;
 	z-index: 99999999999;
 	bottom: calc(16px + env(safe-area-inset-bottom));
@@ -2808,7 +2811,7 @@ html:not([type="app"]) .snackbar-hero{
 }
 .snackbar-hero.has-footer-menu{
 	padding: 0 !important;
-	bottom: calc(16px + 7vh);
+	bottom: calc(16px + env(safe-area-inset-bottom) + 7vh);
 }
 .snackbar-message{
 	flex: auto;
