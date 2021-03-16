@@ -2476,3 +2476,10 @@ html.translated-ltr body{
         grid-column-end: span 4;
     }
 }
+
+#actionBuilderTemplate .required-label::after{
+	content: '*';
+	color: #EE4A4A;
+	font-weight: bold;
+	padding-left: 4px;
+}
