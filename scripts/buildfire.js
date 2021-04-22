@@ -914,6 +914,41 @@ var buildfire = {
                 var p = new Packet(null, "appearance.titlebar.hide");
                 buildfire._sendPacket(p);
             }
+        }, navbar: {
+            show: function(options, callback) {
+                var p = new Packet(null, "appearance.navbar.show");
+                buildfire._sendPacket(p, callback);
+            },
+            hide: function(options, callback) {
+                var p = new Packet(null, "appearance.navbar.hide");
+                buildfire._sendPacket(p, callback);
+            }
+        }, sideMenu: {
+            show: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.show");
+                buildfire._sendPacket(p, callback);
+            },
+            hide: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.hide");
+                buildfire._sendPacket(p, callback);
+            },
+            open: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.open");
+                buildfire._sendPacket(p, callback);
+            },
+            close: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.close");
+                buildfire._sendPacket(p, callback);
+            }
+        }, fullScreenMode: {
+            enable: function(options, callback) {
+                var p = new Packet(null, "appearance.fullScreenMode.enable");
+                buildfire._sendPacket(p, callback);
+            },
+            disable: function(options, callback) {
+                var p = new Packet(null, "appearance.fullScreenMode.disable");
+                buildfire._sendPacket(p, callback);
+            },
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
