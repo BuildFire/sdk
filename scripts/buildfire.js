@@ -906,13 +906,13 @@ var buildfire = {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
         }, titlebar: {
-            show: function() {
+            show: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.show");
-                buildfire._sendPacket(p);
+                buildfire._sendPacket(p, callback);
             },
-            hide: function() {
+            hide: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.hide");
-                buildfire._sendPacket(p);
+                buildfire._sendPacket(p, callback);
             }
         }, navbar: {
             show: function(options, callback) {

@@ -1523,11 +1523,6 @@ html[buildfire] body.no-scroll .scrollable{
 .menu-left-align{
 	left: 0 !important;
 	border-radius: 0px 5px 5px 0px !important;
-	width: 41px;
-}
-
-.menu-right-align{
-	width: 41px;
 }
 
 .floating-right{
@@ -4905,4 +4900,25 @@ button.list-group-item {
 		opacity: 1;
 	}
 	
+}
+
+#webviewBackdrop {
+	z-index: 999999999;
+	min-height: 100vh;
+	min-width: 100vw;
+	position: absolute;
+	top: 0;
+	left: 0;
+	animation: bottom-drawer-fade-in .2s ease-in-out forwards;
+}
+
+#webviewBackdrop.closing {
+	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
+}
+
+#sideMenuHeaderImage {
+	height: 26px;
+	width: 26px; 
+	object-fit: cover; 
+	max-width: none;
 }
