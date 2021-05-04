@@ -1523,11 +1523,6 @@ html[buildfire] body.no-scroll .scrollable{
 .menu-left-align{
 	left: 0 !important;
 	border-radius: 0px 5px 5px 0px !important;
-	width: 41px;
-}
-
-.menu-right-align{
-	width: 41px;
 }
 
 .floating-right{
@@ -3782,18 +3777,19 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 	left: 0;
 }
 .bottom-drawer{
+	display: flex;
+    flex-direction: column;
 	pointer-events: all;
 	font-size: 16px;
-  box-shadow: 0 0.125em 0.5em rgba(50,50,50,.2);
+  box-shadow: 0 4px 16px rgb(150 150 150 / 50%);
   border-radius: .5em .5em 0 0;
   /* height: 100%; */
   width: 100%;
   background-color: #fff;
   position: fixed;
   bottom: 0;
-  max-height: calc(100vh - 4em - env(safe-area-inset-top));
-  overflow: auto;
-  padding-bottom: calc(1em + env(safe-area-inset-bottom));
+  max-height: calc(90vh - 4em - env(safe-area-inset-top));
+  min-height: 60%;
   animation: drawer-slide-up .3s ease-in-out forwards;
 }
 html:not([type="app"]) .bottom-drawer{
@@ -3810,7 +3806,7 @@ html:not([type="app"]) .bottom-drawer{
 	pointer-events: all;
   height: 100%;
   width: 100%;
-	background-color: rgba(50,50,50,.2);
+  background-color: rgba(0,0,0,.5);
   position: absolute;
   top: 0;
   left: 0;
@@ -3818,11 +3814,13 @@ html:not([type="app"]) .bottom-drawer{
   animation: bottom-drawer-fade-in .3s ease-in-out forwards;
 }
 .bottom-drawer-header {
-	padding: 1em;
+	padding: 1.5rem;
 	display: flex;
+	flex-shrink: 0;
 	align-items: center;
 	background-color: #3ca1f1;
 	color: #fff !important;
+	border-radius: .5em .5em 0 0;
 }
 .bottom-drawer-header p,
 .bottom-drawer-header h4{
@@ -3857,14 +3855,16 @@ html:not([type="app"]) .bottom-drawer{
   text-overflow: ellipsis;
 }
 .drawer-content{
-  padding: 1em;
-  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  padding: 1.5rem;
+  word-break: break-word;
 }
 
 /* Tabs */
 .md-tabs-scroll{
 	width: 100%;
-	overflow-y: auto;
+	box-shadow: 0 .25em .25em -.25em rgba(50,50,50,.2);
+	overflow: hidden;
+	flex-shrink: 0;
 }
 .md-tabs-scroller::-webkit-scrollbar{
 	display: none;
@@ -3872,10 +3872,11 @@ html:not([type="app"]) .bottom-drawer{
 .md-tabs{
   display: flex;
   align-items: center;
-  box-shadow: 0 .25em .25em -.25em rgba(50,50,50,.2);
 	position: relative;
-	flex-wrap: nowrap;
 	flex-shrink: 0;
+	-webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
+    flex-wrap: nowrap !important;
+	scrollbar-width: none;
 }
 .md-tabs .md-tab{
   padding: 0 1.5em;
@@ -3886,11 +3887,12 @@ html:not([type="app"]) .bottom-drawer{
   height: 3em;
   background-color: transparent;
   border: 0;
-  flex: auto;
+  flex: 1 0 auto;
+  cursor: pointer;
   transition: background-color ease-in-out .3s;
 }
 .md-tabs .md-tab:hover,
-.md-tabs .md-tab:active{
+.md-tabs .md-tab.active{
   background-color: rgba(150,150,150,.05);
 }
 .md-tabs .active-indicator{
@@ -3970,13 +3972,15 @@ html:not([type="app"]) .bottom-drawer{
 .action-list{
   list-style: none;
   margin: 0;
-  padding: .75em 0;
+  padding: 0 0 5em 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
 }
 .action-list .item-icon{
-  display: block;
   width: 3.5em;
   height: 3.5em;
-  display: flex;
+  margin-right: 1rem;
   align-items: center;
 	justify-content: center;
 	/* Remove Display none when icons are available */
@@ -3985,10 +3989,17 @@ html:not([type="app"]) .bottom-drawer{
 .action-list li{
   display: flex;
   align-items: center;
+  padding: 1.5rem;
   cursor: pointer;
 	transition: background-color ease-in-out .3s;
 	min-height: 3.5em;
 	font-size: 14px;
+}
+.item-icon img {
+	border-radius: 50%;
+	width: 3em;
+    height: 3em;
+    object-fit: cover;
 }
 .action-list li span:not(.icon){
 	margin-left: 1em;
@@ -4905,4 +4916,184 @@ button.list-group-item {
 		opacity: 1;
 	}
 	
+}
+#selectAllDiv {
+	display:flex; 
+	flex: 1;
+	margin-left: auto; 
+	align-items: center; 
+	direction: rtl;
+}
+#selectAllDiv * {
+	direction: ltr;
+}
+#searchIcon {
+	display: none; 
+	z-index: 1;
+}
+#closeSearch {
+	display: none; 
+	padding-left: 1rem; 
+}
+#checkboxSelectAll {
+	display: none; 
+	margin-left: 1.5rem;
+	z-index: 1;
+}
+.has-images li .item-icon{
+	display: flex;
+	flex-shrink: 0;
+}
+#drawerButtonDiv {
+	font-size: initial;
+	font-weight: bold;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: calc(16px + env(safe-area-inset-bottom));
+}
+#drawerButton {
+	max-width: 90%;
+	display: flex;
+	justify-content: center; 
+	padding: 10px 20px;
+	margin: 0 auto;
+}
+#buttonBadge {
+	color: white;
+    min-width: 15%;
+	margin-left: 0.5rem; 
+	background-color: rgba(150, 150, 150, .3) !important;
+}
+#checkboxSelectAll label::before {
+	background: transparent;
+	border: 2px solid #fff;
+}
+#bottomDrawerContainer input[type="checkbox"]:checked + label::after {
+	content: "\e013";
+    font-family: 'Glyphicons Halflings';
+}
+#bottomDrawerContainer input[type="checkbox"] + label::before {
+	border-width: 2px;
+}
+.disabled-drawer-button {
+	opacity: 1 !important; 
+	pointer-events: visible !important;
+	filter: grayscale(50%) !important;
+}
+.show-drawer-search {
+	opacity: 0;
+	width: 0;
+	animation: show-search-input 0.3s ease forwards;
+}
+.hide-drawer-search {
+	width:100%;
+	opacity: 1;
+	animation: hide-search-input 0.3s ease forwards;
+}
+@keyframes show-search-input {
+	0% {
+		opacity: 0;
+		width: 0;
+	}
+	100%{
+		opacity: 1;
+		width:100%;
+	}
+}
+@keyframes hide-search-input {
+	0% {
+		opacity: 1;
+		width: 100%;
+	}
+	100%{
+		opacity: 0;
+		width: 0;
+	}
+}
+.hide-header-text {
+	opacity: 1;
+	width: 100%;
+	animation: hide-header-text 0.3s ease forwards;
+}
+.show-header-text {
+	opacity: 0;
+	width: 0;
+	animation: show-header-text 0.3s ease  0.2s forwards;
+}
+@keyframes hide-header-text {
+	0% {
+		opacity: 1;
+		width: 100%;
+	}
+	100%{
+		opacity: 0;
+		width: 0;
+	}
+}
+@keyframes show-header-text {
+	0% {
+		opacity: 0;
+		width: 0;
+	}
+	100%{
+		opacity: 1;
+		width: 100%;
+	}
+}
+#drawerSearch {
+	opacity: 0;
+	margin-left: 1rem; 
+	width: 0;
+	background: rgba(150,150,150,.1);
+}
+#drawerSearch input {
+	color: white;
+	cursor: auto;
+	background: rgba(150,150,150,.1);
+	border: 0;
+}
+#drawerSearch ::placeholder{
+	color: white;
+}
+.empty-items {
+	display: none;
+	width: 50%;
+	margin: 0 auto;
+	margin-top: -4em;
+	padding-bottom: 5em;
+}
+#headerText, #headerText *, .action-item-texts, .action-item-texts *, #drawerButton *{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
+}
+.scrollable-content {
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
+	scrollbar-width: none;
+}
+#drawerButton span:first-child:hover, #drawerButton span:first-child{
+	background-color: transparent !important;
+}
+#webviewBackdrop {
+	z-index: 999999999;
+	min-height: 100vh;
+	min-width: 100vw;
+	position: absolute;
+	top: 0;
+	left: 0;
+	animation: bottom-drawer-fade-in .2s ease-in-out forwards;
+}
+
+#webviewBackdrop.closing {
+	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
+}
+
+#sideMenuHeaderImage {
+	height: 26px;
+	width: 26px; 
+	object-fit: cover; 
+	max-width: none;
 }
