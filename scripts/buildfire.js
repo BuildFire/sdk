@@ -1997,35 +1997,15 @@ var buildfire = {
 
             var root;
 
-            /*if(buildfire.imageLib.isProdImageServer(url)){
-                url = url.replace(/^https:\/\//i, 'http://');
-                root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            }
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
-                root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
-            }
-
-            if(false && root){
-
-
-                if (options.width && !options.height)
-                    return root + "?w=" + Math.floor(options.width * ratio) ;
-                else if (!options.width && options.height)
-                    return root + "?h=" + Math.floor(options.height * ratio) ;
-                else if (options.width && options.height)
-                    return root + "?w" + Math.floor(options.width * ratio) + "&h=" + Math.floor(options.height * ratio) ;
-                else
-                    return url;
-            }
-            else
-             */
             {
                 //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
                 var protocol = "https:";
-                var root = protocol + "//alnnibitpo.cloudimg.io/";
-                var compression = buildfire.imageLib.getCompression(options.compression);
-                var result = '';
-
+                var root = protocol + "//acbbesnfco.cloudimg.io/v7"
+                
+                // Check if there is query string
+                const hasQueryString = url.indexOf("?") !== -1;
+                let result = root + "/" + url + (hasQueryString ? "&" : "?") + "func=bound"
+    
                 if (options.size && options.aspect) {
                     if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
                         var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
@@ -2043,16 +2023,17 @@ var buildfire = {
                 }
                 // check for missing size or aspect
                 if (options.width && !options.height) {
-                    var size = Math.floor(options.width * ratio);
-                    result = root + "width/" + size + "/" + compression + url;
+                    var width = Math.floor(options.width * ratio);
+                    result += "&width=" + width;
                 }
                 else if (!options.width && options.height) {
-                    var size = Math.floor(options.height * ratio);
-                    result = root + "height/" + size + "/" + compression + url;
+                    var height = Math.floor(options.height * ratio);
+                    result += "&height=" + height;
                 }
                 else if (options.width && options.height) {
-                    var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio);
-                    result = root + "bound/" + size + "/" + compression + url;
+                    let width = Math.floor(options.width * ratio); 
+                    let height = Math.floor(options.height * ratio); 
+                    result += "&width=" + width + "&height=" + height;
                 } else {
                     result = url;
                 }
@@ -2071,8 +2052,8 @@ var buildfire = {
                 console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
             }
-
-            /*if (buildfire.imageLib.isProdImageServer(url)) {
+    
+            /*if (imageTools.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
             }*/
             if (!options) {
@@ -2117,12 +2098,16 @@ var buildfire = {
 
             //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
             var protocol = "https:";
-            var root = protocol + "//alnnibitpo.cloudimg.io/crop/";
+            var root = protocol + "//acbbesnfco.cloudimg.io/v7";
 
-            var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
-            var compression = buildfire.imageLib.getCompression(options.compression);
+            const hasQueryString = url.indexOf("?") !== -1;
+            let result = root + "/" + url + (hasQueryString ? "&" : "?")  + "func=crop"
 
-            var result = root + size + compression + url;
+            let width = Math.floor(options.width * ratio);
+            let height = Math.floor(options.height * ratio);
+
+            result += "&width=" + width + "&height=" + height;
+
 
             this._handleElement(element, result, callback);
 
