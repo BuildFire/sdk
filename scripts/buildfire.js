@@ -1980,17 +1980,24 @@ var buildfire = {
                 return url;
             }
 
+            if (!options)
+                options = {width: window.innerWidth};
+            else if (typeof(options) != "object")
+                throw ("options not an object");
+
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
+            }
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
             // Don't pass any value under 1
             if(ratio < 1){
                 var ratio = 1;
             }
-
-            if (!options)
-                options = {width: window.innerWidth};
-            else if (typeof(options) != "object")
-                throw ("options not an object");
 
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
@@ -1999,12 +2006,17 @@ var buildfire = {
 
             {
                 //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-                var protocol = "https:";
-                var root = protocol + "//acbbesnfco.cloudimg.io/v7"
+                var cloudImageKey = buildfire.getContext().apiKeys.cloudImageKey;
+                var root = "https://" + cloudImageKey + ".cloudimg.io/v7";
                 
                 // Check if there is query string
-                const hasQueryString = url.indexOf("?") !== -1;
-                let result = root + "/" + url + (hasQueryString ? "&" : "?") + "func=bound"
+                var hasQueryString = url.indexOf("?") !== -1;
+                var result = root + "/" + url + (hasQueryString ? "&" : "?") + "func=bound"
+
+                var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+                if (isDevMode) {
+                    result += "&ci_info=1";
+                }
     
                 if (options.size && options.aspect) {
                     if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
@@ -2031,8 +2043,8 @@ var buildfire = {
                     result += "&height=" + height;
                 }
                 else if (options.width && options.height) {
-                    let width = Math.floor(options.width * ratio); 
-                    let height = Math.floor(options.height * ratio); 
+                    var width = Math.floor(options.width * ratio); 
+                    var height = Math.floor(options.height * ratio); 
                     result += "&width=" + width + "&height=" + height;
                 } else {
                     result = url;
@@ -2061,6 +2073,12 @@ var buildfire = {
             }
             if (typeof (options) != "object") {
                 throw ("options not an object");
+            }
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
             }
             if (options.size && options.aspect) {
                 if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
@@ -2097,14 +2115,20 @@ var buildfire = {
             }
 
             //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-            var protocol = "https:";
-            var root = protocol + "//acbbesnfco.cloudimg.io/v7";
+            
+            var cloudImageKey = buildfire.getContext().apiKeys.cloudImageKey;
+            var root = "https://" + cloudImageKey + ".cloudimg.io/v7";
 
-            const hasQueryString = url.indexOf("?") !== -1;
-            let result = root + "/" + url + (hasQueryString ? "&" : "?")  + "func=crop"
+            var hasQueryString = url.indexOf("?") !== -1;
+            var result = root + "/" + url + (hasQueryString ? "&" : "?")  + "func=crop"
 
-            let width = Math.floor(options.width * ratio);
-            let height = Math.floor(options.height * ratio);
+            var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+            if (isDevMode) {
+                result += "&ci_info=1";
+            }
+
+            var width = Math.floor(options.width * ratio);
+            var height = Math.floor(options.height * ratio);
 
             result += "&width=" + width + "&height=" + height;
 
@@ -2924,7 +2948,7 @@ var buildfire = {
         }
         ,getItem: function(key,callback) {
             if(!callback){
-                // let getContext throw if context is not ready and no callback is provided
+                // var getContext throw if context is not ready and no callback is provided
                 var context = buildfire.getContext();
                 if(context && context.localStorage) {
                     var val = context.localStorage[key];
