@@ -2006,8 +2006,7 @@ var buildfire = {
 
             {
                 //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-                var cloudImageKey = buildfire.getContext().apiKeys.cloudImageKey;
-                var root = "https://" + cloudImageKey + ".cloudimg.io/v7";
+                var root = "https://alnnibitpo.cloudimg.io/v7";
                 
                 // Check if there is query string
                 var hasQueryString = url.indexOf("?") !== -1;
@@ -2116,8 +2115,7 @@ var buildfire = {
 
             //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
             
-            var cloudImageKey = buildfire.getContext().apiKeys.cloudImageKey;
-            var root = "https://" + cloudImageKey + ".cloudimg.io/v7";
+            var root = "https://alnnibitpo.cloudimg.io/v7";
 
             var hasQueryString = url.indexOf("?") !== -1;
             var result = root + "/" + url + (hasQueryString ? "&" : "?")  + "func=crop"
