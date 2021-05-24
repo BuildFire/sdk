@@ -2576,6 +2576,8 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         },
         get: function (options, callback) {
+            if(!options) options = {};
+            options.isLauncher = buildfire.getFrameType() == "LAUNCHER_PLUGIN";
             var p = new Packet(null, 'history.get', options);
             buildfire._sendPacket(p, callback);
         }
