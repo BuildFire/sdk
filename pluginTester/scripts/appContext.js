@@ -45,11 +45,13 @@
     }
 
     if (apiKeys) {
+        if(!apiKeys.cloudImageKey) apiKeys.cloudImageKey = "alnnibitpo";
         window.appContext.currentApp.apiKeys = apiKeys;
     } else {
         apiKeys = {
             creditsSystemPublicKey: "test-public",
-            stripePublicKey: "pk_test_Uc7I6bT2fxNiTp3bFqstkyFh00mbnGl0A5"
+            stripePublicKey: "pk_test_Uc7I6bT2fxNiTp3bFqstkyFh00mbnGl0A5",
+            cloudImageKey: "alnnibitpo"
         };
         localStorage.setItem('apiKeys', JSON.stringify(apiKeys));
 

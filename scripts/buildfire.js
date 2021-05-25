@@ -2015,6 +2015,18 @@ var buildfire = {
                 return url;
             }
 
+            if (!options)
+                options = {width: window.innerWidth};
+            else if (typeof(options) != "object")
+                throw ("options not an object");
+
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
+            }
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
             // Don't pass any value under 1
@@ -2022,45 +2034,24 @@ var buildfire = {
                 var ratio = 1;
             }
 
-            if (!options)
-                options = {width: window.innerWidth};
-            else if (typeof(options) != "object")
-                throw ("options not an object");
-
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
             var root;
 
-            /*if(buildfire.imageLib.isProdImageServer(url)){
-                url = url.replace(/^https:\/\//i, 'http://');
-                root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            }
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
-                root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
-            }
-
-            if(false && root){
-
-
-                if (options.width && !options.height)
-                    return root + "?w=" + Math.floor(options.width * ratio) ;
-                else if (!options.width && options.height)
-                    return root + "?h=" + Math.floor(options.height * ratio) ;
-                else if (options.width && options.height)
-                    return root + "?w" + Math.floor(options.width * ratio) + "&h=" + Math.floor(options.height * ratio) ;
-                else
-                    return url;
-            }
-            else
-             */
             {
                 //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-                var protocol = "https:";
-                var root = protocol + "//alnnibitpo.cloudimg.io/";
-                var compression = buildfire.imageLib.getCompression(options.compression);
-                var result = '';
+                var root = "https://alnnibitpo.cloudimg.io/v7";
+                
+                // Check if there is query string
+                var hasQueryString = url.indexOf("?") !== -1;
+                var result = root + "/" + url + (hasQueryString ? "&" : "?") + "func=bound"
 
+                var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+                if (isDevMode) {
+                    result += "&ci_info=1";
+                }
+    
                 if (options.size && options.aspect) {
                     if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
                         var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
@@ -2078,16 +2069,17 @@ var buildfire = {
                 }
                 // check for missing size or aspect
                 if (options.width && !options.height) {
-                    var size = Math.floor(options.width * ratio);
-                    result = root + "width/" + size + "/" + compression + url;
+                    var width = Math.floor(options.width * ratio);
+                    result += "&width=" + width;
                 }
                 else if (!options.width && options.height) {
-                    var size = Math.floor(options.height * ratio);
-                    result = root + "height/" + size + "/" + compression + url;
+                    var height = Math.floor(options.height * ratio);
+                    result += "&height=" + height;
                 }
                 else if (options.width && options.height) {
-                    var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio);
-                    result = root + "bound/" + size + "/" + compression + url;
+                    var width = Math.floor(options.width * ratio); 
+                    var height = Math.floor(options.height * ratio); 
+                    result += "&width=" + width + "&height=" + height;
                 } else {
                     result = url;
                 }
@@ -2106,8 +2098,8 @@ var buildfire = {
                 console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
             }
-
-            /*if (buildfire.imageLib.isProdImageServer(url)) {
+    
+            /*if (imageTools.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
             }*/
             if (!options) {
@@ -2115,6 +2107,12 @@ var buildfire = {
             }
             if (typeof (options) != "object") {
                 throw ("options not an object");
+            }
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
             }
             if (options.size && options.aspect) {
                 if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
@@ -2151,13 +2149,22 @@ var buildfire = {
             }
 
             //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-            var protocol = "https:";
-            var root = protocol + "//alnnibitpo.cloudimg.io/crop/";
+            
+            var root = "https://alnnibitpo.cloudimg.io/v7";
 
-            var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
-            var compression = buildfire.imageLib.getCompression(options.compression);
+            var hasQueryString = url.indexOf("?") !== -1;
+            var result = root + "/" + url + (hasQueryString ? "&" : "?")  + "func=crop"
 
-            var result = root + size + compression + url;
+            var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+            if (isDevMode) {
+                result += "&ci_info=1";
+            }
+
+            var width = Math.floor(options.width * ratio);
+            var height = Math.floor(options.height * ratio);
+
+            result += "&width=" + width + "&height=" + height;
+
 
             this._handleElement(element, result, callback);
 
@@ -2974,7 +2981,7 @@ var buildfire = {
         }
         ,getItem: function(key,callback) {
             if(!callback){
-                // let getContext throw if context is not ready and no callback is provided
+                // var getContext throw if context is not ready and no callback is provided
                 var context = buildfire.getContext();
                 if(context && context.localStorage) {
                     var val = context.localStorage[key];
