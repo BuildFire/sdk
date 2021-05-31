@@ -57,10 +57,9 @@ var buildfire = {
 
             function hasScript(url) {
                 while (url.includes("../")) url = url.replace("../", "");
-                let scripts = document.getElementsByTagName("script");
-                for (let i = 0; i < scripts.length; i++) {
-                    const script = scripts[i];
-                    if(script.src.includes(url)) return true;
+                var scripts = document.getElementsByTagName("script");
+                for (var i = 0; i < scripts.length; i++) {
+                    if(scripts[i].src.includes(url)) return true;
                 }
                 return false;
             }
