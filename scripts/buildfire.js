@@ -51,12 +51,22 @@ var buildfire = {
                     link.type = 'text/css';
                     link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
                     head.appendChild(link);
-                    console.log('loaded components 3');
                     buildfire.components.ratingSystem.injectRatings();
                 });
             } else buildfire.components.ratingSystem.injectRatings();
 
+            function hasScript(url) {
+                while (url.includes("../")) url = url.replace("../", "");
+                let scripts = document.getElementsByTagName("script");
+                for (let i = 0; i < scripts.length; i++) {
+                    const script = scripts[i];
+                    if(script.src.includes(url)) return true;
+                }
+                return false;
+            }
+
             function loadScript(url, callback) {
+                if(hasScript(url)) return;
                 var head = document.head;
                 var script = document.createElement('script');
                 script.type = 'text/javascript';
