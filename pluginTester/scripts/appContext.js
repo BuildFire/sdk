@@ -27,6 +27,13 @@
 
         window.localStorage.setItem('appContext', JSON.stringify(window.appContext));
     }
+
+    if (!window.whitelabelContext) {
+        window.whitelabelContext = {
+            whitelabelId: "1717"
+        }
+    }
+    
     if (window.appContext.currentApp) {
         window.appContext.currentApp.liveMode = 0;
     }
