@@ -2259,6 +2259,12 @@ var buildfire = {
         getCompression: function (c) {
             c = Number(c);
             if(isNaN(c)) return console.warn('Disabling compression, must be an integer between 1-100');
+
+            if(c > 70) {
+                c = 70;
+                console.warn("Falling back to 70. Maximum allowed compression is 70.");
+            }
+
             return c;
         }
         ,local: {
