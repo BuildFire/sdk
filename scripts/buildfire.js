@@ -40,6 +40,41 @@ var buildfire = {
             // don't return anything if context is not ready but we have a callback
         }
 
+    }, ratingSystem: {
+        inject: function () {
+            if (typeof buildfire === 'undefined') return;
+            if (typeof (buildfire.components) == "undefined" || typeof (buildfire.components.ratingSystem) == "undefined") {
+                loadScript('../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
+                    var head = document.head;
+                    var link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.type = 'text/css';
+                    link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
+                    head.appendChild(link);
+                    buildfire.components.ratingSystem.injectRatings();
+                });
+            } else buildfire.components.ratingSystem.injectRatings();
+
+            function hasScript(url) {
+                while (url.includes("../")) url = url.replace("../", "");
+                var scripts = document.getElementsByTagName("script");
+                for (var i = 0; i < scripts.length; i++) {
+                    if(scripts[i].src.includes(url)) return true;
+                }
+                return false;
+            }
+
+            function loadScript(url, callback) {
+                if(hasScript(url)) return;
+                var head = document.head;
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = url;
+                script.onreadystatechange = callback;
+                script.onload = callback;
+                head.appendChild(script);
+            }
+        }
     }
     , logger: {
         attachRemoteLogger:function (tag){
@@ -316,8 +351,7 @@ var buildfire = {
          * Navigate To plugin
          * @pluginData {pluginId : pluginId,instanceId : instanceId,folderName:folderName,title:title ,queryString: to pass to next plugin}
          */
-        navigateTo: function (pluginData) {
-
+        navigateTo: function (pluginData, callback) {
             if(pluginData.pluginTypeId && !pluginData.pluginId)
                 pluginData.pluginId=pluginData.pluginTypeId;
 
@@ -329,29 +363,57 @@ var buildfire = {
                 folderName: pluginData.folderName,
                 queryString: pluginData.queryString
             });
-            buildfire._sendPacket(p);
+            buildfire._sendPacket(p, callback);
         }
-        , navigateToSocialWall: function (pluginData, callback) {
-            var pluginIds = {
-                'social2.0': '697f1612-8208-4870-93f9-555c65103578',
-                'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
-            };
+        , navigateToSocialWall: function (options, callback) {
             if (!callback) {
                 callback = console.warn;
             }
-            if (!pluginData) {
-                pluginData = {};
+            if (!options) {
+                options = {};
             }
-
-            navigate(pluginData, pluginIds['social2.0'], function (error) {
+            if(options.wallUserIds) {
+                var wid = options.wallUserIds.sort().reverse().join('');                
+                if(options.queryString) {
+                    options.queryString += "&wid=" + wid;
+                } else {
+                    options.queryString = "wid=" + wid;
+                }
+            }
+            var predefinedPluginIds = {
+                'community': "b15c62f2-7a99-48dc-a37a-e42d46bd3289",
+                'premium_social': '697f1612-8208-4870-93f9-555c65103578',
+                'social': '7b3d82bf-e5f1-4b2e-82bf-966d2ab0340d'
+            };
+            var orderedPluginIds = [];
+            options.pluginTypeOrder = options.pluginTypeOrder && options.pluginTypeOrder.length ? options.pluginTypeOrder : [
+                'community',
+                'premium_social',
+                'social'
+            ];
+            for (var orderIndex = 0; orderIndex < options.pluginTypeOrder.length; orderIndex++) {
+                if (!predefinedPluginIds[options.pluginTypeOrder[orderIndex]]) {
+                    return callback ("unknown plugin " + options.pluginTypeOrder[orderIndex]);
+                }
+                orderedPluginIds.push(predefinedPluginIds[options.pluginTypeOrder[orderIndex]]);
+            }
+            navigate(options, orderedPluginIds[0], function (error) {
                 if (!error) return callback(null, {status: 'completed'});
-
-                navigate(pluginData, pluginIds['social'], callback);
+                if (orderedPluginIds[1]) {
+                    navigate(options, orderedPluginIds[1], function (error) {
+                        if (!error) return callback(null, {status: 'completed'});
+                        if (orderedPluginIds[2]) {
+                            navigate(options, orderedPluginIds[2], callback);
+                        } else {
+                            callback(error);
+                        }
+                    });
+                } else {
+                    callback(error);
+                }
             });
-
             function navigate(data, pluginId, cb) {
                 data.pluginId = pluginId;
-
                 var p = new Packet(null, 'navigation.navigateTo', {
                     pluginId: data.pluginId,
                     instanceId: data.instanceId,
@@ -853,14 +915,49 @@ var buildfire = {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
         }, titlebar: {
-            show: function() {
+            show: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.show");
-                buildfire._sendPacket(p);
+                buildfire._sendPacket(p, callback);
             },
-            hide: function() {
+            hide: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.hide");
-                buildfire._sendPacket(p);
+                buildfire._sendPacket(p, callback);
             }
+        }, navbar: {
+            show: function(options, callback) {
+                var p = new Packet(null, "appearance.navbar.show");
+                buildfire._sendPacket(p, callback);
+            },
+            hide: function(options, callback) {
+                var p = new Packet(null, "appearance.navbar.hide");
+                buildfire._sendPacket(p, callback);
+            }
+        }, sideMenu: {
+            show: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.show");
+                buildfire._sendPacket(p, callback);
+            },
+            hide: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.hide");
+                buildfire._sendPacket(p, callback);
+            },
+            open: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.open");
+                buildfire._sendPacket(p, callback);
+            },
+            close: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.close");
+                buildfire._sendPacket(p, callback);
+            }
+        }, fullScreenMode: {
+            enable: function(options, callback) {
+                var p = new Packet(null, "appearance.fullScreenMode.enable");
+                buildfire._sendPacket(p, callback);
+            },
+            disable: function(options, callback) {
+                var p = new Packet(null, "appearance.fullScreenMode.disable");
+                buildfire._sendPacket(p, callback);
+            },
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
@@ -1927,6 +2024,18 @@ var buildfire = {
                 return url;
             }
 
+            if (!options)
+                options = {width: window.innerWidth};
+            else if (typeof(options) != "object")
+                throw ("options not an object");
+
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
+            }
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
             // Don't pass any value under 1
@@ -1934,45 +2043,24 @@ var buildfire = {
                 var ratio = 1;
             }
 
-            if (!options)
-                options = {width: window.innerWidth};
-            else if (typeof(options) != "object")
-                throw ("options not an object");
-
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
             var root;
 
-            /*if(buildfire.imageLib.isProdImageServer(url)){
-                url = url.replace(/^https:\/\//i, 'http://');
-                root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            }
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
-                root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
-            }
-
-            if(false && root){
-
-
-                if (options.width && !options.height)
-                    return root + "?w=" + Math.floor(options.width * ratio) ;
-                else if (!options.width && options.height)
-                    return root + "?h=" + Math.floor(options.height * ratio) ;
-                else if (options.width && options.height)
-                    return root + "?w" + Math.floor(options.width * ratio) + "&h=" + Math.floor(options.height * ratio) ;
-                else
-                    return url;
-            }
-            else
-             */
             {
                 //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-                var protocol = "https:";
-                var root = protocol + "//alnnibitpo.cloudimg.io/";
-                var compression = buildfire.imageLib.getCompression(options.compression);
-                var result = '';
+                var root = "https://alnnibitpo.cloudimg.io/v7";
+                
+                // Check if there is query string
+                var hasQueryString = url.indexOf("?") !== -1;
+                var result = root + "/" + url + (hasQueryString ? "&" : "?") + "func=bound"
 
+                var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+                if (isDevMode) {
+                    result += "&ci_info=1";
+                }
+    
                 if (options.size && options.aspect) {
                     if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
                         var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
@@ -1990,16 +2078,17 @@ var buildfire = {
                 }
                 // check for missing size or aspect
                 if (options.width && !options.height) {
-                    var size = Math.floor(options.width * ratio);
-                    result = root + "width/" + size + "/" + compression + url;
+                    var width = Math.floor(options.width * ratio);
+                    result += "&width=" + width;
                 }
                 else if (!options.width && options.height) {
-                    var size = Math.floor(options.height * ratio);
-                    result = root + "height/" + size + "/" + compression + url;
+                    var height = Math.floor(options.height * ratio);
+                    result += "&height=" + height;
                 }
                 else if (options.width && options.height) {
-                    var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio);
-                    result = root + "bound/" + size + "/" + compression + url;
+                    var width = Math.floor(options.width * ratio); 
+                    var height = Math.floor(options.height * ratio); 
+                    result += "&width=" + width + "&height=" + height;
                 } else {
                     result = url;
                 }
@@ -2018,8 +2107,8 @@ var buildfire = {
                 console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
             }
-
-            /*if (buildfire.imageLib.isProdImageServer(url)) {
+    
+            /*if (imageTools.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
             }*/
             if (!options) {
@@ -2027,6 +2116,12 @@ var buildfire = {
             }
             if (typeof (options) != "object") {
                 throw ("options not an object");
+            }
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
             }
             if (options.size && options.aspect) {
                 if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
@@ -2063,13 +2158,22 @@ var buildfire = {
             }
 
             //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-            var protocol = "https:";
-            var root = protocol + "//alnnibitpo.cloudimg.io/crop/";
+            
+            var root = "https://alnnibitpo.cloudimg.io/v7";
 
-            var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
-            var compression = buildfire.imageLib.getCompression(options.compression);
+            var hasQueryString = url.indexOf("?") !== -1;
+            var result = root + "/" + url + (hasQueryString ? "&" : "?")  + "func=crop"
 
-            var result = root + size + compression + url;
+            var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+            if (isDevMode) {
+                result += "&ci_info=1";
+            }
+
+            var width = Math.floor(options.width * ratio);
+            var height = Math.floor(options.height * ratio);
+
+            result += "&width=" + width + "&height=" + height;
+
 
             this._handleElement(element, result, callback);
 
@@ -2323,6 +2427,7 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Notifications
     , notifications: {
         alert: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.com/BuildFire/sdk/wiki/How-to-use-Dialogs");
             //make it compatible with app, cp and the old versions
             if(options && options.buttonName && !options.okButton){
                 options.okButton = {text: options.buttonName};
@@ -2331,6 +2436,7 @@ var buildfire = {
             buildfire._sendPacket(p, callback);
         }
         , confirm: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.com/BuildFire/sdk/wiki/How-to-use-Dialogs");
             //make it compatible with app, cp and the old versions
             if (options && options.buttonLabels) {
                 if (!options.confirmButton) {
@@ -2355,8 +2461,64 @@ var buildfire = {
             var p = new Packet(null, 'notificationsAPI.vibrate', options);
             buildfire._sendPacket(p, callback);
         }, showDialog: function (options, callback) {
+            console.warn("Notifications api is deprecated. Please use dialog api. https://github.com/BuildFire/sdk/wiki/How-to-use-Dialogs");
             var p = new Packet(null, 'notificationsAPI.showDialog', options);
             buildfire._sendPacket(p, callback);
+        }
+    },
+    dialog: {
+        alert: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.alert', options);
+            buildfire._sendPacket(p, function () {
+                if (callback)
+                    return callback(null);
+            });
+        },
+        confirm: function (options, callback) {
+            if (!options.confirmButtonText) {
+                options.confirmButtonText = "Confirm";
+            }
+            var p = new Packet(null, 'dialogAPI.confirm', options);
+            buildfire._sendPacket(p, callback);
+        },
+        show: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.show', options);
+    
+            var actionButtonCallbacks = new Object();
+    
+            if (options.actionButtons && options.actionButtons.length) {
+                options.actionButtons.forEach(function (button) {
+                    actionButtonCallbacks[button.text] = button.action;
+                    delete button.action;
+                })
+            }
+            buildfire._sendPacket(p, function (err, result) {
+                if (result && result.selectedButton) {
+                    var action = actionButtonCallbacks[result.selectedButton.text];
+                    if (action)
+                        action();
+                    result.selectedButton.action = action;
+                    callback && callback(err, result.selectedButton);
+                } else {
+                    callback && callback(err);
+                }
+            });
+        },
+        toast: function (options, callback) {
+            var p = new Packet(null, 'dialogAPI.toast', options);
+            var actionButton = new Object();
+            if (options.actionButton && options.actionButton.action) {
+                actionButton = Object.assign(actionButton, options.actionButton);
+                delete options.actionButton.action;
+            }
+            buildfire._sendPacket(p, function (err, actionClicked) {
+                if (actionClicked) {
+                    actionButton.action && actionButton.action();
+                    callback && callback(err, actionButton);
+                } else {
+                    callback && callback(err, null);
+                }
+            });
         }
     },
     bookmarks: {
@@ -2514,6 +2676,125 @@ var buildfire = {
         generateUrl: function (params, callback) {
             var p = new Packet(null, 'shortLinks.generate', params);
             buildfire._sendPacket(p, callback);
+        },
+        registerDeeplink : function(options, callback) {
+            if (!callback) {
+                callback = function(err) {
+                    if(err) console.error(err);
+                };
+            };
+            if(!options) {
+                return callback('Missing options parameter', null);
+            };
+            if(!options.id)  {
+                return callback('Missing deeplink id', null);
+            }
+            if(!options.name) {
+                return callback('Missing deeplink name', null);
+            };
+            if(!options.deeplinkData) {
+                return callback('Missing deeplink deeplinkData', null);
+            };
+
+            var _self = this;
+            buildfire.getContext(function(err, context) {
+                if(err) {
+                    callback(err, null);
+                } else {
+                    if(context && context.instanceId && context.pluginId) {
+                        var deeplinkItem = {
+                            name: options.name,
+                            deeplinkId: options.id,
+                            imageUrl: options.imageUrl,
+                            deeplinkData: options.deeplinkData,
+                            pluginInstanceId: context.instanceId,
+                            pluginTypeId: context.pluginId,
+                            _buildfire: {
+                                index: {
+                                    string1: context.instanceId,
+                                    text: options.name,
+                                    array1: [{string1: options.id}]
+                                }
+                            }
+                        };
+
+                        _self.getDeeplink(options.id, function(err, result) {
+                            if(err) return callback(err, null);
+                            if(result) {
+                                buildfire.appData.update(result.id, deeplinkItem, '$$deeplinks', callback);
+                            } else {
+                                buildfire.appData.insert(deeplinkItem, '$$deeplinks', false, callback);
+                            }
+                        });
+                    } else {
+                        callback('no context', null);
+                    }
+                }
+            });  
+        },
+        getDeeplink : function(deeplinkId, callback) {
+            if(!callback) {
+                return console.error('Missing callback parameter');
+            };
+            buildfire.getContext(function(err, context) {
+                if(err) return callback(err, null);
+                if(context && context.instanceId) {
+                    var searchOptions = {
+                        filter : {
+                            "_buildfire.index.string1" : context.instanceId,
+                            "_buildfire.index.array1.string1" : deeplinkId
+                        }
+                    };
+                    buildfire.appData.search(searchOptions, '$$deeplinks', function(err, result) {
+                        if(err) return callback(err, null);
+                        if(result) { 
+                            callback(null, result[0]);
+                        } else {
+                            callback(null, null);
+                        }
+                    })
+                } else {
+                    callback('no context', null);
+                }
+            });
+        },
+        getAllDeeplinks : function(options, callback) {
+            if(!callback) {
+                return console.error('Missing callback parameter');
+            };
+            options = options || {};
+            buildfire.getContext(function(err, context) {
+                if(err) {
+                    callback(err, null);
+                } else {
+                    if(context && context.instanceId) {
+                        var searchOptions = {
+                            pageSize : options.pageSize,
+                            filter: {
+                                "_buildfire.index.string1" : context.instanceId
+                            }
+                        }
+                        buildfire.appData.search(searchOptions, '$$deeplinks', callback);
+                    } else {
+                        callback('no context', null);
+                    }
+                }
+            }); 
+        },
+        unregisterDeeplink : function(deeplinkId, callback) {
+            if (!callback) {
+                callback = function(err) {
+                    if(err) console.error(err);
+                };
+            }
+            this.getDeeplink(deeplinkId, function(err, result) {
+                if(err) return callback(err, null);
+                if(result) {                    
+                    buildfire.appData.delete(result.id, '$$deeplinks', callback);
+                } else {
+                    callback('no result found for this deeplink id', null);
+                }
+            });
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
@@ -2616,6 +2897,9 @@ var buildfire = {
         assignUserTags: function(tags, options, callback) {
             var p = new Packet(null, 'userTags.assignUserTags', {tags: tags, options: options});
             buildfire._sendPacket(p, callback);
+        },
+        keepSessionAlive: function(options, callback) {
+            buildfire._sendPacket(new Packet(null, 'auth.keepSessionAlive', options), callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -2706,7 +2990,7 @@ var buildfire = {
         }
         ,getItem: function(key,callback) {
             if(!callback){
-                // let getContext throw if context is not ready and no callback is provided
+                // var getContext throw if context is not ready and no callback is provided
                 var context = buildfire.getContext();
                 if(context && context.localStorage) {
                     var val = context.localStorage[key];
@@ -2840,6 +3124,28 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
     stopVideos(iframes, videos);
 
 }, true);
+
+
+(function () {
+    var processedClick = false;
+    var handleEvent = function(eventType, event){
+        if (!processedClick) {
+            processedClick = true;
+            setTimeout(function(){ processedClick = false; }, 1000);
+            buildfire.auth.keepSessionAlive({ type: eventType });
+        }
+    };
+    document.addEventListener("click", function(e) {
+        setTimeout(function(){
+            handleEvent("click", e);
+        });
+    });
+    document.addEventListener("touchstart", function(e) {
+        setTimeout(function(){
+            handleEvent("touchstart", e);
+        });
+    });
+})();
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
