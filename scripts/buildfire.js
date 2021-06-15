@@ -2049,16 +2049,18 @@ var buildfire = {
             var root;
 
             {
-                //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
                 var root = "https://alnnibitpo.cloudimg.io/v7";
                 
-                // Check if there is query string
                 var hasQueryString = url.indexOf("?") !== -1;
                 var result = root + "/" + url + (hasQueryString ? "&" : "?") + "func=bound"
 
                 var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
                 if (isDevMode) {
                     result += "&ci_info=1";
+                }
+
+                if (options.compression) {
+                    result += "&q=" + buildfire.imageLib.getCompression(options.compression);
                 }
     
                 if (options.size && options.aspect) {
@@ -2108,9 +2110,6 @@ var buildfire = {
                 return url;
             }
     
-            /*if (imageTools.isProdImageServer(url)) {
-                url = url.replace(/^https:\/\//i, 'http://');
-            }*/
             if (!options) {
                 options = {};
             }
@@ -2156,8 +2155,6 @@ var buildfire = {
             if (options && options.disablePixelRatio) {
                 ratio = options.disablePixelRatio;
             }
-
-            //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
             
             var root = "https://alnnibitpo.cloudimg.io/v7";
 
@@ -2167,6 +2164,10 @@ var buildfire = {
             var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
             if (isDevMode) {
                 result += "&ci_info=1";
+            }
+
+            if (options.compression) {
+                result += "&q=" + buildfire.imageLib.getCompression(options.compression);
             }
 
             var width = Math.floor(options.width * ratio);
@@ -2256,19 +2257,9 @@ var buildfire = {
             return 'cdvfile://localhost/persistent/imageCache/images/' + hash + extension;
         },
         getCompression: function (c) {
-            var result = 'n/'
-            if (c) {
-                var isValid = typeof c === "number" && c >= 1 && c <= 100;
-                if (isValid) {
-                    var value = 'png-lossy-' + c + '.q' + c + '/';
-                    if (/png-lossy-\d{1,3}.q\d{1,3}\//g.test(value)) {
-                        result = value;
-                    }
-                } else {
-                    console.warn('Disabling compression, must be an integer between 1-100');
-                }
-            }
-            return result;
+            c = Number(c);
+            if(isNaN(c)) return console.warn('Disabling compression, must be an integer between 1-100');
+            return c;
         }
         ,local: {
             _parser: document.createElement('a')
