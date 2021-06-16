@@ -186,7 +186,8 @@ var buildfire = {
         buildfire.appearance.attachCSSFiles();
 
         buildfire.localStorage.overrideNativeLocalStorage();
-
+        
+        buildfire.wysiwyg.extend();
     }
     , _whitelistedCommands: [
         "datastore.triggerOnUpdate"
@@ -3090,6 +3091,20 @@ var buildfire = {
         },
         getByItemId: function (options, callback) {
             buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
+        }
+    },
+    wysiwyg: {
+        extend: function() {
+            if(typeof tinymce !== 'undefined' && tinymce.init) {
+                var appContext = buildfire.getContext();
+                if (appContext && appContext.endPoints) {
+                    var originalTinymceInit = tinymce.init.bind(tinymce);
+                    tinymce.init = function(options) { 
+                        options.content_css = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
+                        return originalTinymceInit(options);
+                    }
+                }
+            } 
         }
     }
 };
