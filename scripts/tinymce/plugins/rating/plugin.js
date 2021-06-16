@@ -1,8 +1,5 @@
 
 tinymce.PluginManager.add("rating", function (editor, url) {
-  editor.on('PreProcess', function (e) {
-      console.log(e.node);
-  });
   editor.addButton("rating", {
       text: "Rating",
       icon: false,
