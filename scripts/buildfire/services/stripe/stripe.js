@@ -161,3 +161,24 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
 };
+
+/**
+ * capture payment.
+ * @param {Object} options.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ * @param {string} response.status - Account status, values ['pending', 'active'].
+ * @param {Boolean} response.isActive - Account activity status.
+ * @param {string} response.bfStripeConnectToken - Buildfire Stripe connect token, this should be saved in your database.
+ */
+buildfire.services.stripe.connect.account = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.connect.account';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
