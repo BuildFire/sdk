@@ -8,6 +8,8 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 
 if (typeof (buildfire.services.stripe) == "undefined") buildfire.services.stripe = {};
 
+if (typeof (buildfire.services.stripe.connect) == "undefined") buildfire.services.stripe.connect = {};
+
 /**
  * charge dynamic products using stripe checkout.
  * @param {Object} options.
