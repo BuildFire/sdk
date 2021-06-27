@@ -3098,9 +3098,25 @@ var buildfire = {
             if(typeof tinymce !== 'undefined' && tinymce.init) {
                 var appContext = buildfire.getContext();
                 if (appContext && appContext.endPoints) {
+                    var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
                     var originalTinymceInit = tinymce.init.bind(tinymce);
-                    tinymce.init = function(options) { 
-                        options.content_css = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
+                    tinymce.init = function(options) {
+                        if (options._bfInitialize === true) {
+                            return originalTinymceInit(options);
+                        }
+                        if (options.content_css) {
+                            if (options.content_css instanceof Array) {
+                                options.content_css.push(appTheme);
+                            } else {
+                                options.content_css = [options.content_css, appTheme];
+                            }
+                        } else {
+                            options.content_css = appTheme;
+                        }
+                        options.plugins = 'buttons';
+                        options.toolbar = 'buttons';
+                        options.valid_elements= "@[id|class|style|title|dir<ltr?rtl|lang|xml::lang], *[*]";
+                        options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
                 }
