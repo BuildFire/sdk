@@ -51,12 +51,21 @@ var buildfire = {
                     link.type = 'text/css';
                     link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
                     head.appendChild(link);
-                    console.log('loaded components 3');
                     buildfire.components.ratingSystem.injectRatings();
                 });
             } else buildfire.components.ratingSystem.injectRatings();
 
+            function hasScript(url) {
+                while (url.includes("../")) url = url.replace("../", "");
+                var scripts = document.getElementsByTagName("script");
+                for (var i = 0; i < scripts.length; i++) {
+                    if(scripts[i].src.includes(url)) return true;
+                }
+                return false;
+            }
+
             function loadScript(url, callback) {
+                if(hasScript(url)) return;
                 var head = document.head;
                 var script = document.createElement('script');
                 script.type = 'text/javascript';
@@ -177,7 +186,8 @@ var buildfire = {
         buildfire.appearance.attachCSSFiles();
 
         buildfire.localStorage.overrideNativeLocalStorage();
-
+        
+        buildfire.wysiwyg.extend();
     }
     , _whitelistedCommands: [
         "datastore.triggerOnUpdate"
@@ -906,14 +916,49 @@ var buildfire = {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
         }, titlebar: {
-            show: function() {
+            show: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.show");
-                buildfire._sendPacket(p);
+                buildfire._sendPacket(p, callback);
             },
-            hide: function() {
+            hide: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.hide");
-                buildfire._sendPacket(p);
+                buildfire._sendPacket(p, callback);
             }
+        }, navbar: {
+            show: function(options, callback) {
+                var p = new Packet(null, "appearance.navbar.show");
+                buildfire._sendPacket(p, callback);
+            },
+            hide: function(options, callback) {
+                var p = new Packet(null, "appearance.navbar.hide");
+                buildfire._sendPacket(p, callback);
+            }
+        }, sideMenu: {
+            show: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.show");
+                buildfire._sendPacket(p, callback);
+            },
+            hide: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.hide");
+                buildfire._sendPacket(p, callback);
+            },
+            open: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.open");
+                buildfire._sendPacket(p, callback);
+            },
+            close: function(options, callback) {
+                var p = new Packet(null, "appearance.sideMenu.close");
+                buildfire._sendPacket(p, callback);
+            }
+        }, fullScreenMode: {
+            enable: function(options, callback) {
+                var p = new Packet(null, "appearance.fullScreenMode.enable");
+                buildfire._sendPacket(p, callback);
+            },
+            disable: function(options, callback) {
+                var p = new Packet(null, "appearance.fullScreenMode.disable");
+                buildfire._sendPacket(p, callback);
+            },
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
@@ -1980,6 +2025,18 @@ var buildfire = {
                 return url;
             }
 
+            if (!options)
+                options = {width: window.innerWidth};
+            else if (typeof(options) != "object")
+                throw ("options not an object");
+
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
+            }
+
             var ratio = options.disablePixelRation?1:window.devicePixelRatio;
 
             // Don't pass any value under 1
@@ -1987,45 +2044,24 @@ var buildfire = {
                 var ratio = 1;
             }
 
-            if (!options)
-                options = {width: window.innerWidth};
-            else if (typeof(options) != "object")
-                throw ("options not an object");
-
             if (options.width == 'full') options.width = window.innerWidth;
             if (options.height == 'full') options.height = window.innerHeight;
 
             var root;
 
-            /*if(buildfire.imageLib.isProdImageServer(url)){
-                url = url.replace(/^https:\/\//i, 'http://');
-                root ="http://buildfire.imgix.net" + url.substring(40); // length of root host
-            }
-            else if (url.indexOf("Kaleo.DevBucket/") > 0 ){
-                root ="http://bflegacy.imgix.net/" + url.split('Kaleo.DevBucket/')[1];
-            }
-
-            if(false && root){
-
-
-                if (options.width && !options.height)
-                    return root + "?w=" + Math.floor(options.width * ratio) ;
-                else if (!options.width && options.height)
-                    return root + "?h=" + Math.floor(options.height * ratio) ;
-                else if (options.width && options.height)
-                    return root + "?w" + Math.floor(options.width * ratio) + "&h=" + Math.floor(options.height * ratio) ;
-                else
-                    return url;
-            }
-            else
-             */
             {
                 //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-                var protocol = "https:";
-                var root = protocol + "//alnnibitpo.cloudimg.io/";
-                var compression = buildfire.imageLib.getCompression(options.compression);
-                var result = '';
+                var root = "https://alnnibitpo.cloudimg.io/v7";
+                
+                // Check if there is query string
+                var hasQueryString = url.indexOf("?") !== -1;
+                var result = root + "/" + url + (hasQueryString ? "&" : "?") + "func=bound"
 
+                var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+                if (isDevMode) {
+                    result += "&ci_info=1";
+                }
+    
                 if (options.size && options.aspect) {
                     if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
                         var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
@@ -2043,16 +2079,17 @@ var buildfire = {
                 }
                 // check for missing size or aspect
                 if (options.width && !options.height) {
-                    var size = Math.floor(options.width * ratio);
-                    result = root + "width/" + size + "/" + compression + url;
+                    var width = Math.floor(options.width * ratio);
+                    result += "&width=" + width;
                 }
                 else if (!options.width && options.height) {
-                    var size = Math.floor(options.height * ratio);
-                    result = root + "height/" + size + "/" + compression + url;
+                    var height = Math.floor(options.height * ratio);
+                    result += "&height=" + height;
                 }
                 else if (options.width && options.height) {
-                    var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio);
-                    result = root + "bound/" + size + "/" + compression + url;
+                    var width = Math.floor(options.width * ratio); 
+                    var height = Math.floor(options.height * ratio); 
+                    result += "&width=" + width + "&height=" + height;
                 } else {
                     result = url;
                 }
@@ -2071,8 +2108,8 @@ var buildfire = {
                 console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
                 return url;
             }
-
-            /*if (buildfire.imageLib.isProdImageServer(url)) {
+    
+            /*if (imageTools.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
             }*/
             if (!options) {
@@ -2080,6 +2117,12 @@ var buildfire = {
             }
             if (typeof (options) != "object") {
                 throw ("options not an object");
+            }
+            if(!options.disablePixelRation && options.disablePixelRatio) {
+                options.disablePixelRation = options.disablePixelRatio;
+            }
+            if(!options.disablePixelRatio && options.disablePixelRation) {
+                options.disablePixelRatio = options.disablePixelRation;
             }
             if (options.size && options.aspect) {
                 if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
@@ -2116,13 +2159,22 @@ var buildfire = {
             }
 
             //var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-            var protocol = "https:";
-            var root = protocol + "//alnnibitpo.cloudimg.io/crop/";
+            
+            var root = "https://alnnibitpo.cloudimg.io/v7";
 
-            var size = Math.floor(options.width * ratio) + "x" + Math.floor(options.height * ratio) + "/";
-            var compression = buildfire.imageLib.getCompression(options.compression);
+            var hasQueryString = url.indexOf("?") !== -1;
+            var result = root + "/" + url + (hasQueryString ? "&" : "?")  + "func=crop"
 
-            var result = root + size + compression + url;
+            var isDevMode = window.location.pathname.indexOf("&devMode=true") !== -1;
+            if (isDevMode) {
+                result += "&ci_info=1";
+            }
+
+            var width = Math.floor(options.width * ratio);
+            var height = Math.floor(options.height * ratio);
+
+            result += "&width=" + width + "&height=" + height;
+
 
             this._handleElement(element, result, callback);
 
@@ -2949,7 +3001,7 @@ var buildfire = {
         }
         ,getItem: function(key,callback) {
             if(!callback){
-                // let getContext throw if context is not ready and no callback is provided
+                // var getContext throw if context is not ready and no callback is provided
                 var context = buildfire.getContext();
                 if(context && context.localStorage) {
                     var val = context.localStorage[key];
@@ -3049,6 +3101,20 @@ var buildfire = {
         },
         getByItemId: function (options, callback) {
             buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
+        }
+    },
+    wysiwyg: {
+        extend: function() {
+            if(typeof tinymce !== 'undefined' && tinymce.init) {
+                var appContext = buildfire.getContext();
+                if (appContext && appContext.endPoints) {
+                    var originalTinymceInit = tinymce.init.bind(tinymce);
+                    tinymce.init = function(options) { 
+                        options.content_css = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
+                        return originalTinymceInit(options);
+                    }
+                }
+            } 
         }
     }
 };

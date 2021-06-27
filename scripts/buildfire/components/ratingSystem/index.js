@@ -391,8 +391,8 @@ function injectRatings(options = defaultOptions, callback) {
 
     for (let i = 0; i < elements.length; i++) {
         let oldElement = elements[i];
+        if(oldElement.innerHTML.includes("trigger_error")) continue;
         let newElement = elements[i].cloneNode(true);
-
         if (oldElement.parentNode) oldElement.parentNode.replaceChild(newElement, oldElement);
     }
 

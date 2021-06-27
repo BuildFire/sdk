@@ -27,6 +27,13 @@
 
         window.localStorage.setItem('appContext', JSON.stringify(window.appContext));
     }
+
+    if (!window.whitelabelContext) {
+        window.whitelabelContext = {
+            whitelabelId: "1717"
+        }
+    }
+    
     if (window.appContext.currentApp) {
         window.appContext.currentApp.liveMode = 0;
     }
@@ -45,11 +52,13 @@
     }
 
     if (apiKeys) {
+        if(!apiKeys.cloudImageKey) apiKeys.cloudImageKey = "alnnibitpo";
         window.appContext.currentApp.apiKeys = apiKeys;
     } else {
         apiKeys = {
             creditsSystemPublicKey: "test-public",
-            stripePublicKey: "pk_test_Uc7I6bT2fxNiTp3bFqstkyFh00mbnGl0A5"
+            stripePublicKey: "pk_test_Uc7I6bT2fxNiTp3bFqstkyFh00mbnGl0A5",
+            cloudImageKey: "alnnibitpo"
         };
         localStorage.setItem('apiKeys', JSON.stringify(apiKeys));
 
