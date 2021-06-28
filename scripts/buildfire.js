@@ -2645,6 +2645,14 @@ var buildfire = {
             }
             buildfire.pluginInstance.showDialog(options,callback);
         }
+        , create: function (options, callback) {
+            var p = new Packet(null, 'pluginInstances.create', options);
+            buildfire._sendPacket(p, callback);
+        }
+        , clone: function (options, callback) {
+            var p = new Packet(null, 'pluginInstances.clone', options);
+            buildfire._sendPacket(p, callback);
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
     , deeplink: {
