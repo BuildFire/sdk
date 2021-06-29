@@ -104,7 +104,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             postMaster.controlPluginAPI.getContext(null, function(err, context){
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
                 $scope.currentControl = $scope.pluginConfig.webpack
-                    ?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control'
+                    ?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter
                     : '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter;
 
                     $scope.activeTab = section;
