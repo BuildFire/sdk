@@ -201,7 +201,9 @@ html[wkwebview="true"] #footerMenuParent{
 	font-size: 3.5vh;
 }
 
-.has-footer-menu {
+.has-footer-menu,
+#plugin.has-footer-menu #pluginIap .iap-subscriptions,
+#plugin.has-footer-menu #pluginIap .iapMessage {
 	/*height:calc(100% - 40px) !important;*/
 	/*padding-bottom: 43px;*/
 	padding-bottom: 7vh;
@@ -1244,6 +1246,8 @@ html[ios="true"][view="app"] .app-search-plugin,
 html[ios="true"][view="app"] .bookmarks-container,
 html[ios="true"][view="app"] .page-container,
 html[ios="true"][view="app"] .push-notifications,
+html[ios="true"][view="app"] .isNavbarVisible .iap-subscriptions,
+html[ios="true"][view="app"] .isNavbarVisible .iapMessage,
 html[ios="true"][view="app"] #frmExternalRegistrationForm {
 	padding-top: 64px !important;
 }
@@ -1301,6 +1305,8 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications,
+	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
 	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
 		padding-top: 88px !important;
 	}
@@ -1384,7 +1390,9 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 		padding-bottom: env(safe-area-inset-bottom) !important; /* iOS 11.2 */
 		min-height:10% !important;
 	}
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu {
+	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
 		padding-bottom: 10vh !important;
 	}
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
@@ -1892,6 +1900,10 @@ textarea.md-input{
 .iap-subscriptions:not(.iapMessage) #iap-wysiwyg span {
 	color: #222 !important;
 	word-break: break-word;
+}
+
+#launcherIap .iap-subscriptions {
+	height: 100vh !important;
 }
 
 /** Lory */
