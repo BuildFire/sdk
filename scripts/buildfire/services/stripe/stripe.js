@@ -8,6 +8,8 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 
 if (typeof (buildfire.services.stripe) == "undefined") buildfire.services.stripe = {};
 
+if (typeof (buildfire.services.stripe.connect) == "undefined") buildfire.services.stripe.connect = {};
+
 /**
  * charge dynamic products using stripe checkout.
  * @param {Object} options.
@@ -157,6 +159,27 @@ buildfire.services.stripe.addCustomerCard = function (options, cb) {
 buildfire.services.stripe.capturePayment = function (options, cb) {
     var packetId = null;
     var command = 'stripe.capturePayment';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * capture payment.
+ * @param {Object} options.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ * @param {string} response.status - Account status, values ['pending', 'active'].
+ * @param {Boolean} response.is_active - Account activity status.
+ * @param {string} response.bf_stripe_connect_token - Buildfire Stripe connect token, this should be saved in your database.
+ */
+buildfire.services.stripe.connect.account = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.connect.account';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
