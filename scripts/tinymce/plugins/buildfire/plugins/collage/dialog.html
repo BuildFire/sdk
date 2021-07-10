@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="../../../../../../styles/bootstrap.css" rel="stylesheet">
+    <link href="../../../../../../styles/siteIcons.css" rel="stylesheet">
+    <link href="../../../../../../styles/siteStyle.css" rel="stylesheet">
+    <link href="../../../../../../styles/helper.css" rel="stylesheet">
+    <script>
+        let lastTable=null;
+        window.onload = function() {
+            selection(1);
+        };
+        function selection(num){
+            let table=document.getElementsByTagName("table")[(num-1)];
+
+            if(lastTable!=table){
+                if(lastTable!=null)changeTableColor(lastTable,null);
+                changeTableColor(table,"#00a1f1");
+                lastTable=table;
+            }
+        }
+        function changeTableColor(table,color){
+            let td = table.getElementsByTagName("td");
+            for (let item of td) {
+                if(color==null) item.setAttribute("style","");
+                else item.style.backgroundColor=color;
+            };
+        }
+    </script>
+    <style>
+        html,
+        body {
+            background-color: white;
+        }
+
+        #roundedCorners{
+            margin: 4px 4px 0px 22px;
+            vertical-align: top;
+            width: 16px;
+            height: 16px;
+        }
+
+        .positionTables{
+            margin-left:14px;
+        }
+
+        .selectLabel{
+            margin:14px 20px;
+        }
+
+        table {
+            border-spacing: 7px;
+            display: inline-block;
+            border-collapse: inherit !important;
+            border: inherit !important;
+        }
+
+        table:hover td{
+            background-color:#40b8f4;
+        }
+
+        td {
+            background-color: #d8d8d8;
+        }
+
+        .first {
+            width: 80px;
+            height: 50px;
+        }
+
+        .first {
+            width: 80px;
+            height: 50px;
+        }
+
+        .second1 {
+            width: 110px;
+            height: 50px;
+        }
+
+        .second2 {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="selectLabel"><b>Select Layout</b></div>
+    <span class="positionTables">
+    <table onclick="selection(1)">
+        <tr>
+            <td class="first"></td>
+            <td class="first"></td>
+        </tr>
+        <tr>
+            <td class="first"></td>
+            <td class="first"></td>
+        </tr>
+    </table>
+
+    <table onclick="selection(2)">
+        <tr>
+            <td rowspan="2" class="second1"></td>
+            <td class="second2"></td>
+        </tr>
+        <tr>
+            <td class="second2"></td>
+        </tr>
+    </table>
+
+    <table onclick="selection(3)">
+        <tr>
+            <td class="second2"></td>
+            <td rowspan="2" class="second1"></td>
+        </tr>
+        <tr>
+            <td class="second2"></td>
+        </tr>
+    </table>
+    </span><span class="positionTables">
+    <table onclick="selection(4)">
+        <tr>
+            <td class="second2"></td>
+            <td class="second1"></td>
+        </tr>
+        <tr>
+            <td class="second2"></td>
+            <td class="second1"></td>
+        </tr>
+    </table>
+
+    <table onclick="selection(5)">
+        <tr>
+            <td class="second1"></td>
+            <td class="second2"></td>
+        </tr>
+        <tr>
+            <td class="second1"></td>
+            <td class="second2"></td>
+        </tr>
+    </table>
+
+    <table onclick="selection(6)">
+        <tr>
+            <td class="second2"></td>
+            <td class="second1" colspan="2"></td>
+
+        </tr>
+        <tr>
+            <td class="second2" colspan="2"></td>
+            <td class="second2"></td>
+        </tr>
+    </table>
+    </span>
+    <div>
+        <input class="form-check-input" type="checkbox" value="" id="roundedCorners" checked>
+        <label class="form-check-label" for="flexCheckChecked">
+            Rounded Corners
+        </label>
+    </div>
+</body>
+</html>

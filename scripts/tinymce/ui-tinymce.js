@@ -56,11 +56,9 @@ angular.module('ui.tinymce', [])
                 angular.extend(expression, scope.$eval(attrs.uiTinymce));
 
                 options = {
-                    selector: 'textarea',  // change this value according to your HTML
-                    toolbar: ['  styleselect  | insertfile | forecolor | backcolor  | bold italic | alignleft aligncenter alignright alignjustify  | bullist  numlist | outdent indent | link image | media  | code'
-                    ],
+                    selector: 'textarea', 
                     valid_elements: "*[*]",
-                    content_css: '../../../../../scripts/buildfire/components/ratingSystem/index.css',
+                    content_css: '../../../../../styles/bootstrap.css',
                     menu: {
                         edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall' },
                         insert: { title: 'Insert', items: 'link image | media  | code' },
