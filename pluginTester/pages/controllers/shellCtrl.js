@@ -35,6 +35,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
         $scope.loadFrames = function (pluginRoot, config) {
             postMaster.controlPluginAPI.getContext(null, function(err, context){
+                context.widgetTheme = context.appTheme;
                 context.appTheme = controlDefaultTheme;
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
                 let lastTabName = sessionStorage.getItem($routeParams.pluginFolder); // Get the last tab opened in a specific plugin

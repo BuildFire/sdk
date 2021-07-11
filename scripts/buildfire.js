@@ -567,6 +567,19 @@ var buildfire = {
 
             });
         },
+        getWidgetTheme: function (callback) {
+            buildfire.getContext(function(err, context){
+                if (err) return callback(err, null);
+                if (context){
+                    if (context.widgetTheme) {
+                        return callback(null, context.widgetTheme);
+                    }
+                    return buildfire.appearance.getAppTheme(callback);
+                } else {
+                    callback(null, null);
+                }
+            });
+        },
         _forceCSSRender: function(){
             // WebKit Rendering Reset on Plugins
             if(window.location.href.indexOf('widget') > 0){
@@ -695,26 +708,36 @@ var buildfire = {
                         files.push('styles/appStyle.css');
                     }
                 }
+            }
+            
+            // TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
+            var scripts = document.getElementsByTagName("script");
 
-                // TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
-                var scripts = document.getElementsByTagName("script");
+            for (var i = 0; i < scripts.length; i++) {
+                var src = scripts[i].src;
 
-                for (var i = 0; i < scripts.length; i++) {
-                    var src = scripts[i].src;
-
-                    if (src.indexOf('buildfire.js') > 0) {
-                        base = src.replace('/scripts/buildfire.js', '');
-                        break;
-                    } else if (src.indexOf('buildfire.min.js') > 0) {
-                        base = src.replace('/scripts/buildfire.min.js', '');
-                        break;
-                    }
-                    else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
-                        base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
-                        break;
-                    }
+                if (src.indexOf('buildfire.js') > 0) {
+                    base = src.replace('/scripts/buildfire.js', '');
+                    break;
+                } else if (src.indexOf('buildfire.min.js') > 0) {
+                    base = src.replace('/scripts/buildfire.min.js', '');
+                    break;
+                }
+                else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
+                    base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
+                    break;
                 }
             }
+
+            buildfire.appearance.getWidgetTheme(function(err, theme) {
+                if (err) return console.error(err);
+                var bfWidgetTheme = document.createElement('style');
+                bfWidgetTheme.id = 'bfWidgetTheme';
+                bfWidgetTheme.rel = 'stylesheet';
+                bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(theme);
+                (document.head || document.body || document).appendChild(bfWidgetTheme);
+                files.push('styles/bfUIElements.css');
+            });
 
             if (enableMDTheme) {
                 buildfire.appearance.getAppTheme(function(err, appTheme) {
@@ -910,11 +933,26 @@ var buildfire = {
             var p = new Packet(null, "appearance.setHeaderVisibility", value);
             buildfire._sendPacket(p);
         }
+        , onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appearanceOnUpdate', callback, allowMultipleHandlers);
+        }
         , triggerOnUpdate: function () {
             var appThemeCSSElement = document.getElementById("appThemeCSS");
             if(appThemeCSSElement) {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
+            setTimeout(function () {
+                var p = new Packet(null, 'getContext');
+                buildfire._sendPacket(p, function (err, data) {
+                    if (err) return console.error(err);
+                    if (data) {
+                        var bfWidgetTheme = document.getElementById("bfWidgetTheme");
+                        if (bfWidgetTheme) {
+                            bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(data.appTheme);
+                        }
+                    }
+                });
+            }, 2000); //give it enough time for the datastore to save
         }, titlebar: {
             show: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.show");
@@ -959,6 +997,32 @@ var buildfire = {
                 var p = new Packet(null, "appearance.fullScreenMode.disable");
                 buildfire._sendPacket(p, callback);
             },
+        },
+        _getAppThemeCssVariables: function(appTheme) {
+            var css = ''
+            if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
+            && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
+            && appTheme.fontId !== 'Shadows+into+Light'&& appTheme.fontId !== 'Asap+condensed') {
+                css += '@import url(\'https://fonts.googleapis.com/css?family='+ appTheme.fontName +'\');'
+            }
+            css += ':root {'
+                + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
+                + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
+                + '--bf-theme-warning: ' + appTheme.colors.warningTheme + ' !important;'
+                + '--bf-theme-info: ' + appTheme.colors.infoTheme + ' !important;'
+                + '--bf-theme-default: ' + appTheme.colors.defaultTheme + ' !important;'
+                + '--bf-theme-danger: ' + appTheme.colors.dangerTheme + ' !important;'
+                + '--bf-theme-background: ' + appTheme.colors.backgroundColor + ' !important;'
+                + '--bf-theme-body-text: ' + appTheme.colors.bodyText + ' !important;'
+                + '--bf-theme-footer-background: ' + appTheme.colors.footerMenuBackgroundColor + ' !important;'
+                + '--bf-theme-footer-icon: ' + appTheme.colors.footerMenuIconColor + ' !important;'
+                + '--bf-theme-header-text: ' + appTheme.colors.headerText + ' !important;'
+                + '--bf-theme-icons: ' + appTheme.colors.icons + ' !important;'
+                + '--bf-theme-title-bar: ' + appTheme.colors.titleBar + ' !important;'
+                + '--bf-theme-title-bar-text-icons: ' + appTheme.colors.titleBarTextAndIcons + ' !important;'
+                + '--bf-font-family:' + appTheme.fontName + ', sans-serif !important'                
+            +'}';
+            return css;
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
@@ -3106,15 +3170,49 @@ var buildfire = {
             if(typeof tinymce !== 'undefined' && tinymce.init) {
                 var appContext = buildfire.getContext();
                 if (appContext && appContext.endPoints) {
+                    var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
                     var originalTinymceInit = tinymce.init.bind(tinymce);
-                    tinymce.init = function(options) { 
-                        options.content_css = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
+                    tinymce.init = function(options) {
+                        if (options._bfInitialize === true) {
+                            return originalTinymceInit(options);
+                        }
+                        var originalSetup = options.setup;
+                        if (originalSetup) {
+                            options.setup = function (editor) {
+                                originalSetup(editor);
+                            }
+                        }
+                        
+                        buildfire.appearance.getWidgetTheme(function(err, theme) {
+                            if (err) return console.error(err);
+                            if (options.content_style) {
+                                options.content_style += buildfire.appearance._getAppThemeCssVariables(theme);
+                            } else {
+                                options.content_style = buildfire.appearance._getAppThemeCssVariables(theme);
+                            }
+                        });
+                        if (options.content_css) {
+                            if (options.content_css instanceof Array) {
+                                options.content_css.push(appTheme, '../../../../styles/bfUIElements.css');
+                            } else {
+                                var splittedStyleFiles = options.content_css.split(',');
+                                splittedStyleFiles.push(appTheme, '../../../../styles/bfUIElements.css');
+                                options.content_css = splittedStyleFiles;
+                            }
+                        } else {
+                            options.content_css = [appTheme , '../../../../styles/bfUIElements.css'];
+                        }
+                        options.plugins = 'bf_buttons, fullscreen';
+                        options.toolbar = 'bf_buttons, fullscreen';
+                        
+                        options.valid_elements= "@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],*[*]";
+                        options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
                 }
             } 
         }
-    }
+    },
 };
 
 window.parsedQuerystring = buildfire.parseQueryString();
@@ -3185,7 +3283,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         else {
             if (context && context.debugTag)
                 buildfire.logger.attachRemoteLogger(context.debugTag);
-            if (window.location.pathname.indexOf('/widget/') > 0) {
+            if (window.location.pathname.indexOf('/widget/') >= 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
                 var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
 
