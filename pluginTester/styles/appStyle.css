@@ -3990,8 +3990,8 @@ html:not([type="app"]) .bottom-drawer{
   -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
 }
 .action-list .item-icon{
-  width: 3.5em;
-  height: 3.5em;
+  width: 3em;
+  height: 3em;
   margin-right: 1rem;
   align-items: center;
 	justify-content: center;
@@ -4000,7 +4000,6 @@ html:not([type="app"]) .bottom-drawer{
 }
 .action-list li{
   display: flex;
-  align-items: center;
   padding: 1.5rem;
   cursor: pointer;
 	transition: background-color ease-in-out .3s;
@@ -4956,6 +4955,9 @@ button.list-group-item {
 	display: flex;
 	flex-shrink: 0;
 }
+.has-images .checkbox {
+	padding-top: 1.2rem;
+}
 #drawerButtonDiv {
 	font-size: initial;
 	font-weight: bold;
@@ -5089,6 +5091,14 @@ button.list-group-item {
 #drawerButton span:first-child:hover, #drawerButton span:first-child{
 	background-color: transparent !important;
 }
+.drawer-checkboxes {
+	padding-top: 1.2rem;
+}
+.action-item-texts {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
 #webviewBackdrop {
 	z-index: 999999999;
 	min-height: 100vh;
@@ -5098,11 +5108,9 @@ button.list-group-item {
 	left: 0;
 	animation: bottom-drawer-fade-in .2s ease-in-out forwards;
 }
-
 #webviewBackdrop.closing {
 	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
 }
-
 #sideMenuHeaderImage {
 	height: 26px;
 	width: 26px; 
