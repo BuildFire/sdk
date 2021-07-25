@@ -950,6 +950,7 @@ var buildfire = {
                         if (bfWidgetTheme) {
                             bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(data.appTheme);
                         }
+                        buildfire.eventManager.trigger('appearanceOnUpdate', data.appTheme);
                     }
                 });
             }, 2000); //give it enough time for the datastore to save
@@ -3212,8 +3213,8 @@ var buildfire = {
                         } else {
                             options.content_css = [appTheme , '../../../../styles/bfUIElements.css'];
                         }
-                        options.plugins = 'bf_buttons, fullscreen';
-                        options.toolbar = 'bf_buttons, fullscreen';
+                        options.plugins = 'bf_buttons';
+                        options.toolbar = 'bf_buttons';
                         
                         options.valid_elements= "@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],*[*]";
                         options._bfInitialize = true;

@@ -24,30 +24,51 @@
 }
 .bf-text-primary {
     color: var(--bf-theme-primary) !important;
+    cursor: pointer;
     font-family: var(--bf-font-family) !important;
 }
 .bf-text-success {
     color: var(--bf-theme-success) !important;
+    cursor: pointer;
     font-family: var(--bf-font-family) !important;
 }
 .bf-text-warning {
     color: var(--bf-theme-warning) !important;
+    cursor: pointer;
     font-family: var(--bf-font-family) !important;
 }
 .bf-text-info {
     color: var(--bf-theme-info) !important;
+    cursor: pointer;
     font-family: var(--bf-font-family) !important;
 }
 .bf-text-default {
     color: var(--bf-theme-default) !important;
+    cursor: pointer;
     font-family: var(--bf-font-family) !important;
 }
 .bf-text-danger {
     color: var(--bf-theme-danger) !important;
+    cursor: pointer;
     font-family: var(--bf-font-family) !important;
 }
 .bf-border-primary {
     border: 1px solid var(--bf-theme-primary) !important;
+}
+.bf-border-success {
+    border: 1px solid var(--bf-theme-success) !important;
+}
+.bf-border-warning {
+    border: 1px solid var(--bf-theme-warning) !important;
+}
+.bf-border-info {
+    border: 1px solid var(--bf-theme-info) !important;
+}
+.bf-border-default {
+    border: 1px solid var(--bf-theme-default) !important;
+}
+.bf-border-danger {
+    border: 1px solid var(--bf-theme-danger) !important;
 }
 .bf-btn {
     font-family: var(--bf-font-family) !important;

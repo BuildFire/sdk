@@ -1,4 +1,4 @@
-let buttonAndLinksStyles = ['primary', 'success', 'info', 'warning', 'danger', 'default'];
+let buttonAndLinksStyles = ['primary', 'success', 'info', 'warning', 'default', 'danger'];
 let dialogData = {buttonStyle : 'primary', type: 'button'};
 
 if (window.parent.document.getElementById('bfWidgetTheme')) {
@@ -10,20 +10,22 @@ function render() {
     function createElements(type) {
         let container = document.getElementById(type === 'buttons' ? 'buttonsContainer' : 'linksContainer');
         buttonAndLinksStyles.forEach((style, index) => {
+            let columnDiv = document.createElement('div');
             let buttonOrLinkDiv = document.createElement('div');
-            buttonOrLinkDiv.className = 'col-xs-6 pull-left margin-top-20';
-            buttonOrLinkDiv.className = index === 0 ? buttonOrLinkDiv.className + ' bf-border-primary' : buttonOrLinkDiv.className;
+            columnDiv.className = 'col-xs-6 pull-left margin-top-20';
+            buttonOrLinkDiv.className = index === 0 ? 'bf-border-primary active' : '';
             let buttonOrLink = document.createElement('a');
             buttonOrLink.className = type === 'buttons' ? `bf-btn bf-btn-${style} btns-width` : `bf-text-${style}`;
             let itemToClick = type === 'buttons' ? buttonOrLink : buttonOrLinkDiv;
             itemToClick.onclick = () => {
                 selectButtonType(style, type === 'buttons' ? 'button' : 'link');
                 resetBorder(type === 'buttons' ? 'button' : 'link');
-                buttonOrLinkDiv.classList.add('bf-border-primary');
+                buttonOrLinkDiv.classList.add(`bf-border-${style}`, 'active');
             }
             buttonOrLink.innerText = `${style} ${type === 'buttons' ? 'button' : 'link'}`;
             buttonOrLinkDiv.appendChild(buttonOrLink);
-            container.appendChild(buttonOrLinkDiv);
+            columnDiv.appendChild(buttonOrLinkDiv);
+            container.appendChild(columnDiv);
         });
     }
     createElements('buttons');
@@ -35,10 +37,10 @@ render();
 document.querySelector('#buttonsContainer').style.display = 'block';
 document.querySelector('#buttonsContainer').classList.add('showDiv');
 const resetBorder = (type) => {
-    if(type === 'button') {
-        document.querySelector('#buttonsContainer .bf-border-primary').classList.remove('bf-border-primary');
+    if (type === 'button') {
+        document.querySelector('#buttonsContainer .active').className = '';
     } else {
-        document.querySelector('#linksContainer .bf-border-primary').classList.remove('bf-border-primary');
+        document.querySelector('#linksContainer .active').className = '';
     }
 }
 const selectButtonType = (buttonStyle, type) =>  {

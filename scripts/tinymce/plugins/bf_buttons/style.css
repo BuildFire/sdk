@@ -1,10 +1,6 @@
-* {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
 body {
     background: var(--bf-theme-background);
+    font-size: 13px;
 }
 .btns {
     content: " ";
@@ -13,52 +9,48 @@ body {
 #main {
     display: none;
 }
-.pull-left {
-    float: left !important;
-}
-.col-xs-6 {
-    width: 50%;
-    position: relative;
-    min-height: 1px;
-    padding : 16px;
-    margin-bottom: 10px !important;
+.col-xs-6 div {
     border: 1px solid transparent;
+    padding: 16px;
+    width: 200px;
 }
 .btns-width {
     width: 160px;
 }
-.text-center {
-    text-align: center !important;
-}
 .margin-top-20 {
     margin-top : 20px !important;
 }
-#buttonsContainer , #linksContainer{
+#buttonsContainer , #linksContainer {
     text-transform: capitalize;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    padding:  0 1rem;
     text-align: center;
     transform: translate(-100%, 0);
     display: none;
 }
-.bf-border-primary {
+.bf-border-primary,
+.bf-border-success,
+.bf-border-info,
+.bf-border-warning,
+.bf-border-default,
+.bf-border-danger {
     border-radius: 0.5rem;
     transition: 0.3s;
 }
 #typesDiv {
-    margin: -8px;
-    padding: 8px;
+    padding: 8px 8px 24px 8px;
     font-family: sans-serif;
+    border-bottom: 1px solid #ddd;
 }
 #typesDiv, #typesDiv * {
-    color: black;
     background: white;
 }
 #typesDiv div:first-child {
     margin-left: 5px;
 }
-#radioButtonsDiv {
-    display: flex;
-    align-items: center;
+#types {
+    padding: 8px 0 16px 0;
+    font-weight: bold;
 }
 #linksContainer div {
     cursor: pointer;
@@ -78,4 +70,4 @@ body {
     100% {
         transform: translate(0, 0);
     }
-  }
+}

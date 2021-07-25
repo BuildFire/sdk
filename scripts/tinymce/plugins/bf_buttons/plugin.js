@@ -4,9 +4,9 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
         icon: false,
         onclick: function () {
             editor.windowManager.open({
-                title: "Buttons",
+                title: "Buttons and Links",
                 url: url + "/dialog.html",
-                width: 470,
+                width: 500,
                 height: 400,
                 buttons: [
                     {
@@ -25,9 +25,15 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
                                             if (err) return console.error(err);
                                             if (!actionItem) return;
                                             let stringifiedActionItem = escape(JSON.stringify(actionItem));
-                                            let content = `<a class="${result.type === 'button' ? 'bf-btn bf-btn-' + result.buttonStyle : 'bf-text-' + result.buttonStyle}" data-execute="${stringifiedActionItem}"
-                                            onclick="buildfire.actionItems.execute(JSON.parse(unescape('${stringifiedActionItem}')), ()=>{})">${actionItem.title}</a>&nbsp;`
-                                            editor.insertContent(content);
+                                            function getActionItem() {
+                                                return `buildfire.actionItems.execute(JSON.parse(unescape(this.getAttribute('data-execute'))), ()=>{})`;
+                                            }
+                                            let buttonOrlink = document.createElement('a');
+                                            buttonOrlink.className = result.type === 'button' ? 'bf-btn bf-btn-' + result.buttonStyle : 'bf-text-' + result.buttonStyle;
+                                            buttonOrlink.setAttribute('data-execute', stringifiedActionItem);
+                                            buttonOrlink.setAttribute('onclick', getActionItem())
+                                            buttonOrlink.innerText = actionItem.title;
+                                            editor.insertContent(buttonOrlink.outerHTML + '&nbsp;');
                                         }
                                     );
                                 };
