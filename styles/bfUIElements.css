@@ -73,6 +73,7 @@
 .bf-btn {
     font-family: var(--bf-font-family) !important;
     display: inline-block;
+    max-width: 100%;
     margin-bottom: 0;
     font-weight: normal;
     text-align: center;
@@ -96,6 +97,10 @@
     -o-transition: all 0.35s;
     -webkit-transition: all 0.35s;
     transition: all 0.35s;
+    overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
 }
 .bf-btn:hover {
     color: white !important;

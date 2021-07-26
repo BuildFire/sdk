@@ -25,13 +25,10 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
                                             if (err) return console.error(err);
                                             if (!actionItem) return;
                                             let stringifiedActionItem = escape(JSON.stringify(actionItem));
-                                            function getActionItem() {
-                                                return `buildfire.actionItems.execute(JSON.parse(unescape(this.getAttribute('data-execute'))), ()=>{})`;
-                                            }
                                             let buttonOrlink = document.createElement('a');
                                             buttonOrlink.className = result.type === 'button' ? 'bf-btn bf-btn-' + result.buttonStyle : 'bf-text-' + result.buttonStyle;
                                             buttonOrlink.setAttribute('data-execute', stringifiedActionItem);
-                                            buttonOrlink.setAttribute('onclick', getActionItem())
+                                            buttonOrlink.setAttribute('onclick', 'buildfire.actionItems.execute(JSON.parse(unescape(this.getAttribute("data-execute"))), ()=>{})')
                                             buttonOrlink.innerText = actionItem.title;
                                             editor.insertContent(buttonOrlink.outerHTML + '&nbsp;');
                                         }

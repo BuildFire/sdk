@@ -3190,6 +3190,12 @@ var buildfire = {
                         var originalSetup = options.setup;
                         if (originalSetup) {
                             options.setup = function (editor) {
+                                editor.on('init', function () {
+                                    // add a mimic of buildfire object to prevent errors in tinymce
+                                    var scriptElm = editor.dom.create( 'script', {
+                                    },  'var buildfire = { actionItems: { execute: function() { console.log("Cannot Execute"); }}}');
+                                    editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
+                                });
                                 originalSetup(editor);
                             }
                         }
@@ -3216,7 +3222,7 @@ var buildfire = {
                         options.plugins = 'bf_buttons';
                         options.toolbar = 'bf_buttons';
                         
-                        options.valid_elements= "@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],*[*]";
+                        options.extended_valid_elements= "a[href|onclick|class],img[src|style|onerror|height|width]"
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
