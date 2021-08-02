@@ -2932,6 +2932,16 @@ var buildfire = {
         },
         triggerOnAppResumed: function (data) {
             return buildfire.eventManager.trigger('deviceAppResumed', data);
+        },
+        contacts: {
+            showDialog: function (options, callback) {
+                var p = new Packet(null, 'device.contacts.showDialog', options);
+                buildfire._sendPacket(p, callback);
+            },
+            search: function (options, callback) {
+                var p = new Packet(null, 'device.contacts.search', options);
+                buildfire._sendPacket(p, callback);
+            }
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
