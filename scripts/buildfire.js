@@ -2254,7 +2254,7 @@ var buildfire = {
                 hash |= 0; // Convert to 32bit integer
             }
 
-            return 'cdvfile://localhost/persistent/imageCache/images/' + hash + extension;
+            return buildfire.getContext().endPoints.pluginHost.replace('pluginTemplate/plugins', 'imageCache/images') + '/' + hash + extension;
         },
         getCompression: function (c) {
             var result = 'n/'
