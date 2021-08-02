@@ -165,7 +165,7 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
 };
 
 /**
- * capture payment.
+ * Add Stripe Connect account.
  * @param {Object} options.
  */
 
@@ -180,6 +180,24 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
 buildfire.services.stripe.connect.account = function (options, cb) {
     var packetId = null;
     var command = 'stripe.connect.account';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * Delete Stripe Connect account.
+ * @param {Object} options.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.connect.deleteAccount = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.connect.deleteAccount';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
