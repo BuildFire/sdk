@@ -218,6 +218,7 @@ var buildfire = {
         , "services.publicFiles._triggerOnComplete"
         , "notes.triggerOnSeekTo"
         , "navigation.triggerOnPluginOpened"
+        , "deeplink.triggerOnUpdate"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -2804,6 +2805,17 @@ var buildfire = {
                     callback('no result found for this deeplink id', null);
                 }
             });
+        },
+        onUpdate: function (data) {
+            return console.error('deeplink.onUpdate', data);
+        },
+        triggerOnUpdate: function (data) {
+            if (!data || typeof data !== 'string') return
+            try {
+                buildfire.deeplink.onUpdate(JSON.parse(data));
+            } catch (error) {
+                console.error(error);
+            }
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
