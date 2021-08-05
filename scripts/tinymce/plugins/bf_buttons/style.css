@@ -25,7 +25,6 @@ body {
     margin-top: 0.5rem;
     padding:  0 1rem;
     text-align: center;
-    transform: translate(-100%, 0);
     display: none;
 }
 .bf-border-primary,
@@ -59,15 +58,4 @@ body {
     display: inline-block;
     padding: 6px 12px;
     font-size: 13px;
-}
-.showDiv {
-    animation: show 0.3s linear forwards;
-}
-@keyframes show {
-    0% {
-        transform: translate(-100%, 0);
-    }
-    100% {
-        transform: translate(0, 0);
-    }
 }

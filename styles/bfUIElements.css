@@ -83,7 +83,6 @@
     cursor: pointer;
     background-image: none;
     border: 1px solid transparent;
-    white-space: nowrap;
     padding: 6px 12px;
     font-size: 13px;
     line-height: 20px;
@@ -97,10 +96,6 @@
     -o-transition: all 0.35s;
     -webkit-transition: all 0.35s;
     transition: all 0.35s;
-    overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	position: relative;
 }
 .bf-btn:hover {
     color: white !important;

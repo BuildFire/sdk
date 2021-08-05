@@ -3192,9 +3192,45 @@ var buildfire = {
                             options.setup = function (editor) {
                                 editor.on('init', function () {
                                     // add a mimic of buildfire object to prevent errors in tinymce
-                                    var scriptElm = editor.dom.create( 'script', {
-                                    },  'var buildfire = { actionItems: { execute: function() { console.log("Cannot Execute"); }}}');
+                                    var scriptElm = editor.dom.create( 'script', {},
+                                        'var buildfire = {'
+                                        +   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
+                                        +   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
+                                        +'}'
+                                    );
                                     editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
+                                });
+                                editor.addMenuItem('clearContent', {
+                                    text: 'Clear content',
+                                    onclick: function() {
+                                      editor.execCommand('mceNewDocument');
+                                    }
+                                });
+                                editor.addMenuItem('insertActionItem', {
+                                    text: 'Insert/edit action item',
+                                    icon: 'link',
+                                    onclick: function() {
+                                        editor.buttons.bf_actionitem.showDialog();                                    
+                                    }
+                                });
+                                editor.addMenuItem('insertButtonOrLink', {
+                                    text: 'Insert button or link',
+                                    onclick: function() {
+                                        editor.buttons.bf_buttons.showDialog();                                    
+                                    }
+                                });
+                                editor.addMenuItem('insertImage', {
+                                    text: 'Insert/edit image',
+                                    icon: 'image',
+                                    onclick: function() {
+                                        editor.buttons.bf_imagelib.showDialog();                                    
+                                    }
+                                });
+                                editor.addMenuItem('insertRating', {
+                                    text: 'Insert rating',
+                                    onclick: function() {
+                                        editor.buttons.bf_rating.showDialog();                                    
+                                    }
                                 });
                                 originalSetup(editor);
                             }
@@ -3219,10 +3255,44 @@ var buildfire = {
                         } else {
                             options.content_css = [appTheme , '../../../../styles/bfUIElements.css'];
                         }
-                        options.plugins = 'bf_buttons';
-                        options.toolbar = 'bf_buttons';
                         
-                        options.extended_valid_elements= "a[href|onclick|class],img[src|style|onerror|height|width]"
+                        var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
+                        options.menu = {
+                            edit: {title: "Edit", items: "undo redo | cut copy paste | selectall | clearContent"},
+                            insert: {title: "Insert", items: "insertActionItem media insertImage | insertButtonOrLink | insertRating"},
+                            view: {title: 'View', items: 'visualaid | preview'},
+                            format: {title: "Format", items: "bold italic underline strikethrough superscript subscript | formats | removeformat"},
+                            tools: {title: 'Tools', items: 'code'},
+                        }
+                        if (userMenu) {
+                            for (item in userMenu) {
+                                options.menu[item] = userMenu[item];
+                            }
+                        }
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons'];
+                        if (options.plugins) {
+                            if (options.plugins instanceof Array) {
+                                options.plugins = defaultPlugins.concat(options.plugins);  
+                            } else {
+                                var splittedPlugins = options.plugins.split(' ');
+                                options.plugins = defaultPlugins.concat(splittedPlugins);
+                            }
+                        } else {
+                            options.plugins = defaultPlugins;
+                        }
+                        var defaultToolbar = ['fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen'];
+                        if (options.toolbar) {
+                            if (options.toolbar instanceof Array) {
+                                options.toolbar = defaultToolbar.concat(options.toolbar);
+                            } else {
+                                defaultToolbar[0] += ' | ' + options.toolbar;
+                                options.toolbar = defaultToolbar[0];
+                            }
+                        } else {
+                            options.toolbar = defaultToolbar;
+                        }
+                        options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
+                        options.extended_valid_elements= "a[href|onclick|class],img[src|style|onerror|height|width],button[style|class|onclick]"
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }

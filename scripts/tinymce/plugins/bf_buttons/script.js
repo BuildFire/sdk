@@ -35,7 +35,7 @@ function render() {
 
 render();
 document.querySelector('#buttonsContainer').style.display = 'block';
-document.querySelector('#buttonsContainer').classList.add('showDiv');
+
 const resetBorder = (type) => {
     if (type === 'button') {
         document.querySelector('#buttonsContainer .active').className = '';
@@ -55,14 +55,10 @@ document.getElementsByName('buttonsTypes').forEach((button) => {
             dialogData = {buttonStyle : 'primary', type: 'link'};
             document.querySelector('#buttonsContainer').style.display = 'none';
             document.querySelector('#linksContainer').style.display = 'block';
-            buttonsContainer.classList.remove('showDiv');
-            linksContainer.classList.add('showDiv');
         } else if (e.target.value === 'buttons') {
             dialogData = {buttonStyle : 'primary', type: 'button'};
             document.querySelector('#linksContainer').style.display = 'none';
             document.querySelector('#buttonsContainer').style.display = 'block';
-            buttonsContainer.classList.add('showDiv');
-            linksContainer.classList.remove('showDiv');
         }
     }
 })
