@@ -2658,11 +2658,18 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
     , deeplink: {
         getData: function (callback) {
+            if (buildfire.deeplink._data) {
+                return callback(buildfire.deeplink._data);
+            }
+
             var qs = buildfire.parseQueryString();
-            if(qs.dld)
-                callback(JSON.parse(qs.dld)); /// dld: Deep Link Data
-            else
+            if (qs.dld) {
+                var obj = JSON.parse(qs.dld);
+                buildfire.deeplink._data = obj;
+                callback(obj); /// dld: Deep Link Data
+            } else {
                 callback(null);
+            }
         },
         template: {
             get: function (callback) {
@@ -2806,17 +2813,14 @@ var buildfire = {
                 }
             });
         },
-        onUpdate: function (data) {
-            return console.error('deeplink.onUpdate', data);
+        onUpdate: function (callback, allowMultipleHandlers) {
+            buildfire.eventManager.add('deeplinkOnUpdate', callback, allowMultipleHandlers);
         },
-        triggerOnUpdate: function (data) {
-            if (!data || typeof data !== 'string') return
-            try {
-                buildfire.deeplink.onUpdate(JSON.parse(data));
-            } catch (error) {
-                console.error(error);
-            }
-        }
+        triggerOnUpdate: function (obj) {
+            buildfire.deeplink._data = obj;
+            buildfire.eventManager.trigger('deeplinkOnUpdate', obj);
+        },
+        _data: null
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
