@@ -195,7 +195,7 @@ buildfire.components.actionItems.sortableList.prototype = {
         sliderContainer.className = "hide-empty dynamic-link-list draggable-list-view margin-top-twenty border-radius-four border-grey has-btn links-list";
 
         button.innerHTML = "Add Action Item";
-        button.classList.add('button-plus-icon');
+        button.classList.add('btn-plus-icon-with-text');
 
         componentContainer.appendChild(componentName);
         buttonContainer.appendChild(button);

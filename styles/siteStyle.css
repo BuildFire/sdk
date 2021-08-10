@@ -2485,12 +2485,12 @@ html.translated-ltr body{
 }
 
 
-.button-plus-icon {
+.btn-plus-icon-with-text {
 	position: relative !important;
 	padding-left: 2.75rem !important;
 }
 
-.button-plus-icon::after {
+.btn-plus-icon-with-text::after {
     content: "";
     width: .75rem;
     top: 50%;
@@ -2503,7 +2503,7 @@ html.translated-ltr body{
     position: absolute;
 }
 
-.button-plus-icon::before {
+.btn-plus-icon-with-text::before {
     content: "";
     width: .75rem;
     top: 50%;
