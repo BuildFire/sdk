@@ -582,7 +582,7 @@ var buildfire = {
         },
         _forceCSSRender: function(){
             // WebKit Rendering Reset on Plugins
-            if(window.location.href.indexOf('widget') > 0){
+            if(window.location.href.indexOf('/widget/') > 0){
                 var html = document.getElementsByTagName('html')[0];
                 var style = document.createElement('style');
                 style.type = 'text/css';
@@ -593,7 +593,7 @@ var buildfire = {
         insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
 
-            if(window.location.href.indexOf('widget') > 0){
+            if(window.location.href.indexOf('/widget/') > 0){
                 html.setAttribute('buildfire', 'widget');
                 html.setAttribute('type', 'app');
             }else{
