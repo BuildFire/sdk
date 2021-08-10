@@ -46,19 +46,30 @@ const resetBorder = (type) => {
 const selectButtonType = (buttonStyle, type) =>  {
     dialogData = {buttonStyle, type};
 }
-window.validate = (options, callback) => {
-    callback(null, dialogData !== undefined ? dialogData : null);
-}
 document.getElementsByName('buttonsTypes').forEach((button) => {
     button.onclick = (e) => {
         if(e.target.value === 'links') {
+            resetBorder('link');
+            document.querySelector('#linksContainer').children[0].children[0].className = 'bf-border-primary active';
             dialogData = {buttonStyle : 'primary', type: 'link'};
             document.querySelector('#buttonsContainer').style.display = 'none';
             document.querySelector('#linksContainer').style.display = 'block';
         } else if (e.target.value === 'buttons') {
+            resetBorder('button');
+            document.querySelector('#buttonsContainer').children[0].children[0].className = 'bf-border-primary active';
             dialogData = {buttonStyle : 'primary', type: 'button'};
             document.querySelector('#linksContainer').style.display = 'none';
             document.querySelector('#buttonsContainer').style.display = 'block';
         }
     }
-})
+});
+window.addEventListener('message', function (event) {
+    if (event.data.message === 'getButtonData') {
+        window.parent.postMessage({
+            mceAction: 'setButtonData',
+            data: {
+                content: dialogData
+            }
+        }, origin);
+    }
+});

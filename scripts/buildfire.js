@@ -3200,36 +3200,36 @@ var buildfire = {
                                     );
                                     editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
                                 });
-                                editor.addMenuItem('clearContent', {
-                                    text: 'Clear content',
-                                    onclick: function() {
+                                editor.ui.registry.addMenuItem('clearContent', {
+                                    text: 'Delete all',
+                                    onAction: function() {
                                       editor.execCommand('mceNewDocument');
                                     }
                                 });
-                                editor.addMenuItem('insertActionItem', {
+                                editor.ui.registry.addMenuItem('insertActionItem', {
                                     text: 'Insert/edit action item',
                                     icon: 'link',
-                                    onclick: function() {
-                                        editor.buttons.bf_actionitem.showDialog();                                    
+                                    onAction: function() {
+                                        editor.ui.registry.getAll().buttons.bf_actionitem.showDialog();                                    
                                     }
                                 });
-                                editor.addMenuItem('insertButtonOrLink', {
+                                editor.ui.registry.addMenuItem('insertButtonOrLink', {
                                     text: 'Insert button or link',
-                                    onclick: function() {
-                                        editor.buttons.bf_buttons.showDialog();                                    
+                                    onAction: function() {
+                                        editor.ui.registry.getAll().buttons.bf_buttons.showDialog();                                    
                                     }
                                 });
-                                editor.addMenuItem('insertImage', {
+                                editor.ui.registry.addMenuItem('insertImage', {
                                     text: 'Insert/edit image',
                                     icon: 'image',
-                                    onclick: function() {
-                                        editor.buttons.bf_imagelib.showDialog();                                    
+                                    onAction: function() {
+                                        editor.ui.registry.getAll().buttons.bf_imagelib.showDialog();                                    
                                     }
                                 });
-                                editor.addMenuItem('insertRating', {
+                                editor.ui.registry.addMenuItem('insertRating', {
                                     text: 'Insert rating',
-                                    onclick: function() {
-                                        editor.buttons.bf_rating.showDialog();                                    
+                                    onAction: function() {
+                                        editor.ui.registry.getAll().buttons.bf_rating.showDialog();                                    
                                     }
                                 });
                                 originalSetup(editor);
@@ -3256,12 +3256,13 @@ var buildfire = {
                             options.content_css = [appTheme , '../../../../styles/bfUIElements.css'];
                         }
                         
+                        options.menubar = options.menubar || 'edit insert view format tools';
                         var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
                         options.menu = {
-                            edit: {title: "Edit", items: "undo redo | cut copy paste | selectall | clearContent"},
-                            insert: {title: "Insert", items: "insertActionItem media insertImage | insertButtonOrLink | insertRating"},
+                            edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | clearContent'},
+                            insert: {title: 'Insert', items: 'insertActionItem media insertImage | insertButtonOrLink | insertRating'},
                             view: {title: 'View', items: 'visualaid | preview'},
-                            format: {title: "Format", items: "bold italic underline strikethrough superscript subscript | formats | removeformat"},
+                            format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
                             tools: {title: 'Tools', items: 'code'},
                         }
                         if (userMenu) {
@@ -3269,7 +3270,7 @@ var buildfire = {
                                 options.menu[item] = userMenu[item];
                             }
                         }
-                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons'];
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists'];
                         if (options.plugins) {
                             if (options.plugins instanceof Array) {
                                 options.plugins = defaultPlugins.concat(options.plugins);  
@@ -3280,19 +3281,27 @@ var buildfire = {
                         } else {
                             options.plugins = defaultPlugins;
                         }
-                        var defaultToolbar = ['fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen'];
+                        var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
                         if (options.toolbar) {
                             if (options.toolbar instanceof Array) {
-                                options.toolbar = defaultToolbar.concat(options.toolbar);
+                                if (!(options.toolbar[0] instanceof Object)) {
+                                    options.toolbar.forEach(function (toolbarGroup) {
+                                        defaultToolbar += ' | ' + toolbarGroup;
+                                    });
+                                    options.toolbar = defaultToolbar;
+                                }
                             } else {
-                                defaultToolbar[0] += ' | ' + options.toolbar;
-                                options.toolbar = defaultToolbar[0];
+                                defaultToolbar += ' | ' + options.toolbar;
+                                options.toolbar = defaultToolbar;
                             }
                         } else {
                             options.toolbar = defaultToolbar;
                         }
+                        options.toolbar_mode = 'floating';
+                        options.theme = 'silver';
+                        options.skin = null,
                         options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
-                        options.extended_valid_elements= "a[href|onclick|class],img[src|style|onerror|height|width],button[style|class|onclick]"
+                        options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width],button[style|class|onclick]'
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
