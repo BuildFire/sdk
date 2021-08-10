@@ -188,13 +188,14 @@ buildfire.components.actionItems.sortableList.prototype = {
 
         componentContainer.className = "item clearfix row margin-bottom-fifteen";
         componentName.className = "labels col-md-3 padding-right-zero pull-left";
-        componentName.innerHTML = "Links";
+        componentName.innerHTML = "Action Item";
         contentContainer.className = "main col-md-9 pull-right";
         buttonContainer.className = "clearfix";
         button.className = "btn btn-success pull-left add-new-item";
         sliderContainer.className = "hide-empty dynamic-link-list draggable-list-view margin-top-twenty border-radius-four border-grey has-btn links-list";
 
-        button.innerHTML = "Add Link";
+        button.innerHTML = "Add Action Item";
+        button.classList.add('button-plus-icon');
 
         componentContainer.appendChild(componentName);
         buttonContainer.appendChild(button);
