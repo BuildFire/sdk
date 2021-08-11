@@ -99,8 +99,8 @@ var buildfire = {
         }
     }
     , _callbacks: {}
-    , parseQueryString: function () {
-        var query = window.location.search.substring(1);
+    , parseQueryString: function (str) {
+        var query = str || window.location.search.substring(1);
         var vars = query.split('&');
         var obj = new Object();
         for (var i = 0; i < vars.length; i++) {
@@ -2816,9 +2816,15 @@ var buildfire = {
         onUpdate: function (callback, allowMultipleHandlers) {
             buildfire.eventManager.add('deeplinkOnUpdate', callback, allowMultipleHandlers);
         },
-        triggerOnUpdate: function (obj) {
-            buildfire.deeplink._data = obj;
-            buildfire.eventManager.trigger('deeplinkOnUpdate', obj);
+        triggerOnUpdate: function (queryString) {
+            try {
+                var qs = buildfire.parseQueryString(decodeURIComponent(queryString));
+                buildfire.deeplink._data = JSON.parse(qs.dld);
+            } catch (error) {
+                console.error(error);
+                buildfire.deeplink._data = queryString;
+            }
+            buildfire.eventManager.trigger('deeplinkOnUpdate', buildfire.deeplink._data);
         },
         _data: null
     }
