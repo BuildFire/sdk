@@ -1,0 +1,102 @@
+.bf-btn-primary {
+    color: white !important; 
+    background-color: var(--bf-theme-primary) !important;
+}
+.bf-btn-success {
+    color: white !important; 
+    background-color: var(--bf-theme-success) !important;
+}
+.bf-btn-warning {
+    color: white !important; 
+    background-color: var(--bf-theme-warning) !important;
+}
+.bf-btn-info { 
+    color: white !important; 
+    background-color: var(--bf-theme-info) !important;
+}
+.bf-btn-default {
+    color: white !important; 
+    background-color: var(--bf-theme-default) !important;
+}
+.bf-btn-danger { 
+    color: white !important; 
+    background-color: var(--bf-theme-danger) !important;
+}
+.bf-text-primary {
+    color: var(--bf-theme-primary) !important;
+    cursor: pointer;
+    font-family: var(--bf-font-family) !important;
+}
+.bf-text-success {
+    color: var(--bf-theme-success) !important;
+    cursor: pointer;
+    font-family: var(--bf-font-family) !important;
+}
+.bf-text-warning {
+    color: var(--bf-theme-warning) !important;
+    cursor: pointer;
+    font-family: var(--bf-font-family) !important;
+}
+.bf-text-info {
+    color: var(--bf-theme-info) !important;
+    cursor: pointer;
+    font-family: var(--bf-font-family) !important;
+}
+.bf-text-default {
+    color: var(--bf-theme-default) !important;
+    cursor: pointer;
+    font-family: var(--bf-font-family) !important;
+}
+.bf-text-danger {
+    color: var(--bf-theme-danger) !important;
+    cursor: pointer;
+    font-family: var(--bf-font-family) !important;
+}
+.bf-border-primary {
+    border: 1px solid var(--bf-theme-primary) !important;
+}
+.bf-border-success {
+    border: 1px solid var(--bf-theme-success) !important;
+}
+.bf-border-warning {
+    border: 1px solid var(--bf-theme-warning) !important;
+}
+.bf-border-info {
+    border: 1px solid var(--bf-theme-info) !important;
+}
+.bf-border-default {
+    border: 1px solid var(--bf-theme-default) !important;
+}
+.bf-border-danger {
+    border: 1px solid var(--bf-theme-danger) !important;
+}
+.bf-btn {
+    font-family: var(--bf-font-family) !important;
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 300;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -moz-transition: all 0.35s;
+    -o-transition: all 0.35s;
+    -webkit-transition: all 0.35s;
+    transition: all 0.35s;
+}
+.bf-btn:hover {
+    color: white !important;
+}
