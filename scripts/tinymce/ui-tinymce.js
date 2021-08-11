@@ -57,28 +57,11 @@ angular.module('ui.tinymce', [])
 
                 options = {
                     selector: 'textarea',  // change this value according to your HTML
-                    toolbar: ['  styleselect  | insertfile | forecolor | backcolor  | bold italic | alignleft aligncenter alignright alignjustify  | bullist  numlist | outdent indent | link image | media  | code'
-                    ],
-                    valid_elements: "*[*]",
-                    content_css: '../../../../../scripts/buildfire/components/ratingSystem/index.css',
-                    menu: {
-                        edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall' },
-                        insert: { title: 'Insert', items: 'link image | media  | code' },
-                        view   : { title : 'View'  , items : 'preview' },
-                        format : { title : 'Format', items : 'bold italic underline strikethrough superscript subscript | removeformat' },
-                    },
 
                     // Update model when calling setContent
                     // (such as from the source editor popup)
                     setup: function (ed) {
                         ed.on('init', function () {
-                            var scriptId = ed.dom.uniqueId();
-                            var scriptElm = ed.dom.create( 'script', {
-                                id: scriptId,
-                                type: 'text/javascript',
-                                src: '../../../../../scripts/buildfire.js'
-                            } );
-                            ed.getDoc().getElementsByTagName( 'head' )[ 0 ].appendChild( scriptElm );
                             ngModel.$render();
                             ngModel.$setPristine();
                             if (form) {
@@ -128,7 +111,6 @@ angular.module('ui.tinymce', [])
                 // element to be present in DOM before instantiating editor when
                 // re-rendering directive
                 $timeout(function () {
-                    options.plugins = "preview , image,code,media,link ,textcolor colorpicker";
                     tinymce.init(options);
                     toggleDisable(scope.$eval(attrs.ngDisabled));
                 });

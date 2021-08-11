@@ -2483,3 +2483,34 @@ html.translated-ltr body{
 	font-weight: bold;
 	padding-left: 4px;
 }
+
+.btn-plus-icon-with-text {
+	position: relative !important;
+	padding-left: 2.75rem !important;
+}
+
+.btn-plus-icon-with-text::after {
+    content: "";
+    width: .75rem;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    left: 1rem;
+    display: inline-block;
+    height: 1px;
+    background-color: #ffffff;
+    margin-right: .5rem;
+    position: absolute;
+}
+
+.btn-plus-icon-with-text::before {
+    content: "";
+    width: .75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1rem;
+    display: inline-block;
+    height: 1px;
+    background-color: #ffffff;
+    margin-right: .5rem;
+    position: absolute;
+}

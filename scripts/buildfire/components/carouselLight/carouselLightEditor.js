@@ -358,7 +358,8 @@ buildfire.components.carousel.editor.prototype = {
         sliderContainer.className = "carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey";
 
         button.innerHTML = "Add Image";
-
+        button.classList.add('btn-plus-icon-with-text');
+        
         componentContainer.appendChild(componentName);
         buttonContainer.appendChild(button);
         
