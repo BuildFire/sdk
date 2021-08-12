@@ -167,6 +167,8 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
 /**
  * Add Stripe Connect account.
  * @param {Object} options.
+ * @param {string} options.email - The email address of the account holder. This is only to make the account easier to identify to you. Stripe will never directly email Custom accounts.
+ * @param {string} options.metadata - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value.
  */
 
 /**
@@ -198,6 +200,26 @@ buildfire.services.stripe.connect.account = function (options, cb) {
 buildfire.services.stripe.connect.deleteAccount = function (options, cb) {
     var packetId = null;
     var command = 'stripe.connect.deleteAccount';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * cancel payment.
+ * @param {Object} options.
+ * @param {string} options.paymentIntentsId - stripe payment intents id.
+ * @param {string} [options.cancellationReason] - Reason for canceling this PaymentIntent. Possible values are duplicate, fraudulent, requested_by_customer, or abandoned.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.cancelPayment = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.cancelPayment';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
