@@ -3178,7 +3178,7 @@ var buildfire = {
     },
     wysiwyg: {
         extend: function() {
-            if(typeof tinymce !== 'undefined' && tinymce.init) {
+            if(typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
                 var appContext = buildfire.getContext();
                 if (appContext && appContext.endPoints) {
                     var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
