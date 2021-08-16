@@ -28,14 +28,14 @@ function showRatingDialog(editor, url) {
         height: 250,
         buttons: [
             {
+                text: 'Cancel',
+                type: 'cancel'
+            },
+            {
                 text: "Add",
                 type: 'custom',
                 name: 'Add Rating',
                 primary: true,
-            },
-            {
-                text: 'Cancel',
-                type: 'cancel'
             },
         ],
         onAction: (dialogApi, details) => {

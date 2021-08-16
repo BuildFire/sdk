@@ -3202,6 +3202,7 @@ var buildfire = {
                                 });
                                 editor.ui.registry.addMenuItem('clearContent', {
                                     text: 'Delete all',
+                                    icon: 'remove',
                                     onAction: function() {
                                       editor.execCommand('mceNewDocument');
                                     }

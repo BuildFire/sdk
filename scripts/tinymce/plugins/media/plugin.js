@@ -943,7 +943,7 @@
         tabs: tabs
       };
       var win = editor.windowManager.open({
-        title: 'Insert/Edit Media',
+        title: 'Insert/edit video',
         size: 'normal',
         body: body,
         buttons: [
@@ -1346,7 +1346,7 @@
     };
     var register$1 = function (editor) {
       editor.ui.registry.addToggleButton('media', {
-        tooltip: 'Insert/edit media',
+        tooltip: 'Insert/edit video',
         icon: 'embed',
         onAction: function () {
           editor.execCommand('mceMedia');
@@ -1359,7 +1359,7 @@
       });
       editor.ui.registry.addMenuItem('media', {
         icon: 'embed',
-        text: 'Media...',
+        text: 'Insert/edit video',
         onAction: function () {
           editor.execCommand('mceMedia');
         }

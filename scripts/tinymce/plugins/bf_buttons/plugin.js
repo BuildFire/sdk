@@ -28,14 +28,14 @@ function showDialog(editor, url) {
         height: 500,
         buttons: [
             {
+                text: 'Cancel',
+                type: 'cancel',
+            },
+            {
                 text: "Select Action",
                 name: 'Select Action',
                 type: 'custom',
                 primary : true,
-            },
-            {
-                text: 'Cancel',
-                type: 'cancel',
             },
         ],
         onAction: (dialogApi, details) => {
