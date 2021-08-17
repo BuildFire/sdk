@@ -3322,7 +3322,7 @@ var buildfire = {
                         }
                         options.toolbar_mode = 'floating';
                         options.theme = 'silver';
-                        options.skin = null,
+                        options.skin = 'bf-skin',
                         options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
                         options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width],button[style|class|onclick]'
                         options._bfInitialize = true;
