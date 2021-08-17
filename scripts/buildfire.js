@@ -99,8 +99,8 @@ var buildfire = {
         }
     }
     , _callbacks: {}
-    , parseQueryString: function () {
-        var query = window.location.search.substring(1);
+    , parseQueryString: function (str) {
+        var query = str || window.location.search.substring(1);
         var vars = query.split('&');
         var obj = new Object();
         for (var i = 0; i < vars.length; i++) {
@@ -218,6 +218,7 @@ var buildfire = {
         , "services.publicFiles._triggerOnComplete"
         , "notes.triggerOnSeekTo"
         , "navigation.triggerOnPluginOpened"
+        , "deeplink.triggerOnUpdate"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -2722,11 +2723,18 @@ var buildfire = {
     /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
     , deeplink: {
         getData: function (callback) {
+            if (buildfire.deeplink._data) {
+                return callback(buildfire.deeplink._data);
+            }
+
             var qs = buildfire.parseQueryString();
-            if(qs.dld)
-                callback(JSON.parse(qs.dld)); /// dld: Deep Link Data
-            else
+            if (qs.dld) {
+                var obj = JSON.parse(qs.dld);
+                buildfire.deeplink._data = obj;
+                callback(obj); /// dld: Deep Link Data
+            } else {
                 callback(null);
+            }
         },
         template: {
             get: function (callback) {
@@ -2869,7 +2877,21 @@ var buildfire = {
                     callback('no result found for this deeplink id', null);
                 }
             });
-        }
+        },
+        onUpdate: function (callback, allowMultipleHandlers) {
+            buildfire.eventManager.add('deeplinkOnUpdate', callback, allowMultipleHandlers);
+        },
+        triggerOnUpdate: function (queryString) {
+            try {
+                var qs = buildfire.parseQueryString(decodeURIComponent(queryString));
+                buildfire.deeplink._data = JSON.parse(qs.dld);
+            } catch (error) {
+                console.error(error);
+                buildfire.deeplink._data = queryString;
+            }
+            buildfire.eventManager.trigger('deeplinkOnUpdate', buildfire.deeplink._data);
+        },
+        _data: null
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
@@ -3178,7 +3200,7 @@ var buildfire = {
     },
     wysiwyg: {
         extend: function() {
-            if(typeof tinymce !== 'undefined' && tinymce.init) {
+            if(typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
                 var appContext = buildfire.getContext();
                 if (appContext && appContext.endPoints) {
                     var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
