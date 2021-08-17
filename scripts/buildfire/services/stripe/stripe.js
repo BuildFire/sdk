@@ -168,7 +168,7 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
  * Add Stripe Connect account.
  * @param {Object} options.
  * @param {string} options.email - The email address of the account holder. This is only to make the account easier to identify to you. Stripe will never directly email Custom accounts.
- * @param {string} options.metadata - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value.
+ * @param {Object} options.metadata - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value.
  */
 
 /**
@@ -220,6 +220,28 @@ buildfire.services.stripe.connect.deleteAccount = function (options, cb) {
 buildfire.services.stripe.cancelPayment = function (options, cb) {
     var packetId = null;
     var command = 'stripe.cancelPayment';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * refund payment.
+ * @param {Object} options.
+ * @param {string} options.paymentIntentsId - ID of the PaymentIntent to refund.
+ * @param {integer} [options.amount] - Default is entire charge. A positive integer in cents representing how much of this charge to refund. Can refund only up to the remaining, unrefunded amount of the charge.
+ * @param {string} [options.reason] - The reason for the refund. If set, possible values are duplicate, fraudulent, and requested_by_customer. If you believe the charge to be fraudulent, specifying fraudulent as the reason will add the associated card and email to your block lists, and will also help us improve our fraud detection algorithms.
+ * @param {Object} [options.metadata] - A set of key-value pairs that you can attach to a Refund object. This can be useful for storing additional information about the refund in a structured format. You can unset individual keys if you POST an empty value for that key. You can clear all keys if you POST an empty value for metadata.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.refundPayment = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.refundPayment';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
