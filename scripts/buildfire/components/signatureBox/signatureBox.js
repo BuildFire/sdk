@@ -8,8 +8,23 @@ if (typeof (buildfire.components) === 'undefined') {
   buildfire.components = {};
 }
 
-if (typeof (buildfire.components.signatureBox) == 'undefined') {
+if (typeof (buildfire.components.signatureBox) === 'undefined') {
   buildfire.components.signatureBox = {};
 }
+
+(function () {
+  var script = document.createElement('script');
+  script.setAttribute('src', '/../../../scripts/buildfire/components/signatureBox/signature_pad.min.js');
+  script.setAttribute('type', 'text/javascript');
+  document.head.appendChild(script);
+
+  script.onload = function () {
+    console.info('Loaded signature_pad.min.js successfully');
+  };
+
+  script.onerror = function () {
+    throw ('Failed to load signature_pad.min.js');
+  };
+})();
 
 console.log('signatureBox initiated');
