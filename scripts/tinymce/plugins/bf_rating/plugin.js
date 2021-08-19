@@ -25,7 +25,6 @@ function showRatingDialog(editor, url) {
         title: "Add new rating",
         url: url + "/dialog.html",
         width: 400,
-        height: 250,
         buttons: [
             {
                 text: 'Cancel',
