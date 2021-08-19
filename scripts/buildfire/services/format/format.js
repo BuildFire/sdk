@@ -10,10 +10,10 @@ buildfire.format.textToHTML = function(options, callback) {
     text = !options.ignoreAnchors ? text.replace(/(?<URL>https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/g, function(URL) { return `<a onclick="buildfire.actionItems.execute({action: 'linkToWeb', url: '${encodeURI(URL)}', openIn: '_system'}, () => {})">${URL}</a>`; }) : text;
     text = !options.ignoreEmails ? text.replace(/(?<EMAIL>([\w\.]+)@([\w\.]+)\.(\w+))/g, `<a onclick="buildfire.actionItems.execute({action: 'sendEmail', email: '$<EMAIL>'}, () => {})">$<EMAIL></a>`) : text;
     text = !options.ignorePhoneNumbers ? text.replace(/(?<PHONENUMBER>(\+?[0-9][0-9-.]{7,}[0-9]))/g,  `<a onclick="buildfire.actionItems.execute({action: 'callNumber', phoneNumber: '$<PHONENUMBER>'}, () => {})">$<PHONENUMBER></a>`) : text;
-    if (options.supportHashtag) {
+    if (options.supportedHashtagType) {
         let url;
         let querystring;
-        switch(options.supportHashtag.toLowerCase()) {
+        switch(options.supportedHashtagType.toLowerCase()) {
             case 'youtube':
                 url = 'https://www.youtube.com/hashtag/';
                 break;
