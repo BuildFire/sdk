@@ -12,8 +12,11 @@ if (typeof (buildfire.components.signatureBox) === 'undefined') {
   buildfire.components.signatureBox = {};
 }
 
+/**
+ * Inject and loads signature_pad.js
+ */
 (function () {
-  var script = document.createElement('script');
+  const script = document.createElement('script');
   script.setAttribute('src', '/../../../scripts/buildfire/components/signatureBox/signature_pad.min.js');
   script.setAttribute('type', 'text/javascript');
   document.head.appendChild(script);
@@ -25,6 +28,134 @@ if (typeof (buildfire.components.signatureBox) === 'undefined') {
   script.onerror = function () {
     throw ('Failed to load signature_pad.min.js');
   };
-})();
+}());
 
-console.log('signatureBox initiated');
+/**
+ * Rotate image data 90 degree
+ * @param {string} src - JS date
+ * @param {function} cb - err or or base64 data URL
+ */
+const _rotate90 = (src, cb) => {
+  const img = new Image();
+  img.src = src;
+  img.onload = function () {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.height;
+    canvas.height = img.width;
+    canvas.style.position = 'absolute';
+    const ctx = canvas.getContext('2d');
+    ctx.translate(0, canvas.height);
+    ctx.rotate(Math.PI / -2);
+    ctx.drawImage(img, 0, 0);
+    cb(null, canvas.toDataURL());
+  };
+};
+
+/**
+ * Shows signature box
+ * @param {object} options - optional width and height of the signature box
+ * @param {function} cb - err or or base64 data URL
+ */
+buildfire.components.signatureBox.openDialog = function ({ width = '200', height = '400' } = {}, cb) {
+  buildfire.appearance.getAppTheme((err, theme) => {
+    // main container
+    const signatureScreen = document.createElement('div');
+    signatureScreen.id = 'signatureScreen';
+    signatureScreen.style.background = theme.colors.backgroundColor;
+    signatureScreen.style.top = '0';
+
+    // box footer
+    const footer = document.createElement('div');
+    footer.className = 'signature-footer';
+    footer.style.height = height.concat('px');
+
+    const clearButton = document.createElement('button');
+    clearButton.className = 'mdc-button mdc-button--outlined';
+    clearButton.style.marginTop = '3rem';
+
+    const clearButtonRipple = document.createElement('div');
+    clearButtonRipple.className = 'mdc-button__ripple';
+    clearButton.appendChild(clearButtonRipple);
+
+    const clearButtonLabel = document.createElement('span');
+    clearButtonLabel.className = 'mdc-button__label';
+    clearButtonLabel.innerText = 'Clear';
+    clearButton.appendChild(clearButtonLabel);
+
+    const saveButton = document.createElement('button');
+    saveButton.className = 'mdc-button mdc-button--raised';
+    saveButton.style.marginTop = '3rem';
+
+    const saveButtonRipple = document.createElement('div');
+    saveButtonRipple.className = 'mdc-button__ripple';
+    saveButton.appendChild(saveButtonRipple);
+
+    const saveButtonLabel = document.createElement('span');
+    saveButtonLabel.className = 'mdc-button__label';
+    saveButtonLabel.innerText = 'Save';
+    saveButton.appendChild(saveButtonLabel);
+
+    const cancelButton = document.createElement('button');
+    cancelButton.className = 'mdc-button mdc-button--outlined';
+    cancelButton.style.marginTop = '3rem';
+
+    const cancelButtonRipple = document.createElement('div');
+    cancelButtonRipple.className = 'mdc-button__ripple';
+    cancelButton.appendChild(cancelButtonRipple);
+
+    const cancelButtonLabel = document.createElement('span');
+    cancelButtonLabel.className = 'mdc-button__label';
+    cancelButtonLabel.innerText = 'Cancel';
+    cancelButton.appendChild(cancelButtonLabel);
+
+    footer.appendChild(clearButton);
+    footer.appendChild(cancelButton);
+    footer.appendChild(saveButton);
+    signatureScreen.appendChild(footer);
+
+    // Box
+    const canvasContainer = document.createElement('div');
+    canvasContainer.className = 'canvas-container';
+
+    const canvas = document.createElement('canvas');
+    canvas.id = 'signatureCanvas';
+    canvas.width = Number(width);
+    canvas.height = Number(height);
+
+    canvasContainer.appendChild(canvas);
+    signatureScreen.appendChild(canvasContainer);
+
+    // header
+    const header = document.createElement('div');
+    header.className = 'signature-header';
+
+    const headText = document.createElement('p');
+    headText.innerText = 'Please sign the box below';
+    header.appendChild(headText);
+
+    signatureScreen.appendChild(header);
+
+    document.body.appendChild(signatureScreen);
+
+    const signaturePad = new SignaturePad(canvas);
+    signaturePad.on();
+
+    clearButton.addEventListener('click', () => { signaturePad.clear(); });
+    saveButton.addEventListener('click', () => {
+      _rotate90(signaturePad.toDataURL(), (error, dataUrl) => {
+        const base64 = Uint8Array.from(atob(dataUrl.slice(22)), (c) => c.charCodeAt(0));
+        if (cb) cb(null, { dataUrl, base64 });
+
+        signatureScreen.style.top = '100vh';
+        setTimeout(() => { document.body.removeChild(signatureScreen); }, 200, signatureScreen);
+        buildfire.navigation.restoreBackButtonClick();
+      });
+    });
+
+    buildfire.navigation.onBackButtonClick = () => {
+      signatureScreen.style.top = '100vh';
+      setTimeout(document.body.removeChild, 200, signatureScreen);
+      buildfire.navigation.restoreBackButtonClick();
+    };
+  });
+};
