@@ -8,7 +8,7 @@ buildfire.format.textToHTML = function(options, callback) {
     let text = options.text;
     let allHashtags = [];
     if(!text) {
-        return callback('Text is missing', null);
+        return callback('text is missing', null);
     }
     // to check if the text is already transformed to html
     if (text.includes("buildfire.actionItems.execute") || text.includes("buildfire.format.onHashtagClick")) {
