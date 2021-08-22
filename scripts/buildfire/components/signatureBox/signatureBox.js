@@ -13,7 +13,7 @@ if (typeof (buildfire.components.signatureBox) === 'undefined') {
 }
 
 /**
- * Inject and loads signature_pad.js
+ * Inject required CSS classes and loads signature_pad.js
  */
 (function () {
   const script = document.createElement('script');
@@ -28,12 +28,29 @@ if (typeof (buildfire.components.signatureBox) === 'undefined') {
   script.onerror = function () {
     throw ('Failed to load signature_pad.min.js');
   };
+
+  let style = document.getElementById('signatureBoxCSS');
+  if (style) document.head.removeChild(style);
+
+  style = document.createElement('style');
+  style.type = 'text/css';
+  style.id = 'signatureBoxCSS';
+
+  style.innerHTML += ' #signatureScreen {width: 100vw;height: 100vh;display: flex;justify-content: center;position: fixed;top: 100vh;left: 0;z-index: 10;transition: all 0.2s ease-in-out;}';
+  style.innerHTML += ' #signatureCanvas {border: 1px solid #ccc;}';
+  style.innerHTML += ' .signature-footer {width: 400px;display: flex;align-items: center;flex-shrink: 0;height: 40px !important;position: absolute;top: calc(50% - 20px);right: calc(50% - 60px);transform: rotate(90deg) !important;}';
+  style.innerHTML += ' .canvas-container {display: flex;justify-content: center;align-items: center;margin-left: 40px;flex-shrink: 0;}';
+  style.innerHTML += ' .signature-header {width: 48px;height: 100%;display: flex;justify-content: center;align-items: center;flex-shrink: 0;}';
+  style.innerHTML += ' .signature-header p {writing-mode: vertical-rl;text-orientation: mixed;}';
+
+  document.head.appendChild(style);
 }());
 
 /**
  * Rotate image data 90 degree
  * @param {string} src - JS date
  * @param {function} cb - err or or base64 data URL
+ * @private
  */
 const _rotate90 = (src, cb) => {
   const img = new Image();
