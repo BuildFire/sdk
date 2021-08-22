@@ -9,7 +9,7 @@ buildfire.format.textToHTML = function(options, callback) {
     let allHashtags = [];
     // to check if the text is already transformed to html
     if (text.includes("buildfire.actionItems.execute") || text.includes("buildfire.format.onHashtagClick")) {
-        return callback(null, {html: text, hashtags: []});
+        return callback('textToHTML is already applied', null);
     }
     text = !options.ignoreAnchors ? text.replace(/(?<URL>https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/g, function(URL) { return `<a onclick="buildfire.actionItems.execute({action: 'linkToWeb', url: '${encodeURI(URL)}', openIn: '_system'}, () => {})">${URL}</a>`; }) : text;
     text = !options.ignoreEmails ? text.replace(/(?<EMAIL>([\w\.]+)@([\w\.]+)\.(\w+))/g, `<a onclick="buildfire.actionItems.execute({action: 'sendEmail', email: '$<EMAIL>'}, () => {})">$<EMAIL></a>`) : text;
