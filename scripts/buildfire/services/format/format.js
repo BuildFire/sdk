@@ -7,6 +7,13 @@ buildfire.format.textToHTML = function(options, callback) {
     let data = {};
     let text = options.text;
     let allHashtags = [];
+    if(!text) {
+        return callback('text is missing', null);
+    }
+    // to check if the text is already transformed to html
+    if (text.includes("buildfire.actionItems.execute") || text.includes("buildfire.format.onHashtagClick")) {
+        return callback('textToHTML is already applied', null);
+    }
     text = !options.ignoreAnchors ? text.replace(/(?<URL>https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/g, function(URL) { return `<a onclick="buildfire.actionItems.execute({action: 'linkToWeb', url: '${encodeURI(URL)}', openIn: '_system'}, () => {})">${URL}</a>`; }) : text;
     text = !options.ignoreEmails ? text.replace(/(?<EMAIL>([\w\.]+)@([\w\.]+)\.(\w+))/g, `<a onclick="buildfire.actionItems.execute({action: 'sendEmail', email: '$<EMAIL>'}, () => {})">$<EMAIL></a>`) : text;
     text = !options.ignorePhoneNumbers ? text.replace(/(?<PHONENUMBER>(\+?[0-9][0-9-.]{7,}[0-9]))/g,  `<a onclick="buildfire.actionItems.execute({action: 'callNumber', phoneNumber: '$<PHONENUMBER>'}, () => {})">$<PHONENUMBER></a>`) : text;
@@ -35,7 +42,10 @@ buildfire.format.textToHTML = function(options, callback) {
     }
     data.html = text;
     data.hashtags  = allHashtags;
-    callback(null, data);
+    // to make the response async and force everyone to deal with this function asyncronously
+    setTimeout(() => {
+        callback(null, data);
+    }, 0);
 }
 buildfire.format.onHashtagClick = function(hashtag) {
     console.log(`Clicked HASHTAG: ${hashtag}`);
