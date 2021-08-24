@@ -13,23 +13,33 @@ if (typeof (buildfire.components.signatureBox) === 'undefined') {
 }
 
 /**
- * Inject required CSS classes and loads signature_pad.js
+ * Inject signaturePad and loads signature_pad.js
+ *  @param {function} cb - callback function
+ *  @private
  */
-(function () {
-  const script = document.createElement('script');
-  script.setAttribute('src', '/../../../scripts/buildfire/components/signatureBox/signature_pad.min.js');
+const _injectScript = (cb) => {
+  let script = document.getElementById('signaturePadScript');
+  if (script) return;
+  if (!document.head) {
+    return cb(new Error('please add head element to the document first to use signatureBox component'));
+  }
+
+  script = document.createElement('script');
   script.setAttribute('type', 'text/javascript');
+  script.setAttribute('src', '/../../../scripts/buildfire/components/signatureBox/signature_pad.min.js');
+  script.id = 'signaturePadScript';
+
   document.head.appendChild(script);
 
   script.onload = function () {
+    cb();
     console.info('Loaded signature_pad.min.js successfully');
   };
-
   script.onerror = function () {
-    throw ('Failed to load signature_pad.min.js');
+    cb(new Error('Failed to load signature_pad.min.js'));
+    console.error('Failed to load signature_pad.min.js');
   };
-}());
-
+}
 /**
  * Rotate image data 90 degree
  * @param {string} src - JS date
@@ -58,6 +68,9 @@ const _rotate90 = (src, cb) => {
  * @private
  */
 const _injectCSS = (theme) => {
+  if (!document.head) {
+    throw new Error('please add head element to the document first to use signatureBox component');
+  }
   const { colors } = theme;
   let style = document.getElementById('signatureBoxCSS');
   if (style) document.head.removeChild(style);
@@ -78,93 +91,97 @@ const _injectCSS = (theme) => {
 
   document.head.appendChild(style);
 }
+
 /**
  * Shows signature box
  * @param {object} options - optional width and height of the signature box
  * @param {function} cb - err or or base64 data URL
  */
 buildfire.components.signatureBox.openDialog = function ({ width = '200', height = '400' } = {}, cb) {
-  buildfire.appearance.getAppTheme((err, theme) => {
-    // main container
-    const signatureScreen = document.createElement('div');
-    signatureScreen.id = 'signatureScreen';
-    signatureScreen.style.background = theme.colors.backgroundColor;
-    signatureScreen.style.top = '0';
+  _injectScript((injectError) => {
+    if (injectError) return cb(injectError);
+    buildfire.appearance.getAppTheme((err, theme) => {
+      // main container
+      const signatureScreen = document.createElement('div');
+      signatureScreen.id = 'signatureScreen';
+      signatureScreen.style.background = theme.colors.backgroundColor;
+      signatureScreen.style.top = '0';
 
-    // box footer
-    const footer = document.createElement('div');
-    footer.className = 'signature-footer';
-    footer.style.height = height.concat('px');
+      // box footer
+      const footer = document.createElement('div');
+      footer.className = 'signature-footer';
+      footer.style.height = height.concat('px');
 
-    const clearButton = document.createElement('button');
-    clearButton.className = 'signature-btn signature-btn--outlined';
-    clearButton.innerText = 'Clear';
+      const clearButton = document.createElement('button');
+      clearButton.className = 'signature-btn signature-btn--outlined';
+      clearButton.innerText = 'Clear';
 
 
-    const saveButton = document.createElement('button');
-    saveButton.className = 'signature-btn--primary signature-btn';
-    saveButton.style.marginLeft = '12.75px';
-    saveButton.innerText = 'Save';
+      const saveButton = document.createElement('button');
+      saveButton.className = 'signature-btn--primary signature-btn';
+      saveButton.style.marginLeft = '12.75px';
+      saveButton.innerText = 'Save';
 
-    const cancelButton = document.createElement('button');
-    cancelButton.className = 'signature-btn signature-btn--outlined';
-    cancelButton.style.marginLeft = 'auto';
-    cancelButton.innerText = 'Cancel';
+      const cancelButton = document.createElement('button');
+      cancelButton.className = 'signature-btn signature-btn--outlined';
+      cancelButton.style.marginLeft = 'auto';
+      cancelButton.innerText = 'Cancel';
 
-    footer.appendChild(clearButton);
-    footer.appendChild(cancelButton);
-    footer.appendChild(saveButton);
-    signatureScreen.appendChild(footer);
+      footer.appendChild(clearButton);
+      footer.appendChild(cancelButton);
+      footer.appendChild(saveButton);
+      signatureScreen.appendChild(footer);
 
-    // Box
-    const canvasContainer = document.createElement('div');
-    canvasContainer.className = 'canvas-container';
+      // Box
+      const canvasContainer = document.createElement('div');
+      canvasContainer.className = 'canvas-container';
 
-    const canvas = document.createElement('canvas');
-    canvas.id = 'signatureCanvas';
-    canvas.width = Number(width);
-    canvas.height = Number(height);
+      const canvas = document.createElement('canvas');
+      canvas.id = 'signatureCanvas';
+      canvas.width = Number(width);
+      canvas.height = Number(height);
 
-    canvasContainer.appendChild(canvas);
-    signatureScreen.appendChild(canvasContainer);
+      canvasContainer.appendChild(canvas);
+      signatureScreen.appendChild(canvasContainer);
 
-    // header
-    const header = document.createElement('div');
-    header.className = 'signature-header';
+      // header
+      const header = document.createElement('div');
+      header.className = 'signature-header';
 
-    const headText = document.createElement('p');
-    headText.innerText = 'Please sign the box below';
-    header.appendChild(headText);
+      const headText = document.createElement('p');
+      headText.innerText = 'Please sign the box below';
+      header.appendChild(headText);
 
-    signatureScreen.appendChild(header);
+      signatureScreen.appendChild(header);
 
-    _injectCSS(theme);
-    document.body.appendChild(signatureScreen);
+      _injectCSS(theme);
+      document.body.appendChild(signatureScreen);
 
-    const signaturePad = new SignaturePad(canvas);
-    signaturePad.on();
+      const signaturePad = new SignaturePad(canvas);
+      signaturePad.on();
 
-    clearButton.addEventListener('click', () => { signaturePad.clear(); });
-    cancelButton.addEventListener('click', () => {
-      signatureScreen.style.top = '100vh';
-      setTimeout(() => { document.body.removeChild(signatureScreen); }, 200, signatureScreen);
-      buildfire.navigation.restoreBackButtonClick();
-    });
-    saveButton.addEventListener('click', () => {
-      _rotate90(signaturePad.toDataURL(), (error, dataUrl) => {
-        const base64 = Uint8Array.from(atob(dataUrl.slice(22)), (c) => c.charCodeAt(0));
-        if (cb) cb(null, { dataUrl, base64 });
-
+      clearButton.addEventListener('click', () => { signaturePad.clear(); });
+      cancelButton.addEventListener('click', () => {
         signatureScreen.style.top = '100vh';
         setTimeout(() => { document.body.removeChild(signatureScreen); }, 200, signatureScreen);
         buildfire.navigation.restoreBackButtonClick();
       });
-    });
+      saveButton.addEventListener('click', () => {
+        _rotate90(signaturePad.toDataURL(), (error, dataUrl) => {
+          const base64 = Uint8Array.from(atob(dataUrl.slice(22)), (c) => c.charCodeAt(0));
+          if (cb) cb(null, { dataUrl, base64 });
 
-    buildfire.navigation.onBackButtonClick = () => {
-      signatureScreen.style.top = '100vh';
-      setTimeout(document.body.removeChild, 200, signatureScreen);
-      buildfire.navigation.restoreBackButtonClick();
-    };
-  });
+          signatureScreen.style.top = '100vh';
+          setTimeout(() => { document.body.removeChild(signatureScreen); }, 200, signatureScreen);
+          buildfire.navigation.restoreBackButtonClick();
+        });
+      });
+
+      buildfire.navigation.onBackButtonClick = () => {
+        signatureScreen.style.top = '100vh';
+        setTimeout(document.body.removeChild, 200, signatureScreen);
+        buildfire.navigation.restoreBackButtonClick();
+      };
+    });
+  })
 };
