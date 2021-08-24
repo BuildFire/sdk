@@ -98,6 +98,8 @@ const _injectCSS = (theme) => {
  * @param {function} cb - err or or base64 data URL
  */
 buildfire.components.signatureBox.openDialog = function ({ width = '200', height = '400' } = {}, cb) {
+  // todo check if width height are numbers then convert to string
+  // todo handle if the dialog is already active
   _injectScript((injectError) => {
     if (injectError) return cb(injectError);
     buildfire.appearance.getAppTheme((err, theme) => {
@@ -165,6 +167,7 @@ buildfire.components.signatureBox.openDialog = function ({ width = '200', height
         signatureScreen.style.top = '100vh';
         setTimeout(() => { document.body.removeChild(signatureScreen); }, 200, signatureScreen);
         buildfire.navigation.restoreBackButtonClick();
+        cb();
       });
       saveButton.addEventListener('click', () => {
         _rotate90(signaturePad.toDataURL(), (error, dataUrl) => {
@@ -181,6 +184,7 @@ buildfire.components.signatureBox.openDialog = function ({ width = '200', height
         signatureScreen.style.top = '100vh';
         setTimeout(document.body.removeChild, 200, signatureScreen);
         buildfire.navigation.restoreBackButtonClick();
+        cb();
       };
     });
   })
