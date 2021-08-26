@@ -741,10 +741,10 @@ var buildfire = {
             });
 
             if (enableMDTheme) {
-                buildfire.appearance.getAppTheme(function(err, appTheme) {
-                    var styleElement = document.createElement('style');
-                    styleElement.id = 'appMDTheme';
-                    styleElement.type = 'text/css';
+                var styleElement = document.createElement('style');
+                styleElement.id = 'appMDTheme';
+                styleElement.type = 'text/css';
+                function applyMDTheme(err, appTheme) {
                     var css = "";
                     if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
                     && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
@@ -822,8 +822,13 @@ var buildfire = {
                             + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
                             + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
                     styleElement.innerHTML = css;
+                }
+                buildfire.appearance.getAppTheme(function(err, appTheme) {
+                    applyMDTheme(err, appTheme);
                     (document.head || document.body || document).appendChild(styleElement);
-
+                });
+                buildfire.appearance.onUpdate(function(appTheme){
+                    applyMDTheme(null, appTheme);
                 });
             }
 
@@ -937,24 +942,18 @@ var buildfire = {
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('appearanceOnUpdate', callback, allowMultipleHandlers);
         }
-        , triggerOnUpdate: function () {
+        , triggerOnUpdate: function (appTheme) {
             var appThemeCSSElement = document.getElementById("appThemeCSS");
             if(appThemeCSSElement) {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
-            setTimeout(function () {
-                var p = new Packet(null, 'getContext');
-                buildfire._sendPacket(p, function (err, data) {
-                    if (err) return console.error(err);
-                    if (data) {
-                        var bfWidgetTheme = document.getElementById("bfWidgetTheme");
-                        if (bfWidgetTheme) {
-                            bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(data.appTheme);
-                        }
-                        buildfire.eventManager.trigger('appearanceOnUpdate', data.appTheme);
-                    }
-                });
-            }, 2000); //give it enough time for the datastore to save
+            if (appTheme) {
+                var bfWidgetTheme = document.getElementById("bfWidgetTheme");
+                if (bfWidgetTheme) {
+                    bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+                }
+                buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
+            }
         }, titlebar: {
             show: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.show");
