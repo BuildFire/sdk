@@ -19,7 +19,7 @@ if (typeof (buildfire.components.signatureBox) === 'undefined') {
  */
 const _injectScript = (cb) => {
   let script = document.getElementById('signaturePadScript');
-  if (script) return;
+  if (script) return cb();
   if (!document.head) {
     return cb(new Error('please add head element to the document first to use signatureBox component'));
   }
@@ -79,18 +79,18 @@ const _injectCSS = (theme) => {
   style.type = 'text/css';
   style.id = 'signatureBoxCSS';
 
-  style.innerHTML += ' #signatureScreen {width: 100vw;height: 100vh;display: flex;justify-content: center;position: fixed;top: 100vh;left: 0;z-index: 10;transition: all 0.2s ease-in-out;}';
+  style.innerHTML += ' #signatureScreen {width: 100vw;height: 100vh;display: flex;justify-content: center;position: fixed;top: 100vh;left: 0;z-index: 1001;transition: all 0.2s ease-in-out;}';
   style.innerHTML += ` #signatureCanvas {border: 1px solid ${colors.primaryTheme};background-color: #ffffff;}`;
   style.innerHTML += ' .signature-footer {width: 400px;display: flex;align-items: center;flex-shrink: 0;height: 40px !important;position: absolute;top: calc(50% - 20px);right: calc(50% - 75px);transform: rotate(90deg) !important;}';
   style.innerHTML += ' .canvas-container {display: flex;justify-content: center;align-items: center;margin-left: 60px;flex-shrink: 0;}';
-  style.innerHTML += ` .signature-header {width: 48px;height: 100%;display: flex;justify-content: center;align-items: center;flex-shrink: 0; color: ${colors.bodyText};}`;
+  style.innerHTML += ` .signature-header {font-size: 14px;width: 48px;height: 100%;display: flex;justify-content: center;align-items: center;flex-shrink: 0; color: ${colors.bodyText};}`;
   style.innerHTML += ' .signature-header p {writing-mode: vertical-rl;text-orientation: mixed;}';
-  style.innerHTML += ` .signature-btn {-moz-osx-font-smoothing: grayscale;-webkit-font-smoothing: antialiased;font-size: .875rem;line-height: 2.25rem;font-weight: 500;height: 36px;letter-spacing: .0892857143em;text-decoration: none;text-transform: uppercase;padding: 0 8px 0 8px;box-sizing: border-box;min-width: 64px;border: none;outline: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-appearance: none;overflow: visible;vertical-align: middle;border-radius: 4px;background-color: transparent;cursor: pointer;font-family: Architects Daughter, sans-serif !important;color: ${colors.primaryTheme};border-color: ${colors.primaryTheme};}`;
+  style.innerHTML += ` .signature-btn {-moz-osx-font-smoothing: grayscale;-webkit-font-smoothing: antialiased;font-size: 12px;line-height: 2.25rem;font-weight: 500;height: 36px;letter-spacing: .0892857143em;text-decoration: none;text-transform: uppercase;padding: 0 8px 0 8px;box-sizing: border-box;min-width: 64px;border: none;outline: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-appearance: none;overflow: visible;vertical-align: middle;border-radius: 4px;background-color: transparent;cursor: pointer;font-family: Architects Daughter, sans-serif !important;color: ${colors.primaryTheme};border-color: ${colors.primaryTheme};}`;
   style.innerHTML += ' .signature-btn--outlined {border-style: solid;padding: 0 15px 0 15px;border-width: 1px;}';
   style.innerHTML += ` .signature-btn--primary {color: #FFFFFF;background-color: ${colors.primaryTheme};box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);padding: 0 16px 0 16px;}`;
 
   document.head.appendChild(style);
-}
+};
 
 /**
  * Shows signature box
@@ -98,8 +98,6 @@ const _injectCSS = (theme) => {
  * @param {function} cb - err or or base64 data URL
  */
 buildfire.components.signatureBox.openDialog = function ({ width = '200', height = '400' } = {}, cb) {
-  // todo check if width height are numbers then convert to string
-  // todo handle if the dialog is already active
   _injectScript((injectError) => {
     if (injectError) return cb(injectError);
     buildfire.appearance.getAppTheme((err, theme) => {
@@ -187,5 +185,5 @@ buildfire.components.signatureBox.openDialog = function ({ width = '200', height
         cb();
       };
     });
-  })
+  });
 };
