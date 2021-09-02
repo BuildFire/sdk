@@ -86,6 +86,7 @@ const _injectCSS = (theme) => {
   style.innerHTML += ` .signature-header {font-size: 14px;width: 48px;height: 100%;display: flex;justify-content: center;align-items: center;flex-shrink: 0; color: ${colors.bodyText};}`;
   style.innerHTML += ' .signature-header p {writing-mode: vertical-rl;text-orientation: mixed;}';
   style.innerHTML += ` .signature-btn {-moz-osx-font-smoothing: grayscale;-webkit-font-smoothing: antialiased;font-size: 12px;line-height: 2.25rem;font-weight: 500;height: 36px;letter-spacing: .0892857143em;text-decoration: none;text-transform: uppercase;padding: 0 8px 0 8px;box-sizing: border-box;min-width: 64px;border: none;outline: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-appearance: none;overflow: visible;vertical-align: middle;border-radius: 4px;background-color: transparent;cursor: pointer;font-family: Architects Daughter, sans-serif !important;color: ${colors.primaryTheme};border-color: ${colors.primaryTheme};}`;
+  style.innerHTML += ` .signature-btn.disabled {opacity: 0.5; pointer-events: none;}`;
   style.innerHTML += ' .signature-btn--outlined {border-style: solid;padding: 0 15px 0 15px;border-width: 1px;}';
   style.innerHTML += ` .signature-btn--primary {color: #FFFFFF;background-color: ${colors.primaryTheme};box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);padding: 0 16px 0 16px;}`;
 
@@ -118,7 +119,7 @@ buildfire.components.signatureBox.openDialog = function ({ width = '200', height
 
 
       const saveButton = document.createElement('button');
-      saveButton.className = 'signature-btn--primary signature-btn';
+      saveButton.className = 'signature-btn--primary signature-btn disabled';
       saveButton.style.marginLeft = '12.75px';
       saveButton.innerText = 'Save';
 
@@ -157,10 +158,15 @@ buildfire.components.signatureBox.openDialog = function ({ width = '200', height
       _injectCSS(theme);
       document.body.appendChild(signatureScreen);
 
-      const signaturePad = new SignaturePad(canvas);
+      const signaturePad = new SignaturePad(canvas, {
+        onEnd: () => {saveButton.classList.remove('disabled');}
+      });
       signaturePad.on();
 
-      clearButton.addEventListener('click', () => { signaturePad.clear(); });
+      clearButton.addEventListener('click', () => {
+        signaturePad.clear();
+        saveButton.classList.add('disabled');
+      });
       cancelButton.addEventListener('click', () => {
         signatureScreen.style.top = '100vh';
         setTimeout(() => { document.body.removeChild(signatureScreen); }, 200, signatureScreen);
