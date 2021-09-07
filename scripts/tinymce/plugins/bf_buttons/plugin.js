@@ -65,6 +65,17 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
             };
             let stringifiedData = JSON.stringify(data);
             querystring = `?data=${encodeURIComponent(stringifiedData)}`;
+        } else {
+            let stylesToInject = `
+            button[title="Select Action"].tox-button {
+                background-color: #05acf0;
+                border-color: #05acf0;
+            }
+            button[title="Select Action"].tox-button:hover {
+                background-color: #0089d1 !important;
+                border-color: #0089d1 !important;
+            }`;
+        buildfire.wysiwyg.injectPluginStyles(stylesToInject);
         }    
         editor.windowManager.openUrl({
             title,
