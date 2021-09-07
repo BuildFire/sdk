@@ -3198,6 +3198,18 @@ var buildfire = {
         }
     },
     wysiwyg: {
+        injectPluginStyles: function(css) {
+            var tinymcePluginStylesElement = document.getElementById('tinymcePluginStyles');
+            if (tinymcePluginStylesElement) {
+                tinymcePluginStylesElement.innerHTML = css;
+            } else {
+                var tinymcePluginStyles = document.createElement('style');
+                tinymcePluginStyles.id = 'tinymcePluginStyles';
+                tinymcePluginStyles.rel = 'stylesheet';
+                tinymcePluginStyles.innerHTML = css;
+                (document.head || document.body || document).appendChild(tinymcePluginStyles);
+            }
+        },
         extend: function() {
             if(typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
                 var appContext = buildfire.getContext();
@@ -3217,41 +3229,17 @@ var buildfire = {
                                         'var buildfire = {'
                                         +   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
                                         +   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
-                                        +'}'
-                                    );
+                                        +'};'
+                                        + ' document.body.onmouseover = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.add("hover-box-shadow")}; '
+                                        + ' document.body.onmouseout = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.remove("hover-box-shadow")}; '
+                                        );
                                     editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
                                 });
-                                editor.ui.registry.addMenuItem('clearContent', {
+                                editor.ui.registry.addMenuItem('bf_clearContent', {
                                     text: 'Delete all',
                                     icon: 'remove',
                                     onAction: function() {
                                       editor.execCommand('mceNewDocument');
-                                    }
-                                });
-                                editor.ui.registry.addMenuItem('insertActionItem', {
-                                    text: 'Insert/edit action item',
-                                    icon: 'link',
-                                    onAction: function() {
-                                        editor.ui.registry.getAll().buttons.bf_actionitem.showDialog();                                    
-                                    }
-                                });
-                                editor.ui.registry.addMenuItem('insertButtonOrLink', {
-                                    text: 'Insert button or link',
-                                    onAction: function() {
-                                        editor.ui.registry.getAll().buttons.bf_buttons.showDialog();                                    
-                                    }
-                                });
-                                editor.ui.registry.addMenuItem('insertImage', {
-                                    text: 'Insert/edit image',
-                                    icon: 'image',
-                                    onAction: function() {
-                                        editor.ui.registry.getAll().buttons.bf_imagelib.showDialog();                                    
-                                    }
-                                });
-                                editor.ui.registry.addMenuItem('insertRating', {
-                                    text: 'Insert rating',
-                                    onAction: function() {
-                                        editor.ui.registry.getAll().buttons.bf_rating.showDialog();                                    
                                     }
                                 });
                                 originalSetup(editor);
@@ -3268,21 +3256,21 @@ var buildfire = {
                         });
                         if (options.content_css) {
                             if (options.content_css instanceof Array) {
-                                options.content_css.push(appTheme, '../../../../styles/bfUIElements.css');
+                                options.content_css.push(appTheme, '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css');
                             } else {
                                 var splittedStyleFiles = options.content_css.split(',');
-                                splittedStyleFiles.push(appTheme, '../../../../styles/bfUIElements.css');
+                                splittedStyleFiles.push(appTheme, '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css');
                                 options.content_css = splittedStyleFiles;
                             }
                         } else {
-                            options.content_css = [appTheme , '../../../../styles/bfUIElements.css'];
+                            options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
                         }
                         
                         options.menubar = options.menubar || 'edit insert view format tools';
                         var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
                         options.menu = {
-                            edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | clearContent'},
-                            insert: {title: 'Insert', items: 'insertActionItem media insertImage | insertButtonOrLink | insertRating'},
+                            edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
+                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating'},
                             view: {title: 'View', items: 'visualaid | preview'},
                             format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
                             tools: {title: 'Tools', items: 'code'},
@@ -3322,8 +3310,10 @@ var buildfire = {
                         options.toolbar_mode = 'floating';
                         options.theme = 'silver';
                         options.skin = 'bf-skin',
+                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu';
                         options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
-                        options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width],button[style|class|onclick]'
+                        options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
+                        options.height = options.height || 265;
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
