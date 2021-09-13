@@ -45,7 +45,7 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
     editor.ui.registry.addContextMenu('bf_buttonOrLinkContextMenu', {
         update: function (element) {
             let elementClasses = element.className;
-            return elementClasses.includes('bf-btn') || elementClasses.includes('bf-text-') ? 'bf_editButtonOrLink | bf_editButtonOrLinkAction' : '';
+            return elementClasses.includes('bf-btn') || elementClasses.includes('bf-text-') ? 'bf_editButtonOrLink bf_editButtonOrLinkAction' : '';
         }
     });
 

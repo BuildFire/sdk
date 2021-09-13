@@ -145,12 +145,5 @@ window.addEventListener('message', function (event) {
                 imageData
             }
         }, origin);
-    } else if (event.data.message === 'getImageToInsertAction') {
-        window.parent.postMessage({
-            mceAction: 'setImageAction',
-            data: {
-                imageData
-            }
-        }, origin);
     }
 });

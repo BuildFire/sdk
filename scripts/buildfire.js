@@ -3242,6 +3242,14 @@ var buildfire = {
                                       editor.execCommand('mceNewDocument');
                                     }
                                 });
+                                editor.ui.registry.addMenuItem('bf_delete', {
+                                    text: 'Delete',
+                                    icon: 'remove',
+                                    shortcut: 'Del',
+                                    onAction: function() {
+                                      editor.execCommand('Delete');
+                                    }
+                                });
                                 originalSetup(editor);
                             }
                         }
@@ -3280,7 +3288,7 @@ var buildfire = {
                                 options.menu[item] = userMenu[item];
                             }
                         }
-                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists'];
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste'];
                         if (options.plugins) {
                             if (options.plugins instanceof Array) {
                                 options.plugins = defaultPlugins.concat(options.plugins);  
@@ -3310,7 +3318,7 @@ var buildfire = {
                         options.toolbar_mode = 'floating';
                         options.theme = 'silver';
                         options.skin = 'bf-skin',
-                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu';
+                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu cut copy paste  | bf_delete';
                         options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
                         options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
                         options.height = options.height || 265;
