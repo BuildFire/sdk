@@ -1,0 +1,11 @@
+body img {
+    max-width : 100%;
+    height: auto;
+}
+body.slim-tinymce {
+    width: 50%;
+    margin: 0 auto;
+}
+.hover-box-shadow {
+    box-shadow: 0 0 0 1px var(--bf-theme-body-text) !important;
+}

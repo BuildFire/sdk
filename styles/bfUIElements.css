@@ -92,10 +92,6 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    -moz-transition: all 0.35s;
-    -o-transition: all 0.35s;
-    -webkit-transition: all 0.35s;
-    transition: all 0.35s;
 }
 .bf-btn:hover {
     color: white !important;
