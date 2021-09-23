@@ -3235,6 +3235,24 @@ var buildfire = {
                                         );
                                     editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
                                 });
+                                editor.on('change', function() {
+                                    // check if there are unused style elements for layouts and delete them
+                                    var styleElementInBody = editor.dom.doc.body.querySelectorAll('style[data-layout-name]');
+                                    if (styleElementInBody.length > 0) {
+                                        var allLayouts = editor.dom.doc.body.querySelectorAll('div[data-layout-name]');
+                                        styleElementInBody.forEach(function(element) {
+                                            var isStyleUsed = false;
+                                            allLayouts.forEach(function(layout) {
+                                                if (layout.dataset.layoutName === element.dataset.layoutName) {
+                                                    isStyleUsed = true;
+                                                }
+                                            })
+                                            if (!isStyleUsed) {
+                                                element.parentElement.removeChild(element);
+                                            }
+                                        });
+                                    }
+                                });
                                 editor.ui.registry.addMenuItem('bf_clearContent', {
                                     text: 'Delete all',
                                     icon: 'remove',
@@ -3278,7 +3296,7 @@ var buildfire = {
                         var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
                         options.menu = {
                             edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating'},
+                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating | bf_insertLayout'},
                             view: {title: 'View', items: 'visualaid | preview'},
                             format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
                             tools: {title: 'Tools', items: 'code'},
@@ -3288,7 +3306,7 @@ var buildfire = {
                                 options.menu[item] = userMenu[item];
                             }
                         }
-                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste'];
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
                         if (options.plugins) {
                             if (options.plugins instanceof Array) {
                                 options.plugins = defaultPlugins.concat(options.plugins);  
@@ -3322,6 +3340,7 @@ var buildfire = {
                         options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
                         options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
                         options.height = options.height || 265;
+                        options.custom_elements = 'style';
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }

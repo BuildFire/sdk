@@ -1,0 +1,26 @@
+body {
+    font-family: arial;
+    padding: 16px 8px;
+    font-weight: bold;
+}
+#main {
+    padding: 16px 0px;
+}
+#main div div:nth-child(even) {
+    margin-left: calc(12.5% - 6px - 24px);
+    margin-right: calc(12.5% - 6px - 24px);
+}
+.imageDiv {
+    display: inline-block;
+    width: 25%;
+    padding: 8px 8px;
+    border-radius: 0.5rem;
+    transition: 0.3s;
+    border: 2px solid transparent;
+}
+img {
+    width: 100%;
+}
+.imageDiv.active {
+    border: 2px solid #05acf0;
+}
