@@ -1,42 +1,41 @@
 
 tinymce.PluginManager.add("bf_rating", function (editor, url) {
-  editor.addButton("bf_rating", {
-      text: "Rating",
-      icon: false,
-      onclick: function () {
-        showRatingDialog(editor, url);
-        },
-        showDialog: function() {
-            showRatingDialog(editor, url);
+    editor.ui.registry.addMenuItem('bf_insertRating', {
+        text: 'Insert rating',
+        onAction: function() {
+            showDialog();
         }
-  });
+    });
 
-  return {
-      getMetadata: function () {
-          return {
-              name: "Rating Plugin",
-              // url: ""
-          };
-      },
-  };
-});
-function showRatingDialog(editor, url) {
-    editor.windowManager.open({
-        title: "Add new rating",
-        url: url + "/dialog.html",
-        width: 400,
-        height: 100,
-        buttons: [
-            {
-                text: "Add",
-                classes: 'widget btn primary',
-                onclick: function () {
-                    const modal = editor.windowManager.getWindows()[0];
-
-                    function getElementById(id) {
-                        return modal.getContentWindow().document.getElementById(id);
-                    }
-                    let val = getElementById('data_id').value.trim();
+    function showDialog() {
+        editor.windowManager.openUrl({
+            title: "Add New Rating",
+            url: url + "/dialog.html",
+            width: 400,
+            buttons: [
+                {
+                    text: 'Cancel',
+                    type: 'cancel'
+                },
+                {
+                    text: "Add",
+                    type: 'custom',
+                    name: 'Add Rating',
+                    primary: true,
+                },
+            ],
+            onAction: (dialogApi, details) => {
+                if (details.name === 'Add Rating') {
+                    dialogApi.sendMessage({
+                        message: 'getDataId'
+                    });
+                }
+            },
+            onMessage : (dialogApi, details) => {
+                let result = details.data.content;
+                let mceAction = details.mceAction;
+                if (result && mceAction === 'setDataId') {
+                    let val = result.trim();
                     val = escape(val);
                     editor.insertContent(
                         `<img src="trigger_errorasd" onerror="typeof buildfire !== 'undefined' && buildfire.ratingSystem.inject()" style="display: none">
@@ -45,16 +44,17 @@ function showRatingDialog(editor, url) {
                             </p><br>
                         `
                     );
-                    modal.close();
+                    dialogApi.close();
                 }
-            },
-            {
-                text: 'Cancel',
-                onclick: function () {
-                    const modal = editor.windowManager.getWindows()[0];
-                    modal.close();
-                }
-            },
-        ]
-    });
-}
+            }
+        });
+    }
+
+    return {
+        getMetadata: function () {
+            return {
+                name: "Rating Plugin",
+            };
+        },
+    };
+});

@@ -741,10 +741,10 @@ var buildfire = {
             });
 
             if (enableMDTheme) {
-                buildfire.appearance.getAppTheme(function(err, appTheme) {
-                    var styleElement = document.createElement('style');
-                    styleElement.id = 'appMDTheme';
-                    styleElement.type = 'text/css';
+                var styleElement = document.createElement('style');
+                styleElement.id = 'appMDTheme';
+                styleElement.type = 'text/css';
+                function applyMDTheme(err, appTheme) {
                     var css = "";
                     if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
                     && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
@@ -822,8 +822,13 @@ var buildfire = {
                             + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
                             + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
                     styleElement.innerHTML = css;
+                }
+                buildfire.appearance.getAppTheme(function(err, appTheme) {
+                    applyMDTheme(err, appTheme);
                     (document.head || document.body || document).appendChild(styleElement);
-
+                });
+                buildfire.appearance.onUpdate(function(appTheme){
+                    applyMDTheme(null, appTheme);
                 });
             }
 
@@ -937,24 +942,18 @@ var buildfire = {
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('appearanceOnUpdate', callback, allowMultipleHandlers);
         }
-        , triggerOnUpdate: function () {
+        , triggerOnUpdate: function (appTheme) {
             var appThemeCSSElement = document.getElementById("appThemeCSS");
             if(appThemeCSSElement) {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
-            setTimeout(function () {
-                var p = new Packet(null, 'getContext');
-                buildfire._sendPacket(p, function (err, data) {
-                    if (err) return console.error(err);
-                    if (data) {
-                        var bfWidgetTheme = document.getElementById("bfWidgetTheme");
-                        if (bfWidgetTheme) {
-                            bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(data.appTheme);
-                        }
-                        buildfire.eventManager.trigger('appearanceOnUpdate', data.appTheme);
-                    }
-                });
-            }, 2000); //give it enough time for the datastore to save
+            if (appTheme) {
+                var bfWidgetTheme = document.getElementById("bfWidgetTheme");
+                if (bfWidgetTheme) {
+                    bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+                }
+                buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
+            }
         }, titlebar: {
             show: function(options, callback) {
                 var p = new Packet(null, "appearance.titlebar.show");
@@ -3199,6 +3198,18 @@ var buildfire = {
         }
     },
     wysiwyg: {
+        injectPluginStyles: function(css) {
+            var tinymcePluginStylesElement = document.getElementById('tinymcePluginStyles');
+            if (tinymcePluginStylesElement) {
+                tinymcePluginStylesElement.innerHTML = css;
+            } else {
+                var tinymcePluginStyles = document.createElement('style');
+                tinymcePluginStyles.id = 'tinymcePluginStyles';
+                tinymcePluginStyles.rel = 'stylesheet';
+                tinymcePluginStyles.innerHTML = css;
+                (document.head || document.body || document).appendChild(tinymcePluginStyles);
+            }
+        },
         extend: function() {
             if(typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
                 var appContext = buildfire.getContext();
@@ -3218,40 +3229,25 @@ var buildfire = {
                                         'var buildfire = {'
                                         +   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
                                         +   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
-                                        +'}'
-                                    );
+                                        +'};'
+                                        + ' document.body.onmouseover = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.add("hover-box-shadow")}; '
+                                        + ' document.body.onmouseout = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.remove("hover-box-shadow")}; '
+                                        );
                                     editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
                                 });
-                                editor.addMenuItem('clearContent', {
-                                    text: 'Clear content',
-                                    onclick: function() {
+                                editor.ui.registry.addMenuItem('bf_clearContent', {
+                                    text: 'Delete all',
+                                    icon: 'remove',
+                                    onAction: function() {
                                       editor.execCommand('mceNewDocument');
                                     }
                                 });
-                                editor.addMenuItem('insertActionItem', {
-                                    text: 'Insert/edit action item',
-                                    icon: 'link',
-                                    onclick: function() {
-                                        editor.buttons.bf_actionitem.showDialog();                                    
-                                    }
-                                });
-                                editor.addMenuItem('insertButtonOrLink', {
-                                    text: 'Insert button or link',
-                                    onclick: function() {
-                                        editor.buttons.bf_buttons.showDialog();                                    
-                                    }
-                                });
-                                editor.addMenuItem('insertImage', {
-                                    text: 'Insert/edit image',
-                                    icon: 'image',
-                                    onclick: function() {
-                                        editor.buttons.bf_imagelib.showDialog();                                    
-                                    }
-                                });
-                                editor.addMenuItem('insertRating', {
-                                    text: 'Insert rating',
-                                    onclick: function() {
-                                        editor.buttons.bf_rating.showDialog();                                    
+                                editor.ui.registry.addMenuItem('bf_delete', {
+                                    text: 'Delete',
+                                    icon: 'remove',
+                                    shortcut: 'Del',
+                                    onAction: function() {
+                                      editor.execCommand('Delete');
                                     }
                                 });
                                 originalSetup(editor);
@@ -3268,22 +3264,23 @@ var buildfire = {
                         });
                         if (options.content_css) {
                             if (options.content_css instanceof Array) {
-                                options.content_css.push(appTheme, '../../../../styles/bfUIElements.css');
+                                options.content_css.push(appTheme, '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css');
                             } else {
                                 var splittedStyleFiles = options.content_css.split(',');
-                                splittedStyleFiles.push(appTheme, '../../../../styles/bfUIElements.css');
+                                splittedStyleFiles.push(appTheme, '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css');
                                 options.content_css = splittedStyleFiles;
                             }
                         } else {
-                            options.content_css = [appTheme , '../../../../styles/bfUIElements.css'];
+                            options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
                         }
                         
+                        options.menubar = options.menubar || 'edit insert view format tools';
                         var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
                         options.menu = {
-                            edit: {title: "Edit", items: "undo redo | cut copy paste | selectall | clearContent"},
-                            insert: {title: "Insert", items: "insertActionItem media insertImage | insertButtonOrLink | insertRating"},
+                            edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
+                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating'},
                             view: {title: 'View', items: 'visualaid | preview'},
-                            format: {title: "Format", items: "bold italic underline strikethrough superscript subscript | formats | removeformat"},
+                            format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
                             tools: {title: 'Tools', items: 'code'},
                         }
                         if (userMenu) {
@@ -3291,7 +3288,7 @@ var buildfire = {
                                 options.menu[item] = userMenu[item];
                             }
                         }
-                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons'];
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste'];
                         if (options.plugins) {
                             if (options.plugins instanceof Array) {
                                 options.plugins = defaultPlugins.concat(options.plugins);  
@@ -3302,19 +3299,29 @@ var buildfire = {
                         } else {
                             options.plugins = defaultPlugins;
                         }
-                        var defaultToolbar = ['fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen'];
+                        var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
                         if (options.toolbar) {
                             if (options.toolbar instanceof Array) {
-                                options.toolbar = defaultToolbar.concat(options.toolbar);
+                                if (!(options.toolbar[0] instanceof Object)) {
+                                    options.toolbar.forEach(function (toolbarGroup) {
+                                        defaultToolbar += ' | ' + toolbarGroup;
+                                    });
+                                    options.toolbar = defaultToolbar;
+                                }
                             } else {
-                                defaultToolbar[0] += ' | ' + options.toolbar;
-                                options.toolbar = defaultToolbar[0];
+                                defaultToolbar += ' | ' + options.toolbar;
+                                options.toolbar = defaultToolbar;
                             }
                         } else {
                             options.toolbar = defaultToolbar;
                         }
-                        options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
-                        options.extended_valid_elements= "a[href|onclick|class],img[src|style|onerror|height|width],button[style|class|onclick]"
+                        options.toolbar_mode = 'floating';
+                        options.theme = 'silver';
+                        options.skin = 'bf-skin',
+                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu cut copy paste  | bf_delete';
+                        options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
+                        options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
+                        options.height = options.height || 265;
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
