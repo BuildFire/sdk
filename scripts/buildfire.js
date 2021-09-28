@@ -1477,6 +1477,58 @@ var buildfire = {
                 }
             }
         }
+        , aggregate: function (obj, tag, callback) {
+            debugger
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0 || !obj.stages) {
+                callback("stages is required property for aggregation", null);
+                return;
+            }
+
+            if (!Array.isArray(obj.stages)) {
+                callback("stages property should be an array of your pipeline stages", null);
+                return;
+            }
+
+            var matchStage = obj.stages[0];
+
+            if (!Object.keys(matchStage).includes('$match')) {
+                callback("$match should be first stage of pipeline ", null);
+                return;
+            }
+
+            if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                callback("$match stage should has at least one of the buildfire indexes", null);
+                return
+            }
+
+            var hasIndex = false;
+            var matchKeys = Object.keys(matchStage.$match);
+           
+            for (var i = 0; i < matchKeys.length; i++) {
+                var key = matchKeys[i];
+                if ((key.indexOf('_buildfire.index') > -1)) {
+                    hasIndex = true;
+                    break;
+                }
+            }
+
+            if (!hasIndex) {
+                callback("$match stage should has at least one of the buildfire indexes", null);
+            }
+
+            var p = new Packet(null, 'userData.aggregate', {tag: tag, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('userDataOnUpdate', callback, allowMultipleHandlers);
@@ -1724,6 +1776,58 @@ var buildfire = {
                 }
             }
         }
+        , aggregate: function (obj, tag, callback) {
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0 || !obj.stages) {
+                callback("stages is required property for aggregation", null);
+                return;
+            }
+
+            if (!Array.isArray(obj.stages)) {
+                callback("stages property should be an array of your pipeline stages", null);
+                return;
+            }
+
+            var matchStage = obj.stages[0];
+
+            if (!Object.keys(matchStage).includes('$match')) {
+                callback("$match should be first stage of pipeline ", null);
+                return;
+            }
+
+            if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                callback("$match stage should has at least one of the buildfire indexes", null);
+                return
+            }
+
+            var hasIndex = false;
+            var matchKeys = Object.keys(matchStage.$match);
+            for (var i = 0; i < matchKeys.length; i++) {
+                var key = matchKeys[i];
+                if ((key.indexOf('_buildfire.index') > -1)) {
+                    hasIndex = true;
+                    break;
+                }
+            }
+
+            if (!hasIndex) {
+                callback("$match stage should has at least one of the buildfire indexes", null);
+            }
+
+
+
+            var p = new Packet(null, 'publicData.aggregate', {tag: tag, obj: obj});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('publicDataOnUpdate', callback, allowMultipleHandlers);
@@ -1895,6 +1999,52 @@ var buildfire = {
             }
 
             var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
+        , aggregate: function (obj, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0 || !obj.stages) {
+                callback("stages is required property for aggregation", null);
+                return;
+            }
+
+            if (!Array.isArray(obj.stages)) {
+                callback("stages property should be an array of your pipeline stages", null);
+                return;
+            }
+
+            var matchStage = obj.stages[0];
+
+            if (!Object.keys(matchStage).includes('$match')) {
+                callback("$match should be first stage of pipeline ", null);
+                return;
+            }
+
+            if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                callback("$match stage should has at least one of the buildfire indexes", null);
+                return
+            }
+
+            var hasIndex = false;
+            var matchKeys = Object.keys(matchStage.$match);
+            for (var i = 0; i < matchKeys.length; i++) {
+                var key = matchKeys[i];
+                if ((key.indexOf('_buildfire.index') > -1)) {
+                    hasIndex = true;
+                    break;
+                }
+            }
+
+            if (!hasIndex) {
+                callback("$match stage should has at least one of the buildfire indexes", null);
+            }
+
+
+
+            var p = new Packet(null, 'appData.aggregate', {tag: tag, obj: obj});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
