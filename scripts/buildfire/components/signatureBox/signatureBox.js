@@ -26,7 +26,7 @@ const _injectScript = (cb) => {
 
   script = document.createElement('script');
   script.setAttribute('type', 'text/javascript');
-  script.setAttribute('src', '/../../../scripts/buildfire/components/signatureBox/signature_pad.min.js');
+  script.setAttribute('src', '../../../scripts/buildfire/components/signatureBox/signature_pad.min.js');
   script.id = 'signaturePadScript';
 
   document.head.appendChild(script);
