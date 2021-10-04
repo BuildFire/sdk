@@ -7,6 +7,8 @@ function Packet(id, cmd, data) {
     this.instanceId = null;
 }
 
+
+
 /// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
     isFileServer: function(url){
@@ -1477,8 +1479,7 @@ var buildfire = {
                 }
             }
         }
-        , aggregate: function (obj, tag, callback) {
-            debugger
+        , aggregate: function (params, tag, callback) {
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -1487,44 +1488,57 @@ var buildfire = {
                 tag = '';
             }
 
-            if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0 || !obj.stages) {
-                callback("stages is required property for aggregation", null);
-                return;
+            if (!params || typeof params !== 'object') {
+                params = {};
             }
 
-            if (!Array.isArray(obj.stages)) {
-                callback("stages property should be an array of your pipeline stages", null);
-                return;
-            }
+            function validate() {
 
-            var matchStage = obj.stages[0];
-
-            if (!Object.keys(matchStage).includes('$match')) {
-                callback("$match should be first stage of pipeline ", null);
-                return;
-            }
-
-            if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
-                callback("$match stage should has at least one of the buildfire indexes", null);
-                return
-            }
-
-            var hasIndex = false;
-            var matchKeys = Object.keys(matchStage.$match);
-           
-            for (var i = 0; i < matchKeys.length; i++) {
-                var key = matchKeys[i];
-                if ((key.indexOf('_buildfire.index') > -1)) {
-                    hasIndex = true;
-                    break;
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
+                }
+    
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+    
+                var matchStage = params.pipelineStages[0];
+    
+                if (!Object.keys(matchStage).includes('$match')) {
+                    callback("$match should be first stage of pipeline ", null);
+                    return false;
+                }
+    
+                if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                    callback("$match stage should has at least one of the buildfire indexes", null);
+                    return false;
+                }
+    
+                var hasIndex = false;
+                var matchKeys = Object.keys(matchStage.$match);
+               
+                for (var i = 0; i < matchKeys.length; i++) {
+                    var key = matchKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1)) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+    
+                if (!hasIndex) {
+                    callback("$match stage should has at least one of the buildfire indexes", null);
+                    return false;
                 }
             }
+            
+            // these validation not used  for current state, we handle that on server side
+            // if (!validate()) {
+            //     return;
+            // }
 
-            if (!hasIndex) {
-                callback("$match stage should has at least one of the buildfire indexes", null);
-            }
-
-            var p = new Packet(null, 'userData.aggregate', {tag: tag, obj: obj});
+            var p = new Packet(null, 'userData.aggregate', {tag: tag, obj: params});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
@@ -1776,7 +1790,7 @@ var buildfire = {
                 }
             }
         }
-        , aggregate: function (obj, tag, callback) {
+        , aggregate: function (params, tag, callback) {
             var tagType = typeof (tag);
             if (tagType == "undefined")
                 tag = '';
@@ -1785,45 +1799,60 @@ var buildfire = {
                 tag = '';
             }
 
-            if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0 || !obj.stages) {
-                callback("stages is required property for aggregation", null);
-                return;
+            if (!params || typeof params !== 'obj') {
+                params = {};
             }
 
-            if (!Array.isArray(obj.stages)) {
-                callback("stages property should be an array of your pipeline stages", null);
-                return;
-            }
-
-            var matchStage = obj.stages[0];
-
-            if (!Object.keys(matchStage).includes('$match')) {
-                callback("$match should be first stage of pipeline ", null);
-                return;
-            }
-
-            if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
-                callback("$match stage should has at least one of the buildfire indexes", null);
-                return
-            }
-
-            var hasIndex = false;
-            var matchKeys = Object.keys(matchStage.$match);
-            for (var i = 0; i < matchKeys.length; i++) {
-                var key = matchKeys[i];
-                if ((key.indexOf('_buildfire.index') > -1)) {
-                    hasIndex = true;
-                    break;
+            function validate () {
+                
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
                 }
+
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+
+                var matchStage = params.pipelineStages[0];
+
+                if (!Object.keys(matchStage).includes('$match')) {
+                    callback("$match should be first stage of pipeline ", null);
+                    return false;
+                }
+
+                if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                    callback("$match stage should has at least one of the buildfire indexes", null);
+                    return false
+                }
+
+                var hasIndex = false;
+                var matchKeys = Object.keys(matchStage.$match);
+                for (var i = 0; i < matchKeys.length; i++) {
+                    var key = matchKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1)) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    callback("$match stage should has at least one of the buildfire indexes", null);
+                    return false;
+                }
+
+                return true;
+
             }
 
-            if (!hasIndex) {
-                callback("$match stage should has at least one of the buildfire indexes", null);
-            }
+            // these validation not used  for current state, we handle that on server side
+            // if (!validate()) {
+            //     return;
+            // }
 
 
-
-            var p = new Packet(null, 'publicData.aggregate', {tag: tag, obj: obj});
+            var p = new Packet(null, 'publicData.aggregate', {tag: tag, obj: params});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
@@ -2003,48 +2032,59 @@ var buildfire = {
                 callback(err, result);
             });
         }
-        , aggregate: function (obj, tag, callback) {
+        , aggregate: function (params, tag, callback) {
             if (!this._isTagValid(tag, callback)) return;
 
-            if (!obj || typeof obj !== 'object' || Object.keys(obj).length === 0 || !obj.stages) {
-                callback("stages is required property for aggregation", null);
-                return;
+            if (!params || typeof params !== 'object') {
+                params = {};
             }
 
-            if (!Array.isArray(obj.stages)) {
-                callback("stages property should be an array of your pipeline stages", null);
-                return;
-            }
+            function validate() {
 
-            var matchStage = obj.stages[0];
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return;
+                }
+                
+                if (!Array.isArray(params.pipelineStages)) {
+                     callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return;
+                }
 
-            if (!Object.keys(matchStage).includes('$match')) {
-                callback("$match should be first stage of pipeline ", null);
-                return;
-            }
+                var matchStage = params.pipelineStages[0];
 
-            if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
-                callback("$match stage should has at least one of the buildfire indexes", null);
-                return
-            }
+                if (!Object.keys(matchStage).includes('$match')) {
+                    callback("$match should be first stage of pipeline ", null);
+                    return;
+                }
 
-            var hasIndex = false;
-            var matchKeys = Object.keys(matchStage.$match);
-            for (var i = 0; i < matchKeys.length; i++) {
-                var key = matchKeys[i];
-                if ((key.indexOf('_buildfire.index') > -1)) {
-                    hasIndex = true;
-                    break;
+                if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                    callback("$match stage should has at least one of the buildfire indexes", null);
+                    return
+                }
+
+                var hasIndex = false;
+                var matchKeys = Object.keys(matchStage.$match);
+                for (var i = 0; i < matchKeys.length; i++) {
+                    var key = matchKeys[i];
+                    if ((key.indexOf('_buildfire.index') > -1)) {
+                        hasIndex = true;
+                        break;
+                    }
+                }
+
+                if (!hasIndex) {
+                    callback("$match stage should has at least one of the buildfire indexes", null);
                 }
             }
 
-            if (!hasIndex) {
-                callback("$match stage should has at least one of the buildfire indexes", null);
-            }
+            // these validation not used  for current state, we handle that on server side
+            /* if (!validate()){
+                return;
+            } */
+           
 
-
-
-            var p = new Packet(null, 'appData.aggregate', {tag: tag, obj: obj});
+            var p = new Packet(null, 'appData.aggregate', {tag: tag, obj: params});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
