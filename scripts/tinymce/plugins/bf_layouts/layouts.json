@@ -1,55 +1,55 @@
 [
     {
         "id": "layout_1",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1563183491-b43a35941412?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8MTIwfHxzYWR8ZW58MHx8fHwxNjIzMDc5ODMx&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=608&height=1080",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_1.jpg",
         "cssUrl": "layouts/layout1.css",
         "htmlUrl" : "layouts/layout1.html"
     },
     {
         "id": "layout_2",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1498752138506-52a681c54b5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8OXx8bmV3fGVufDB8fHx8MTYyMzAyMDYxNA&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=128&height=227",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_2.jpg",
         "cssUrl": "layouts/layout2.css",
         "htmlUrl" : "layouts/layout1.html"
     },
     {
         "id": "layout_3",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1595351446090-f698f354f8be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8ODZ8fG1heHxlbnwwfHx8fDE2MjMwNzc4OTQ&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=128&height=227",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_3.jpg",
         "cssUrl": "layouts/layout3.css",
-        "htmlUrl" : "layouts/layout1.html"
+        "htmlUrl" : "layouts/layout3.html"
     },
     {
         "id": "layout_4",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1563183491-b43a35941412?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8MTIwfHxzYWR8ZW58MHx8fHwxNjIzMDc5ODMx&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=608&height=1080",
-        "cssUrl": "layouts/layout1.css",
-        "htmlUrl" : "layouts/layout1.html"
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_4.jpg",
+        "cssUrl": "layouts/layout4.css",
+        "htmlUrl" : "layouts/layout4.html"
     },
     {
         "id": "layout_5",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1498752138506-52a681c54b5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8OXx8bmV3fGVufDB8fHx8MTYyMzAyMDYxNA&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=128&height=227",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_5.jpg",
         "cssUrl": "layouts/layout2.css",
         "htmlUrl" : "layouts/layout2.html"
     },
     {
         "id": "layout_6",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1595351446090-f698f354f8be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8ODZ8fG1heHxlbnwwfHx8fDE2MjMwNzc4OTQ&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=128&height=227",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_6.jpg",
         "cssUrl": "layouts/layout3.css",
         "htmlUrl" : "layouts/layout3.html"
     },
     {
         "id": "layout_7",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1563183491-b43a35941412?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8MTIwfHxzYWR8ZW58MHx8fHwxNjIzMDc5ODMx&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=608&height=1080",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_7.jpg",
         "cssUrl": "layouts/layout1.css",
         "htmlUrl" : "layouts/layout1.html"
     },
     {
         "id": "layout_8",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1498752138506-52a681c54b5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8OXx8bmV3fGVufDB8fHx8MTYyMzAyMDYxNA&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=128&height=227",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_8.jpg",
         "cssUrl": "layouts/layout2.css",
         "htmlUrl" : "layouts/layout2.html"
     },
     {
         "id": "layout_9",
-        "imageUrl": "https://alnnibitpo.cloudimg.io/v7/https://images.unsplash.com/photo-1595351446090-f698f354f8be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=Mnw0NDA1fDB8MXxzZWFyY2h8ODZ8fG1heHxlbnwwfHx8fDE2MjMwNzc4OTQ&ixlib=rb-1.2.1&q=80&w=1080&func=crop&width=128&height=227",
+        "imageUrl": "/scripts/tinymce/plugins/bf_layouts/layouts/layoutPreview/lyt_9.jpg",
         "cssUrl": "layouts/layout3.css",
         "htmlUrl" : "layouts/layout3.html"
     }
