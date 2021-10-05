@@ -1,10 +1,7 @@
-.test-bg{
-    background-image: url('https://images.pexels.com/photos/2117937/pexels-photo-2117937.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
-    background-size: cover;
-    padding: 2rem 0;
+#bf_mce_layout_4 .container * > span{
+    font-size: inherit;
 }
-
-#layout_4 .container{
+#bf_mce_layout_4 .container{
     font-size: 16px !important;
     line-height: 1.5;
     padding: 1.5em;
@@ -15,31 +12,31 @@
     box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
     backdrop-filter: blur(24px);
 }
-#layout_4 .container span{
-    font-size: inherit !important;
+#bf_mce_layout_4 .container * > span{
+    font-size: inherit;
 }
-#layout_4 .main-title{
+#bf_mce_layout_4 .main-title{
     font-size: 2.5em;
     font-weight: bold;
     margin-top: 0;
     margin-bottom: 1em;
 }
-#layout_4 .secondary-title{
+#bf_mce_layout_4 .secondary-title{
     font-size: 1.5em;
     font-weight: bold;
     margin-top: 0;
     margin-bottom: .125em;
 }
-#layout_4 .caption{
+#bf_mce_layout_4 .caption{
     font-size: .75em;
     margin-top: 0;
     margin-bottom: 1.5em;
 }
-#layout_4 .body-copy{
+#bf_mce_layout_4 .body-copy{
     margin-top: 0;
     font-size: .875em;
     margin-bottom: 2em;
 }
-#layout_4 .bf-btn{
+#bf_mce_layout_4 .bf-btn{
     width: 100%;
 }
