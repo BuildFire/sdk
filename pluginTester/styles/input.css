@@ -11,10 +11,6 @@
 	z-index: 1050;
 	transform: translateY(100%);
 	-webkit-transform: translateY(100%);
-	transition-duration: 500ms;
-	-webkit-transition-duration: 500ms;
-	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
-	transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 #inputDialog .input-dialog-container {
 	height: 100%;
@@ -40,12 +36,14 @@
 	display: flex !important;
 	transform: translateY(0%);
 	-webkit-transform: translateY(0%);
-	transition-duration: 500ms;
-	-webkit-transition-duration: 500ms;
+}
+#inputDialog.transition,
+#gifDialog.transition {
 	-webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 	transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition-duration: 500ms;
+	-webkit-transition-duration: 500ms;
 }
-
 #inputDialog .inputapi-nav,
 #gifDialog .gifapi-nav {
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
