@@ -1918,7 +1918,7 @@ var buildfire = {
                 tag = '';
             }
 
-            if (!params || typeof params !== 'obj') {
+            if (!params || typeof params !== 'object') {
                 params = {};
             }
 
