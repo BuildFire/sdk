@@ -8,6 +8,8 @@ if (typeof (buildfire.services) == "undefined") buildfire.services = {};
 
 if (typeof (buildfire.services.stripe) == "undefined") buildfire.services.stripe = {};
 
+if (typeof (buildfire.services.stripe.connect) == "undefined") buildfire.services.stripe.connect = {};
+
 /**
  * charge dynamic products using stripe checkout.
  * @param {Object} options.
@@ -45,6 +47,7 @@ buildfire.services.stripe.charge = function (options, cb) {
  * @param {number} [options.trialPeriodDays] - The number of trial period days before the customer is charged for the first time.
  * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
  * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
+ * @param {Object} [options.metadata] - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata.
  */
 
 /**
@@ -157,6 +160,89 @@ buildfire.services.stripe.addCustomerCard = function (options, cb) {
 buildfire.services.stripe.capturePayment = function (options, cb) {
     var packetId = null;
     var command = 'stripe.capturePayment';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * Add Stripe Connect account.
+ * @param {Object} options.
+ * @param {string} options.email - The email address of the account holder. This is only to make the account easier to identify to you. Stripe will never directly email Custom accounts.
+ * @param {Object} options.metadata - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ * @param {string} response.status - Account status, values ['pending', 'active'].
+ * @param {Boolean} response.is_active - Account activity status.
+ * @param {string} response.bf_stripe_connect_token - Buildfire Stripe connect token, this should be saved in your database.
+ */
+buildfire.services.stripe.connect.account = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.connect.account';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * Delete Stripe Connect account.
+ * @param {Object} options.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.connect.deleteAccount = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.connect.deleteAccount';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * cancel payment.
+ * @param {Object} options.
+ * @param {string} options.paymentIntentsId - stripe payment intents id.
+ * @param {string} [options.cancellationReason] - Reason for canceling this PaymentIntent. Possible values are duplicate, fraudulent, requested_by_customer, or abandoned.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.cancelPayment = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.cancelPayment';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * refund payment.
+ * @param {Object} options.
+ * @param {string} options.paymentIntentsId - ID of the PaymentIntent to refund.
+ * @param {integer} [options.amount] - Default is entire charge. A positive integer in cents representing how much of this charge to refund. Can refund only up to the remaining, unrefunded amount of the charge.
+ * @param {string} [options.reason] - The reason for the refund. If set, possible values are duplicate, fraudulent, and requested_by_customer. If you believe the charge to be fraudulent, specifying fraudulent as the reason will add the associated card and email to your block lists, and will also help us improve our fraud detection algorithms.
+ * @param {Object} [options.metadata] - A set of key-value pairs that you can attach to a Refund object. This can be useful for storing additional information about the refund in a structured format. You can unset individual keys if you POST an empty value for that key. You can clear all keys if you POST an empty value for metadata.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.refundPayment = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.refundPayment';
 
     var packet = new Packet(packetId, command, options);
     buildfire._sendPacket(packet, cb);
