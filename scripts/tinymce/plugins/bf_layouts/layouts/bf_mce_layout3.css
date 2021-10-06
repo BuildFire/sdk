@@ -3,6 +3,7 @@
 }
 #bf_mce_layout_3 .container{
   font-size: 16px !important;
+  text-align: center;
   line-height: 1.5;
   padding: .75em;
   margin: 1em;
@@ -57,4 +58,8 @@
   font-size: .75em;
   margin-bottom: 6em;
   margin-top: 0;
+}
+#bf_mce_layout_3 button{
+  min-width: 150px;
+  margin-bottom: 1em;
 }
