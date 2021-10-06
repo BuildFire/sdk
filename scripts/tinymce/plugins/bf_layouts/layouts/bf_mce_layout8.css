@@ -6,25 +6,21 @@
 
   line-height: 1.5;
   padding: .75em;
-  padding-top: calc(120px + 1em);
   margin: 1em;
   border-radius: 1em;
   position: relative;
   box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
-  margin-top: calc(120px + 1em);
   text-align: center;
 }
 #bf_mce_layout_8 .image-container{
   border-radius: .5em;
-  width: 240px;
-  height: 240px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
   overflow: hidden;
   min-height: 12em;
-  position: absolute;
+  margin: 0 auto;
+  margin-top: .5em;
 }
 #bf_mce_layout_8 .image-container img{
   width: 100%;
@@ -41,6 +37,7 @@
 #bf_mce_layout_8 .copy .caption{
   font-size: .75rem !important;
   margin-bottom: 2rem;
+  margin-top: 0;
 }
 #bf_mce_layout_8 .copy p{
   line-height: 1.5;
