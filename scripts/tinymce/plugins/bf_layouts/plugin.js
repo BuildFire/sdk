@@ -1,5 +1,6 @@
 tinymce.PluginManager.add("bf_layouts", function (editor, url) {
     let selectedLayout;
+    let dialogHeight = window.innerHeight > 600 ? 600 : window.innerHeight - 20;
     editor.ui.registry.addButton("bf_edit_layout", {
         icon: 'edit-block',
         tooltip: 'Edit layout',
@@ -78,7 +79,7 @@ tinymce.PluginManager.add("bf_layouts", function (editor, url) {
             title,
             url: `${url}/dialog.html${querystring}`,
             width: 500,
-            height: 600,
+            height: dialogHeight,
             buttons,
             onAction: (dialogApi, details) => {
                 if (details.name === 'Insert Layout' || details.name === 'Change Layout') {

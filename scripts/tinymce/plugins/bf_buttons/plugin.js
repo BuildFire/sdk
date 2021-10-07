@@ -1,4 +1,5 @@
 tinymce.PluginManager.add("bf_buttons", function (editor, url) {
+    let dialogHeight = window.innerHeight > 500 ? 500 : window.innerHeight - 20;
     editor.ui.registry.addButton("bf_edit_button", {
         icon: 'edit-block',
         tooltip: 'Edit button',
@@ -82,7 +83,7 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
             title,
             url: `${url}/dialog.html${querystring}`,
             width: 500,
-            height: 500,
+            height: dialogHeight,
             buttons: dialogButtons,
             onAction: (dialogApi, details) => {
                 if (details.name === 'Select Action') {
