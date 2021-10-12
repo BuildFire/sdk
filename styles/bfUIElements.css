@@ -88,10 +88,6 @@
     line-height: 20px;
     font-weight: 300;
     border-radius: 4px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 .bf-btn:hover {
     color: white !important;

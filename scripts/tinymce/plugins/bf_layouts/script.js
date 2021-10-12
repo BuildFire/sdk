@@ -26,13 +26,24 @@ function render(layouts) {
     }
     let rowDiv = document.createElement('div');
     layouts.forEach((item, index) => {
-        if (index === 0) {
-            selectedLayout = item;
-        }
         let imageDiv = document.createElement('div');
+        if (index === 0 && !originalLayoutData) {
+            selectedLayout = item;
+            imageDiv.classList.add('active');
+        } else if (originalLayoutData) {
+            if (originalLayoutData.id === item.id) {
+                selectedLayout = item;
+                imageDiv.classList.add('active');
+            }
+        }
         imageDiv.classList.add('imageDiv');
         let image = document.createElement('img');
         image.src = item.imageUrl;
+        image.onclick = () => {
+            document.getElementsByClassName('active')[0].classList.remove('active');
+            imageDiv.classList.add('active');
+            selectLayout(item.id);
+        }
         imageDiv.appendChild(image);
         if (index != 0 && index % 3 === 0) {
             mainContainer.appendChild(rowDiv);
@@ -41,24 +52,14 @@ function render(layouts) {
         } else {
             rowDiv.appendChild(imageDiv);
         }
-    }) 
-    mainContainer.appendChild(rowDiv);
-
-    let images = document.querySelectorAll('img');
-    images.forEach((img, index) => {
-        if (index === 0) {
-            img.parentElement.classList.add('active');
-        }
-        img.onclick = () => {
-            document.getElementsByClassName('active')[0].classList.remove('active');
-            img.parentElement.classList.add('active');
-            selectLayout(index);
-        }
     })
+    mainContainer.appendChild(rowDiv);
 }
 
-function selectLayout(index) {
-    selectedLayout = layouts[index];
+function selectLayout(layoutId) {
+    selectedLayout = layouts.find((layout) => {
+        return layoutId === layout.id;
+    });
 }
 window.addEventListener('message', function (event) {
     if (event.data.message === 'getLayout') {

@@ -3237,16 +3237,15 @@ var buildfire = {
                                 });
                                 editor.on('change', function() {
                                     // check if there are unused style elements for layouts and delete them
-                                    var styleElementInBody = editor.dom.doc.body.querySelectorAll('style[data-layout-name]');
-                                    if (styleElementInBody.length > 0) {
+                                    var styleElementsInBody = editor.dom.doc.body.querySelectorAll('style[data-layout-name]');
+                                    if (styleElementsInBody.length > 0) {
                                         var allLayouts = editor.dom.doc.body.querySelectorAll('div[data-layout-name]');
-                                        styleElementInBody.forEach(function(element) {
-                                            var isStyleUsed = false;
-                                            allLayouts.forEach(function(layout) {
-                                                if (layout.dataset.layoutName === element.dataset.layoutName) {
-                                                    isStyleUsed = true;
-                                                }
-                                            })
+                                        allLayouts = Array.from(allLayouts);
+                                        styleElementsInBody.forEach(function(element) {
+                                            var isStyleUsed;
+                                            isStyleUsed = allLayouts.find(function(layout) {
+                                                return layout.dataset.layoutName === element.dataset.layoutName;
+                                            });
                                             if (!isStyleUsed) {
                                                 element.parentElement.removeChild(element);
                                             }
@@ -3266,6 +3265,11 @@ var buildfire = {
                                     shortcut: 'Del',
                                     onAction: function() {
                                       editor.execCommand('Delete');
+                                    }
+                                });
+                                editor.ui.registry.addContextMenu('bf_defaultmenuItems', {
+                                    update: function (element) {
+                                        return element.dataset.bfLayout ? '' : 'cut copy paste | bf_delete';
                                     }
                                 });
                                 originalSetup(editor);
@@ -3336,8 +3340,8 @@ var buildfire = {
                         options.toolbar_mode = 'floating';
                         options.theme = 'silver';
                         options.skin = 'bf-skin',
-                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu cut copy paste  | bf_delete';
-                        options.fontsize_formats= '8px 10px 12px 14px 18px 24px 36px';
+                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
+                        options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
                         options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
                         options.height = options.height || 265;
                         options.custom_elements = 'style';
