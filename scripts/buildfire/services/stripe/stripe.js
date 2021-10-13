@@ -19,10 +19,12 @@ if (typeof (buildfire.services.stripe.connect) == "undefined") buildfire.service
  * @param {string} [options.items[].description] - The description for the line item.
  * @param {string} [options.items[].currency = "usd"] - Three-letter ISO currency code, in lowercase. Must be a supported, for more details check [https://stripe.com/docs/currencies].
  * @param {number} [options.items[].quantity = 1] - The quantity of the line item being purchased.
+ * @param {number} [params.items[].taxBehavior=unspecified] - Specifies whether the price is considered inclusive of taxes or exclusive of taxes. Possible enum values `["inclusive", "exclusive"]`. Once specify it cannot be changed. Required to specify it when enable `automatic tax`
  * @param {string} [options.submitType] - Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. Supported values are "auto, book, donate, or pay".
  * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
  * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
  * @param {string} [params.captureMethod=automatic] - Controls when the funds will be captured from the customer’s account. Possible enum values [automatic, manual].
+ * @param {boolean} [params.automaticTax=false] - Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions. Set it to automaticTax=true to enable automatic taxes.
  */
 
 /**
@@ -48,6 +50,7 @@ buildfire.services.stripe.charge = function (options, cb) {
  * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
  * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
  * @param {Object} [options.metadata] - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata.
+ * @param {boolean} [params.automaticTax=false] - Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions. Set it to automaticTax=true to enable automatic taxes.
  */
 
 /**
@@ -67,11 +70,13 @@ buildfire.services.stripe.subscribe = function (options, cb) {
  * purchase stripe products using stripe checkout.
  * @param {Object} options.
  * @param {Array.<Object>} options.items - a list of items.
- * @param {string} options.items[].sku - The ID of the SKU that the customer would like to purchase.
+ * @param {string} options.items[].sku - The ID of the SKU that the customer would like to purchase. One of sku or price is required.
+ * @param {string} params.items[].price - The ID of the Price object. One of price or sku is required.
  * @param {number} [options.items[].quantity = 1] - The quantity of the line item being purchased.
  * @param {string} [options.submitType] - Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. Supported values are "auto, book, donate, or pay".
  * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
- */
+ * @param {boolean} [params.automaticTax=false] - Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions. to be enable should set it to true. just work with prices (use price instead of sku in item object)
+*/
 
 /**
  * @callback cb
