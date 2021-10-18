@@ -1,5 +1,5 @@
 
-#bf_mce_layout_9 .container{
+#bf_mce_layout_9{
   font-size: 16px !important;
 
   line-height: 1.5;
@@ -10,7 +10,7 @@
   box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
   margin-top: calc(2.5em + 1em);
 }
-#bf_mce_layout_9 .container hr{
+#bf_mce_layout_9 hr{
   margin-left: -.75em;
   margin-right: -.75em;
 }

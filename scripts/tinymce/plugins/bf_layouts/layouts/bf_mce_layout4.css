@@ -1,5 +1,5 @@
 
-#bf_mce_layout_4 .container{
+#bf_mce_layout_4{
     font-size: 16px !important;
     line-height: 1.5;
     padding: 1.5em;
@@ -10,7 +10,7 @@
     box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
     backdrop-filter: blur(24px);
 }
-#bf_mce_layout_4 .container * > span{
+#bf_mce_layout_4 * > span{
     font-size: inherit;
 }
 #bf_mce_layout_4 .main-title{
