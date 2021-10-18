@@ -1403,7 +1403,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
 		padding-bottom: 0px !important;
 	}
-	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent .action-group {
+	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent.has-footer-menu-border-right .action-group {
 		border-bottom: 	1px solid rgba(193, 193, 193, .47)
 	}
 
@@ -2771,6 +2771,10 @@ nav.menu .core-content a.without-text .active-indicator,
 	right: auto;
 	bottom: 0;
 	transform: translateX(-50%);
+}
+
+#footerMenuParent .action-item-img {
+	max-height: 100%;
 }
 
 nav.menu a.active{
