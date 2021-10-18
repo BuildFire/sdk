@@ -1,4 +1,7 @@
 
+#bf_mce_layout_2 * > span{
+    color: currentColor;
+}
 #bf_mce_layout_2{
     font-size: 16px;
     margin: 1rem;

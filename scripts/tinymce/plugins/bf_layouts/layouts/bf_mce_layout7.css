@@ -1,4 +1,6 @@
-
+#bf_mce_layout_7 * > span{
+  color: currentColor;
+}
 #bf_mce_layout_7{
   font-size: 16px !important;
 
@@ -19,7 +21,7 @@
   border-radius: 50%;
   top: -120px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(0);
   overflow: hidden;
   min-height: 12em;
   position: absolute;

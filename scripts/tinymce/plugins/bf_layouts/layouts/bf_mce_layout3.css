@@ -1,4 +1,7 @@
 
+#bf_mce_layout_3 * > span{
+  color: currentColor;
+}
 #bf_mce_layout_3{
   font-size: 16px !important;
   text-align: center;

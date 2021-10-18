@@ -1,4 +1,6 @@
-
+#bf_mce_layout_5 * > span{
+  color: currentColor;
+}
 #bf_mce_layout_5 .container-grid{
   font-size: 16px;
   display: grid;

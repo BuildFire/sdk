@@ -11,7 +11,7 @@
     backdrop-filter: blur(24px);
 }
 #bf_mce_layout_4 * > span{
-    font-size: inherit;
+    color: currentColor;
 }
 #bf_mce_layout_4 .main-title{
     font-size: 2.5em;
