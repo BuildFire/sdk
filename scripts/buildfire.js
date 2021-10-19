@@ -3314,7 +3314,7 @@ var buildfire = {
                         var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
                         options.menu = {
                             edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating | bf_insertLayout'},
+                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating'},
                             view: {title: 'View', items: 'visualaid | preview'},
                             format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
                             tools: {title: 'Tools', items: 'code'},
