@@ -49,11 +49,37 @@ tinymce.PluginManager.add("bf_layouts", function (editor, url) {
             editor.fire("change");
         }
     });
+    editor.ui.registry.addMenuItem('bf_insertBeforeLayout', {
+        text: 'Insert before layout',
+        icon: 'chevron-left',
+        onAction: function() {
+            selectedLayout.insertAdjacentHTML("beforebegin", '<p><br></p>');
+        }
+    });
+    editor.ui.registry.addMenuItem('bf_insertAfterLayout', {
+        text: 'Insert after layout',
+        icon: 'chevron-right',
+        onAction: function() {
+            selectedLayout.insertAdjacentHTML("afterend", '<p><br></p>');
+        }
+    });
     editor.ui.registry.addContextMenu('bf_customLayouts', {
         update: function (element) {
             if (element.dataset.bfLayout) {
                 selectedLayout = element;
-                return 'bf_editLayout bf_copyLayout bf_deleteLayout';
+                return 'bf_editLayout bf_copyLayout bf_deleteLayout bf_insertBeforeLayout bf_insertAfterLayout';
+            } else {
+                while(element.dataset.bfLayout || element.nodeName !== 'BODY') {
+                    element = element.parentElement;
+                    if (element && element.dataset) {
+                        if (element.dataset.bfLayout) {
+                            selectedLayout = element;
+                            return 'bf_editLayout bf_copyLayout bf_deleteLayout bf_insertAfterLayout bf_insertBeforeLayout';
+                        }
+                    } else {
+                        return '';
+                    }
+                }
             }
             return '';
         }
@@ -100,7 +126,8 @@ tinymce.PluginManager.add("bf_layouts", function (editor, url) {
                         layoutDiv.id = layout.id;
                         layoutDiv.innerHTML = layoutHtml;
                         layoutDiv.querySelectorAll('img').forEach((image) => {
-                            image.setAttribute('data-mce-src', image.src);
+                            // this is just a way to convert the relative image path url to an absolute url
+                            image.setAttribute('src', image.src);
                         })
 
                         let data = {};

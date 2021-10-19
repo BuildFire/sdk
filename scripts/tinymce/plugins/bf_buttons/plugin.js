@@ -45,9 +45,12 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
     });
     editor.ui.registry.addContextMenu('bf_buttonOrLinkContextMenu', {
         update: function (element) {
-            editor.execCommand('mceSelectNode', false, element);
             let elementClasses = element.className;
-            return elementClasses.includes('bf-btn') || elementClasses.includes('bf-text-') ? 'bf_editButtonOrLink bf_editButtonOrLinkAction' : '';
+            if(elementClasses.includes('bf-btn') || elementClasses.includes('bf-text-')) {
+                editor.execCommand('mceSelectNode', false, element);
+                return 'bf_editButtonOrLink bf_editButtonOrLinkAction'
+            }
+            return '';
         }
     });
 

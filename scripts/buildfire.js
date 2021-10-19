@@ -3230,8 +3230,6 @@ var buildfire = {
                                         +   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
                                         +   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
                                         +'};'
-                                        + ' document.body.onmouseover = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.add("hover-box-shadow")}; '
-                                        + ' document.body.onmouseout = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.remove("hover-box-shadow")}; '
                                         );
                                     editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
                                 });
@@ -3267,9 +3265,25 @@ var buildfire = {
                                       editor.execCommand('Delete');
                                     }
                                 });
+                                editor.ui.registry.addMenuItem('bf_insertBefore', {
+                                    text: 'Insert before',
+                                    icon: 'chevron-left',
+                                    onAction: function() {
+                                        let selectedNode = editor.selection.getNode();
+                                        selectedNode.insertAdjacentHTML("beforebegin", '&nbsp;');
+                                    }
+                                });
+                                editor.ui.registry.addMenuItem('bf_insertAfter', {
+                                    text: 'Insert after',
+                                    icon: 'chevron-right',
+                                    onAction: function() {
+                                        let selectedNode = editor.selection.getNode();
+                                        selectedNode.insertAdjacentHTML("afterend", '&nbsp;');
+                                    }
+                                });
                                 editor.ui.registry.addContextMenu('bf_defaultmenuItems', {
                                     update: function (element) {
-                                        return element.dataset.bfLayout ? '' : 'cut copy paste | bf_delete';
+                                        return element.dataset.bfLayout ? '' : 'cut copy paste bf_insertBefore bf_insertAfter | bf_delete';
                                     }
                                 });
                                 originalSetup(editor);
@@ -3345,6 +3359,7 @@ var buildfire = {
                         options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
                         options.height = options.height || 265;
                         options.custom_elements = 'style';
+                        options.convert_urls = false;
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
