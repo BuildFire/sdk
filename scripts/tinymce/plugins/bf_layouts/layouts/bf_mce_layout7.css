@@ -1,0 +1,74 @@
+#bf_mce_layout_7 * > span{
+  color: currentColor;
+}
+#bf_mce_layout_7{
+  font-size: 16px !important;
+
+  line-height: 1.5;
+  padding: .75em;
+  padding-top: calc(120px + 1em);
+  margin: 1em;
+  border-radius: 1em;
+  position: relative;
+  box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
+  margin-top: calc(120px + 1em);
+  text-align: center;
+}
+#bf_mce_layout_7 .img-container{
+  border-radius: .5em;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  overflow: hidden;
+  min-height: 12em;
+  position: absolute;
+  
+}
+#bf_mce_layout_7 .img-container .img-copy{
+  margin: 1rem;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  z-index: 2;
+}
+#bf_mce_layout_7 .img-container > img{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+#bf_mce_layout_7 .img-container::after{
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 1;
+}
+#bf_mce_layout_7 .img-container .main-title,
+#bf_mce_layout_7 .img-container .main-title > span{
+  margin-bottom: 0;
+  padding-top: 3em;
+  font-size: 1.5em;
+}
+#bf_mce_layout_7 .img-container .main-title > span{
+  font-size: inherit;
+}
+#bf_mce_layout_7 .img-container .caption,
+#bf_mce_layout_7 .img-container .caption > span{
+  font-size: .75em;
+  margin-bottom: 6em;
+  margin-top: 0;
+}
+#bf_mce_layout_7 .container .bf-btn{
+  width: 100%;
+}

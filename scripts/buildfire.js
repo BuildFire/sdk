@@ -3230,10 +3230,25 @@ var buildfire = {
                                         +   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
                                         +   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
                                         +'};'
-                                        + ' document.body.onmouseover = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.add("hover-box-shadow")}; '
-                                        + ' document.body.onmouseout = function(event) {event.stopPropagation();if(event.target.nodeName !== "BODY")event.target.classList.remove("hover-box-shadow")}; '
                                         );
                                     editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
+                                });
+                                editor.on('change', function() {
+                                    // check if there are unused style elements for layouts and delete them
+                                    var styleElementsInBody = editor.dom.doc.body.querySelectorAll('style[data-layout-name]');
+                                    if (styleElementsInBody.length > 0) {
+                                        var allLayouts = editor.dom.doc.body.querySelectorAll('div[data-layout-name]');
+                                        allLayouts = Array.from(allLayouts);
+                                        styleElementsInBody.forEach(function(element) {
+                                            var isStyleUsed;
+                                            isStyleUsed = allLayouts.find(function(layout) {
+                                                return layout.dataset.layoutName === element.dataset.layoutName;
+                                            });
+                                            if (!isStyleUsed) {
+                                                element.parentElement.removeChild(element);
+                                            }
+                                        });
+                                    }
                                 });
                                 editor.ui.registry.addMenuItem('bf_clearContent', {
                                     text: 'Delete all',
@@ -3248,6 +3263,27 @@ var buildfire = {
                                     shortcut: 'Del',
                                     onAction: function() {
                                       editor.execCommand('Delete');
+                                    }
+                                });
+                                editor.ui.registry.addMenuItem('bf_insertBefore', {
+                                    text: 'Insert before',
+                                    icon: 'chevron-left',
+                                    onAction: function() {
+                                        let selectedNode = editor.selection.getNode();
+                                        selectedNode.insertAdjacentHTML("beforebegin", '&nbsp;');
+                                    }
+                                });
+                                editor.ui.registry.addMenuItem('bf_insertAfter', {
+                                    text: 'Insert after',
+                                    icon: 'chevron-right',
+                                    onAction: function() {
+                                        let selectedNode = editor.selection.getNode();
+                                        selectedNode.insertAdjacentHTML("afterend", '&nbsp;');
+                                    }
+                                });
+                                editor.ui.registry.addContextMenu('bf_defaultmenuItems', {
+                                    update: function (element) {
+                                        return element.dataset.bfLayout ? '' : 'cut copy paste bf_insertBefore bf_insertAfter | bf_delete';
                                     }
                                 });
                                 originalSetup(editor);
@@ -3278,7 +3314,7 @@ var buildfire = {
                         var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
                         options.menu = {
                             edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating'},
+                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating | bf_insertLayout'},
                             view: {title: 'View', items: 'visualaid | preview'},
                             format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
                             tools: {title: 'Tools', items: 'code'},
@@ -3288,7 +3324,7 @@ var buildfire = {
                                 options.menu[item] = userMenu[item];
                             }
                         }
-                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste'];
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
                         if (options.plugins) {
                             if (options.plugins instanceof Array) {
                                 options.plugins = defaultPlugins.concat(options.plugins);  
@@ -3318,10 +3354,12 @@ var buildfire = {
                         options.toolbar_mode = 'floating';
                         options.theme = 'silver';
                         options.skin = 'bf-skin',
-                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu cut copy paste  | bf_delete';
+                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
                         options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
                         options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
                         options.height = options.height || 265;
+                        options.custom_elements = 'style';
+                        options.convert_urls = false;
                         options._bfInitialize = true;
                         return originalTinymceInit(options);
                     }
