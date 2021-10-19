@@ -74,7 +74,7 @@ tinymce.PluginManager.add("bf_layouts", function (editor, url) {
                     if (element && element.dataset) {
                         if (element.dataset.bfLayout) {
                             selectedLayout = element;
-                            return 'bf_editLayout bf_copyLayout bf_deleteLayout bf_insertAfterLayout bf_insertBeforeLayout';
+                            return 'bf_editLayout bf_copyLayout bf_deleteLayout bf_insertBeforeLayout bf_insertAfterLayout';
                         }
                     } else {
                         return '';
