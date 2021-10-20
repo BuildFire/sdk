@@ -7,6 +7,8 @@ function Packet(id, cmd, data) {
     this.instanceId = null;
 }
 
+
+
 /// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
     isFileServer: function(url){
@@ -1542,6 +1544,124 @@ var buildfire = {
                 }
             }
         }
+        , aggregate: function (params, tag, callback) {
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            if (!params || typeof params !== 'object') {
+                params = {};
+            }
+
+            function validate() {
+
+                function _checkIfMatchHasIndexes(matchStage) {
+               
+                    if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                        return false;
+                    }
+
+                    var matchKeys = Object.keys(matchStage);
+                    for (var i = 0; i < matchKeys.length; i++) {
+                        var key = matchKeys[i];
+                        if ((key.indexOf('_buildfire.index') > -1)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            
+                function _findFirstGeoNearStage(stages) {
+                   
+                    if (stages && stages.length === 0) {
+                        return null;
+                    }
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && typeof stage.$geoNear === 'object') {
+                            return { $geoNear: stage.$geoNear, index: i };
+                        }
+                    }
+            
+                    return null;
+                }
+            
+                function _checkIfGeoNearStagesHasRightKey(stages) {
+                    // key : Specify the geospatial indexed field to use when calculating the distance.
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
+                            return false;
+                        }
+                    }
+            
+                    return true;
+                }
+
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
+                }
+    
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+
+                var geoStage = _findFirstGeoNearStage(params.pipelineStages);
+
+                if (geoStage) {
+                    if (geoStage.index !== 0) {
+                        callback('$geoNear should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
+                        callback("$geoNear stages doesn't have the right geospatial indexed field name for key option", null);
+                        return false;
+                    }
+                } else {
+                     // check $match stage should first stage of pipeline
+                    if (typeof params.pipelineStages[0] !== 'object' || !params.pipelineStages[0].$match) {
+                        callback('$match stage should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
+                        callback('$match stage should has at least one of the buildfire indexes', null);
+                        return false;
+                    }
+                }
+    
+                return true;
+            }
+            
+            // these validation not used  for current state, we handle that on server side
+            // if (!validate()) {
+            //     return;
+            // }
+
+            var p = new Packet(null, 'userData.aggregate', {tag: tag, obj: params});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('userDataOnUpdate', callback, allowMultipleHandlers);
@@ -1789,6 +1909,125 @@ var buildfire = {
                 }
             }
         }
+        , aggregate: function (params, tag, callback) {
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            if (!params || typeof params !== 'object') {
+                params = {};
+            }
+
+            function validate() {
+
+                function _checkIfMatchHasIndexes(matchStage) {
+               
+                    if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                        return false;
+                    }
+
+                    var matchKeys = Object.keys(matchStage);
+                    for (var i = 0; i < matchKeys.length; i++) {
+                        var key = matchKeys[i];
+                        if ((key.indexOf('_buildfire.index') > -1)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            
+                function _findFirstGeoNearStage(stages) {
+                   
+                    if (stages && stages.length === 0) {
+                        return null;
+                    }
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && typeof stage.$geoNear === 'object') {
+                            return { $geoNear: stage.$geoNear, index: i };
+                        }
+                    }
+            
+                    return null;
+                }
+            
+                function _checkIfGeoNearStagesHasRightKey(stages) {
+                    // key : Specify the geospatial indexed field to use when calculating the distance.
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
+                            return false;
+                        }
+                    }
+            
+                    return true;
+                }
+
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
+                }
+    
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+
+                var geoStage = _findFirstGeoNearStage(params.pipelineStages);
+
+                if (geoStage) {
+                    if (geoStage.index !== 0) {
+                        callback('$geoNear should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
+                        callback("$geoNear stages doesn't have the right geospatial indexed field name for key option", null);
+                        return false;
+                    }
+                } else {
+                     // check $match stage should first stage of pipeline
+                    if (typeof params.pipelineStages[0] !== 'object' || !params.pipelineStages[0].$match) {
+                        callback('$match stage should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
+                        callback('$match stage should has at least one of the buildfire indexes', null);
+                        return false;
+                    }
+                }
+    
+                return true;
+            }
+
+            // these validation not used  for current state, we handle that on server side
+            // if (!validate()) {
+            //     return;
+            // }
+
+
+            var p = new Packet(null, 'publicData.aggregate', {tag: tag, obj: params});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('publicDataOnUpdate', callback, allowMultipleHandlers);
@@ -1960,6 +2199,119 @@ var buildfire = {
             }
 
             var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
+        , aggregate: function (params, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            if (!params || typeof params !== 'object') {
+                params = {};
+            }
+
+            function validate() {
+
+                function _checkIfMatchHasIndexes(matchStage) {
+               
+                    if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                        return false;
+                    }
+
+                    var matchKeys = Object.keys(matchStage);
+                    for (var i = 0; i < matchKeys.length; i++) {
+                        var key = matchKeys[i];
+                        if ((key.indexOf('_buildfire.index') > -1)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            
+                function _findFirstGeoNearStage(stages) {
+                   
+                    if (stages && stages.length === 0) {
+                        return null;
+                    }
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && typeof stage.$geoNear === 'object') {
+                            return { $geoNear: stage.$geoNear, index: i };
+                        }
+                    }
+            
+                    return null;
+                }
+            
+                function _checkIfGeoNearStagesHasRightKey(stages) {
+                    // key : Specify the geospatial indexed field to use when calculating the distance.
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
+                            return false;
+                        }
+                    }
+            
+                    return true;
+                }
+
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
+                }
+    
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+
+                var geoStage = _findFirstGeoNearStage(params.pipelineStages);
+
+                if (geoStage) {
+                    if (geoStage.index !== 0) {
+                        callback('$geoNear should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
+                        callback("$geoNear stages doesn't have the right geospatial indexed field name for key option", null);
+                        return false;
+                    }
+                } else {
+                     // check $match stage should first stage of pipeline
+                    if (typeof params.pipelineStages[0] !== 'object' || !params.pipelineStages[0].$match) {
+                        callback('$match stage should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
+                        callback('$match stage should has at least one of the buildfire indexes', null);
+                        return false;
+                    }
+                }
+    
+                return true;
+            }
+
+            // these validation not used  for current state, we handle that on server side
+            /* if (!validate()){
+                return;
+            } */
+           
+
+            var p = new Packet(null, 'appData.aggregate', {tag: tag, obj: params});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
