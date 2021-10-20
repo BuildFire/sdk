@@ -13,24 +13,24 @@
 #bf_mce_layout_4 * > span{
     color: currentColor;
 }
-#bf_mce_layout_4 .main-title{
+#bf_mce_layout_4 .bf_mce_main-title{
     font-size: 2.5em;
     font-weight: bold;
     margin-top: 0;
     margin-bottom: 1em;
 }
-#bf_mce_layout_4 .secondary-title{
+#bf_mce_layout_4 .bf_mce_secondary-title{
     font-size: 1.5em;
     font-weight: bold;
     margin-top: 0;
     margin-bottom: .125em;
 }
-#bf_mce_layout_4 .caption{
+#bf_mce_layout_4 .bf_mce_caption{
     font-size: .75em;
     margin-top: 0;
     margin-bottom: 1.5em;
 }
-#bf_mce_layout_4 .body-copy{
+#bf_mce_layout_4 .bf_mce_body-copy{
     margin-top: 0;
     font-size: .875em;
     margin-bottom: 2em;
