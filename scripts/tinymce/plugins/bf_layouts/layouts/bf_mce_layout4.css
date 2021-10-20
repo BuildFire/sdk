@@ -1,0 +1,40 @@
+
+#bf_mce_layout_4{
+    font-size: 16px !important;
+    line-height: 1.5;
+    padding: 1.5em;
+    margin: 1em;
+    border-radius: 1em;
+    position: relative;
+    border: 1px solid rgba(77, 77, 77, 0.2);
+    box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
+    backdrop-filter: blur(24px);
+}
+#bf_mce_layout_4 * > span{
+    color: currentColor;
+}
+#bf_mce_layout_4 .main-title{
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 1em;
+}
+#bf_mce_layout_4 .secondary-title{
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: .125em;
+}
+#bf_mce_layout_4 .caption{
+    font-size: .75em;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+}
+#bf_mce_layout_4 .body-copy{
+    margin-top: 0;
+    font-size: .875em;
+    margin-bottom: 2em;
+}
+#bf_mce_layout_4 .bf-btn{
+    width: 100%;
+}
