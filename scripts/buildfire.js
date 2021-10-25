@@ -502,6 +502,10 @@ var buildfire = {
                 return qs.backnavigationinstance;
             return undefined;
         }
+        , navigateToTab(options = {}, callback) {
+            var p = new Packet(null, 'navigation.navigateToTab', options);
+            buildfire._sendPacket(p, callback);
+        }
     },
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
     // else it returns "controlIFrame"
