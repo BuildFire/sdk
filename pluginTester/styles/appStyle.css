@@ -3805,7 +3805,6 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   position: fixed;
   bottom: 0;
   max-height: calc(90vh - 4em - env(safe-area-inset-top));
-  min-height: 60%;
   animation: drawer-slide-up .3s ease-in-out forwards;
 }
 html:not([type="app"]) .bottom-drawer{
@@ -3988,7 +3987,7 @@ html:not([type="app"]) .bottom-drawer{
 .action-list{
   list-style: none;
   margin: 0;
-  padding: 0 0 5em 0;
+  padding: 0 0 6em 0;
   overflow-y: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
@@ -5079,7 +5078,7 @@ button.list-group-item {
 	width: 50%;
 	margin: 0 auto;
 	margin-top: -4em;
-	padding-bottom: 5em;
+	padding-bottom: calc(16px + 5em + env(safe-area-inset-bottom));
 }
 #headerText, #headerText *, .action-item-texts, .action-item-texts *, #drawerButton *{
 	overflow: hidden;
