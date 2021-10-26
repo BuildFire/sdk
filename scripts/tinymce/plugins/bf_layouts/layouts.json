@@ -3,55 +3,55 @@
         "id": "bf_mce_layout_1",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_1.jpg",
         "cssUrl": "layouts/bf_mce_layout1.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout1.html"
+        "htmlUrl" : "layouts/template_a.html"
     },
     {
         "id": "bf_mce_layout_2",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_2.jpg",
         "cssUrl": "layouts/bf_mce_layout2.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout1.html"
+        "htmlUrl" : "layouts/template_a.html"
     },
     {
         "id": "bf_mce_layout_3",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_3.jpg",
         "cssUrl": "layouts/bf_mce_layout3.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout3.html"
+        "htmlUrl" : "layouts/template_b.html"
     },
     {
         "id": "bf_mce_layout_4",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_4.jpg",
         "cssUrl": "layouts/bf_mce_layout4.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout4.html"
+        "htmlUrl" : "layouts/template_c.html"
     },
     {
         "id": "bf_mce_layout_5",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_5.jpg",
         "cssUrl": "layouts/bf_mce_layout5.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout5.html"
+        "htmlUrl" : "layouts/template_d.html"
     },
     {
         "id": "bf_mce_layout_6",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_6.jpg",
         "cssUrl": "layouts/bf_mce_layout6.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout6.html"
+        "htmlUrl" : "layouts/template_e.html"
     },
     {
         "id": "bf_mce_layout_7",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_7.jpg",
         "cssUrl": "layouts/bf_mce_layout7.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout3.html"
+        "htmlUrl" : "layouts/template_b.html"
     },
     {
         "id": "bf_mce_layout_8",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_8.jpg",
         "cssUrl": "layouts/bf_mce_layout8.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout2.html"
+        "htmlUrl" : "layouts/template_a.html"
     },
     {
         "id": "bf_mce_layout_9",
         "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_9.jpg",
         "cssUrl": "layouts/bf_mce_layout9.css",
-        "htmlUrl" : "layouts/h_bf_mce_layout9.html"
+        "htmlUrl" : "layouts/template_f.html"
     }
 ]
 

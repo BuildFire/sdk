@@ -12,7 +12,7 @@
   box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
   text-align: center;
 }
-#bf_mce_layout_8 .image-container{
+#bf_mce_layout_8 .bf_mce_img-container{
   border-radius: .5em;
   width: 200px;
   height: 200px;
@@ -23,24 +23,24 @@
   margin: 0 auto;
   margin-top: .5em;
 }
-#bf_mce_layout_8 .image-container img{
+#bf_mce_layout_8 .bf_mce_img-container img{
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-#bf_mce_layout_8 .copy{
+#bf_mce_layout_8 .bf_mce_copy{
   padding: 1rem;
 }
-#bf_mce_layout_8 .copy h1{
+#bf_mce_layout_8 .bf_mce_copy h1{
   margin-top: 0;
   margin-bottom: .5rem;
 }
-#bf_mce_layout_8 .copy .caption{
+#bf_mce_layout_8 .bf_mce_copy .bf_mce_caption{
   font-size: .75rem !important;
   margin-bottom: 2rem;
   margin-top: 0;
 }
-#bf_mce_layout_8 .copy p{
+#bf_mce_layout_8 .bf_mce_copy p{
   line-height: 1.5;
 }
 #bf_mce_layout_8 button{
