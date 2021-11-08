@@ -131,10 +131,32 @@ buildfire.services.stripe.cancelSubscription = function (options, cb) {
 };
 
 /**
+ * add customer.
+ * @param {Object} options.
+ * @param {string} options.email - Customer’s email address. It’s displayed alongside the customer in your dashboard and can be useful for searching and tracking. This may be up to 512 characters.
+ * @param {string} options.name - The customer’s full name or business name.
+ * @param {string} options.description - An arbitrary string that you can attach to a customer object. It is displayed alongside the customer in the dashboard.
+ * @param {string} options.metadata - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to metadata.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ * @param {stripe} response.customer_id - Stripe customer id.
+ */
+buildfire.services.stripe.addCustomer = function (options, cb) {
+    var packetId = null;
+    var command = 'stripe.addCustomer';
+
+    var packet = new Packet(packetId, command, options);
+    buildfire._sendPacket(packet, cb);
+};
+
+/**
  * add customer card.
  * @param {Object} options.
  * @param {string} options.customerId - stripe customer id.
- * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
  */
 
 /**
