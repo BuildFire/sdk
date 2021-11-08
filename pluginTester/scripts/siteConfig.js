@@ -11,7 +11,8 @@ window.siteConfig = {
         publicFilesHost : "https://publicfiles.buildfire.com",
 		searchEngineHost : 'https://public.buildfire.com/1.0',
         creditSystemHost : 'https://public.buildfire.com/1.0',
-        stripeHost: 'https://public.buildfire.com/1.0'
+        stripeHost: 'https://public.buildfire.com/1.0',
+		cloudImageHost: 'https://alnnibitpo.cloudimg.io/v7'
 	}
 	, keys: {
 		datastoreKey: '123-ASD-TEST'
