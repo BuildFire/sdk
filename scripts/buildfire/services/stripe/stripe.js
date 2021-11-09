@@ -143,7 +143,7 @@ buildfire.services.stripe.cancelSubscription = function (options, cb) {
  * @callback cb
  * @param {Object} error
  * @param {Object} response
- * @param {stripe} response.customer_id - Stripe customer id.
+ * @param {stripe} response.customer - Stripe customer id.
  */
 buildfire.services.stripe.addCustomer = function (options, cb) {
     var packetId = null;
