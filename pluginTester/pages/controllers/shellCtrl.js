@@ -34,7 +34,9 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
         };
 
         $scope.loadFrames = function (pluginRoot, config) {
-            postMaster.controlPluginAPI.getContext(null, function(err, context){
+            postMaster.controlPluginAPI.getContext(null, function(err, controlContext){
+                var context = JSON.parse(JSON.stringify(controlContext));
+                context.widgetTheme = controlContext.appTheme; // don't change the original context
                 context.appTheme = controlDefaultTheme;
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
                 let lastTabName = sessionStorage.getItem($routeParams.pluginFolder); // Get the last tab opened in a specific plugin
@@ -101,10 +103,13 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
             var pluginFolder = $routeParams.pluginFolder;
             if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
-            postMaster.controlPluginAPI.getContext(null, function(err, context){
+            postMaster.controlPluginAPI.getContext(null, function(err, controlContext){
+                var context = JSON.parse(JSON.stringify(controlContext));
+                context.widgetTheme = controlContext.appTheme; // don't change the original context
+                context.appTheme = controlDefaultTheme;
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
                 $scope.currentControl = $scope.pluginConfig.webpack
-                    ?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control'
+                    ?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter
                     : '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter;
 
                     $scope.activeTab = section;

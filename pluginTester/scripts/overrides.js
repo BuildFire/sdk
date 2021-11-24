@@ -143,6 +143,8 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	};
 	///
 
+	window.keyboardResize  = function() {}; // works for ios only
+
 //override the imageLibTemplate url
 	imageLibCurrentApp.imageLibTemplate = 'https://app.buildfire.com/pages/imageLib/imageLib.html';
 	postMaster.controlPluginAPI.actionItems.templateUrl = 'https://app.buildfire.com/pages/share/actionBuilder.html';

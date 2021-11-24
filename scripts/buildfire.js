@@ -7,6 +7,8 @@ function Packet(id, cmd, data) {
     this.instanceId = null;
 }
 
+
+
 /// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
     isFileServer: function(url){
@@ -99,8 +101,8 @@ var buildfire = {
         }
     }
     , _callbacks: {}
-    , parseQueryString: function () {
-        var query = window.location.search.substring(1);
+    , parseQueryString: function (str) {
+        var query = str || window.location.search.substring(1);
         var vars = query.split('&');
         var obj = new Object();
         for (var i = 0; i < vars.length; i++) {
@@ -186,7 +188,8 @@ var buildfire = {
         buildfire.appearance.attachCSSFiles();
 
         buildfire.localStorage.overrideNativeLocalStorage();
-
+        
+        buildfire.wysiwyg.extend();
     }
     , _whitelistedCommands: [
         "datastore.triggerOnUpdate"
@@ -217,6 +220,7 @@ var buildfire = {
         , "services.publicFiles._triggerOnComplete"
         , "notes.triggerOnSeekTo"
         , "navigation.triggerOnPluginOpened"
+        , "deeplink.triggerOnUpdate"
     ]
     , _postMessageHandler: function (e) {
         if (e.source === window) {
@@ -500,6 +504,10 @@ var buildfire = {
                 return qs.backnavigationinstance;
             return undefined;
         }
+        , navigateToTab(options = {}, callback) {
+            var p = new Packet(null, 'navigation.navigateToTab', options);
+            buildfire._sendPacket(p, callback);
+        }
     },
     //buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
     // else it returns "controlIFrame"
@@ -566,9 +574,22 @@ var buildfire = {
 
             });
         },
+        getWidgetTheme: function (callback) {
+            buildfire.getContext(function(err, context){
+                if (err) return callback(err, null);
+                if (context){
+                    if (context.widgetTheme) {
+                        return callback(null, context.widgetTheme);
+                    }
+                    return buildfire.appearance.getAppTheme(callback);
+                } else {
+                    callback(null, null);
+                }
+            });
+        },
         _forceCSSRender: function(){
             // WebKit Rendering Reset on Plugins
-            if(window.location.href.indexOf('widget') > 0){
+            if(window.location.href.indexOf('/widget/') > 0){
                 var html = document.getElementsByTagName('html')[0];
                 var style = document.createElement('style');
                 style.type = 'text/css';
@@ -579,7 +600,7 @@ var buildfire = {
         insertHTMLAttributes: function () {
             var html = document.getElementsByTagName('html')[0];
 
-            if(window.location.href.indexOf('widget') > 0){
+            if(window.location.href.indexOf('/widget/') > 0){
                 html.setAttribute('buildfire', 'widget');
                 html.setAttribute('type', 'app');
             }else{
@@ -694,32 +715,42 @@ var buildfire = {
                         files.push('styles/appStyle.css');
                     }
                 }
+            }
+            
+            // TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
+            var scripts = document.getElementsByTagName("script");
 
-                // TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
-                var scripts = document.getElementsByTagName("script");
+            for (var i = 0; i < scripts.length; i++) {
+                var src = scripts[i].src;
 
-                for (var i = 0; i < scripts.length; i++) {
-                    var src = scripts[i].src;
-
-                    if (src.indexOf('buildfire.js') > 0) {
-                        base = src.replace('/scripts/buildfire.js', '');
-                        break;
-                    } else if (src.indexOf('buildfire.min.js') > 0) {
-                        base = src.replace('/scripts/buildfire.min.js', '');
-                        break;
-                    }
-                    else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
-                        base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
-                        break;
-                    }
+                if (src.indexOf('buildfire.js') > 0) {
+                    base = src.replace('/scripts/buildfire.js', '');
+                    break;
+                } else if (src.indexOf('buildfire.min.js') > 0) {
+                    base = src.replace('/scripts/buildfire.min.js', '');
+                    break;
+                }
+                else if (src.match(/(\/scripts\/_bundle\S+.js)/gi)) {
+                    base = src.replace(/(\/scripts\/_bundle\S+.js)/gi, '');
+                    break;
                 }
             }
 
+            buildfire.appearance.getWidgetTheme(function(err, theme) {
+                if (err) return console.error(err);
+                var bfWidgetTheme = document.createElement('style');
+                bfWidgetTheme.id = 'bfWidgetTheme';
+                bfWidgetTheme.rel = 'stylesheet';
+                bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(theme);
+                (document.head || document.body || document).appendChild(bfWidgetTheme);
+                files.push('styles/bfUIElements.css');
+            });
+
             if (enableMDTheme) {
-                buildfire.appearance.getAppTheme(function(err, appTheme) {
-                    var styleElement = document.createElement('style');
-                    styleElement.id = 'appMDTheme';
-                    styleElement.type = 'text/css';
+                var styleElement = document.createElement('style');
+                styleElement.id = 'appMDTheme';
+                styleElement.type = 'text/css';
+                function applyMDTheme(err, appTheme) {
                     var css = "";
                     if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
                     && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
@@ -797,8 +828,13 @@ var buildfire = {
                             + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
                             + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
                     styleElement.innerHTML = css;
+                }
+                buildfire.appearance.getAppTheme(function(err, appTheme) {
+                    applyMDTheme(err, appTheme);
                     (document.head || document.body || document).appendChild(styleElement);
-
+                });
+                buildfire.appearance.onUpdate(function(appTheme){
+                    applyMDTheme(null, appTheme);
                 });
             }
 
@@ -909,10 +945,20 @@ var buildfire = {
             var p = new Packet(null, "appearance.setHeaderVisibility", value);
             buildfire._sendPacket(p);
         }
-        , triggerOnUpdate: function () {
+        , onUpdate: function (callback, allowMultipleHandlers) {
+            return buildfire.eventManager.add('appearanceOnUpdate', callback, allowMultipleHandlers);
+        }
+        , triggerOnUpdate: function (appTheme) {
             var appThemeCSSElement = document.getElementById("appThemeCSS");
             if(appThemeCSSElement) {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
+            }
+            if (appTheme) {
+                var bfWidgetTheme = document.getElementById("bfWidgetTheme");
+                if (bfWidgetTheme) {
+                    bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+                }
+                buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
             }
         }, titlebar: {
             show: function(options, callback) {
@@ -958,6 +1004,32 @@ var buildfire = {
                 var p = new Packet(null, "appearance.fullScreenMode.disable");
                 buildfire._sendPacket(p, callback);
             },
+        },
+        _getAppThemeCssVariables: function(appTheme) {
+            var css = ''
+            if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
+            && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
+            && appTheme.fontId !== 'Shadows+into+Light'&& appTheme.fontId !== 'Asap+condensed') {
+                css += '@import url(\'https://fonts.googleapis.com/css?family='+ appTheme.fontName +'\');'
+            }
+            css += ':root {'
+                + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
+                + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
+                + '--bf-theme-warning: ' + appTheme.colors.warningTheme + ' !important;'
+                + '--bf-theme-info: ' + appTheme.colors.infoTheme + ' !important;'
+                + '--bf-theme-default: ' + appTheme.colors.defaultTheme + ' !important;'
+                + '--bf-theme-danger: ' + appTheme.colors.dangerTheme + ' !important;'
+                + '--bf-theme-background: ' + appTheme.colors.backgroundColor + ' !important;'
+                + '--bf-theme-body-text: ' + appTheme.colors.bodyText + ' !important;'
+                + '--bf-theme-footer-background: ' + appTheme.colors.footerMenuBackgroundColor + ' !important;'
+                + '--bf-theme-footer-icon: ' + appTheme.colors.footerMenuIconColor + ' !important;'
+                + '--bf-theme-header-text: ' + appTheme.colors.headerText + ' !important;'
+                + '--bf-theme-icons: ' + appTheme.colors.icons + ' !important;'
+                + '--bf-theme-title-bar: ' + appTheme.colors.titleBar + ' !important;'
+                + '--bf-theme-title-bar-text-icons: ' + appTheme.colors.titleBarTextAndIcons + ' !important;'
+                + '--bf-font-family:' + appTheme.fontName + ', sans-serif !important'                
+            +'}';
+            return css;
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
@@ -1476,6 +1548,124 @@ var buildfire = {
                 }
             }
         }
+        , aggregate: function (params, tag, callback) {
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            if (!params || typeof params !== 'object') {
+                params = {};
+            }
+
+            function validate() {
+
+                function _checkIfMatchHasIndexes(matchStage) {
+               
+                    if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                        return false;
+                    }
+
+                    var matchKeys = Object.keys(matchStage);
+                    for (var i = 0; i < matchKeys.length; i++) {
+                        var key = matchKeys[i];
+                        if ((key.indexOf('_buildfire.index') > -1)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            
+                function _findFirstGeoNearStage(stages) {
+                   
+                    if (stages && stages.length === 0) {
+                        return null;
+                    }
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && typeof stage.$geoNear === 'object') {
+                            return { $geoNear: stage.$geoNear, index: i };
+                        }
+                    }
+            
+                    return null;
+                }
+            
+                function _checkIfGeoNearStagesHasRightKey(stages) {
+                    // key : Specify the geospatial indexed field to use when calculating the distance.
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
+                            return false;
+                        }
+                    }
+            
+                    return true;
+                }
+
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
+                }
+    
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+
+                var geoStage = _findFirstGeoNearStage(params.pipelineStages);
+
+                if (geoStage) {
+                    if (geoStage.index !== 0) {
+                        callback('$geoNear should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
+                        callback("$geoNear stages doesn't have the right geospatial indexed field name for key option", null);
+                        return false;
+                    }
+                } else {
+                     // check $match stage should first stage of pipeline
+                    if (typeof params.pipelineStages[0] !== 'object' || !params.pipelineStages[0].$match) {
+                        callback('$match stage should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
+                        callback('$match stage should has at least one of the buildfire indexes', null);
+                        return false;
+                    }
+                }
+    
+                return true;
+            }
+            
+            // these validation not used  for current state, we handle that on server side
+            // if (!validate()) {
+            //     return;
+            // }
+
+            var p = new Packet(null, 'userData.aggregate', {tag: tag, obj: params});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('userDataOnUpdate', callback, allowMultipleHandlers);
@@ -1723,6 +1913,125 @@ var buildfire = {
                 }
             }
         }
+        , aggregate: function (params, tag, callback) {
+            var tagType = typeof (tag);
+            if (tagType == "undefined")
+                tag = '';
+            else if (tagType == "function" && typeof (callback) == "undefined") {
+                callback = tag;
+                tag = '';
+            }
+
+            if (!params || typeof params !== 'object') {
+                params = {};
+            }
+
+            function validate() {
+
+                function _checkIfMatchHasIndexes(matchStage) {
+               
+                    if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                        return false;
+                    }
+
+                    var matchKeys = Object.keys(matchStage);
+                    for (var i = 0; i < matchKeys.length; i++) {
+                        var key = matchKeys[i];
+                        if ((key.indexOf('_buildfire.index') > -1)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            
+                function _findFirstGeoNearStage(stages) {
+                   
+                    if (stages && stages.length === 0) {
+                        return null;
+                    }
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && typeof stage.$geoNear === 'object') {
+                            return { $geoNear: stage.$geoNear, index: i };
+                        }
+                    }
+            
+                    return null;
+                }
+            
+                function _checkIfGeoNearStagesHasRightKey(stages) {
+                    // key : Specify the geospatial indexed field to use when calculating the distance.
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
+                            return false;
+                        }
+                    }
+            
+                    return true;
+                }
+
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
+                }
+    
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+
+                var geoStage = _findFirstGeoNearStage(params.pipelineStages);
+
+                if (geoStage) {
+                    if (geoStage.index !== 0) {
+                        callback('$geoNear should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
+                        callback("$geoNear stages doesn't have the right geospatial indexed field name for key option", null);
+                        return false;
+                    }
+                } else {
+                     // check $match stage should first stage of pipeline
+                    if (typeof params.pipelineStages[0] !== 'object' || !params.pipelineStages[0].$match) {
+                        callback('$match stage should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
+                        callback('$match stage should has at least one of the buildfire indexes', null);
+                        return false;
+                    }
+                }
+    
+                return true;
+            }
+
+            // these validation not used  for current state, we handle that on server side
+            // if (!validate()) {
+            //     return;
+            // }
+
+
+            var p = new Packet(null, 'publicData.aggregate', {tag: tag, obj: params});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
         /// ref:
         , onUpdate: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('publicDataOnUpdate', callback, allowMultipleHandlers);
@@ -1894,6 +2203,119 @@ var buildfire = {
             }
 
             var p = new Packet(null, 'appData.search', {tag: tag, obj: options});
+            buildfire._sendPacket(p, function (err, result) {
+                callback(err, result);
+            });
+        }
+        , aggregate: function (params, tag, callback) {
+            if (!this._isTagValid(tag, callback)) return;
+
+            if (!params || typeof params !== 'object') {
+                params = {};
+            }
+
+            function validate() {
+
+                function _checkIfMatchHasIndexes(matchStage) {
+               
+                    if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
+                        return false;
+                    }
+
+                    var matchKeys = Object.keys(matchStage);
+                    for (var i = 0; i < matchKeys.length; i++) {
+                        var key = matchKeys[i];
+                        if ((key.indexOf('_buildfire.index') > -1)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            
+                function _findFirstGeoNearStage(stages) {
+                   
+                    if (stages && stages.length === 0) {
+                        return null;
+                    }
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && typeof stage.$geoNear === 'object') {
+                            return { $geoNear: stage.$geoNear, index: i };
+                        }
+                    }
+            
+                    return null;
+                }
+            
+                function _checkIfGeoNearStagesHasRightKey(stages) {
+                    // key : Specify the geospatial indexed field to use when calculating the distance.
+            
+                    for (var i = 0; i < stages.length; i++) {
+                        var stage = stages[i];
+            
+                        if (typeof stage !== 'object') {
+                            continue;
+                        }
+            
+                        if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
+                            return false;
+                        }
+                    }
+            
+                    return true;
+                }
+
+                if (!params.pipelineStages) {
+                    callback("pipelineStages is required property for aggregation", null);
+                    return false;
+                }
+    
+                if (!Array.isArray(params.pipelineStages)) {
+                    callback("pipelineStages property should be an array of your pipeline stages", null);
+                    return false;
+                }
+
+                var geoStage = _findFirstGeoNearStage(params.pipelineStages);
+
+                if (geoStage) {
+                    if (geoStage.index !== 0) {
+                        callback('$geoNear should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
+                        callback("$geoNear stages doesn't have the right geospatial indexed field name for key option", null);
+                        return false;
+                    }
+                } else {
+                     // check $match stage should first stage of pipeline
+                    if (typeof params.pipelineStages[0] !== 'object' || !params.pipelineStages[0].$match) {
+                        callback('$match stage should be first stage of pipeline', null);
+                        return false;
+                    }
+        
+                    if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
+                        callback('$match stage should has at least one of the buildfire indexes', null);
+                        return false;
+                    }
+                }
+    
+                return true;
+            }
+
+            // these validation not used  for current state, we handle that on server side
+            /* if (!validate()){
+                return;
+            } */
+           
+
+            var p = new Packet(null, 'appData.aggregate', {tag: tag, obj: params});
             buildfire._sendPacket(p, function (err, result) {
                 callback(err, result);
             });
@@ -2253,7 +2675,7 @@ var buildfire = {
                 hash |= 0; // Convert to 32bit integer
             }
 
-            return 'cdvfile://localhost/persistent/imageCache/images/' + hash + extension;
+            return buildfire.getContext().endPoints.pluginHost.replace('pluginTemplate/plugins', 'imageCache/images') + '/' + hash + extension;
         },
         getCompression: function (c) {
             var result = 'n/'
@@ -2644,15 +3066,30 @@ var buildfire = {
             }
             buildfire.pluginInstance.showDialog(options,callback);
         }
+        , create: function (options, callback) {
+            var p = new Packet(null, 'pluginInstances.create', options);
+            buildfire._sendPacket(p, callback);
+        }
+        , clone: function (options, callback) {
+            var p = new Packet(null, 'pluginInstances.clone', options);
+            buildfire._sendPacket(p, callback);
+        }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Deep-Links
     , deeplink: {
         getData: function (callback) {
+            if (buildfire.deeplink._data) {
+                return callback(buildfire.deeplink._data);
+            }
+
             var qs = buildfire.parseQueryString();
-            if(qs.dld)
-                callback(JSON.parse(qs.dld)); /// dld: Deep Link Data
-            else
+            if (qs.dld) {
+                var obj = JSON.parse(qs.dld);
+                buildfire.deeplink._data = obj;
+                callback(obj); /// dld: Deep Link Data
+            } else {
                 callback(null);
+            }
         },
         template: {
             get: function (callback) {
@@ -2795,7 +3232,21 @@ var buildfire = {
                     callback('no result found for this deeplink id', null);
                 }
             });
-        }
+        },
+        onUpdate: function (callback, allowMultipleHandlers) {
+            buildfire.eventManager.add('deeplinkOnUpdate', callback, allowMultipleHandlers);
+        },
+        triggerOnUpdate: function (queryString) {
+            try {
+                var qs = buildfire.parseQueryString(decodeURIComponent(queryString));
+                buildfire.deeplink._data = JSON.parse(qs.dld);
+            } catch (error) {
+                console.error(error);
+                buildfire.deeplink._data = queryString;
+            }
+            buildfire.eventManager.trigger('deeplinkOnUpdate', buildfire.deeplink._data);
+        },
+        _data: null
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/Spinners
     , spinner: {
@@ -2923,6 +3374,16 @@ var buildfire = {
         },
         triggerOnAppResumed: function (data) {
             return buildfire.eventManager.trigger('deviceAppResumed', data);
+        },
+        contacts: {
+            showDialog: function (options, callback) {
+                var p = new Packet(null, 'device.contacts.showDialog', options);
+                buildfire._sendPacket(p, callback);
+            },
+            search: function (options, callback) {
+                var p = new Packet(null, 'device.contacts.search', options);
+                buildfire._sendPacket(p, callback);
+            }
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
@@ -3091,7 +3552,177 @@ var buildfire = {
         getByItemId: function (options, callback) {
             buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
         }
-    }
+    },
+    wysiwyg: {
+        injectPluginStyles: function(css) {
+            var tinymcePluginStylesElement = document.getElementById('tinymcePluginStyles');
+            if (tinymcePluginStylesElement) {
+                tinymcePluginStylesElement.innerHTML = css;
+            } else {
+                var tinymcePluginStyles = document.createElement('style');
+                tinymcePluginStyles.id = 'tinymcePluginStyles';
+                tinymcePluginStyles.rel = 'stylesheet';
+                tinymcePluginStyles.innerHTML = css;
+                (document.head || document.body || document).appendChild(tinymcePluginStyles);
+            }
+        },
+        extend: function() {
+            if(typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
+                var appContext = buildfire.getContext();
+                if (appContext && appContext.endPoints) {
+                    var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
+                    var originalTinymceInit = tinymce.init.bind(tinymce);
+                    tinymce.init = function(options) {
+                        if (options._bfInitialize === true) {
+                            return originalTinymceInit(options);
+                        }
+                        var originalSetup = options.setup;
+                        if (originalSetup) {
+                            options.setup = function (editor) {
+                                editor.on('init', function () {
+                                    // add a mimic of buildfire object to prevent errors in tinymce
+                                    var scriptElm = editor.dom.create( 'script', {},
+                                        'var buildfire = {'
+                                        +   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
+                                        +   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
+                                        +'};'
+                                        );
+                                    editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
+                                });
+                                editor.on('change', function() {
+                                    // check if there are unused style elements for layouts and delete them
+                                    var styleElementsInBody = editor.dom.doc.body.querySelectorAll('style[data-layout-name]');
+                                    if (styleElementsInBody.length > 0) {
+                                        var allLayouts = editor.dom.doc.body.querySelectorAll('div[data-layout-name]');
+                                        allLayouts = Array.from(allLayouts);
+                                        styleElementsInBody.forEach(function(element) {
+                                            var isStyleUsed;
+                                            isStyleUsed = allLayouts.find(function(layout) {
+                                                return layout.dataset.layoutName === element.dataset.layoutName;
+                                            });
+                                            if (!isStyleUsed) {
+                                                element.parentElement.removeChild(element);
+                                            }
+                                        });
+                                    }
+                                });
+                                editor.ui.registry.addMenuItem('bf_clearContent', {
+                                    text: 'Delete all',
+                                    icon: 'remove',
+                                    onAction: function() {
+                                      editor.execCommand('mceNewDocument');
+                                    }
+                                });
+                                editor.ui.registry.addMenuItem('bf_delete', {
+                                    text: 'Delete',
+                                    icon: 'remove',
+                                    shortcut: 'Del',
+                                    onAction: function() {
+                                      editor.execCommand('Delete');
+                                    }
+                                });
+                                editor.ui.registry.addMenuItem('bf_insertBefore', {
+                                    text: 'Insert before',
+                                    icon: 'chevron-left',
+                                    onAction: function() {
+                                        let selectedNode = editor.selection.getNode();
+                                        selectedNode.insertAdjacentHTML("beforebegin", '&nbsp;');
+                                    }
+                                });
+                                editor.ui.registry.addMenuItem('bf_insertAfter', {
+                                    text: 'Insert after',
+                                    icon: 'chevron-right',
+                                    onAction: function() {
+                                        let selectedNode = editor.selection.getNode();
+                                        selectedNode.insertAdjacentHTML("afterend", '&nbsp;');
+                                    }
+                                });
+                                editor.ui.registry.addContextMenu('bf_defaultmenuItems', {
+                                    update: function (element) {
+                                        return element.dataset.bfLayout ? '' : 'cut copy paste bf_insertBefore bf_insertAfter | bf_delete';
+                                    }
+                                });
+                                originalSetup(editor);
+                            }
+                        }
+                        
+                        buildfire.appearance.getWidgetTheme(function(err, theme) {
+                            if (err) return console.error(err);
+                            if (options.content_style) {
+                                options.content_style += buildfire.appearance._getAppThemeCssVariables(theme);
+                            } else {
+                                options.content_style = buildfire.appearance._getAppThemeCssVariables(theme);
+                            }
+                        });
+                        if (options.content_css) {
+                            if (options.content_css instanceof Array) {
+                                options.content_css.push(appTheme, '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css');
+                            } else {
+                                var splittedStyleFiles = options.content_css.split(',');
+                                splittedStyleFiles.push(appTheme, '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css');
+                                options.content_css = splittedStyleFiles;
+                            }
+                        } else {
+                            options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
+                        }
+                        
+                        options.menubar = options.menubar || 'edit insert view format tools';
+                        var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
+                        options.menu = {
+                            edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
+                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
+                            view: {title: 'View', items: 'visualaid | preview'},
+                            format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
+                            tools: {title: 'Tools', items: 'code'},
+                        }
+                        if (userMenu) {
+                            for (item in userMenu) {
+                                options.menu[item] = userMenu[item];
+                            }
+                        }
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
+                        if (options.plugins) {
+                            if (options.plugins instanceof Array) {
+                                options.plugins = defaultPlugins.concat(options.plugins);  
+                            } else {
+                                var splittedPlugins = options.plugins.split(' ');
+                                options.plugins = defaultPlugins.concat(splittedPlugins);
+                            }
+                        } else {
+                            options.plugins = defaultPlugins;
+                        }
+                        var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
+                        if (options.toolbar) {
+                            if (options.toolbar instanceof Array) {
+                                if (!(options.toolbar[0] instanceof Object)) {
+                                    options.toolbar.forEach(function (toolbarGroup) {
+                                        defaultToolbar += ' | ' + toolbarGroup;
+                                    });
+                                    options.toolbar = defaultToolbar;
+                                }
+                            } else {
+                                defaultToolbar += ' | ' + options.toolbar;
+                                options.toolbar = defaultToolbar;
+                            }
+                        } else {
+                            options.toolbar = defaultToolbar;
+                        }
+                        options.toolbar_mode = 'floating';
+                        options.theme = 'silver';
+                        options.skin = 'bf-skin',
+                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
+                        options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
+                        options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]'
+                        options.height = options.height || 265;
+                        options.custom_elements = 'style';
+                        options.convert_urls = false;
+                        options._bfInitialize = true;
+                        return originalTinymceInit(options);
+                    }
+                }
+            } 
+        }
+    },
 };
 
 window.parsedQuerystring = buildfire.parseQueryString();
@@ -3162,7 +3793,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         else {
             if (context && context.debugTag)
                 buildfire.logger.attachRemoteLogger(context.debugTag);
-            if (window.location.pathname.indexOf('/widget/') > 0) {
+            if (window.location.pathname.indexOf('/widget/') >= 0) {
                 var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
                 var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
 

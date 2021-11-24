@@ -201,7 +201,9 @@ html[wkwebview="true"] #footerMenuParent{
 	font-size: 3.5vh;
 }
 
-.has-footer-menu {
+.has-footer-menu,
+#plugin.has-footer-menu #pluginIap .iap-subscriptions,
+#plugin.has-footer-menu #pluginIap .iapMessage {
 	/*height:calc(100% - 40px) !important;*/
 	/*padding-bottom: 43px;*/
 	padding-bottom: 7vh;
@@ -1244,6 +1246,8 @@ html[ios="true"][view="app"] .app-search-plugin,
 html[ios="true"][view="app"] .bookmarks-container,
 html[ios="true"][view="app"] .page-container,
 html[ios="true"][view="app"] .push-notifications,
+html[ios="true"][view="app"] .isNavbarVisible .iap-subscriptions,
+html[ios="true"][view="app"] .isNavbarVisible .iapMessage,
 html[ios="true"][view="app"] #frmExternalRegistrationForm {
 	padding-top: 64px !important;
 }
@@ -1301,6 +1305,8 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications,
+	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
 	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
 		padding-top: 88px !important;
 	}
@@ -1384,7 +1390,9 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 		padding-bottom: env(safe-area-inset-bottom) !important; /* iOS 11.2 */
 		min-height:10% !important;
 	}
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu {
+	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
 		padding-bottom: 10vh !important;
 	}
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
@@ -1395,7 +1403,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
 		padding-bottom: 0px !important;
 	}
-	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent .action-group {
+	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent.has-footer-menu-border-right .action-group {
 		border-bottom: 	1px solid rgba(193, 193, 193, .47)
 	}
 
@@ -1892,6 +1900,10 @@ textarea.md-input{
 .iap-subscriptions:not(.iapMessage) #iap-wysiwyg span {
 	color: #222 !important;
 	word-break: break-word;
+}
+
+#launcherIap .iap-subscriptions {
+	height: 100vh !important;
 }
 
 /** Lory */
@@ -2759,6 +2771,10 @@ nav.menu .core-content a.without-text .active-indicator,
 	right: auto;
 	bottom: 0;
 	transform: translateX(-50%);
+}
+
+#footerMenuParent .action-item-img {
+	max-height: 100%;
 }
 
 nav.menu a.active{
@@ -3789,7 +3805,6 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   position: fixed;
   bottom: 0;
   max-height: calc(90vh - 4em - env(safe-area-inset-top));
-  min-height: 60%;
   animation: drawer-slide-up .3s ease-in-out forwards;
 }
 html:not([type="app"]) .bottom-drawer{
@@ -3972,14 +3987,14 @@ html:not([type="app"]) .bottom-drawer{
 .action-list{
   list-style: none;
   margin: 0;
-  padding: 0 0 5em 0;
+  padding: 0 0 6em 0;
   overflow-y: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
 }
 .action-list .item-icon{
-  width: 3.5em;
-  height: 3.5em;
+  width: 3em;
+  height: 3em;
   margin-right: 1rem;
   align-items: center;
 	justify-content: center;
@@ -3988,7 +4003,6 @@ html:not([type="app"]) .bottom-drawer{
 }
 .action-list li{
   display: flex;
-  align-items: center;
   padding: 1.5rem;
   cursor: pointer;
 	transition: background-color ease-in-out .3s;
@@ -4944,6 +4958,9 @@ button.list-group-item {
 	display: flex;
 	flex-shrink: 0;
 }
+.has-images .checkbox {
+	padding-top: 1.2rem;
+}
 #drawerButtonDiv {
 	font-size: initial;
 	font-weight: bold;
@@ -5061,7 +5078,7 @@ button.list-group-item {
 	width: 50%;
 	margin: 0 auto;
 	margin-top: -4em;
-	padding-bottom: 5em;
+	padding-bottom: calc(16px + 5em + env(safe-area-inset-bottom));
 }
 #headerText, #headerText *, .action-item-texts, .action-item-texts *, #drawerButton *{
 	overflow: hidden;
@@ -5077,6 +5094,14 @@ button.list-group-item {
 #drawerButton span:first-child:hover, #drawerButton span:first-child{
 	background-color: transparent !important;
 }
+.drawer-checkboxes {
+	padding-top: 1.2rem;
+}
+.action-item-texts {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
 #webviewBackdrop {
 	z-index: 999999999;
 	min-height: 100vh;
@@ -5086,11 +5111,9 @@ button.list-group-item {
 	left: 0;
 	animation: bottom-drawer-fade-in .2s ease-in-out forwards;
 }
-
 #webviewBackdrop.closing {
 	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
 }
-
 #sideMenuHeaderImage {
 	height: 26px;
 	width: 26px; 

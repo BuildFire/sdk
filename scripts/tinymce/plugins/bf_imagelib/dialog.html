@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="./style.css" rel="stylesheet">
+		<link href="../../../../scripts/tinymce/bf_tinymce_plugins.css" rel="stylesheet">
+		<link href="../../../../styles/bootstrap.css" rel="stylesheet">
+	</head>
+	<body>
+		<div id="imageContainer">
+			<div id="imageDiv">
+			</div>
+		</div>
+		<div id="container">
+			<p>Aspect Ratio</p>
+			<div id="radioButtonsDiv" class="margin-10-bottom">
+				<div class="radio radio-primary radio-inline">
+					<input id="resize" type="radio" name="cropOrResize" value="resize" checked="checked">
+					<label for="resize">Resize</label>
+				</div>
+				<div class="radio radio-primary radio-inline">
+					<input id="crop" type="radio" name="cropOrResize" value="crop">
+					<label for="crop">Crop</label>
+				</div>
+			</div>
+
+			<div class="stretch margin-20-bottom">
+				<div class="dropdown" >
+					<button id="cropAspectRatioButton" class="btn btn-default stretch" disabled>
+						<span id="cropDropDownValue" class="pull-left">1:1</span>
+						<span class="chevron icon-chevron-down pull-right"></span>
+					</button>
+					<ul id="cropAspectRatios" class="dropdown-menu" role="menu">
+						<li>1:1</li>
+						<li>4:3</li>
+						<li>16:9</li>
+						<li>9:16</li>
+						<li>11:5</li>
+						<li>4:1</li>
+						<li>2.39:1</li>
+					</ul>
+				</div>
+			</div>
+
+			<p>Image Size</p>
+			<div id="radioButtonsDiv" class="margin-10-bottom">
+				<div class="radio radio-primary radio-inline">
+					<input id="fixed" type="radio" name="fixedOrResponsive" value="fixed" checked="checked">
+					<label for="fixed">Fixed</label>
+				</div>
+				<div class="radio radio-primary radio-inline">
+					<input id="responsive" type="radio" name="fixedOrResponsive" value="responsive">
+					<label for="responsive">Responsive</label>
+				</div>
+			</div>
+
+			<div id="fixedDropdown">
+				<div class="stretch margin-10-bottom">
+					<div class="dropdown" >
+						<button class="btn btn-default stretch">
+							<span id="fixedValue" class="pull-left">xxs (32px)</span>
+							<span class="chevron icon-chevron-down pull-right"></span>
+						</button>
+						<ul id="fixedOptions" class="dropdown-menu" role="menu">
+							<li id="xxs">xxs (32px)</li>
+							<li id="xs">xs (64px)</li>
+							<li id="s">s (128px)</li>
+							<li id="m">m (200px)</li>
+							<li id="l">l (304px)</li>
+							<li id="xl">xl (416px)</li>
+							<li id="xxl">xxl (600px)</li>
+							<li id="720">720 (720px)</li>
+							<li id="1080">1080 (1080px)</li>
+							<li id="1440">1440 (1440px)</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div id="responsiveDropdown" style="display: none;">
+				<div class="stretch margin-10-bottom">
+					<div class="dropdown" >
+						<button class="btn btn-default stretch">
+							<span id="responsiveValue" class="pull-left">Full width</span>
+							<span class="chevron icon-chevron-down pull-right"></span>
+						</button>
+						<ul id="responsiveOptions" class="dropdown-menu" role="menu">
+							<li id="full_width">Full width</li>
+							<li id="half_width">Half width</li>
+							<li id="third_width">Third width</li>
+							<li id="quarter_width">Quarter width</li>
+							<li id="fifth_width">Fifth width</li>
+							<li id="sixth_width">Sixth width</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="./script.js"></script>
+	</body>
+</html>
