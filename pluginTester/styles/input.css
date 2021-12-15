@@ -300,7 +300,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	background-color: rgba(128, 128, 128, 0.1);
 }
 
-#gifDialog .powered-by {
+#gifDialog .powered-by-giphy {
 	background: black;
 }
 
@@ -310,7 +310,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	flex-direction: column;
 }
 
-#gifDialog .powered-by img {
+#gifDialog .powered-by-giphy img {
 	margin: 0 auto;
 	display: block;
 	padding-bottom: env(safe-area-inset-bottom);
