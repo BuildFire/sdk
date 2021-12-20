@@ -477,8 +477,8 @@ var buildfire = {
                 }, false);
             }
         }
-        , navigateEmulator: function(){
-            buildfire._sendPacket(new Packet(null, 'navigation.navigateEmulator'));
+        , navigateEmulator: function(options){
+            buildfire._sendPacket(new Packet(null, 'navigation.navigateEmulator', options));
         }
         , onAppLauncherActive: function (callback, allowMultipleHandlers) {
             return buildfire.eventManager.add('appLauncherActive', callback, allowMultipleHandlers);
