@@ -3785,7 +3785,7 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 /* Bottom Drawer - New UI components */
 .bottom-drawer-container{
 	position: absolute;
-	z-index: 99999;
+	z-index: 999999999;
 	pointer-events: none;
 	width: 100%;
 	height: 100%;
