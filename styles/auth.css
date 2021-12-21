@@ -357,79 +357,6 @@ html[ios="true"][view="app"][storyboard-launch-images="true"] .gdpr-notice .clos
   padding-bottom: const(safe-area-inset-bottom) !important;
 }
 
-.gdpr-checkboxes {
-  text-align: left;
-  margin-top: 15px;
-}
-.gdpr-checkboxes input {
-  margin-top: 0 !important;
-  margin-left: 4px;
-  padding: 8px;
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-  transition: opacity .2s ease-in-out;
-  opacity: 0;
-  position: absolute;
-  /* margin: 10px 0 !important; */
-}
-.gdpr-checkboxes label {
-  padding: 8px 8px 8px 32px;
-  margin-bottom: 0;
-  display: block;
-  transition: opacity .2s ease-in-out;
-  position: relative;
-  font-size: 12px;
-  max-width: 100% !important;
-}
-.gdpr-checkboxes label::before{
-  content: '';
-  background-color: rgba(100, 100, 100, .3);
-  border: 1px solid rgba(180,180,180,.4);
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 10px;
-  /* padding-left: 10px; */
-}
-.gdpr-checkboxes input:checked + label::after{
-  content: "\e013";
-  display: inline-block;
-  font-family: 'Glyphicons Halflings';
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  color: rgba(20, 20, 20, .9);
-  position: absolute;
-  left: 3px;
-  top: 13px;
-  font-size: 12px !important;
-}
-.gdpr-checkboxes input:checked + label::before{
-  background-color: rgba(180,180,180,.5);
-}
-
-.gdpr-checkboxes .group {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.gdpr-checkboxes .group .feedback-messages{
-  flex-basis: 100%;
-}
-.custom-registration .gdpr-checkboxes .group .checkbox-group{
-  display: flex;
-  align-items: center;
-}
-.custom-registration .gdpr-checkboxes .has-error + .feedback-messages{
-  margin-left: 32px;
-  display: block;
-  font-size: 12px;
-}
 .vertical-padding {
   padding: 10px 0;
 }
@@ -490,13 +417,6 @@ html[type='app'] .modal .modal-dialog {
   max-width: 90%;
 }
 
-.login-holder .gdpr-checkboxes {
-  margin-top: 30px;
-}
-
-.login-holder .gdpr-checkboxes .group {
-  margin-bottom: 8px;
-}
 /*
 .login-holder .external-registration-form,
 .login-holder .custom-registration {
@@ -641,4 +561,28 @@ html[type='app'] .modal .modal-dialog {
 .login-holder .navbar.sso-navbar.form-loaded,
 .login-holder .navbar.sso-navbar.form-failed {
 	display: initial;
+}
+.multiple-select-options, .gdpr-checkboxes .checkbox {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  padding-top: 8px;
+  padding-left: 22px;
+  margin-bottom: 10px;
+  margin-top: 10px !important;
+  text-align: left;
+}
+.login-holder .checkbox input[type="checkbox"]:checked + label::after,
+.profile-holder .checkbox input[type="checkbox"]:checked + label::after{
+  font-family: "Glyphicons Halflings";
+  content: "\e013";
+}
+.gdpr-checkboxes {
+  text-align: left;
+  margin-top: 34px;
+}
+.login-holder .gdpr-checkboxes .has-error + .feedback-messages{
+  display: block;
+  padding-left: 10px;
+  font-size: 12px;
 }
