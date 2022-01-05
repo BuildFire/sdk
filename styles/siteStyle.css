@@ -603,8 +603,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	top:4px;
 }
 .draggable-list-view.carousel-items .d-item span.title{
-	width: 59%;
-	max-width: 59%;
+	width: 58%;
+	max-width: 58%;
 	margin-right:0;
 }
 .draggable-list-view .d-item .copy span.content{
