@@ -286,14 +286,14 @@ buildfire.components.carousel.editor.prototype = {
 
         editContainer.setAttribute("style","margin-left:94px;");//added
         speedDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-top:7px;");//added
-        selector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:64px ; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
+        selector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:62px ; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
         orderDropDown.className="screen layouticon pull-left";//added
         orderSelector.className="form-control dropdown margin-left-zero change-random";//added
         orderDropDownLabel.className="labels pull-left medium";//added
 
         orderDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-left:5px; margin-top:7px;");//added
-        orderSelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:72px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
+        orderSelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:70px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
 
         displayDropDown.className="screen layouticon pull-left";//added
@@ -301,7 +301,7 @@ buildfire.components.carousel.editor.prototype = {
         displayDropDownLabel.className="labels pull-left medium";//added
 
         displayDropDownLabel.setAttribute("style","font-size:13px!important; margin-right:5px; margin-left:5px; margin-top:7px;");//added
-        displaySelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:86px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
+        displaySelector.setAttribute("style","padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:84px; -moz-appearance: menulist; -webkit-appearance: menulist;");//added
 
         displayDropDownLabel.innerHTML = "Display";//added
 

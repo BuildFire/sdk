@@ -603,8 +603,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	top:4px;
 }
 .draggable-list-view.carousel-items .d-item span.title{
-	width:60%;
-	max-width:60%;
+	width: 59%;
+	max-width: 59%;
 	margin-right:0;
 }
 .draggable-list-view .d-item .copy span.content{
@@ -621,8 +621,8 @@ html[browser="Firefox"] .draggable-list-view .d-item.square-icon .media-holder{
 	position:relative;
 	top:5px;
 	display:inline-block;
-	width:76.5%;
-	max-width:76.5%;
+	width: 75%;
+	max-width: 75%;
 }
 .draggable-list-view .d-item .copy span.btn-icon{
 	top:5px;
