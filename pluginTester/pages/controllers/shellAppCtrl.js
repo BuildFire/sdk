@@ -43,6 +43,9 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 	$scope.loadWebpackFrames = function(config) {
 			var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
         	postMaster.widgetPluginAPI.getContext(null, function(err, context){
+                var widgetFrame = document.querySelector("#widget");
+            	context.initialWidth = widgetFrame.clientWidth;
+            	context.initialHeight = widgetFrame.clientHeight;
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
                 $scope.widgetSrc = root + '/widget/index.html?fid=widget&' + contextQueryParameter;
 
@@ -67,6 +70,9 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 	$scope.loadFrames = function (pluginFolder, config) {
 			var root =  '../plugins/';
 			postMaster.widgetPluginAPI.getContext(null, function(err, context){
+				var widgetFrame = document.querySelector("#widget");
+            	context.initialWidth = widgetFrame.clientWidth;
+            	context.initialHeight = widgetFrame.clientHeight;
                 var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
                 $scope.widgetSrc = root + pluginFolder + '/widget/index.html?fid=widget&' + contextQueryParameter;
 

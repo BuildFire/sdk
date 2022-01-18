@@ -108,6 +108,10 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		iframeControl.style.height = height + 'px';
 	};
 
+	postMaster.widgetPluginAPI.appearance.navbar.isVisible = function(){ 
+		return false; 
+	}
+
 	postMaster.controlPluginAPI.analytics.trackAction = postMaster.widgetPluginAPI.analytics.trackAction = function (actionName, metadata) {
 		console.log('analytics mock track action [' + actionName + ']', metadata);
 	};
