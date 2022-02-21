@@ -1564,7 +1564,7 @@ var buildfire = {
             function validate() {
 
                 function _checkIfMatchHasIndexes(matchStage) {
-               
+
                     if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
                         return false;
                     }
@@ -1929,7 +1929,7 @@ var buildfire = {
             function validate() {
 
                 function _checkIfMatchHasIndexes(matchStage) {
-               
+
                     if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
                         return false;
                     }
@@ -2482,7 +2482,14 @@ var buildfire = {
                 if (isDevMode) {
                     result += "&ci_info=1";
                 }
-    
+
+                if (options.compression) {
+                  var compression = buildfire.imageLib.getCompression(options.compression);
+                  if (compression) {
+                    result += "&q=" + compression;
+                  }
+                }
+
                 if (options.size && options.aspect) {
                     if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
                         var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
@@ -2591,6 +2598,13 @@ var buildfire = {
                 result += "&ci_info=1";
             }
 
+            if (options.compression) {
+              var compression = buildfire.imageLib.getCompression(options.compression);
+              if (compression) {
+                result += "&q=" + compression;
+              }
+            }
+
             var width = Math.floor(options.width * ratio);
             var height = Math.floor(options.height * ratio);
 
@@ -2678,19 +2692,14 @@ var buildfire = {
             return buildfire.getContext().endPoints.pluginHost.replace('pluginTemplate/plugins', 'imageCache/images') + '/' + hash + extension;
         },
         getCompression: function (c) {
-            var result = 'n/'
-            if (c) {
-                var isValid = typeof c === "number" && c >= 1 && c <= 100;
-                if (isValid) {
-                    var value = 'png-lossy-' + c + '.q' + c + '/';
-                    if (/png-lossy-\d{1,3}.q\d{1,3}\//g.test(value)) {
-                        result = value;
-                    }
-                } else {
-                    console.warn('Disabling compression, must be an integer between 1-100');
-                }
+            var ratio = Number(c);
+
+            if (isNaN(ratio) || ratio < 1 || ratio > 100) {
+              return console.error('Disabling compression, must be an integer between 1-100');
             }
-            return result;
+
+            // increase compression to 70 to preserve quality
+            return (ratio < 70) ? 70 : ratio;
         }
         ,local: {
             _parser: document.createElement('a')
@@ -3645,7 +3654,7 @@ var buildfire = {
                                 originalSetup(editor);
                             }
                         }
-                        
+
                         buildfire.appearance.getWidgetTheme(function(err, theme) {
                             if (err) return console.error(err);
                             if (options.content_style) {
@@ -3665,7 +3674,7 @@ var buildfire = {
                         } else {
                             options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
                         }
-                        
+
                         options.menubar = options.menubar || 'edit insert view format tools';
                         var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
                         options.menu = {
