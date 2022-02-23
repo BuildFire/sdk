@@ -27,8 +27,23 @@ if (typeof (buildfire.services.fileSystem.fileManager) == "undefined") buildfire
      * }
      * , callback // function
      */
-    fm.download = function (options,  callback) {
-        buildfire._sendPacket(new Packet(null,"fileManager.download",options),callback);
+    fm.download = function (options, onProgress, callback) {
+      // to support backward download API
+      if (!callback && onProgress) {
+        callback = onProgress;
+        onProgress = undefined;
+      }
+
+
+      buildfire.eventManager.clear("fileManagerOnProgress");
+
+      if (typeof onProgress === "function") {
+        buildfire.eventManager.add("fileManagerOnProgress", function (data) {
+          onProgress(data);
+        }, false);
+      }
+
+      buildfire._sendPacket(new Packet(null,"fileManager.download",options),callback);
     };
 
     /*
@@ -62,5 +77,9 @@ if (typeof (buildfire.services.fileSystem.fileManager) == "undefined") buildfire
     fm.writeFileAsText = function (options,  callback) {
         buildfire._sendPacket(new Packet(null,"fileManager.writeFileAsText",options),callback);
     };
+
+    fm._triggerOnProgress = function (data) {
+		    buildfire.eventManager.trigger("fileManagerOnProgress", data);
+    }
 
 })();

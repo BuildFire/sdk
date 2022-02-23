@@ -218,6 +218,7 @@ var buildfire = {
         , "colorLib._triggerOnChange"
         , "services.publicFiles._triggerOnProgress"
         , "services.publicFiles._triggerOnComplete"
+        , "services.fileSystem.fileManager._triggerOnProgress"
         , "notes.triggerOnSeekTo"
         , "navigation.triggerOnPluginOpened"
         , "deeplink.triggerOnUpdate"
