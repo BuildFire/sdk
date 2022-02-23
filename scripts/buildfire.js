@@ -676,7 +676,7 @@ var buildfire = {
             html.setAttribute('fullVersion', fullVersion);
 
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
+            if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i) || (userAgent.match(/Macintosh/i) && navigator.maxTouchPoints > 1)) {
                 var p = new Packet(null, 'appearance.getFooterMenu');
                 buildfire._sendPacket(p, function (err, footerMenu) {
                     if (err) {

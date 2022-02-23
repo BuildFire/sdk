@@ -193,7 +193,7 @@
      *
      * @type boolean
      */
-    var deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent) && !deviceIsWindowsPhone;
+    var deviceIsIOS = (/iP(ad|hone|od)/.test(navigator.userAgent) || (navigator.userAgent.match(/Macintosh/i) && navigator.maxTouchPoints > 1)) && !deviceIsWindowsPhone;
 
 
     /**
