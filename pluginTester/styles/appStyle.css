@@ -1006,8 +1006,7 @@ nav.menu.layout7 a.notifications span.icon{
 /* Slider */
 .plugin-slider,
 .plugin-slide,
-.contact-maps,
-.user-profile .plugin-banner{
+.contact-maps{
 	max-height:380px;
 	position:relative;
 }
@@ -1085,138 +1084,7 @@ nav.menu.layout7 a.notifications span.icon{
 	display:inline-block;
 }
 
-/* User Profile */
-.user-profile .edit-profile{
-	position:absolute;
-	left:0;
-	width:100%;
-}
-.user-profile .edit-profile.done-editing{
-	bottom:-27px;
-}
-.user-profile .edit-profile .inner,
-.user-profile .edit-profile .cancel-link{
-	max-width:677px;
-	padding:10px;
-	width:100%;
-	margin:0 auto;
-}
-.user-profile .edit-profile .cancel-link{
-	padding:5px 15px 0 0;
-}
-.user-profile .user-info{
-	max-width:677px;
-	margin:0 auto;
-	padding:0 15px;
-	width:100%;
-	position:relative;
-}
-.user-profile .user-info .user-avatar{
-	position:absolute;
-	top:-60px;
-	border-radius:100%;
-	border:2px solid #fff;
-	overflow:hidden;
-	width:120px;
-	height:120px;
-	background:#32373a;
-}
-.user-profile .user-info .user-personal{
-	padding-left:140px;
-}
-.user-profile .user-list-items .item{
-	padding:4px 0 2px;
-	width:100%;
-	position:relative;
-}
-.user-profile .user-list-items .item:before{
-	content:'';
-	border-top:1px solid #ddd !important;
-	opacity:0.25;
-	top:0;
-	left:0;
-	position:absolute;
-	width:100%;
-}
-.user-profile .user-list-items .item span{
-	font-size:12px;
-	line-height:12px;
-}
-.user-profile .user-list-items .item p{
-	margin:-4px 0 0;
-}
-.user-profile .user-list-items .item:first-child{
-	padding-bottom:0;
-}
-.user-profile .user-list-items .item:first-child:after,
-.user-profile .item.location:after,
-.user-profile .item.bio:after{
-	border-top:none !important;
-}
-.user-profile .item.location{
-	padding-top:0;
-	margin-top:-10px;
-}
-.user-profile .item.location p{
-	font-size:12px;
-}
-.user-profile .user-list-items{
-	margin:70px auto 0;
-	max-width:677px;
-}
-.user-profile .multi-line{
-	white-space: pre-wrap;
-	overflow-wrap: break-word;
-}
 
-
-/* Edit User Profile */
-.user-profile.edit .plugin-slider:after,
-.user-profile.edit .user-info .user-avatar:after{
-	content:'Upload Cover';
-	position:absolute;
-	top:37%;
-	left:50%;
-	margin-left:-32px;
-	font-size:12px;
-	line-height:16px;
-	width:64px;
-	text-align:center;
-	color:#fff;
-}
-.user-profile.edit .user-info .user-avatar:after{
-	content:'Upload Avatar';
-}
-.user-profile.edit .user-info .user-avatar .user-media{
-	height:100%;
-}
-.user-profile.edit .plugin-slider:after{
-	top:44%;
-	font-size:14px;
-	line-height:18px;
-	width:120px;
-	margin-left:-60px;
-}
-.user-profile.edit .form-control{
-	border:none;
-	padding:0;
-	height:inherit;
-	min-height:inherit;
-	font-size:14px;
-	background:none;
-}
-.user-profile.edit .custom-registration .form-control{
-	border-bottom:1px solid;
-	border-radius:0;
-	padding-bottom: 5px;
-}
-.user-profile.edit textarea.form-control{
-	min-height:40px;
-	resize:none;
-}
-.user-profile.edit .item.no-span .form-control{
-	padding:6px 0;
-}
 
 iframe#launcherPlugin.showNav,
 iframe.pluginFrame,
