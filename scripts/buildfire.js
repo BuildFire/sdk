@@ -82,9 +82,9 @@ var buildfire = {
         attachRemoteLogger:function (tag){
 
             // dont attach twice
-            if(document.getElementById('BuildFireAppDebuggerScript')) {
-                alert('debugger already attached');
-                return;
+            let buildFireAppDebuggerScript = document.getElementById('BuildFireAppDebuggerScript');
+            if (buildFireAppDebuggerScript) {
+                buildFireAppDebuggerScript.parentElement.removeChild(buildFireAppDebuggerScript);
             }
 
             if(!tag)
