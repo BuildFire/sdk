@@ -3392,6 +3392,10 @@ var buildfire = {
         },
         keepSessionAlive: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'auth.keepSessionAlive', options), callback);
+        },
+        searchUsers: function (params, callback) {
+            var p = new Packet(null, 'auth.searchUsers', params);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
