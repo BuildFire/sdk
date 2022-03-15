@@ -559,8 +559,17 @@ var buildfire = {
             fontId : "Lato",
             fontName: "Lato"
         },
+        _setFontUrl: function (context, appTheme) {
+            if (appTheme.fontId) {
+                if (appTheme.isCustomFont) {
+                    appTheme.fontUrl = `${context.endPoints.pluginRootHost}/${appTheme.fontFolderPath}/${context.appId}/${encodeURIComponent(appTheme.fontFileName)}?v=${appTheme.fontLastUpdatedOn}`
+                } else {
+                    appTheme.fontUrl = `https://fonts.googleapis.com/css?family=${appTheme.fontId}`;
+                }
+            }
+        },
         getAppTheme: function (callback) {
-            buildfire.getContext(function(err,context){
+            buildfire.getContext(function(err, context){
                 if(err)
                     callback(err,null);
                 if(context){
@@ -568,11 +577,12 @@ var buildfire = {
                         context.appTheme = buildfire.appearance._defaultTheme;
                     }
 
-                    callback(null,context.appTheme);
+                    buildfire.appearance._setFontUrl(context, context.appTheme);
+
+                    callback(null, context.appTheme);
                 }
                 else
                     callback(null,null);
-
             });
         },
         getWidgetTheme: function (callback) {
@@ -580,6 +590,9 @@ var buildfire = {
                 if (err) return callback(err, null);
                 if (context){
                     if (context.widgetTheme) {
+
+                        buildfire.appearance._setFontUrl(context, context.widgetTheme);
+
                         return callback(null, context.widgetTheme);
                     }
                     return buildfire.appearance.getAppTheme(callback);
@@ -755,9 +768,14 @@ var buildfire = {
                     var css = "";
                     if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
                     && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
-                    && appTheme.fontId !== 'Shadows+into+Light'&& appTheme.fontId !== 'Asap+condensed') {
-                        css += '@import url(\'https://fonts.googleapis.com/css?family='+ appTheme.fontName +'\');'
+                    && appTheme.fontId !== 'Shadows+into+Light' && appTheme.fontId !== 'Asap+condensed' && appTheme.fontUrl) {
+                        if (appTheme.isCustomFont) {
+                            css+= "@font-face { font-family: '" + appTheme.fontId + "'; src: url('" + appTheme.fontUrl + "') format('" + appTheme.fontFormat + "'); }";
+                        } else {
+                            css += '@import url(\'' + appTheme.fontUrl + '\');';
+                        }
                     }
+                    
                     css +=  ':root:root {'
                             + '  --mdc-typography-font-family: unquote("' + appTheme.fontName + ', sans-serif");'
                             + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
@@ -786,7 +804,7 @@ var buildfire = {
                             + '  --mdc-theme-text-icon-on-background:' + appTheme.colors.icons + ';'
                             + '}'
                             + '*:not(i):not(.material-icons):not(.mdc-icon):not(.mdc-button__icon):not(.mdc-icon-button__icon)'
-                            + '{ font-family: ' + appTheme.fontName + ', sans-serif !important '
+                            + '{ font-family: \'' + appTheme.fontName + '\', sans-serif !important '
                             + '}'
                             + '.mdc-typography { font-family: ' + appTheme.fontName + ', sans-serif }'
                             + '.mdc-typography--headline1 { font-family: ' + appTheme.fontName + ', sans-serif }'
@@ -835,7 +853,15 @@ var buildfire = {
                     (document.head || document.body || document).appendChild(styleElement);
                 });
                 buildfire.appearance.onUpdate(function(appTheme){
-                    applyMDTheme(null, appTheme);
+                    buildfire.getContext((err, context) => {
+                        if (err) console.error(err);
+                        if (context) {
+                            buildfire.appearance._setFontUrl(context, appTheme);
+                            applyMDTheme(null, appTheme);
+                        } else {
+                            applyMDTheme(null, appTheme);
+                        }
+                    });
                 });
             }
 
@@ -956,8 +982,17 @@ var buildfire = {
             }
             if (appTheme) {
                 var bfWidgetTheme = document.getElementById("bfWidgetTheme");
+                
                 if (bfWidgetTheme) {
-                    bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+                    buildfire.getContext((err, context) => {
+                        if (err) console.error(err);
+                        if (context) {
+                            buildfire.appearance._setFontUrl(context, appTheme);
+                            bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+                        } else {
+                            bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+                        }
+                    });
                 }
                 buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
             }
@@ -1010,9 +1045,14 @@ var buildfire = {
             var css = ''
             if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
             && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
-            && appTheme.fontId !== 'Shadows+into+Light'&& appTheme.fontId !== 'Asap+condensed') {
-                css += '@import url(\'https://fonts.googleapis.com/css?family='+ appTheme.fontName +'\');'
+            && appTheme.fontId !== 'Shadows+into+Light' && appTheme.fontId !== 'Asap+condensed' && appTheme.fontUrl) {
+                if (appTheme.isCustomFont) {
+                    css+= "@font-face { font-family: '" + appTheme.fontId + "'; src: url('" + appTheme.fontUrl + "') format('" + appTheme.fontFormat + "'); }";
+                } else {
+                    css += '@import url(\'' + appTheme.fontUrl + '\');';
+                }
             }
+
             css += ':root {'
                 + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
                 + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
@@ -3352,6 +3392,10 @@ var buildfire = {
         },
         keepSessionAlive: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'auth.keepSessionAlive', options), callback);
+        },
+        searchUsers: function (params, callback) {
+            var p = new Packet(null, 'auth.searchUsers', params);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
