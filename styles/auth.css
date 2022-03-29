@@ -514,17 +514,17 @@ html[type='app'] .modal .modal-dialog {
   display: flex;
   align-items: center;
 }
-.register-options .btn-apple{
+.register-options.light .btn-apple {
   background-color: #000 !important;
 }
-.register-options .btn-apple span{
+.register-options.light .btn-apple span {
   color: #fff !important;
 }
-.register-options .btn-apple.apple-white{
+.register-options.dark .btn-apple {
   background-color: #fff !important;
   border: 1px solid #000 !important;
 }
-.register-options .btn-apple.apple-white span{
+.register-options.dark .btn-apple span {
   color: #000 !important;
 }
 .register-options .btn-fb{
