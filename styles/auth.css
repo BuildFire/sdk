@@ -475,7 +475,7 @@ html[type='app'] .modal .modal-dialog {
 .register-options .btn{
   display: flex;
   font-size: 14px;
-  padding: 0;
+  padding: 2px;
   min-height: 44px;
   align-items: center;
   justify-content: center;
@@ -493,26 +493,38 @@ html[type='app'] .modal .modal-dialog {
 .register-options .btn img{
   width: 1.75em;
   height: 1.75em;
-  margin: 0 .75em;
+  margin: 0.625em;
   object-fit: cover;
 }
 .register-options .btn span{
   flex: auto;
   margin-right: 2.75em;
+  margin-left: 0.5em;
   padding: .5em 
   0;
 }
-.register-options .btn-apple{
+.register-options #buttonIconSpan, .register-options #customButtonIconSpan {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 3px;
+}
+.register-options #customButtonIconSpan {
+  max-height: 3em;
+  display: flex;
+  align-items: center;
+}
+.register-options.light .btn-apple {
   background-color: #000 !important;
 }
-.register-options .btn-apple span{
+.register-options.light .btn-apple span {
   color: #fff !important;
 }
-.register-options .btn-apple.apple-white{
+.register-options.dark .btn-apple {
   background-color: #fff !important;
   border: 1px solid #000 !important;
 }
-.register-options .btn-apple.apple-white span{
+.register-options.dark .btn-apple span {
   color: #000 !important;
 }
 .register-options .btn-fb{
@@ -529,12 +541,21 @@ html[type='app'] .modal .modal-dialog {
 .register-options .btn-twitter span{
   color: #fff !important;
 }
-.register-options .btn-google{
+.register-options.dark .btn-google{
   background-color: #fff;
   border: 1px solid rgba(50,50,50,.5) !important;
 }
-.register-options .btn-google span{
+.register-options.dark .btn-google span{
   color: #000 !important;
+}
+.register-options.light .btn-google{
+  background-color: #4285f4;
+}
+.register-options.light .btn-google span{
+  color: #fff !important;
+}
+.register-options.light .btn-google #buttonIconSpan {
+  background-color: #fff;
 }
 .register-options .register-divider{
   max-width: 200px;

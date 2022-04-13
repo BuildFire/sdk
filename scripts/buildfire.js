@@ -82,9 +82,9 @@ var buildfire = {
         attachRemoteLogger:function (tag){
 
             // dont attach twice
-            if(document.getElementById('BuildFireAppDebuggerScript')) {
-                alert('debugger already attached');
-                return;
+            let buildFireAppDebuggerScript = document.getElementById('BuildFireAppDebuggerScript');
+            if (buildFireAppDebuggerScript) {
+                buildFireAppDebuggerScript.parentElement.removeChild(buildFireAppDebuggerScript);
             }
 
             if(!tag)
@@ -3338,6 +3338,10 @@ var buildfire = {
             var p = new Packet(null, 'auth.getUserProfile', options);
             buildfire._sendPacket(p, callback);
         },
+        getUserProfiles: function (options, callback) {
+            var p = new Packet(null, 'auth.getUserProfiles', options);
+            buildfire._sendPacket(p, callback);
+        },
         getUsersByEmail: function (options, callback) {
             var p = new Packet(null, 'auth.getUsersByEmail', options);
             buildfire._sendPacket(p, callback);
@@ -3392,6 +3396,10 @@ var buildfire = {
         },
         keepSessionAlive: function(options, callback) {
             buildfire._sendPacket(new Packet(null, 'auth.keepSessionAlive', options), callback);
+        },
+        searchUsers: function (params, callback) {
+            var p = new Packet(null, 'auth.searchUsers', params);
+            buildfire._sendPacket(p, callback);
         }
     }
     /// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
