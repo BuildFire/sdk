@@ -3276,7 +3276,7 @@ fieldset[disabled] .btn-success.active {
 }
 .btn-info {
   color: #ffffff;
-  background-color: #32373a;
+  background-color: #000000;
   border-color: none;
   -moz-transition: all 0.35s;
   -o-transition: all 0.35s;
