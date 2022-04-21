@@ -39,6 +39,8 @@
     var openDialog = buildfire.notes.openDialog;
 
     cachedNotes.openDialog = function (options, callback) {
+        if (!isOnline())
+            return callback("This functionality is not available when offline.", null);
         openDialog(options, function (error, result) {
             if (error) return callback(error, null);
             if (result) {
@@ -55,8 +57,6 @@
                             else callback(true, null);
                         });
                 }
-                else if (!isMobile() && !isOnline())
-                    return callback("This functionality is not available on Web when offline.", null);
                 else callback(null, result);
             } else return callback(true, null);
         });
