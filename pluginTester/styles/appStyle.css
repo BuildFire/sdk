@@ -4489,6 +4489,7 @@ html[ios="true"] .profile-overlay .profile-content{
 	object-fit: cover;
 }
 .insall-app-dialog .btn-text{
+	width: 100%;
 	text-transform: uppercase;
 	display: block;
 	word-break: break-word;
@@ -4507,7 +4508,7 @@ html[ios="true"] .profile-overlay .profile-content{
 }
 .insall-app-dialog .dialog-footer{
 	height: auto !important;
-	padding: 12px;
+	padding: 15px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
