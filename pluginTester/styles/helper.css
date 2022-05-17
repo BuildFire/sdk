@@ -32,7 +32,3 @@
 	display: flex;
 }
 /* End of User Search UI */
-/* important appTheme styles since we don't load appTheme.css */
-html, body, body #widget-container, #loading-screen .loading-bg, .backgroundColorTheme, .slide, nav.menu, .well, .login-holder {
-	background: #fff !important;
-}

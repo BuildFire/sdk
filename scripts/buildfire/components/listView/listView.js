@@ -5,7 +5,7 @@ buildfire.components.listView = class ListView {
 	constructor(containerId, options) {
 		this.container = document.getElementById(containerId);
 		if (!this.container) throw 'Cant find container';
-		this.container.classList.add('listViewContainer', 'full-width');
+		this.container.classList.add('listView-container', 'full-width');
 		this.options = options || {};
 		this.container.innerHTML = '';
 		this.items = [];
@@ -15,17 +15,27 @@ buildfire.components.listView = class ListView {
 		this.container.innerHTML = '';
 		this.items = [];
 	}
+	
 	loadListViewItems(items) {
-		this.items = [];
-		if (this.container.innerHTML == '') {
-			if (this.options.enableAddButton) {
-				let addButton = document.createElement('button');
-				addButton.classList = 'listViewAddButton btn btn--add btn--fab btn-primary';
-				addButton.innerHTML = '<span></span>';
-				this.container.appendChild(addButton);
+		this.clear();
 
-				addButton.onclick = this.onAddButtonClicked;
-			}
+		if (this.options.enableAddButton) {
+			let addButton = document.createElement('button');
+			addButton.classList = 'btn-add btn-fab btn-primary';
+			addButton.innerHTML = '<span></span>';
+			this.container.appendChild(addButton);
+
+			addButton.onclick = this.onAddButtonClicked;
+		}
+
+		this.append(items);
+	}
+
+	append(items) {
+		if (typeof items !== 'object') {
+			return console.error('invalid items parameter');
+		} else if (!(items instanceof Array)) {
+			items = [items];
 		}
 		items.forEach(item => this.addItem(item));
 	}
@@ -68,18 +78,6 @@ class ListViewItem {
 		this.data = obj.data;
 	}
 
-	toRawData() {
-		return {
-			id: this.id,
-			title: this.title,
-			imageUrl: this.imageUrl,
-			subtitle: this.subtitle,
-			description: this.description,
-			action: this.action,
-			data: this.data
-		};
-	}
-
 	render(container, card) {
 		this.container = container;
 
@@ -87,19 +85,19 @@ class ListViewItem {
 			card.innerHTML = '';
 		} else {
 			card = document.createElement('div');
-			card.className = 'listViewItem';
+			card.className = 'listView-item';
 			container.appendChild(card);
 		}
 
 		this.card = card;
 
 		let imgContainer = document.createElement('div');
-		imgContainer.className = 'listViewItemImgContainer';
+		imgContainer.className = 'listView-item-img-container';
 		this.card.appendChild(imgContainer);
 
 		if (this.imageUrl) {
 			let img = document.createElement('img');
-			img.className = 'listViewItemImg';
+			img.className = 'listView-item-img';
 			imgContainer.appendChild(img);
 
 			if (this.imageUrl.indexOf('http') == 0) img.src = buildfire.imageLib.cropImage(this.imageUrl, { width: 128, height: 128 });
@@ -126,8 +124,6 @@ class ListViewItem {
 			listViewItemCopy.appendChild(subtitle);
 		}
 
-		let t = this;
-
 		if (this.description) {
 			let description = document.createElement('p');
 			description.className = 'listViewItemDescription ellipsis margin--0';
@@ -140,14 +136,11 @@ class ListViewItem {
 			actionHolder.classList = 'action-holder';
 
 			const actionIcon = document.createElement('span');
-			actionIcon.classList = this.action.icon || 'icon glyphicon glyphicon-star-empty';
+			actionIcon.classList = this.action.icon || 'glyphicon glyphicon-star-empty';
+			actionIcon.classList.add('icon');
+			actionIcon.textContent = this.action.iconTextContent || ''
 			actionHolder.appendChild(actionIcon);
 
-			// if (this.action.actionItem) {
-			// 	actionIcon.onclick = () => {
-			// 		buildfire.actionItems.execute(this.action.actionItem);
-			// 	};
-			// }
 			actionIcon.onclick = () => {
 				this.onActionClicked();
 			};

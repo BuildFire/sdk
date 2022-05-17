@@ -1,0 +1,20 @@
+/* important appTheme styles since we don't load appTheme.css */
+html, body, body #widget-container, #loading-screen .loading-bg, .backgroundColorTheme, .slide, nav.menu, .well, .login-holder {
+  background: #fff !important;
+}
+/* adding default static colors to the richModal confirm buttons */
+#richModal button.action-button.dangerTheme {
+  color: #d61c29;
+}
+#richModal button.action-button.warningTheme {
+  color: #faba41;
+}
+#richModal button.action-button.infoTheme {
+  color: #3159f3;
+}
+#richModal button.action-button.successTheme {
+  color: #11ce35;
+}
+#richModal button.action-button.primaryTheme {
+  color: #09a3ee;
+}
