@@ -17,8 +17,8 @@ buildfire.components.listView = class ListView {
 	}
 	
 	loadListViewItems(items) {
-		this.clear();
-
+		// this.clear();
+		this.items = [];
 		if (this.options.enableAddButton) {
 			let addButton = document.createElement('button');
 			addButton.classList = 'btn-add btn-fab btn-primary';
