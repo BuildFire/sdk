@@ -5,7 +5,7 @@ buildfire.components.listView = class ListView {
 	constructor(containerId, options) {
 		this.container = document.getElementById(containerId);
 		if (!this.container) throw 'Cant find container';
-		this.container.classList.add('listView-container', 'full-width');
+		this.container.classList.add('listViewContainer', 'full-width');
 		this.options = options || {};
 		this.container.innerHTML = '';
 		this.items = [];
@@ -78,6 +78,18 @@ class ListViewItem {
 		this.data = obj.data;
 	}
 
+	toRawData() {
+		return {
+			id: this.id,
+			title: this.title,
+			imageUrl: this.imageUrl,
+			subtitle: this.subtitle,
+			description: this.description,
+			action: this.action,
+			data: this.data
+		};
+	}
+
 	render(container, card) {
 		this.container = container;
 
@@ -85,19 +97,19 @@ class ListViewItem {
 			card.innerHTML = '';
 		} else {
 			card = document.createElement('div');
-			card.className = 'listView-item';
+			card.className = 'listViewItem';
 			container.appendChild(card);
 		}
 
 		this.card = card;
 
 		let imgContainer = document.createElement('div');
-		imgContainer.className = 'listView-item-img-container';
+		imgContainer.className = 'listViewItemImgContainer';
 		this.card.appendChild(imgContainer);
 
 		if (this.imageUrl) {
 			let img = document.createElement('img');
-			img.className = 'listView-item-img';
+			img.className = 'listViewItemImg';
 			imgContainer.appendChild(img);
 
 			if (this.imageUrl.indexOf('http') == 0) img.src = buildfire.imageLib.cropImage(this.imageUrl, { width: 128, height: 128 });
