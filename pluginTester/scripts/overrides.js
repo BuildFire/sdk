@@ -48,36 +48,36 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		if(postMaster.servicePluginAPIs && postMaster.servicePluginAPIs.service)
 			postMaster.servicePluginAPIs.service.sendMessage(null, packet);
 	};
-    postMaster.controlPluginAPI.datastore.onUpdate = onUpdate;
+	postMaster.controlPluginAPI.datastore.onUpdate = onUpdate;
     
-    postMaster.controlPluginAPI.userData.onUpdate = function (updateObj) {
-        var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
-        postMaster.widgetPluginAPI.sendMessage(null, packet);
-    };
+	postMaster.controlPluginAPI.userData.onUpdate = function (updateObj) {
+		var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
+		postMaster.widgetPluginAPI.sendMessage(null, packet);
+	};
     
-    postMaster.widgetPluginAPI.userData.onUpdate = function (updateObj) {
-        var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
-        postMaster.controlPluginAPI.sendMessage(null, packet);
-    };
+	postMaster.widgetPluginAPI.userData.onUpdate = function (updateObj) {
+		var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
+		postMaster.controlPluginAPI.sendMessage(null, packet);
+	};
 
-    postMaster.controlPluginAPI.publicData.onUpdate = function (updateObj) {
-        var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
-        postMaster.widgetPluginAPI.sendMessage(null, packet);
-    };
+	postMaster.controlPluginAPI.publicData.onUpdate = function (updateObj) {
+		var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
+		postMaster.widgetPluginAPI.sendMessage(null, packet);
+	};
 
-    postMaster.widgetPluginAPI.publicData.onUpdate = function (updateObj) {
-        var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
-        postMaster.controlPluginAPI.sendMessage(null, packet);
-		};
+	postMaster.widgetPluginAPI.publicData.onUpdate = function (updateObj) {
+		var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
+		postMaster.controlPluginAPI.sendMessage(null, packet);
+	};
 	
-		postMaster.controlPluginAPI.appData.onUpdate = function (updateObj) {
-			var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
-			postMaster.widgetPluginAPI.sendMessage(null, packet);
+	postMaster.controlPluginAPI.appData.onUpdate = function (updateObj) {
+		var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
+		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
 
 	postMaster.widgetPluginAPI.appData.onUpdate = function (updateObj) {
-			var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
-			postMaster.controlPluginAPI.sendMessage(null, packet);
+		var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
+		postMaster.controlPluginAPI.sendMessage(null, packet);
 	};
 
 	PluginAPI.prototype.messaging.triggerOnNewWidgetMessage = function (message) {
@@ -91,8 +91,8 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	};
 
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
-	    console.warn("supress navigation in shell");
-	    alert("supress navigation in shell");
+	    console.warn('supress navigation in shell');
+	    alert('supress navigation in shell');
 	};
 
 	/**************************************************/
@@ -110,7 +110,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 
 	postMaster.widgetPluginAPI.appearance.navbar.isVisible = function(){ 
 		return false; 
-	}
+	};
 
 	postMaster.controlPluginAPI.analytics.trackAction = postMaster.widgetPluginAPI.analytics.trackAction = function (actionName, metadata) {
 		console.log('analytics mock track action [' + actionName + ']', metadata);
@@ -126,34 +126,34 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		if(!window.currentUser || !window.currentUser.userToken || !window.currentUser.auth)
 			return null;
 
-        if (!window.currentAuthUser) {
-            var appId = '';
-            if (appContext.currentApp && appContext.currentApp.appId)
-                appId = appContext.currentApp.appId;
+		if (!window.currentAuthUser) {
+			var appId = '';
+			if (appContext.currentApp && appContext.currentApp.appId)
+				appId = appContext.currentApp.appId;
 
-            var request = new XMLHttpRequest();
-            request.open('GET', 'https://app.buildfire.com/api/user/auth/' + appId, false);  // `false` makes the request synchronous
-            request.setRequestHeader("userToken", window.currentUser.userToken);
-            request.setRequestHeader("auth", window.currentUser.auth);
-            request.send(null);
-            if (request.status === 200) {
-                window.currentAuthUser = JSON.parse(request.responseText);
-            }
-        }
-        if (window.currentAuthUser)
-            window.currentAuthUser._cpUser = window.currentUser;
+			var request = new XMLHttpRequest();
+			request.open('GET', 'https://app.buildfire.com/api/user/auth/' + appId, false);  // `false` makes the request synchronous
+			request.setRequestHeader('userToken', window.currentUser.userToken);
+			request.setRequestHeader('auth', window.currentUser.auth);
+			request.send(null);
+			if (request.status === 200) {
+				window.currentAuthUser = JSON.parse(request.responseText);
+			}
+		}
+		if (window.currentAuthUser)
+			window.currentAuthUser._cpUser = window.currentUser;
 
-        return window.currentAuthUser;
+		return window.currentAuthUser;
 	};
 	///
 
 	window.keyboardResize  = function() {}; // works for ios only
 
-//override the imageLibTemplate url
+	//override the imageLibTemplate url
 	imageLibCurrentApp.imageLibTemplate = 'https://app.buildfire.com/pages/imageLib/imageLib.html';
 	postMaster.controlPluginAPI.actionItems.templateUrl = 'https://app.buildfire.com/pages/share/actionBuilder.html';
 	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'https://app.buildfire.com/app/pages/templates/actionItemsListDialog.html';
-	postMaster.controlPluginAPI.pluginInstances.templateUrl = "https://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html";
+	postMaster.controlPluginAPI.pluginInstances.templateUrl = 'https://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html';
 	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
 })();
 

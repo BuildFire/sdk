@@ -15,21 +15,21 @@
 						if (user) {
 							localStorage.setItem('user', JSON.stringify(user));
 							window.currentUser = user;
-							window.location.hash = "/";
+							window.location.hash = '/';
 						}
 						else {
-                            $scope.errors.serverError = "Invalid username or password";
+							$scope.errors.serverError = 'Invalid username or password';
 						}
 					})
 					.error(function (err) {
 						if(err){
 							switch (err.code) {
-								case "authServiceUserExists":
-									$scope.errors.serverError = "Invalid account, make sure to use control panel account";
-									break;
-								case "NOTFOUND":
-									$scope.errors.serverError = "Invalid username or password";
-									break;
+							case 'authServiceUserExists':
+								$scope.errors.serverError = 'Invalid account, make sure to use control panel account';
+								break;
+							case 'NOTFOUND':
+								$scope.errors.serverError = 'Invalid username or password';
+								break;
 							}
 						}
 					});
