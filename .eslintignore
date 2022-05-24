@@ -12,6 +12,7 @@ node_modules
 /scripts/smartcrop.js
 
 /pluginTester/scripts/*.min.js
+/pluginTester/scripts/**/*.min.js
 /pluginTester/scripts/angular
 /pluginTester/scripts/lib
 
