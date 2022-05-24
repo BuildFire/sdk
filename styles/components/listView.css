@@ -1,16 +1,16 @@
-.listView-container {
+.listViewContainer {
     padding: 1rem;
     overflow-y: auto;
     max-height: 100vh;
 }
-.listView-container::-webkit-scrollbar {
+.listViewContainer::-webkit-scrollbar {
   display: none;
 }
-.listView-container.full-width {
+.listViewContainer.full-width {
   padding: 4rem 0 calc(1rem + env(safe-area-inset-bottom));
 }
 
-.listView-item {
+.listViewItem {
     display: flex;
     align-items: center;
     min-height: 3.75rem;
@@ -19,11 +19,11 @@
     cursor: pointer;
     transition: background-color ease-in-out .3s;
 }
-.listView-item:hover,
-.listView-item:active{
+.listViewItem:hover,
+.listViewItem:active{
   background-color: rgba(150,150,150,.05);
 }
-.listView-item .listView-item-img {
+.listViewItem .listViewItemImg {
     height: 2.5rem;
     width: 2.5rem;
     margin-right: 1rem;
@@ -32,14 +32,31 @@
     flex-shrink: 0;
     object-fit: cover;
 }
-.listView-item > .listViewItemCopy{
+.listViewItem > .listViewItemCopy{
     flex: auto;
     padding: .75rem 0;
 }
-.listView-Item-Img-container {
+.listViewItemImgContainer {
     flex-shrink: 0;
 }
+.listViewItemToolbar{
+  display: flex;
+  align-items: center;
+}
+.listViewItem .toolbarBadge,
+.listViewItem .toolbarShare{
+  font-size: .75rem;
+  padding: .25rem .5rem;
+  border-radius: 2rem;
+}
 
+.listViewItem .toolbarShare{
+  border-radius: 50%;
+  overflow: hidden;
+}
+.btn-icon,
+button.btn-icon,
+.btn.btn-icon,
 .action-holder span.icon {
     cursor: pointer;
     width: 2.5rem;
