@@ -66,7 +66,7 @@ buildfire.components.carousel.view = function (options) {
                 width: window.innerWidth,
                 height: Math.ceil(9 * (window.innerWidth) / 16)
             }));
-            img.alt = "Carousel Image";
+            img.alt = options.items[0].title;
             options.selector.appendChild(img);
             img.addEventListener("click", function () {
                 buildfire.actionItems.execute(options.items[0], function (err, result) {
@@ -236,6 +236,7 @@ buildfire.components.carousel.view.prototype = {
             if (!err) {
                 var image = document.createElement("img");
                 image.src = result;
+                image.alt = item.title || '';
                 slide.appendChild(image);
             }
             else

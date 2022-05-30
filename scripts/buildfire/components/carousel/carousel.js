@@ -550,6 +550,7 @@ buildfire.components.carousel.view.prototype = {
         }, function (err, result) {
             if (!err) {
                 image.src = result;
+                image.alt = item.title || '';
                 image.style.transform = "translateZ(0)";
                 slider.appendChild(image);
                 me.selector.appendChild(slider);
