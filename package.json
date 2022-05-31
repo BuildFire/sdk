@@ -7,7 +7,8 @@
     "postinstall": "./node_modules/.bin/bower install",
     "fnTest": "node test/server.js",
     "test": ".\\node_modules\\.bin\\karma start karma.conf.js",
-    "build": "gulp build"
+    "build": "gulp build",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "bower": "^1.7.6"
@@ -25,6 +26,7 @@
   "devDependencies": {
     "body-parser": "1.11.0",
     "chai": "^3.3.0",
+    "eslint": "^6.8.0",
     "express": "^4.0.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",

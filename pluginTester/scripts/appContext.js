@@ -1,68 +1,68 @@
 (function () {
 
-    var strContext = window.localStorage.getItem('appContext');
-    if (strContext) {
-        try {
-            window.appContext = JSON.parse(strContext);
-        } catch (e) {
-        }
-    }
+	var strContext = window.localStorage.getItem('appContext');
+	if (strContext) {
+		try {
+			window.appContext = JSON.parse(strContext);
+		} catch (e) {
+		}
+	}
 
-    if (!window.appContext || !window.appContext.currentApp || !window.appContext.currentApp.config) {
-        var key = window.localStorage.getItem('autoGenKey'); //legacy
-        if (!key) key = ((new Date()).getTime() + "-" + Math.random()).replace(".", "");
-        window.appContext = {
-            currentApp: {
-                appId: key
-                , keys: {datastoreKey: key}
-                , config: {type: "trial"}
-            }
-            , currentPlugin: {
-                pluginId: key
-                , pluginPath: ''
-                , instanceId: key
-                , mode: 0
-            }
-        };
+	if (!window.appContext || !window.appContext.currentApp || !window.appContext.currentApp.config) {
+		var key = window.localStorage.getItem('autoGenKey'); //legacy
+		if (!key) key = ((new Date()).getTime() + '-' + Math.random()).replace('.', '');
+		window.appContext = {
+			currentApp: {
+				appId: key
+				, keys: {datastoreKey: key}
+				, config: {type: 'trial'}
+			}
+			, currentPlugin: {
+				pluginId: key
+				, pluginPath: ''
+				, instanceId: key
+				, mode: 0
+			}
+		};
 
-        window.localStorage.setItem('appContext', JSON.stringify(window.appContext));
-    }
+		window.localStorage.setItem('appContext', JSON.stringify(window.appContext));
+	}
 
-    if (!window.whitelabelContext) {
-        window.whitelabelContext = {
-            whitelabelId: "1717"
-        }
-    }
+	if (!window.whitelabelContext) {
+		window.whitelabelContext = {
+			whitelabelId: '1717'
+		};
+	}
     
-    if (window.appContext.currentApp) {
-        window.appContext.currentApp.liveMode = 0;
-    }
+	if (window.appContext.currentApp) {
+		window.appContext.currentApp.liveMode = 0;
+	}
 
-    var hash = window.location.hash.split('/');
-    if (hash && hash.length > 2)
-        hash = hash[2];
-    else
-        hash = "myPlugin";
+	var hash = window.location.hash.split('/');
+	if (hash && hash.length > 2)
+		hash = hash[2];
+	else
+		hash = 'myPlugin';
 
-    window.appContext.currentPlugin.pluginPath = hash;
+	window.appContext.currentPlugin.pluginPath = hash;
 
-    var apiKeys = localStorage.getItem('apiKeys');
-    if (apiKeys) {
-        apiKeys = JSON.parse(apiKeys);
-    }
+	var apiKeys = localStorage.getItem('apiKeys');
+	if (apiKeys) {
+		apiKeys = JSON.parse(apiKeys);
+	}
 
-    if (apiKeys) {
-        if(!apiKeys.cloudImageKey) apiKeys.cloudImageKey = "alnnibitpo";
-        window.appContext.currentApp.apiKeys = apiKeys;
-    } else {
-        apiKeys = {
-            creditsSystemPublicKey: "test-public",
-            stripePublicKey: "pk_test_Uc7I6bT2fxNiTp3bFqstkyFh00mbnGl0A5",
-            cloudImageKey: "alnnibitpo"
-        };
-        localStorage.setItem('apiKeys', JSON.stringify(apiKeys));
+	if (apiKeys) {
+		if(!apiKeys.cloudImageKey) apiKeys.cloudImageKey = 'alnnibitpo';
+		window.appContext.currentApp.apiKeys = apiKeys;
+	} else {
+		apiKeys = {
+			creditsSystemPublicKey: 'test-public',
+			stripePublicKey: 'pk_test_Uc7I6bT2fxNiTp3bFqstkyFh00mbnGl0A5',
+			cloudImageKey: 'alnnibitpo'
+		};
+		localStorage.setItem('apiKeys', JSON.stringify(apiKeys));
 
-        window.appContext.currentApp.apiKeys = apiKeys;
-    }
+		window.appContext.currentApp.apiKeys = apiKeys;
+	}
 
 })();
