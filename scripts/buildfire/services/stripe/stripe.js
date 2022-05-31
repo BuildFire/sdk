@@ -2,13 +2,13 @@
  * Created by AhmadFHamed on 7/23/2019.
  * Ref: https://github.com/BuildFire/sdk/wiki/Stripe-Services
  */
-if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use BuildFire services");
+if (typeof (buildfire) == 'undefined') throw ('please add buildfire.js first to use BuildFire services');
 
-if (typeof (buildfire.services) == "undefined") buildfire.services = {};
+if (typeof (buildfire.services) == 'undefined') buildfire.services = {};
 
-if (typeof (buildfire.services.stripe) == "undefined") buildfire.services.stripe = {};
+if (typeof (buildfire.services.stripe) == 'undefined') buildfire.services.stripe = {};
 
-if (typeof (buildfire.services.stripe.connect) == "undefined") buildfire.services.stripe.connect = {};
+if (typeof (buildfire.services.stripe.connect) == 'undefined') buildfire.services.stripe.connect = {};
 
 /**
  * charge dynamic products using stripe checkout.
@@ -33,11 +33,11 @@ if (typeof (buildfire.services.stripe.connect) == "undefined") buildfire.service
  * @param {Object} response
  */
 buildfire.services.stripe.charge = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.charge';
+	var packetId = null;
+	var command = 'stripe.charge';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -59,11 +59,11 @@ buildfire.services.stripe.charge = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.subscribe = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.subscribe';
+	var packetId = null;
+	var command = 'stripe.subscribe';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -84,11 +84,11 @@ buildfire.services.stripe.subscribe = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.purchase = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.purchase';
+	var packetId = null;
+	var command = 'stripe.purchase';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -103,11 +103,11 @@ buildfire.services.stripe.purchase = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.getSubscription = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.getSubscription';
+	var packetId = null;
+	var command = 'stripe.getSubscription';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -123,11 +123,11 @@ buildfire.services.stripe.getSubscription = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.cancelSubscription = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.cancelSubscription';
+	var packetId = null;
+	var command = 'stripe.cancelSubscription';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -146,11 +146,11 @@ buildfire.services.stripe.cancelSubscription = function (options, cb) {
  * @param {stripe} response.customer - Stripe customer id.
  */
 buildfire.services.stripe.addCustomer = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.addCustomer';
+	var packetId = null;
+	var command = 'stripe.addCustomer';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -165,11 +165,11 @@ buildfire.services.stripe.addCustomer = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.addCustomerCard = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.addCustomerCard';
+	var packetId = null;
+	var command = 'stripe.addCustomerCard';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -185,11 +185,11 @@ buildfire.services.stripe.addCustomerCard = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.capturePayment = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.capturePayment';
+	var packetId = null;
+	var command = 'stripe.capturePayment';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -208,11 +208,11 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
  * @param {string} response.bf_stripe_connect_token - Buildfire Stripe connect token, this should be saved in your database.
  */
 buildfire.services.stripe.connect.account = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.connect.account';
+	var packetId = null;
+	var command = 'stripe.connect.account';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -226,11 +226,11 @@ buildfire.services.stripe.connect.account = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.connect.deleteAccount = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.connect.deleteAccount';
+	var packetId = null;
+	var command = 'stripe.connect.deleteAccount';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -246,11 +246,11 @@ buildfire.services.stripe.connect.deleteAccount = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.cancelPayment = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.cancelPayment';
+	var packetId = null;
+	var command = 'stripe.cancelPayment';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -268,9 +268,9 @@ buildfire.services.stripe.cancelPayment = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.stripe.refundPayment = function (options, cb) {
-    var packetId = null;
-    var command = 'stripe.refundPayment';
+	var packetId = null;
+	var command = 'stripe.refundPayment';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };

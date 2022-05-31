@@ -1,18 +1,18 @@
-
-.listViewContainer{
+.listViewContainer {
     padding: 1rem;
     overflow-y: auto;
     max-height: 100vh;
 }
-.listViewContainer::-webkit-scrollbar{
+.listViewContainer::-webkit-scrollbar {
   display: none;
 }
-.listViewContainer.full-width{
+.listViewContainer.full-width {
   padding: 0;
   padding-top: 4rem;
   padding-bottom: calc(1rem + env(safe-area-inset-bottom));
 }
-.listViewItem{
+
+.listViewItem {
     display: flex;
     align-items: center;
     min-height: 3.75rem;
@@ -25,7 +25,7 @@
 .listViewItem:active{
   background-color: rgba(150,150,150,.05);
 }
-.listViewItem  .listViewItemImg{
+.listViewItem .listViewItemImg {
     height: 2.5rem;
     width: 2.5rem;
     margin-right: 1rem;
@@ -38,7 +38,7 @@
     flex: auto;
     padding: .75rem 0;
 }
-.listViewItemImgContainer{
+.listViewItemImgContainer {
     flex-shrink: 0;
 }
 .listViewItemToolbar{
@@ -53,8 +53,8 @@
 }
 
 .listViewItem .toolbarShare{
-    border-radius: 50%;
-    overflow: hidden;
+  border-radius: 50%;
+  overflow: hidden;
 }
 .btn-icon,
 button.btn-icon,
@@ -76,7 +76,8 @@ button.btn-icon,
                 opacity ease-in-out .1s, 
                 background-color ease-in-out .2s;
 }
-.action-holder .glyphicon::before{
+
+.action-holder .glyphicon::before {
     top: 1px;
     left: 1px;
     position: relative;
@@ -90,13 +91,13 @@ button.btn-icon,
     opacity: .7;
     transform: scale(.9);
 }
-.padded{
+.padded {
     padding: 1rem;
 }
-.margin-0{
+.margin-0 {
     margin: 0;
 }
-.padded-m{
+.padded-m {
     padding: .75rem;
 }
 .ellipsis {
@@ -108,38 +109,39 @@ button.btn-icon,
     word-break: break-word;
 }
 /* Floating Button */
-.btn-fab{
-    width: 3.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 3.5rem;
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    border: 0;
-    box-shadow: 0 .125rem .5rem rgba(50, 50, 50, 0.3);
-    background-color: #00a1f1;
-    border-radius: 50%;
-    transition: transform ease-in-out .1s, opacity ease-in-out .1s,;
-  }
-  .btn-fab.btn-add span{
-    display: block;
-    width: 1rem;
-    height: .125rem;
-    background-color: #fff;
-    margin-bottom: 0;
-  }
-  .btn-fab.btn-add span::before{
-    display: block;
-    content: '';
-    width: 1rem;
-    height: .125rem;
-    background-color: #fff;
-    margin-bottom: 0;
-    transform: rotate(90deg);
-  }
-  .btn-fab:active{
-      opacity: .9;
-      transform: scale(.95);
-  }
+.btn-fab {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  border: 0;
+  box-shadow: 0 .125rem .5rem rgba(50, 50, 50, 0.3);
+  background-color: var(--bf-theme-default, #018786);
+  border-radius: 50% !important;
+  transition: transform ease-in-out .1s, opacity ease-in-out .1s;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+}
+.btn-fab.btn-add span {
+  display: block;
+  width: 2rem;
+  height: .25rem;
+  background-color: #fff;
+  margin-bottom: 0;
+}
+.btn-fab.btn-add span::before {
+  display: block;
+  content: '';
+  width: 2rem;
+  height: .25rem;
+  background-color: #fff;
+  margin-bottom: 0;
+  transform: rotate(90deg);
+}
+.btn-fab:active {
+    opacity: .9;
+    transform: scale(.95);
+}
