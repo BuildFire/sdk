@@ -51,35 +51,35 @@ buildfire.components.carousel.view = function (options) {
 		/*
          if more than one image add carousel else add image directly to the carousel container
          */
-		if (options.items.length > 1) {
-			this.config = this.mergeSettings(options);
-			this._initDimensions(this.config.layout);
-			this.init();
-		} else {
-			//add image directly to carousel container without adding the carousel lib
-			options.selector.innerHTML = '';
-			//append image tag
-			var img = document.createElement('img');
-			img.setAttribute('src', buildfire.imageLib.cropImage(options.items[0].iconUrl, {
-				size: 'full_width',
-				aspect: '16:9',
-				width: window.innerWidth,
-				height: Math.ceil(9 * (window.innerWidth) / 16)
-			}));
-			img.alt = 'Carousel Image';
-			options.selector.appendChild(img);
-			img.addEventListener('click', function () {
-				buildfire.actionItems.execute(options.items[0], function (err, result) {
-					if (err) {
-						console.warn('Error openning slider action: ', err);
-					}
-				});
-			});
-		}
-		options.selector.style.display='';
-	} else {
-		options.selector.style.display='none';
-	}
+        if (options.items.length > 1) {
+            this.config = this.mergeSettings(options);
+            this._initDimensions(this.config.layout);
+            this.init();
+        } else {
+            //add image directly to carousel container without adding the carousel lib
+            options.selector.innerHTML = '';
+            //append image tag
+            var img = document.createElement('img');
+            img.setAttribute("src", buildfire.imageLib.cropImage(options.items[0].iconUrl, {
+                size: 'full_width',
+                aspect: '16:9',
+                width: window.innerWidth,
+                height: Math.ceil(9 * (window.innerWidth) / 16)
+            }));
+            img.alt = options.items[0].title;
+            options.selector.appendChild(img);
+            img.addEventListener("click", function () {
+                buildfire.actionItems.execute(options.items[0], function (err, result) {
+                    if (err) {
+                        console.warn('Error openning slider action: ', err);
+                    }
+                });
+            });
+        }
+        options.selector.style.display="";
+    } else {
+        options.selector.style.display="none";
+    }
 
 };
 
@@ -227,19 +227,20 @@ buildfire.components.carousel.view.prototype = {
 			});
 		});
 
-		buildfire.imageLib.local.cropImage(item.iconUrl, {
-			aspect: this.aspect,
-			size: 'full_width',
-			width: this.width,
-			height: this.height
-		}, function (err, result) {
-			if (!err) {
-				var image = document.createElement('img');
-				image.src = result;
-				slide.appendChild(image);
-			}
-			else
-				console.log('Error occurred while cropping image: ', err);
+        buildfire.imageLib.local.cropImage(item.iconUrl, {
+            aspect: this.aspect,
+            size: 'full_width',
+            width: this.width,
+            height: this.height
+        }, function (err, result) {
+            if (!err) {
+                var image = document.createElement("img");
+                image.src = result;
+                image.alt = item.title || '';
+                slide.appendChild(image);
+            }
+            else
+                console.log('Error occurred while cropping image: ', err);
 
 			callback(slide);
 		});

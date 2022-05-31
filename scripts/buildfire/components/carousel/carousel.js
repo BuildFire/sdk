@@ -147,7 +147,7 @@ buildfire.components.carousel.editor.prototype = {
 		wrapper.appendChild(mediaHolder);
 		mediaHolder.appendChild(image);
 		details.appendChild(title);
-        
+
 		actionsWrapper.appendChild(editButton);
 		actionsWrapper.appendChild(deleteButton);
 
@@ -204,7 +204,7 @@ buildfire.components.carousel.editor.prototype = {
 
 		button.innerHTML = 'Add Image';
 		button.classList.add('btn-plus-icon-with-text');
-        
+
 		componentContainer.appendChild(componentName);
 		buttonContainer.appendChild(button);
 		contentContainer.appendChild(buttonContainer);
@@ -388,7 +388,7 @@ buildfire.components.carousel.view.prototype = {
 		if(this.height > 380){
 			this.cssHeight = '380px';
 		}else{
-			this.cssHeight = this.height + 'px';			
+			this.cssHeight = this.height + 'px';
 		}
 
 		// Set Min height on carousel so doesn't push content down on load.
@@ -492,7 +492,7 @@ buildfire.components.carousel.view.prototype = {
 		me.selector.style.position = 'relative';
 		me.selector.style.top = '0px';
 		me.selector.style.left = '0px';
-		
+
 		//me.selector.style.width = this.cssWidth;
 		//me.selector.style.height = this.cssHeight;
 		me.selector.className = 'plugin-slider text-center';
@@ -526,11 +526,11 @@ buildfire.components.carousel.view.prototype = {
 			slider.className = 'plugin-slide';
 		else
 			slider.className = 'my-slide';
-		
+
 		if(0 != index) {
 			slider.style.display = 'none';
 		}
-		
+
 		slider.addEventListener('click', function () {
 			buildfire.actionItems.execute(item, function (err, result) {
 				if (err) {
@@ -544,20 +544,21 @@ buildfire.components.carousel.view.prototype = {
 		var image = document.createElement('img');
 		me.$slider = $(me.selector);
 
-		buildfire.imageLib.local.cropImage(item.iconUrl, {
-			width: this.width,
-			height: this.height
-		}, function (err, result) {
-			if (!err) {
-				image.src = result;
-				image.style.transform = 'translateZ(0)';
-				slider.appendChild(image);
-				me.selector.appendChild(slider);
-			}
-			else
-				console.log('Error occurred while cropping image: ', err);
+        buildfire.imageLib.local.cropImage(item.iconUrl, {
+            width: this.width,
+            height: this.height
+        }, function (err, result) {
+            if (!err) {
+                image.src = result;
+                image.alt = item.title || '';
+                image.style.transform = "translateZ(0)";
+                slider.appendChild(image);
+                me.selector.appendChild(slider);
+            }
+            else
+                console.log('Error occurred while cropping image: ', err);
 
-			callback();
-		});
-	}
+            callback();
+        });
+    }
 };

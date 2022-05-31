@@ -188,7 +188,7 @@ var buildfire = {
 		buildfire.appearance.attachCSSFiles();
 
 		buildfire.localStorage.overrideNativeLocalStorage();
-        
+
 		buildfire.wysiwyg.extend();
 	}
 	, _whitelistedCommands: [
@@ -378,7 +378,7 @@ var buildfire = {
 				options = {};
 			}
 			if(options.wallUserIds) {
-				var wid = options.wallUserIds.sort().reverse().join('');                
+				var wid = options.wallUserIds.sort().reverse().join('');
 				if(options.queryString) {
 					options.queryString += '&wid=' + wid;
 				} else {
@@ -730,7 +730,7 @@ var buildfire = {
 					}
 				}
 			}
-            
+
 			// TODO: verify why in attachCSSFiles and if should not run if disableTheme === true ?
 			var scripts = document.getElementsByTagName('script');
 
@@ -775,7 +775,7 @@ var buildfire = {
 							css += '@import url(\'' + appTheme.fontUrl + '\');';
 						}
 					}
-                    
+
 					css +=  ':root:root {'
                             + '  --mdc-typography-font-family: unquote("' + appTheme.fontName + ', sans-serif");'
                             + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
@@ -982,7 +982,7 @@ var buildfire = {
 			}
 			if (appTheme) {
 				var bfWidgetTheme = document.getElementById('bfWidgetTheme');
-                
+
 				if (bfWidgetTheme) {
 					buildfire.getContext((err, context) => {
 						if (err) console.error(err);
@@ -1068,7 +1068,7 @@ var buildfire = {
                 + '--bf-theme-icons: ' + appTheme.colors.icons + ' !important;'
                 + '--bf-theme-title-bar: ' + appTheme.colors.titleBar + ' !important;'
                 + '--bf-theme-title-bar-text-icons: ' + appTheme.colors.titleBarTextAndIcons + ' !important;'
-                + '--bf-font-family:' + appTheme.fontName + ', sans-serif !important'                
+                + '--bf-font-family:' + appTheme.fontName + ', sans-serif !important'
             +'}';
 			return css;
 		}
@@ -1430,7 +1430,7 @@ var buildfire = {
 					}
 				}
 			}
-                
+
 			if (!hasIndex) {
 				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
 			}
@@ -1605,7 +1605,7 @@ var buildfire = {
 			function validate() {
 
 				function _checkIfMatchHasIndexes(matchStage) {
-               
+
 					if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
 						return false;
 					}
@@ -1619,43 +1619,43 @@ var buildfire = {
 					}
 					return false;
 				}
-            
+
 				function _findFirstGeoNearStage(stages) {
-                   
+
 					if (stages && stages.length === 0) {
 						return null;
 					}
-            
+
 					for (var i = 0; i < stages.length; i++) {
 						var stage = stages[i];
-            
+
 						if (typeof stage !== 'object') {
 							continue;
 						}
-            
+
 						if (stage.$geoNear && typeof stage.$geoNear === 'object') {
 							return { $geoNear: stage.$geoNear, index: i };
 						}
 					}
-            
+
 					return null;
 				}
-            
+
 				function _checkIfGeoNearStagesHasRightKey(stages) {
 					// key : Specify the geospatial indexed field to use when calculating the distance.
-            
+
 					for (var i = 0; i < stages.length; i++) {
 						var stage = stages[i];
-            
+
 						if (typeof stage !== 'object') {
 							continue;
 						}
-            
+
 						if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
 							return false;
 						}
 					}
-            
+
 					return true;
 				}
 
@@ -1663,7 +1663,7 @@ var buildfire = {
 					callback('pipelineStages is required property for aggregation', null);
 					return false;
 				}
-    
+
 				if (!Array.isArray(params.pipelineStages)) {
 					callback('pipelineStages property should be an array of your pipeline stages', null);
 					return false;
@@ -1676,7 +1676,7 @@ var buildfire = {
 						callback('$geoNear should be first stage of pipeline', null);
 						return false;
 					}
-        
+
 					if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
 						callback('$geoNear stages doesn\'t have the right geospatial indexed field name for key option', null);
 						return false;
@@ -1687,16 +1687,16 @@ var buildfire = {
 						callback('$match stage should be first stage of pipeline', null);
 						return false;
 					}
-        
+
 					if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
 						callback('$match stage should has at least one of the buildfire indexes', null);
 						return false;
 					}
 				}
-    
+
 				return true;
 			}
-            
+
 			// these validation not used  for current state, we handle that on server side
 			// if (!validate()) {
 			//     return;
@@ -1819,7 +1819,7 @@ var buildfire = {
 					}
 				}
 			}
-                
+
 			if (!hasIndex) {
 				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
 			}
@@ -1929,8 +1929,8 @@ var buildfire = {
 			if (typeof (options) == 'undefined') options = {filter: {}};
 			if (!options.filter) options.filter = {};
 
-            
-            
+
+
 			var p = new Packet(null, 'publicData.search', {tag: tag, obj: options});
 			buildfire._sendPacket(p, function (err, result) {
 				callback(err, result);
@@ -1970,7 +1970,7 @@ var buildfire = {
 			function validate() {
 
 				function _checkIfMatchHasIndexes(matchStage) {
-               
+
 					if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
 						return false;
 					}
@@ -1984,43 +1984,43 @@ var buildfire = {
 					}
 					return false;
 				}
-            
+
 				function _findFirstGeoNearStage(stages) {
-                   
+
 					if (stages && stages.length === 0) {
 						return null;
 					}
-            
+
 					for (var i = 0; i < stages.length; i++) {
 						var stage = stages[i];
-            
+
 						if (typeof stage !== 'object') {
 							continue;
 						}
-            
+
 						if (stage.$geoNear && typeof stage.$geoNear === 'object') {
 							return { $geoNear: stage.$geoNear, index: i };
 						}
 					}
-            
+
 					return null;
 				}
-            
+
 				function _checkIfGeoNearStagesHasRightKey(stages) {
 					// key : Specify the geospatial indexed field to use when calculating the distance.
-            
+
 					for (var i = 0; i < stages.length; i++) {
 						var stage = stages[i];
-            
+
 						if (typeof stage !== 'object') {
 							continue;
 						}
-            
+
 						if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
 							return false;
 						}
 					}
-            
+
 					return true;
 				}
 
@@ -2028,7 +2028,7 @@ var buildfire = {
 					callback('pipelineStages is required property for aggregation', null);
 					return false;
 				}
-    
+
 				if (!Array.isArray(params.pipelineStages)) {
 					callback('pipelineStages property should be an array of your pipeline stages', null);
 					return false;
@@ -2041,7 +2041,7 @@ var buildfire = {
 						callback('$geoNear should be first stage of pipeline', null);
 						return false;
 					}
-        
+
 					if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
 						callback('$geoNear stages doesn\'t have the right geospatial indexed field name for key option', null);
 						return false;
@@ -2052,13 +2052,13 @@ var buildfire = {
 						callback('$match stage should be first stage of pipeline', null);
 						return false;
 					}
-        
+
 					if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
 						callback('$match stage should has at least one of the buildfire indexes', null);
 						return false;
 					}
 				}
-    
+
 				return true;
 			}
 
@@ -2156,7 +2156,7 @@ var buildfire = {
 					}
 				}
 			}
-                
+
 			if (!hasIndex) {
 				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
 			}
@@ -2258,7 +2258,7 @@ var buildfire = {
 			function validate() {
 
 				function _checkIfMatchHasIndexes(matchStage) {
-               
+
 					if (typeof matchStage !== 'object' || Object.keys(matchStage).length === 0) {
 						return false;
 					}
@@ -2272,43 +2272,43 @@ var buildfire = {
 					}
 					return false;
 				}
-            
+
 				function _findFirstGeoNearStage(stages) {
-                   
+
 					if (stages && stages.length === 0) {
 						return null;
 					}
-            
+
 					for (var i = 0; i < stages.length; i++) {
 						var stage = stages[i];
-            
+
 						if (typeof stage !== 'object') {
 							continue;
 						}
-            
+
 						if (stage.$geoNear && typeof stage.$geoNear === 'object') {
 							return { $geoNear: stage.$geoNear, index: i };
 						}
 					}
-            
+
 					return null;
 				}
-            
+
 				function _checkIfGeoNearStagesHasRightKey(stages) {
 					// key : Specify the geospatial indexed field to use when calculating the distance.
-            
+
 					for (var i = 0; i < stages.length; i++) {
 						var stage = stages[i];
-            
+
 						if (typeof stage !== 'object') {
 							continue;
 						}
-            
+
 						if (stage.$geoNear && (typeof stage.$geoNear !== 'object' || !stage.$geoNear.key ||  !stage.$geoNear.key.endsWith('_buildfire.geo'))) {
 							return false;
 						}
 					}
-            
+
 					return true;
 				}
 
@@ -2316,7 +2316,7 @@ var buildfire = {
 					callback('pipelineStages is required property for aggregation', null);
 					return false;
 				}
-    
+
 				if (!Array.isArray(params.pipelineStages)) {
 					callback('pipelineStages property should be an array of your pipeline stages', null);
 					return false;
@@ -2329,7 +2329,7 @@ var buildfire = {
 						callback('$geoNear should be first stage of pipeline', null);
 						return false;
 					}
-        
+
 					if (!_checkIfGeoNearStagesHasRightKey(params.pipelineStages)) {
 						callback('$geoNear stages doesn\'t have the right geospatial indexed field name for key option', null);
 						return false;
@@ -2340,13 +2340,13 @@ var buildfire = {
 						callback('$match stage should be first stage of pipeline', null);
 						return false;
 					}
-        
+
 					if (!_checkIfMatchHasIndexes(params.pipelineStages[0].$match)) {
 						callback('$match stage should has at least one of the buildfire indexes', null);
 						return false;
 					}
 				}
-    
+
 				return true;
 			}
 
@@ -2354,7 +2354,7 @@ var buildfire = {
 			/* if (!validate()){
                 return;
             } */
-           
+
 
 			var p = new Packet(null, 'appData.aggregate', {tag: tag, obj: params});
 			buildfire._sendPacket(p, function (err, result) {
@@ -2514,7 +2514,7 @@ var buildfire = {
 			{
 				//var protocol = window.location.protocol == "https:" ? "https:" : "http:";
 				var root = 'https://alnnibitpo.cloudimg.io/v7';
-                
+
 				// Check if there is query string
 				var hasQueryString = url.indexOf('?') !== -1;
 				var result = root + '/' + url + (hasQueryString ? '&' : '?') + 'func=bound';
@@ -2523,7 +2523,7 @@ var buildfire = {
 				if (isDevMode) {
 					result += '&ci_info=1';
 				}
-    
+
 				if (options.size && options.aspect) {
 					if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
 						var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
@@ -2549,8 +2549,8 @@ var buildfire = {
 					result += '&height=' + height;
 				}
 				else if (options.width && options.height) {
-					var width = Math.floor(options.width * ratio); 
-					var height = Math.floor(options.height * ratio); 
+					var width = Math.floor(options.width * ratio);
+					var height = Math.floor(options.height * ratio);
 					result += '&width=' + width + '&height=' + height;
 				} else {
 					result = url;
@@ -2570,7 +2570,7 @@ var buildfire = {
 				console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
 				return url;
 			}
-    
+
 			/*if (imageTools.isProdImageServer(url)) {
                 url = url.replace(/^https:\/\//i, 'http://');
             }*/
@@ -2621,7 +2621,7 @@ var buildfire = {
 			}
 
 			//var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-            
+
 			var root = 'https://alnnibitpo.cloudimg.io/v7';
 
 			var hasQueryString = url.indexOf('?') !== -1;
@@ -2946,9 +2946,9 @@ var buildfire = {
 		},
 		show: function (options, callback) {
 			var p = new Packet(null, 'dialogAPI.show', options);
-    
+
 			var actionButtonCallbacks = new Object();
-    
+
 			if (options.actionButtons && options.actionButtons.length) {
 				options.actionButtons.forEach(function (button) {
 					actionButtonCallbacks[button.text] = button.action;
@@ -3208,7 +3208,7 @@ var buildfire = {
 						callback('no context', null);
 					}
 				}
-			});  
+			});
 		},
 		getDeeplink : function(deeplinkId, callback) {
 			if(!callback) {
@@ -3225,7 +3225,7 @@ var buildfire = {
 					};
 					buildfire.appData.search(searchOptions, '$$deeplinks', function(err, result) {
 						if(err) return callback(err, null);
-						if(result) { 
+						if(result) {
 							callback(null, result[0]);
 						} else {
 							callback(null, null);
@@ -3257,7 +3257,7 @@ var buildfire = {
 						callback('no context', null);
 					}
 				}
-			}); 
+			});
 		},
 		unregisterDeeplink : function(deeplinkId, callback) {
 			if (!callback) {
@@ -3267,7 +3267,7 @@ var buildfire = {
 			}
 			this.getDeeplink(deeplinkId, function(err, result) {
 				if(err) return callback(err, null);
-				if(result) {                    
+				if(result) {
 					buildfire.appData.delete(result.id, '$$deeplinks', callback);
 				} else {
 					callback('no result found for this deeplink id', null);
@@ -3694,7 +3694,7 @@ var buildfire = {
 								originalSetup(editor);
 							};
 						}
-                        
+
 						buildfire.appearance.getWidgetTheme(function(err, theme) {
 							if (err) return console.error(err);
 							if (options.content_style) {
@@ -3714,64 +3714,64 @@ var buildfire = {
 						} else {
 							options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
 						}
-                        
-						options.menubar = options.menubar || 'edit insert view format tools';
-						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
-						options.menu = {
-							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
-							view: {title: 'View', items: 'visualaid | preview'},
-							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
-							tools: {title: 'Tools', items: 'code'},
-						};
-						if (userMenu) {
-							for (item in userMenu) {
-								options.menu[item] = userMenu[item];
-							}
-						}
-						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
-						if (options.plugins) {
-							if (options.plugins instanceof Array) {
-								options.plugins = defaultPlugins.concat(options.plugins);  
-							} else {
-								var splittedPlugins = options.plugins.split(' ');
-								options.plugins = defaultPlugins.concat(splittedPlugins);
-							}
-						} else {
-							options.plugins = defaultPlugins;
-						}
-						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
-						if (options.toolbar) {
-							if (options.toolbar instanceof Array) {
-								if (!(options.toolbar[0] instanceof Object)) {
-									options.toolbar.forEach(function (toolbarGroup) {
-										defaultToolbar += ' | ' + toolbarGroup;
-									});
-									options.toolbar = defaultToolbar;
-								}
-							} else {
-								defaultToolbar += ' | ' + options.toolbar;
-								options.toolbar = defaultToolbar;
-							}
-						} else {
-							options.toolbar = defaultToolbar;
-						}
-						options.toolbar_mode = 'floating';
-						options.theme = 'silver';
-						options.skin = 'bf-skin',
-						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
-						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick],button[style|class|onclick]';
-						options.height = options.height || 265;
-						options.custom_elements = 'style';
-						options.convert_urls = false;
-						options._bfInitialize = true;
-						return originalTinymceInit(options);
-					};
-				}
-			} 
-		}
-	},
+
+                        options.menubar = options.menubar || 'edit insert view format tools';
+                        var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
+                        options.menu = {
+                            edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
+                            insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
+                            view: {title: 'View', items: 'visualaid | preview'},
+                            format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
+                            tools: {title: 'Tools', items: 'code'},
+                        }
+                        if (userMenu) {
+                            for (item in userMenu) {
+                                options.menu[item] = userMenu[item];
+                            }
+                        }
+                        var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
+                        if (options.plugins) {
+                            if (options.plugins instanceof Array) {
+                                options.plugins = defaultPlugins.concat(options.plugins);
+                            } else {
+                                var splittedPlugins = options.plugins.split(' ');
+                                options.plugins = defaultPlugins.concat(splittedPlugins);
+                            }
+                        } else {
+                            options.plugins = defaultPlugins;
+                        }
+                        var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
+                        if (options.toolbar) {
+                            if (options.toolbar instanceof Array) {
+                                if (!(options.toolbar[0] instanceof Object)) {
+                                    options.toolbar.forEach(function (toolbarGroup) {
+                                        defaultToolbar += ' | ' + toolbarGroup;
+                                    });
+                                    options.toolbar = defaultToolbar;
+                                }
+                            } else {
+                                defaultToolbar += ' | ' + options.toolbar;
+                                options.toolbar = defaultToolbar;
+                            }
+                        } else {
+                            options.toolbar = defaultToolbar;
+                        }
+                        options.toolbar_mode = 'floating';
+                        options.theme = 'silver';
+                        options.skin = 'bf-skin',
+                        options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
+                        options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
+                        options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick|alt],button[style|class|onclick]'
+                        options.height = options.height || 265;
+                        options.custom_elements = 'style';
+                        options.convert_urls = false;
+                        options._bfInitialize = true;
+                        return originalTinymceInit(options);
+                    }
+                }
+            }
+        }
+    },
 };
 
 window.parsedQuerystring = buildfire.parseQueryString();
