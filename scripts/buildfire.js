@@ -505,7 +505,7 @@ var buildfire = {
                 return qs.backnavigationinstance;
             return undefined;
         }
-        , navigateToTab(options = {}, callback) {
+        , navigateToTab: function (options = {}, callback) {
             var p = new Packet(null, 'navigation.navigateToTab', options);
             buildfire._sendPacket(p, callback);
         }
@@ -950,6 +950,23 @@ var buildfire = {
             linkElement.setAttribute("href", url);
             document.getElementsByTagName('head')[0].appendChild(linkElement);
         }
+        , attatchCustomAppCSSUrl: function (appId, liveMode, appHost) {
+            const customCSSUrl = `${appHost}/api/app/styles/customAppCSS.css?appId=${appId}&liveMode=${liveMode}&v=${buildfire.appearance.CSSBusterCounter}`;
+            this._attachCustomAppCSSFiles(customCSSUrl);
+        }
+        , attachLocalCustomAppCSSUrl: function (appId) {
+            const customCSSUrl = `../../../../app/scripts/offline/customAppCSS${appId}.css`;
+            this._attachCustomAppCSSFiles(customCSSUrl);
+        },
+        _attachCustomAppCSSFiles: function (url) {
+            var linkElement = document.createElement("link");
+            buildfire.appearance.CSSBusterCounter = 0;
+            linkElement.setAttribute("rel", "stylesheet");
+            linkElement.setAttribute("type", "text/css");
+            linkElement.setAttribute("id", "customAppCSS");
+            linkElement.setAttribute("href", url);
+            document.getElementsByTagName('head')[0].appendChild(linkElement);
+        }
         , _resizedTo: 0
         , autosizeContainer: function () {
             var height;
@@ -979,6 +996,10 @@ var buildfire = {
             var appThemeCSSElement = document.getElementById("appThemeCSS");
             if(appThemeCSSElement) {
                 appThemeCSSElement.href = appThemeCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
+            }
+            var customAppCSSElement = document.getElementById("customAppCSS");
+            if(customAppCSSElement) {
+                customAppCSSElement.href = customAppCSSElement.href.replace("&v=" + buildfire.appearance.CSSBusterCounter, "&v=" + ++buildfire.appearance.CSSBusterCounter);
             }
             if (appTheme) {
                 var bfWidgetTheme = document.getElementById("bfWidgetTheme");
@@ -1070,6 +1091,7 @@ var buildfire = {
                 + '--bf-theme-title-bar-text-icons: ' + appTheme.colors.titleBarTextAndIcons + ' !important;'
                 + '--bf-font-family:' + appTheme.fontName + ', sans-serif !important'                
             +'}';
+
             return css;
         }
     }
@@ -3852,6 +3874,19 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     else
                         buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
                 }
+
+                // Custom App CSS
+                buildfire.appearance.getWidgetTheme((err, appTheme) => {
+                    if (err) return console.error(err);
+                    if (appTheme.customCSS && appTheme.customCSS.active && window.location.pathname.indexOf('/widget/') >= 0) {
+                        if (buildfire.isWeb() || !context.liveMode) {
+                            buildfire.appearance.attatchCustomAppCSSUrl(context.appId, context.liveMode, context.endPoints.appHost);
+                        } 
+                        else {
+                            buildfire.appearance.attachLocalCustomAppCSSUrl(context.appId);
+                        }
+                    }
+                });
             }
         }
     });
