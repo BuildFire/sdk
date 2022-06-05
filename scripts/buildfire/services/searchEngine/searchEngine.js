@@ -2,11 +2,11 @@
  * Created by AhmadFHamed on 1/07/2019.
  * Ref: https://github.com/BuildFire/app/wiki/Search-Engine-Tech-Spec
  */
-if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use BuildFire services");
+if (typeof (buildfire) == 'undefined') throw ('please add buildfire.js first to use BuildFire services');
 
-if (typeof (buildfire.services) == "undefined") buildfire.services = {};
+if (typeof (buildfire.services) == 'undefined') buildfire.services = {};
 
-if (typeof (buildfire.services.searchEngine) == "undefined") buildfire.services.searchEngine = {};
+if (typeof (buildfire.services.searchEngine) == 'undefined') buildfire.services.searchEngine = {};
 
 /**
  * Insert data in buildfire search engine.
@@ -27,11 +27,11 @@ if (typeof (buildfire.services.searchEngine) == "undefined") buildfire.services.
  * @param {string} response.id - The id of the newly inserted document.
  */
 buildfire.services.searchEngine.insert = function(options, cb){
-    var packetId = null;
-    var command = 'searchEngine.insert';
+	var packetId = null;
+	var command = 'searchEngine.insert';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -54,11 +54,11 @@ buildfire.services.searchEngine.insert = function(options, cb){
  * @param {string} response.id - The id of the saved document.
  */
 buildfire.services.searchEngine.save = function(options, cb){
-    var packetId = null;
-    var command = 'searchEngine.save';
+	var packetId = null;
+	var command = 'searchEngine.save';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -82,11 +82,11 @@ buildfire.services.searchEngine.save = function(options, cb){
  * @param {string} response.id - The id of the updated document.
  */
 buildfire.services.searchEngine.update = function(options, cb){
-    var packetId = null;
-    var command = 'searchEngine.update';
+	var packetId = null;
+	var command = 'searchEngine.update';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -102,11 +102,11 @@ buildfire.services.searchEngine.update = function(options, cb){
  * @param {boolean} response
  */
 buildfire.services.searchEngine.delete = function(options, cb){
-    var packetId = null;
-    var command = 'searchEngine.delete';
+	var packetId = null;
+	var command = 'searchEngine.delete';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -130,15 +130,15 @@ buildfire.services.searchEngine.delete = function(options, cb){
  * @param {Object[]} response.hits.hits - Array of matched documents.
  */
 buildfire.services.searchEngine.search = function(options, cb){
-    var packetId = null;
-    var command = 'searchEngine.search';
+	var packetId = null;
+	var command = 'searchEngine.search';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 buildfire.services.searchEngine.feeds = {
-    /**
+	/**
      * Attach feed in buildfire search engine.
      * @param {Object} options - attach options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
@@ -155,20 +155,20 @@ buildfire.services.searchEngine.feeds = {
      * @param {string} [options.feedItemConfig.imageUrlKey]
      */
 
-    /**
+	/**
      * @callback cb
      * @param {Object} error
      * @param {Object} response
      * @param {string} response - return true.
      */
-    insert: function (options, cb) {
-        var packetId = null;
-        var command = 'searchEngine.feeds.insert';
+	insert: function (options, cb) {
+		var packetId = null;
+		var command = 'searchEngine.feeds.insert';
 
-        var packet = new Packet(packetId, command, options);
-        buildfire._sendPacket(packet, cb);
-    },
-    /**
+		var packet = new Packet(packetId, command, options);
+		buildfire._sendPacket(packet, cb);
+	},
+	/**
      * delete feed from buildfire search engine.
      * @param {Object} options - delete options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
@@ -176,36 +176,36 @@ buildfire.services.searchEngine.feeds = {
      * @param {boolean} [options.removeFeedData] - If true, this will remove all feed data inside the app that's related to this feed.
      */
 
-    /**
+	/**
      * @callback cb
      * @param {Object} error
      * @param {boolean} response
      */
-    delete: function (options, cb) {
-        var packetId = null;
-        var command = 'searchEngine.feeds.delete';
+	delete: function (options, cb) {
+		var packetId = null;
+		var command = 'searchEngine.feeds.delete';
 
-        var packet = new Packet(packetId, command, options);
-        buildfire._sendPacket(packet, cb);
-    },
-    /**
+		var packet = new Packet(packetId, command, options);
+		buildfire._sendPacket(packet, cb);
+	},
+	/**
      * get feeds from buildfire search engine.
      * @param {Object} options - get options.
      * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
      * @param {string} options.feedType - feed type, available types : [rss].
      */
 
-    /**
+	/**
      * @callback cb
      * @param {Object} error
      * @param {Object} response
      * @param {string} response - return array of feeds.
      */
-    get: function (options, cb) {
-        var packetId = null;
-        var command = 'searchEngine.feeds.get';
+	get: function (options, cb) {
+		var packetId = null;
+		var command = 'searchEngine.feeds.get';
 
-        var packet = new Packet(packetId, command, options);
-        buildfire._sendPacket(packet, cb);
-    }
+		var packet = new Packet(packetId, command, options);
+		buildfire._sendPacket(packet, cb);
+	}
 };

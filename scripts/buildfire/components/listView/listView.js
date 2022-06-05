@@ -15,17 +15,27 @@ buildfire.components.listView = class ListView {
 		this.container.innerHTML = '';
 		this.items = [];
 	}
+	
 	loadListViewItems(items) {
+		// this.clear();
 		this.items = [];
-		if (this.container.innerHTML == '') {
-			if (this.options.enableAddButton) {
-				let addButton = document.createElement('button');
-				addButton.classList = 'listViewAddButton btn btn--add btn--fab btn-primary';
-				addButton.innerHTML = '<span></span>';
-				this.container.appendChild(addButton);
+		if (this.options.enableAddButton) {
+			let addButton = document.createElement('button');
+			addButton.classList = 'btn-add btn-fab btn-primary';
+			addButton.innerHTML = '<span></span>';
+			this.container.appendChild(addButton);
 
-				addButton.onclick = this.onAddButtonClicked;
-			}
+			addButton.onclick = this.onAddButtonClicked;
+		}
+
+		this.append(items);
+	}
+
+	append(items) {
+		if (typeof items !== 'object') {
+			return console.error('invalid items parameter');
+		} else if (!(items instanceof Array)) {
+			items = [items];
 		}
 		items.forEach(item => this.addItem(item));
 	}
@@ -126,8 +136,6 @@ class ListViewItem {
 			listViewItemCopy.appendChild(subtitle);
 		}
 
-		let t = this;
-
 		if (this.description) {
 			let description = document.createElement('p');
 			description.className = 'listViewItemDescription ellipsis margin--0';
@@ -140,14 +148,11 @@ class ListViewItem {
 			actionHolder.classList = 'action-holder';
 
 			const actionIcon = document.createElement('span');
-			actionIcon.classList = this.action.icon || 'icon glyphicon glyphicon-star-empty';
+			actionIcon.classList = this.action.icon || 'glyphicon glyphicon-star-empty';
+			actionIcon.classList.add('icon');
+			actionIcon.textContent = this.action.iconTextContent || ''
 			actionHolder.appendChild(actionIcon);
 
-			// if (this.action.actionItem) {
-			// 	actionIcon.onclick = () => {
-			// 		buildfire.actionItems.execute(this.action.actionItem);
-			// 	};
-			// }
 			actionIcon.onclick = () => {
 				this.onActionClicked();
 			};

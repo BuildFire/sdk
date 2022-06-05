@@ -1,8 +1,10 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const data = urlParams.get('data');
-const imageProperties = JSON.parse(data).imageProperties || {};
-const imageUrl = imageProperties.originalSrc || JSON.parse(data).imageUrl;
+const parsedData = JSON.parse(data);
+const imageProperties = parsedData.imageProperties || {};
+const imageUrl = imageProperties.originalSrc || parsedData.imageUrl;
+let imageDescription = parsedData.imageDescription;
 
 let resizedImage = "";
 let cropAspectRatio = imageProperties.crop || '1:1';
@@ -13,6 +15,7 @@ let resize = document.getElementById("resize");
 let responsive = document.getElementById("responsive");
 let crop = document.getElementById("crop");
 let cropAspectRatioButton = document.getElementById("cropAspectRatioButton");
+let imageDescriptionInput = document.getElementById("imageDescription");
 let dropdowns = document.querySelectorAll('.dropdown');
 
 const fixedOptions = {
@@ -35,6 +38,9 @@ function onChangeResizeCrop(selectedValue) {
 
 resize.addEventListener("change", () => onChangeResizeCrop("resize"));
 crop.addEventListener("change", () => onChangeResizeCrop("crop"));
+if (imageDescriptionInput) {
+    imageDescriptionInput.value = imageDescription || '';
+}
 
 if (imageProperties.crop) {
     crop.click();
@@ -122,6 +128,7 @@ getresizedImage();
 
 
 window.addEventListener('message', function (event) {
+    imageDescription = imageDescriptionInput ? imageDescriptionInput.value : '';
     let imageAspects = {
         resize: resize.checked ? true : false,
         crop: !resize.checked ? cropAspectRatio : '',
@@ -136,6 +143,7 @@ window.addEventListener('message', function (event) {
     let imageData = {
         width: imageWidth,
         src: resizedImage,
+        alt: imageDescription,
         imageAspects: stringifiedImageAspects
     }
     if (event.data.message === 'getImage') {

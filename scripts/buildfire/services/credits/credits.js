@@ -1,11 +1,11 @@
 /**
  * Created by Rami Abdel Hadi on 5/25/2019.
  */
-if (typeof (buildfire) == "undefined") throw ("please add buildfire.js first to use BuildFire services");
+if (typeof (buildfire) == 'undefined') throw ('please add buildfire.js first to use BuildFire services');
 
-if (typeof (buildfire.services) == "undefined") buildfire.services = {};
+if (typeof (buildfire.services) == 'undefined') buildfire.services = {};
 
-if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credits = {};
+if (typeof (buildfire.services.credits) == 'undefined') buildfire.services.credits = {};
 
 /**
  * get bundles
@@ -17,16 +17,16 @@ if (typeof (buildfire.services.credits) == "undefined") buildfire.services.credi
  * @param {Object} response
  */
 buildfire.services.credits.getBundles = function (options, cb) {
-    var packetId = null;
-    var command = 'credits.getBundles';
+	var packetId = null;
+	var command = 'credits.getBundles';
 
-    if (typeof (options) == "function") {
-        cb = options;
-        options = {};
-    }
+	if (typeof (options) == 'function') {
+		cb = options;
+		options = {};
+	}
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -44,11 +44,11 @@ buildfire.services.credits.getBundles = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.credits.purchaseBundle = function (options, cb) {
-    var packetId = null;
-    var command = 'credits.purchaseBundle';
+	var packetId = null;
+	var command = 'credits.purchaseBundle';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -61,15 +61,15 @@ buildfire.services.credits.purchaseBundle = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.credits.getUser = function (options, cb) {
-    if (typeof (options) == 'function') {
-        cb = options;
-        options = {};
-    }
-    var packetId = null;
-    var command = 'credits.getUser';
+	if (typeof (options) == 'function') {
+		cb = options;
+		options = {};
+	}
+	var packetId = null;
+	var command = 'credits.getUser';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -83,11 +83,11 @@ buildfire.services.credits.getUser = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.credits.consumeCredits = function (options, cb) {
-    var packetId = null;
-    var command = 'credits.consumeCredits';
+	var packetId = null;
+	var command = 'credits.consumeCredits';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -101,11 +101,11 @@ buildfire.services.credits.consumeCredits = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.credits.transferCredits = function (options, cb) {
-    var packetId = null;
-    var command = 'credits.transferCredits';
+	var packetId = null;
+	var command = 'credits.transferCredits';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -114,11 +114,11 @@ buildfire.services.credits.transferCredits = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.credits.getUserTransactions = function (options, cb) {
-    var packetId = null;
-    var command = 'credits.searchTransactions';
+	var packetId = null;
+	var command = 'credits.searchTransactions';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
 
 /**
@@ -127,9 +127,9 @@ buildfire.services.credits.getUserTransactions = function (options, cb) {
  * @param {Object} response
  */
 buildfire.services.credits.showTransactions = function (options, cb) {
-    var packetId = null;
-    var command = 'credits.showTransactions';
+	var packetId = null;
+	var command = 'credits.showTransactions';
 
-    var packet = new Packet(packetId, command, options);
-    buildfire._sendPacket(packet, cb);
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
 };
