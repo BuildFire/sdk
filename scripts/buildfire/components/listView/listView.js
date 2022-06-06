@@ -150,7 +150,7 @@ class ListViewItem {
 			const actionIcon = document.createElement('span');
 			actionIcon.classList = this.action.icon || 'glyphicon glyphicon-star-empty';
 			actionIcon.classList.add('icon');
-			actionIcon.textContent = this.action.iconTextContent || '';
+			actionIcon.textContent = this.action.iconTextContent || ''
 			actionHolder.appendChild(actionIcon);
 
 			actionIcon.onclick = () => {

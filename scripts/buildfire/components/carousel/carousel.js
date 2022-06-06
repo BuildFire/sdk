@@ -544,21 +544,21 @@ buildfire.components.carousel.view.prototype = {
 		var image = document.createElement('img');
 		me.$slider = $(me.selector);
 
-		buildfire.imageLib.local.cropImage(item.iconUrl, {
-			width: this.width,
-			height: this.height
-		}, function (err, result) {
-			if (!err) {
-				image.src = result;
-				image.alt = item.title || '';
-				image.style.transform = 'translateZ(0)';
-				slider.appendChild(image);
-				me.selector.appendChild(slider);
-			}
-			else
-				console.log('Error occurred while cropping image: ', err);
+        buildfire.imageLib.local.cropImage(item.iconUrl, {
+            width: this.width,
+            height: this.height
+        }, function (err, result) {
+            if (!err) {
+                image.src = result;
+                image.alt = item.title || '';
+                image.style.transform = "translateZ(0)";
+                slider.appendChild(image);
+                me.selector.appendChild(slider);
+            }
+            else
+                console.log('Error occurred while cropping image: ', err);
 
-			callback();
-		});
-	}
+            callback();
+        });
+    }
 };
