@@ -247,7 +247,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 			$scope.loadIFrame(title, deeplinkData);
 		}
 		else {
-			const customTab = $scope.customTabs.find(tab => tab.title.toLowerCase() === title);
+			const customTab = $scope.customTabs.find(tab => tab.title.toLowerCase().trim() === title);
 			if (!customTab) return callback(`Tab with title ${title} not found`);
 			$scope.loadCustomTab(customTab, deeplinkData);
 		}
