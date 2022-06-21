@@ -898,24 +898,30 @@ var buildfire = {
 		}
 		, disableFastClickOnLoad:false
 		, attachFastClick: function(){
-
 			var path;
 			var scripts = document.getElementsByTagName('script');
+			var references = [
+				'buildfire.js',
+				'buildfire.min.js',
+				'buildfire_lightcarousel.min.js',
+				'jquery_angular_buildfire_smartcrop.min.js',
+			];
 			for (var i = 0; i < scripts.length; i++) {
-				if (scripts[i].src.indexOf('buildfire.js') > 0)
-					path = scripts[i].src.replace('buildfire.js', 'fastclick.js');
-				else if (scripts[i].src.indexOf('buildfire.min.js') > 0)
-					path = scripts[i].src.replace('buildfire.min.js', 'fastclick.js');
-				else if (scripts[i].src.indexOf('fastclick.js') > 0){
-					console.warn('fastclick already attached');
-					return;
+				for (var j = 0; j !== references.length; j++) {
+					var ref = references[j];
+					if (scripts[i].src.indexOf(ref) > 0) {
+						// fastclick.js exist in root scripts, following replaces _bundles dir
+						path = (scripts[i].src.replace(ref, 'fastclick.js')).replace('_bundles/', '');
+						break;
+					} else if (scripts[i].src.indexOf('fastclick.js') > 0){
+						console.warn('fastclick already attached');
+						break;
+					}
 				}
 			}
-			if(!path){
+			if (!path) {
 				console.warn('fastclick.js requires a buildfire.js reference.');
-				return;
-			}
-			else {
+			} else {
 				var script = document.createElement('script');
 				script.src = path;
 				script.type='text/javascript';

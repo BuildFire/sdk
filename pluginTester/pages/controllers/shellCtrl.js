@@ -62,7 +62,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 				if (lastTabName === 'settings' || !$scope.currentControl) {
 					$scope.currentControl = $scope.settingsSrc;
 					$scope.activeTab = 'settings';
-				}   
+				}
 			}
 
 			$scope.pluginControlIframeVisible = true;
@@ -82,7 +82,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 							tab.secureUrl = $sce.trustAsResourceUrl(tab.url);
 						}
 						if (lastTabName === tab.title) {
-							$scope.loadCustomTab(tab); 
+							$scope.loadCustomTab(tab);
 						}
 					}
 				}
@@ -98,7 +98,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 		});
 	};
 
-	$scope.loadIFrame = function (section) {
+	$scope.loadIFrame = function (section, deeplinkData) {
 		$scope.pluginControlIframeVisible = true;
 		var pluginFolder = $routeParams.pluginFolder;
 		if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
@@ -112,28 +112,38 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 				?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter
 				: '../plugins/' + pluginFolder + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter;
 
+			if (deeplinkData) {
+				$scope.currentControl += `&dld=${encodeURIComponent(JSON.stringify(deeplinkData))}`;
+			}
+
 			$scope.activeTab = section;
 			sessionStorage.setItem(pluginFolder, section);
+			if (!$scope.$$phase)$scope.$digest();
 		});
 	};
 
-	$scope.loadCustomTab = function (tab) {
+	$scope.loadCustomTab = function (tab, deeplinkData) {
 		var pluginFolder = $routeParams.pluginFolder;
 		if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
 
 		if(tab.controlUrl) {
 			$scope.pluginControlIframeVisible = true;
 			$scope.currentControl = tab.controlUrl;
+			if (deeplinkData) {
+				$scope.currentControl += `&dld=${encodeURIComponent(JSON.stringify(deeplinkData))}`;
+			}
 		} else {
 			$scope.pluginControlIframeVisible = false;
 			$scope.currentNonControl = tab.secureUrl;
+			if (deeplinkData) {
+				$scope.currentNonControl += `&dld=${encodeURIComponent(JSON.stringify(deeplinkData))}`;
+			}
 		}
 
 		$scope.activeTab = tab.title;
 		sessionStorage.setItem(pluginFolder, tab.title);
 
-		if (!$scope.$$phase)
-			$scope.$apply();
+		if (!$scope.$$phase) $scope.$apply();
 	};
 
 	/****************keep track of recent plugins *****/
@@ -228,6 +238,24 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 
 	$scope.init();
 
+	$scope.navigateToTab = ({ tabTitle, deeplinkData }, callback) => {
+		if (!tabTitle) return callback('Tab title shouldn\'t be empty');
+		if (typeof tabTitle !== 'string') return callback('Tab title should be a string');
+		const title = tabTitle.toLowerCase().trim();
+
+		if (title === 'content' || title === 'design' || title === 'settings') {
+			$scope.loadIFrame(title, deeplinkData);
+		}
+		else {
+			const customTab = $scope.customTabs.find(tab => tab.title.toLowerCase().trim() === title);
+			if (!customTab) return callback(`Tab with title ${title} not found`);
+			$scope.loadCustomTab(customTab, deeplinkData);
+		}
+
+		// Success
+		callback();
+	};
+
 	$scope.navTo = function ($event) {
 
 		if ($event.keyCode == 13)
@@ -253,7 +281,7 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 			if(!user){
 				user = localStorage.getItem('user');
 				user = JSON.parse(user);
-        
+
 			}
 			if (!(user && user.userToken)) {
 				user = null;
@@ -279,6 +307,15 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 				url = updateQueryStringParameter(url, 'dld', JSON.stringify(obj.data));
 			}
 			callback(null, url);
+		};
+
+		// This will allow us to navigate through CP tabs using the SDK
+		if (!postMaster.controlPluginAPI.navigation) {
+			postMaster.controlPluginAPI.navigation = {};
+		}
+
+		postMaster.controlPluginAPI.navigation.navigateToTab = (options, callback) => {
+			$scope.navigateToTab(options, callback);
 		};
 	}
 }]
