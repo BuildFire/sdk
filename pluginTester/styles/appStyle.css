@@ -4236,7 +4236,8 @@ html[ios="true"] .profile-overlay .profile-content{
 	margin-bottom: 24px;
 }
 .profile-overlay .edit-profile input,
-.profile-overlay .edit-profile textarea{
+.profile-overlay .edit-profile textarea,
+.delete-account-overlay input {
 	border: 0;
 	background-color: rgba(150,150,150,.08);
 	border-bottom: 1px solid rgba(150,150,150,.3);
@@ -4985,4 +4986,11 @@ button.list-group-item {
 }
 .profile-overlay .edit-profile .field-more-info {
 	margin-top: -8px;
+}
+.delete-account-overlay p {
+  font-size: 14px;
+}
+.delete-account-overlay button.btn-danger {
+  display: block;
+  margin: 30px auto 20px;
 }

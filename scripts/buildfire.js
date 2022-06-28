@@ -562,7 +562,7 @@ var buildfire = {
 		_setFontUrl: function (context, appTheme) {
 			if (appTheme.fontId) {
 				if (appTheme.isCustomFont) {
-					appTheme.fontUrl = `${context.endPoints.pluginRootHost}/${appTheme.fontFolderPath}/${context.appId}/${encodeURIComponent(appTheme.fontFileName)}?v=${appTheme.fontLastUpdatedOn}`;
+					appTheme.fontUrl = `${context.endPoints.pluginRootHost}/${appTheme.fontFolderPath}/${context.appId}/${encodeURIComponent(appTheme.fontFileName)}?cdn-buster=${appTheme.fontLastUpdatedOn}`;
 				} else {
 					appTheme.fontUrl = `https://fonts.googleapis.com/css?family=${appTheme.fontId}`;
 				}
