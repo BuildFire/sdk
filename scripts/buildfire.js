@@ -443,11 +443,10 @@ var buildfire = {
 				console.info('openWindow:: completed');
 			};
 			var actionItem = {
-				action: 'linkToWeb'
-				, url: url
+				url: url
 				, openIn: target
 			};
-			var p = new Packet(null, 'actionItems.execute', actionItem, callback);
+			var p = new Packet(null, 'actionItems.executeOpenWebLink', actionItem, callback);
 			buildfire._sendPacket(p, callback);
 		}
 		, _goBackOne: function () {
