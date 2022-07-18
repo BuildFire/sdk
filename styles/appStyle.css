@@ -884,6 +884,11 @@ nav.menu.layout7 a.notifications span.icon{
 .no-background .plugin-slide{
 	background:none;
 }
+.blurred-background-image {
+	filter: blur(30px);
+	position: absolute;
+	top: 0;
+}
 
 /* Dynamic Links */
 .dynamic-links a,

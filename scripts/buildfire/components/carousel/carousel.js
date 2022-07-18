@@ -392,7 +392,6 @@ buildfire.components.carousel.view.prototype = {
 		}
 
 		// Set Min height on carousel so doesn't push content down on load.
-		this._minHeight = '180px';
 		this._minHeight = this.cssHeight;
 	},
 	// remove all nodes from the slider
@@ -534,7 +533,7 @@ buildfire.components.carousel.view.prototype = {
 		slider.addEventListener('click', function () {
 			buildfire.actionItems.execute(item, function (err, result) {
 				if (err) {
-					console.warn('Error openning slider action: ', err);
+					console.warn('Error opening slider action: ', err);
 				}
 			});
 		});
@@ -542,6 +541,7 @@ buildfire.components.carousel.view.prototype = {
 		// Images
 		var me = this;
 		var image = document.createElement('img');
+		var backgroundImage = document.createElement('img');
 		me.$slider = $(me.selector);
 
 		buildfire.imageLib.local.cropImage(item.iconUrl, {
@@ -549,9 +549,15 @@ buildfire.components.carousel.view.prototype = {
 			height: this.height
 		}, function (err, result) {
 			if (!err) {
-				image.src = result;
-				image.alt = item.title || '';
+				image.src = backgroundImage.src = result;
+				image.alt = backgroundImage.alt = item.title || '';
+				backgroundImage.className = 'blurred-background-image';
+				backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2) !important;`);
 				image.style.transform = 'translateZ(0)';
+				slider.style.overflow = 'hidden';
+				if (me.height > 380) {
+					slider.appendChild(backgroundImage);
+				}
 				slider.appendChild(image);
 				me.selector.appendChild(slider);
 			}
