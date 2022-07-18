@@ -9,6 +9,7 @@
     border: 1px solid rgba(77, 77, 77, 0.2);
     box-shadow: 0 .5em 1em rgba(77, 77, 77, 0.5);
     backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 }
 #bf_mce_layout_4 * > span{
     color: currentColor;
