@@ -18,3 +18,17 @@ buildfire.services.camera.getVideo = function (options, callback) {
 	if (!options) options = {};
 	buildfire._sendPacket(new Packet(null, 'camera.getVideo', options), callback);
 };
+
+buildfire.services.camera.requestAuthorization = function (options, callback) {
+	if (!callback) {
+		throw 'callback function is mandatory';
+	}
+	buildfire._sendPacket(new Packet(null, 'camera.requestAuthorization', {}), callback);
+};
+
+buildfire.services.camera.isAuthorized = function (options, callback) {
+	if (!callback) {
+		throw 'callback function is mandatory';
+	}
+	buildfire._sendPacket(new Packet(null, 'camera.isAuthorized', {}), callback);
+};
