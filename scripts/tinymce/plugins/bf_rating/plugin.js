@@ -38,7 +38,7 @@ tinymce.PluginManager.add("bf_rating", function (editor, url) {
                     let val = result.trim();
                     val = escape(val);
                     editor.insertContent(
-                        `<img src="rating_inject_error" onerror="typeof buildfire !== 'undefined' && buildfire.ratingSystem.inject()" style="display: none !important;">
+                        `<img src="trigger_errorasd" onerror="typeof buildfire !== 'undefined' && buildfire.ratingSystem.inject()" style="display: none !important;">
                             <p data-rating-id="${val}-tinymce" style="text-align: center;" data-mce-style="text-align: center;">
                                 &#9733; &#9733; &#9733; &#9733; &#9733;
                             </p><br>
