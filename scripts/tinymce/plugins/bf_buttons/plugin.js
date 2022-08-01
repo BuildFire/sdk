@@ -109,7 +109,7 @@ tinymce.PluginManager.add("bf_buttons", function (editor, url) {
                             let buttonOrlink = document.createElement(result.type === 'button' ? 'button' : 'a');
                             buttonOrlink.className = result.type === 'button' ? 'bf-btn bf-btn-' + result.buttonStyle : 'bf-text-' + result.buttonStyle;
                             buttonOrlink.setAttribute('data-execute', res.stringifiedActionItem);
-                            buttonOrlink.setAttribute('onclick', 'buildfire.actionItems.execute(JSON.parse(unescape(this.getAttribute("data-execute"))), ()=>{})')
+                            buttonOrlink.setAttribute('onclick', "buildfire.actionItems.execute(JSON.parse(unescape(this.getAttribute('data-execute'))), ()=>{})")
                             buttonOrlink.innerText = res.actionItem.title;
                             editor.insertContent(buttonOrlink.outerHTML + '&nbsp;');
                             dialogApi.close();
