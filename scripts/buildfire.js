@@ -3433,7 +3433,7 @@ var buildfire = {
 						"_buildfire.index.date1": { $gte: fromDate.getTime() },
 						},
 				},
-				"$$buildfire_deletedUsers",
+				"$$deletedUsers",
 				callback
 			);
 		}
