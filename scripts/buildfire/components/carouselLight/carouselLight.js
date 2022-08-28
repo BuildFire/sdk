@@ -9,18 +9,8 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 	buildfire.components.carousel = {};
 
 (function () {
-	var scripts = document.getElementsByTagName('script');
-	var carouselScriptSrc = null;
-
-	for (var i = 0; i < scripts.length; i++) {
-		if (scripts[i].src && (scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.js') || scripts[i].src.toLowerCase().indexOf('buildfire/components/carousellight/carousellight.min.js'))) {
-			carouselScriptSrc = scripts[i].src;
-		}
-	}
-
-	if (carouselScriptSrc) {
 		if (typeof lory == 'undefined') {
-			document.write('<script src="' + carouselScriptSrc + '/../../../../lory/lory.min.js"></script>');
+			throw ('lory library not found');
 		}
 
 		//Add Lory CSS
@@ -35,52 +25,29 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 		style.innerHTML += ' .loryPercentage .lorySlides { display: block; padding: 0px;}';
 		style.innerHTML += ' .loryPercentage li {  width: 100%;}';
 
-		if (style.innerHTML.length > 0)
-			document.head.appendChild(style);
-		//# Add Lory CSS
-	}
-	else {
-		throw ('carousellight components not found');
-	}
+		document.head.appendChild(style);
 })();
 
 // This is the class that will be used in the mobile
 //{selector:selector, items:items, layout:layout, speed:speed}
 buildfire.components.carousel.view = function (options) {
-	if ( options.items && options.items.length > 0) {
-		/*
-         if more than one image add carousel else add image directly to the carousel container
-         */
-		if (options.items.length > 1) {
+	if (options.items && options.items.length > 0) {
 			this.config = this.mergeSettings(options);
 			this._initDimensions(this.config.layout);
 			this.init();
+		if (options.selector) {
+			options.selector.style.display= '';
 		} else {
-			//add image directly to carousel container without adding the carousel lib
-			options.selector.innerHTML = '';
-			//append image tag
-			var img = document.createElement('img');
-			img.setAttribute('src', buildfire.imageLib.cropImage(options.items[0].iconUrl, {
-				size: 'full_width',
-				aspect: '16:9',
-				width: window.innerWidth,
-				height: Math.ceil(9 * (window.innerWidth) / 16)
-			}));
-			img.alt = options.items[0].title;
-			options.selector.appendChild(img);
-			img.addEventListener('click', function () {
-				buildfire.actionItems.execute(options.items[0], function (err, result) {
-					if (err) {
-						console.warn('Error openning slider action: ', err);
-					}
-				});
-			});
+			console.error('Selector element should be provided');
 		}
-		options.selector.style.display='';
+		
 	} else {
-		options.selector.style.display='none';
+		if (options.selector) {
+			options.selector.style.display = 'none';
+		} else {
+			console.error('Selector element should be provided');
+		}
 	}
-
 };
 
 // Carousel view methods
@@ -94,9 +61,9 @@ buildfire.components.carousel.view.prototype = {
 			loop: true,
 			autoInterval: 5 * 1000
 		};
-		var userSttings = options;
-		for (var attrname in userSttings) {
-			settings[attrname] = userSttings[attrname];
+		var userSettings = options;
+		for (var attrName in userSettings) {
+			settings[attrName] = userSettings[attrName];
 		}
 		return settings;
 	},
@@ -104,9 +71,11 @@ buildfire.components.carousel.view.prototype = {
 		this.selector = typeof this.config.selector === 'string' ? document.querySelector(this.config.selector) : this.config.selector;
 
 		if (!this.selector) {
-			throw ('selecter not found');
+			throw ('selector not found');
 			return;
 		}
+		// Add min-height to carousel to prevent it from pushing content down
+		this.selector.style['min-height'] = this._minHeight;
 
 		var self = this;
 
@@ -222,11 +191,12 @@ buildfire.components.carousel.view.prototype = {
 		slide.addEventListener('click', function () {
 			buildfire.actionItems.execute(item, function (err, result) {
 				if (err) {
-					console.warn('Error openning slider action: ', err);
+					console.warn('Error opening slider action: ', err);
 				}
 			});
 		});
 
+		let me = this;
 		buildfire.imageLib.local.cropImage(item.iconUrl, {
 			aspect: this.aspect,
 			size: 'full_width',
@@ -235,8 +205,16 @@ buildfire.components.carousel.view.prototype = {
 		}, function (err, result) {
 			if (!err) {
 				var image = document.createElement('img');
-				image.src = result;
-				image.alt = item.title || '';
+				var backgroundImage = document.createElement('img');
+				image.src = backgroundImage.src = result;
+				image.alt = backgroundImage.alt = item.title || '';
+				backgroundImage.className = 'blurred-background-image';
+				backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2) !important;`);
+				slide.style.overflow = 'hidden';
+				image.style.transform = 'translateZ(0)';
+				if (me.height > 380) {
+					slide.appendChild(backgroundImage);
+				}
 				slide.appendChild(image);
 			}
 			else
@@ -254,12 +232,12 @@ buildfire.components.carousel.view.prototype = {
 
 		if (items && items instanceof Array && items.length) {
 			for (var i = 0; i < items.length; i++) {
-				this.items.push(items[i]);
+				this.config.items.push(items[i]);
 			}
-
 			var self = this;
-			this._loadImages(items, function () {
-				self._applySlider();
+			self.slideContainer.innerHTML = '';
+			this._loadImages(this.config.items, function () {
+				self.lorySlider.setup();
 			});
 		}
 	},
@@ -277,7 +255,6 @@ buildfire.components.carousel.view.prototype = {
 			this.aspect = '2.39:1';
 		} else if (layout == 'MobileScreen') {
 			this.height = (window.innerHeight / this.width) * this.width;
-			this.width = this.width;
 			this.aspect = '9:16';
 		}
 
@@ -289,7 +266,6 @@ buildfire.components.carousel.view.prototype = {
 		}
 
 		// Set Min height on carousel so doesn't push content down on load.
-		this._minHeight = '180px';
 		this._minHeight = this.cssHeight;
 	}
 };

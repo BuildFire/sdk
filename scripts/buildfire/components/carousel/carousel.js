@@ -71,7 +71,7 @@ buildfire.components.carousel.editor.prototype = {
 	},
 	// This will be triggered when you add a new item, item index will be items.length
 	onAddItems: function (items) {
-		console.warn('please handle onAddItems', item);
+		console.warn('please handle onAddItems', items);
 	},
 	// This will be triggered when you delete an item
 	onDeleteItem: function (item, index) {
@@ -308,7 +308,7 @@ buildfire.components.carousel.view = function (selector, items, layout, speed, d
 	this.responsive = disableResponsive ? false : true;
 	this._initDimensions(layout);
 	this._loadItems(items, false);
-	this.init(selector,speed);
+	this.init(selector, speed);
 	window.dispatchEvent(new CustomEvent('resize'));
 };
 
@@ -333,7 +333,7 @@ buildfire.components.carousel.view.prototype = {
 		});
 	},
 	// this method allows you to append or replace slider images
-	loadItems: function (items, appendItems, layout,speed) {
+	loadItems: function (items, appendItems, layout, speed) {
 		if (this.$slider) {
 			this._destroySlider();
 			this._removeAll();
@@ -379,15 +379,14 @@ buildfire.components.carousel.view.prototype = {
 			this.height = this.width;
 		} else if (layout == 'Cinema') {
 			this.height = Math.ceil(1 * this.width / 2.39);
-		}else if(layout == 'MobileScreen'){
-			this.height=(window.innerHeight/this.width)*this.width;
-			this.width=this.width;
+		} else if (layout == 'MobileScreen'){
+			this.height = (window.innerHeight / this.width) * this.width;
 		}
 
 		this.cssWidth = this.width + 'px';
-		if(this.height > 380){
+		if (this.height > 380) {
 			this.cssHeight = '380px';
-		}else{
+		} else {
 			this.cssHeight = this.height + 'px';
 		}
 
