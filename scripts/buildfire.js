@@ -3426,6 +3426,9 @@ var buildfire = {
 			if(!fromDate){
 				return callback("from Date not defined", null);
 			}
+			if((fromDate instanceof Date) == false){
+    			return callback('from Date must be a Date type.', null);
+			}
 			buildfire.appData.search(
 				{
 					filter: {
