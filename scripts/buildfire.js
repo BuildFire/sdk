@@ -3421,6 +3421,20 @@ var buildfire = {
 		searchUsers: function (params, callback) {
 			var p = new Packet(null, 'auth.searchUsers', params);
 			buildfire._sendPacket(p, callback);
+		},
+		getDeletedUsers: function({fromDate} , callback){
+			if(!fromDate){
+				return callback("from Date not defined", null);
+			}
+			buildfire.appData.search(
+				{
+					filter: {
+						"_buildfire.index.date1": { $gte: fromDate.getTime() },
+						},
+				},
+				"$$deletedUsers",
+				callback
+			);
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
