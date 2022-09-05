@@ -3422,31 +3422,32 @@ var buildfire = {
 			var p = new Packet(null, 'auth.searchUsers', params);
 			buildfire._sendPacket(p, callback);
 		},
-		getDeletedUsers: function({fromDate} , callback){
-			if(!fromDate){
-				return callback("from Date not defined", null);
+		getDeletedUsers: function(params , callback){
+			if(!params || !params.fromDate){
+				return callback("params or fromDate not defined", null);
 			}
-			if((fromDate instanceof Date) == false){
-    			return callback('from Date must be a Date type.', null);
+			if((params.fromDate instanceof Date) == false){
+    			return callback('fromDate must be a Date type.', null);
 			}
 			buildfire.appData.search(
 				{
 					filter: {
-						"_buildfire.index.date1": { $gte: fromDate.getTime() },
+						"_buildfire.index.date1": { $gte: params.fromDate.getTime() },
 						},
 				},
 				"$$deletedUsers",
 				(err,result) => {
-					if(err) callback(err, null)
+					if(err) return callback(err, null);
 					if(result){
-							const deletedUsers  = result.map(({data}) =>{ 
+							const deletedUsers  = result.map(({data}) =>{
 									return {
 										 userId: data.userId,
 					 					 deletedOn: new Date(data._buildfire.index.date1)
 									}
-							})
-							callback(null, deletedUsers)
+							});
+							return callback(null, deletedUsers);
 					}
+					return callback(null, []);
 				}
 			);
 		}

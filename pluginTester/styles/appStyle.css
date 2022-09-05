@@ -1260,7 +1260,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame { 
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
 		padding-bottom: 0px;
 	}
 
@@ -4972,6 +4972,12 @@ button.list-group-item {
 }
 #webviewBackdrop.closing {
 	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
+}
+#webviewBackdrop .webview-backdrop-wrapper {
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 #sideMenuHeaderImage {
 	height: 26px;
