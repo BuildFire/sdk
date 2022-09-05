@@ -3436,7 +3436,18 @@ var buildfire = {
 						},
 				},
 				"$$deletedUsers",
-				callback
+				(err,result) => {
+					if(err) callback(err, null)
+					if(result){
+							const deletedUsers  = result.map(({data}) =>{ 
+									return {
+										 userId: data.userId,
+					 					 deletedOn: new Date(data._buildfire.index.date1)
+									}
+							})
+							callback(null, deletedUsers)
+					}
+				}
 			);
 		}
 	}
