@@ -92,3 +92,7 @@
 .bf-btn:hover {
     color: white !important;
 }
+/* solve issue: appTheme forcing color for span children */
+.bf-wysiwyg-top span span {
+	color: inherit;
+}

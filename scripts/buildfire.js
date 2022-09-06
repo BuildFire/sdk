@@ -3675,6 +3675,8 @@ var buildfire = {
 											}
 										});
 									}
+									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element 
+									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add("bf-wysiwyg-top") });
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',
