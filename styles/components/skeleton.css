@@ -73,7 +73,6 @@
 }
 .bf-skeleton-container .bf-skeleton-loader:empty.skeleton-image {
 	aspect-ratio: 16/9;
-	max-height: 200px;
 	margin-bottom: 5px;
 	width: 100%;
 }
