@@ -2737,7 +2737,33 @@ html:not([type="app"]) .snackbar-hero{
 }
 
 @media(min-width: 1200px){
-	[type="app"] #footerMenuParent{
+	[type="app"] .plugin-overlay {
+		height: 100%;
+		margin: 0 auto;
+		padding-bottom: 0;
+	}
+
+	[type="app"] body:not(.has-footer-menu) .plugin-overlay {
+		padding-top: 68px;
+	}
+
+	[type="app"] body:not(.menu-disabled) .plugin-overlay {
+		padding-left: 280px;
+	}
+
+	[type="app"] .screen-overlay {
+		display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+	}
+	[type="app"] .pluginFrame.has-navbar:not(.showTitleBar) {
+		padding-top:68px !important;
+	}
+
+	[type="app"] #footerMenuParent:not(.ng-hide){
 		top: 0;
 		height: 68px;
 		z-index: 99999999;
@@ -2770,10 +2796,12 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] #footerMenuParent .action-group{
 		justify-content: flex-end;
-		max-width: calc(280px + 900px);
 		margin: 0 auto;
 		cursor: auto;
 		padding-left: 40%;
+	}
+	[type="app"] body:not(.full) #footerMenuParent .action-group{
+		max-width: calc(280px + 900px);
 	}
 	[type="app"] #footerMenuParent .action-group .action-item{
 		width: auto;
@@ -2788,14 +2816,14 @@ html:not([type="app"]) .snackbar-hero{
 		padding-top: 0;
 		padding-bottom: 0;
 	}
-	[type="app"] .notes-wrapper,
+	[type="app"] .notes-wrapper.has-footer-menu,
 	[type="app"] .menu-body-container,
-	[type="app"] .search-container,
+	[type="app"] .search-container.has-footer-menu,
 	[type="app"] #inputDialog{
 		padding-top: 68px;
 		padding-bottom: 0;
 	}
-	[type="app"] #plugin #pluginNav{
+	[type="app"] #pluginNav.has-navbar{
 		margin-top: 68px;
 	}
 	[type="app"] #pluginNav{
@@ -2807,14 +2835,14 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] #pluginNav a.menu-btn-icon{
 		left: 17px;
 	}
-	[type="app"] #launcherPlugin{
+	[type="app"] .has-footer-menu #launcherPlugin{
 		padding-top: 68px;
 	}
 	[type=app] #launcherPlugin.showNav{
 		padding-top: 0;
 		height: calc(100% - 50px - 68px);
 	}
-	[type=app] .launcherNav{
+	[type=app] .has-footer-menu .launcherNav{
 		margin-top: 68px;
 	}
 	[type="app"] .pluginFrame{
@@ -2824,33 +2852,59 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .shell-sdk .pluginFrame{
 		padding-top: 49px !important;
 	}
+	[type="app"] body.menu-disabled #appBody {
+		padding-left: 0px! important;
+		padding-top: 0px! important;
+	}
+	[type="app"] #menuNav {
+		transition: none !important;
+	}
+	[type="app"] #menuNav.hideMenuWeb {
+		display: none !important;
+	}
 	[type="app"] #appBody,
 	[type="app"] #notesDialog .notes-wrapper,
 	[type="app"] #inputDialog,
 	[type="app"] #gifDialog{
-		max-width: calc(280px + 900px) !important;
-		width: calc(280px + 900px) !important;
+		margin: 0 auto 0 280px;
+	}
+	[type="app"] body:not(.full) #appBody,
+	[type="app"] body:not(.full) #notesDialog .notes-wrapper,
+	[type="app"] body:not(.full) #inputDialog,
+	[type="app"] body:not(.full) #gifDialog{
 		padding-left: 280px;
 		margin: 0 auto;
+		max-width: calc(280px + 900px) !important;
+		width: calc(280px + 900px) !important;
 	}
+
 	[type="app"] .menu-disabled #appBody,
 	[type="app"] .menu-disabled #notesDialog .notes-wrapper,
 	[type="app"] .menu-disabled #inputDialog,
 	[type="app"] .menu-disabled #gifDialog{
-		padding-left: 0;
+		margin-left: 0;
 	}
 	[type="app"] .menu-now-playing-body {
     padding: 24px 0 0 16px;
 	}
-	[type="app"] #plugin,
-	[type="app"] .bookmarks-container{
+	[type="app"] body #plugin,
+	[type="app"] body .bookmarks-container{
+		width: calc(100% - 280px);
+		max-width: calc(100% - 280px);
+	}
+	[type="app"] body:not(.full) #plugin,
+	[type="app"] body:not(.full) .bookmarks-container{
 		width: 900px;
 		max-width: 900px;
 	}
-	[type="app"] .menu-disabled #plugin,
-	[type="app"] .menu-disabled .bookmarks-container{
+	[type="app"] body:not(.full).menu-disabled #plugin,
+	[type="app"] body:not(.full).menu-disabled .bookmarks-container{
 		max-width: calc(280px + 900px) !important;
 		width: calc(280px + 900px) !important;
+	}
+	[type="app"] body.full.menu-disabled #plugin,
+	[type="app"] body.full.menu-disabled .bookmarks-container{
+		min-width: 100vw !important;
 	}
 	[type="app"] #notesDialog{
 		z-index: 99999999;
@@ -2865,14 +2919,6 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] #notesDialog .notes-wrapper,
 	[type="app"] #notesDialog .notes-secondary-wrapper{
 		height: 100%;
-	}
-	[type="app"] #notesDialog .backdrop{
-		display: block;
-		position: absolute;
-		height: 100%;
-		width: 100%;
-		top: 0;
-		left: 0;
 	}
 	[type="app"] .notes-container{
 		height: calc(100% - 50px);
@@ -2944,10 +2990,12 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .menu-close-container{
 		padding: 0 1px;
     width: calc(280px + 900px);
-    margin: 0 auto;
     padding-right: calc(900px - 1px);
 		pointer-events: none;
 		background: transparent !important;
+	}
+	[type="app"] body:not(.full) .menu-close-container{
+		margin: 0 auto;
 	}
 	[type="app"] .menu-close-container .search-container{
 		pointer-events: auto;
@@ -3021,20 +3069,22 @@ html:not([type="app"]) .snackbar-hero{
 		display: none;
 	}
 	[type="app"] .menu-body-container{
-		pointer-events: none !important;
-    width: calc(280px + 900px + -2px);
-		margin: 0 auto;
 		padding-top: 52px;
     padding-right: 912px;
+		pointer-events: none !important;
+		width: calc(280px + 900px + -2px);
+	}
+	[type="app"] body:not(.full) .menu-body-container{
+		margin: 0 auto;
 	}
 	[type="app"] .menu-body-container.no-search{
 		padding-top: 0;
     z-index: 9999;
 	}
-	[type="app"] .search-container {
+	[type="app"] .search-container.has-footer-menu {
     margin-top: 66px;
 	}
-	[type="app"] .menu-body-container{
+	[type="app"] .menu-body-container.has-footer-menu{
 		padding-top: 122px;
     /* z-index: 9999; */
 	}
