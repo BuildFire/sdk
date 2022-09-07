@@ -3423,6 +3423,35 @@ var buildfire = {
 		searchUsers: function (params, callback) {
 			var p = new Packet(null, 'auth.searchUsers', params);
 			buildfire._sendPacket(p, callback);
+		},
+		getDeletedUsers: function(params , callback){
+			if (!params || !params.fromDate) {
+				return callback('params or fromDate not defined', null);
+			}
+			if ((params.fromDate instanceof Date) == false) {
+				return callback('fromDate must be a Date type.', null);
+			}
+			buildfire.appData.search(
+				{
+					filter: {
+						'_buildfire.index.date1': { $gte: params.fromDate.getTime() },
+					},
+				},
+				'$$deletedUsers',
+				(err,result) => {
+					if (err) return callback(err, null);
+					if (result) {
+						const deletedUsers  = result.map(({data}) => {
+							return {
+								userId: data.userId,
+								deletedOn: new Date(data._buildfire.index.date1)
+							};
+						});
+						return callback(null, deletedUsers);
+					}
+					return callback(null, []);
+				}
+			);
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -3677,6 +3706,8 @@ var buildfire = {
 											}
 										});
 									}
+									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element 
+									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add("bf-wysiwyg-top") });
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',
