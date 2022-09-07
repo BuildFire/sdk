@@ -2435,6 +2435,8 @@ var buildfire = {
 					'720': 720,
 					'1080': 1080,
 					'1440': 1440,
+					'1920': 1920,
+					'2560': 2560,
 					get full_width() {
 						return this.findNearest(1);
 					},
@@ -2455,19 +2457,19 @@ var buildfire = {
 					},
 					findNearest: function (ratio) {
 						var match = null;
-						for (var i = 0; i < this.VALID_SIZES.length; i++) {
-							var size = this.VALID_SIZES[i];
+						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_' < -1));
 
+						for (size of sizes) {
 							if ((window.innerWidth / ratio) < this[size]) {
 								match = size;
 								break;
 							}
 						}
-						return this[match];
+						return match ? this[match] : window.innerWidth;
 					},
 					VALID_SIZES: [
 						'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', //standard
-						'720', '1080', '1440', //desktop
+						'720', '1080', '1440', '1920', '2560', //desktop
 						'full_width', 'half_width', 'third_width', 'quarter_width', 'fifth_width', 'sixth_width' // responsive
 					]
 				},
