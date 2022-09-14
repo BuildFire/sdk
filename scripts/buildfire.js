@@ -53,6 +53,15 @@ var buildfire = {
 					link.type = 'text/css';
 					link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
 					head.appendChild(link);
+					// utf-8 encoding is necessary for the rating system to function
+					const charset = head.querySelector('meta[charset]');
+					if (charset && !charset.getAttribute('charset').toLowerCase().includes('utf-8')) {
+						console.warn('UTF-8 character encoding is missing, and its required for some components to function properly');
+					} else if (!charset) {
+						const meta = document.createElement('meta');
+						meta.setAttribute('charset', 'UTF-8');
+						head.appendChild(meta);
+					}
 					buildfire.components.ratingSystem.injectRatings();
 				});
 			} else buildfire.components.ratingSystem.injectRatings();
@@ -3706,7 +3715,7 @@ var buildfire = {
 											}
 										});
 									}
-									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element 
+									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add("bf-wysiwyg-top") });
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
