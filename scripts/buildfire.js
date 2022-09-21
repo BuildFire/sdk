@@ -47,20 +47,21 @@ var buildfire = {
 			if (typeof buildfire === 'undefined') return;
 			if (typeof (buildfire.components) == 'undefined' || typeof (buildfire.components.ratingSystem) == 'undefined') {
 				loadScript('../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
-					var head = document.head;
+					var parentElement = (document.head || document.body || document);
 					var link = document.createElement('link');
 					link.rel = 'stylesheet';
 					link.type = 'text/css';
 					link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
-					head.appendChild(link);
+					parentElement.appendChild(link);
 					// utf-8 encoding is necessary for the rating system to function
-					const charset = head.querySelector('meta[charset]');
+					const charset = parentElement.querySelector('meta[charset]');
 					if (charset && !charset.getAttribute('charset').toLowerCase().includes('utf-8')) {
-						console.warn('UTF-8 character encoding is missing, and its required for some components to function properly');
+						console.warn('character encoding other than UTF-8 is detected, UTF-8 charset is required for ratingSystem to function properly');
 					} else if (!charset) {
 						const meta = document.createElement('meta');
 						meta.setAttribute('charset', 'UTF-8');
-						head.appendChild(meta);
+						console.warn('UTF-8 charset is required for ratingSystem to function properly');
+						parentElement.appendChild(meta);
 					}
 					buildfire.components.ratingSystem.injectRatings();
 				});
@@ -77,13 +78,13 @@ var buildfire = {
 
 			function loadScript(url, callback) {
 				if(hasScript(url)) return;
-				var head = document.head;
+				var parentElement = (document.head || document.body || document);
 				var script = document.createElement('script');
 				script.type = 'text/javascript';
 				script.src = url;
 				script.onreadystatechange = callback;
 				script.onload = callback;
-				head.appendChild(script);
+				parentElement.appendChild(script);
 			}
 		}
 	}
