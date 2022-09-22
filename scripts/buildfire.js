@@ -55,13 +55,8 @@ var buildfire = {
 					parentElement.appendChild(link);
 					// utf-8 encoding is necessary for the rating system to function
 					const charset = parentElement.querySelector('meta[charset]');
-					if (charset && !charset.getAttribute('charset').toLowerCase().includes('utf-8')) {
-						console.warn('character encoding other than UTF-8 is detected, UTF-8 charset is required for ratingSystem to function properly');
-					} else if (!charset) {
-						const meta = document.createElement('meta');
-						meta.setAttribute('charset', 'UTF-8');
+					if (!charset || !charset.getAttribute('charset').toLowerCase().includes('utf-8')) {
 						console.warn('UTF-8 charset is required for ratingSystem to function properly');
-						parentElement.appendChild(meta);
 					}
 					buildfire.components.ratingSystem.injectRatings();
 				});
@@ -82,6 +77,7 @@ var buildfire = {
 				var script = document.createElement('script');
 				script.type = 'text/javascript';
 				script.src = url;
+				script.charset = 'utf-8';
 				script.onreadystatechange = callback;
 				script.onload = callback;
 				parentElement.appendChild(script);
