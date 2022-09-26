@@ -47,12 +47,17 @@ var buildfire = {
 			if (typeof buildfire === 'undefined') return;
 			if (typeof (buildfire.components) == 'undefined' || typeof (buildfire.components.ratingSystem) == 'undefined') {
 				loadScript('../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
-					var head = document.head;
+					var parentElement = (document.head || document.body || document);
 					var link = document.createElement('link');
 					link.rel = 'stylesheet';
 					link.type = 'text/css';
 					link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
-					head.appendChild(link);
+					parentElement.appendChild(link);
+					// utf-8 encoding is necessary for the rating system to function
+					const charset = parentElement.querySelector('meta[charset]');
+					if (!charset || !charset.getAttribute('charset').toLowerCase().includes('utf-8')) {
+						console.warn('UTF-8 charset is required for ratingSystem to function properly');
+					}
 					buildfire.components.ratingSystem.injectRatings();
 				});
 			} else buildfire.components.ratingSystem.injectRatings();
@@ -68,13 +73,14 @@ var buildfire = {
 
 			function loadScript(url, callback) {
 				if(hasScript(url)) return;
-				var head = document.head;
+				var parentElement = (document.head || document.body || document);
 				var script = document.createElement('script');
 				script.type = 'text/javascript';
 				script.src = url;
+				script.charset = 'utf-8';
 				script.onreadystatechange = callback;
 				script.onload = callback;
-				head.appendChild(script);
+				parentElement.appendChild(script);
 			}
 		}
 	}
@@ -3706,7 +3712,7 @@ var buildfire = {
 											}
 										});
 									}
-									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element 
+									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add("bf-wysiwyg-top") });
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
