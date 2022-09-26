@@ -2798,7 +2798,6 @@ html:not([type="app"]) .snackbar-hero{
 		justify-content: flex-end;
 		margin: 0 auto;
 		cursor: auto;
-		padding-left: 40%;
 	}
 	[type="app"] body:not(.full) #footerMenuParent .action-group{
 		max-width: calc(280px + 900px);
@@ -5049,4 +5048,27 @@ button.list-group-item {
 .delete-account-overlay button.btn-danger {
   display: block;
   margin: 30px auto 20px;
+}
+
+.pswp .pswp__img {
+	max-width: none;
+	object-fit: contain;
+}
+
+.bf-pswp-close {
+	top: 0;
+	right: 0;
+	font-weight: 900;
+	font-size: 20px;
+	position: relative;
+	transition: opacity 0.2s;
+	opacity: 0.9;
+	float: right;
+	cursor: pointer;
+	overflow: visible;
+	-webkit-appearance: none;
+	display: block;
+	border: 0;
+	margin: 0;
+	padding: 20px;
 }
