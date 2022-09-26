@@ -1140,16 +1140,29 @@ html[ios="true"][view="app"] nav.menu .menu-close-container{
 	padding-top: 30px!important;
 }
 
+:root {
+	--extra-padding: 0px;
+}
+
+@media only
+screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-device-height: 852px) and (-webkit-device-pixel-ratio: 3) {
+	:root {
+		--extra-padding: 12px;
+	}
+}
+
 /* iPhone X, Xr, Xs and Xs Max*/
 @media only
 screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
-screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3) {
+screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
 
 	/* iOS Transparent Nav */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
-		padding-top:50px !important;
-		height: 88px !important;
+		padding-top:calc(50px + var(--extra-padding)) !important;
+		height: calc(88px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav,
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
@@ -1162,7 +1175,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
 	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
-		padding-top: 88px !important;
+		padding-top: calc(88px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
 		padding-top:0px !important;
@@ -1170,10 +1183,10 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 
 	/* Menu and Back */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #menu-location{
-		top:47px !important;
+		top: calc(47px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon{
-		top:37px !important;
+		top: calc(37px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .search-container{
 		/* margin: 30px 16px 8px 16px !important; */
@@ -1195,7 +1208,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
-		top:54px !important;
+		top:calc(54px + var(--extra-padding)) !important;
 		padding-bottom:23px !important;
 	}
 
@@ -1223,10 +1236,10 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
 	html[ios="true"][view="app"] .login-holder .sso-back.input {
-		top: 50px !important;
+		top: calc(50px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu {
-		padding-top:15px !important;
+		padding-top: calc(15px + var(--extra-padding)) !important;
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .notificationHolder{
