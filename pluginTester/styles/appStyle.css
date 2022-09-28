@@ -2774,6 +2774,7 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] .pluginFrame.has-navbar:not(.showTitleBar) {
 		padding-top:68px !important;
+		height: 100% !important;
 	}
 
 	[type="app"] #footerMenuParent:not(.ng-hide){
@@ -2852,6 +2853,10 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type=app] #launcherPlugin.showNav{
 		padding-top: 0;
+		height: calc(100% - 50px);
+	}
+	[type=app] .has-footer-menu #launcherPlugin.showNav{
+		padding-top: 0;
 		height: calc(100% - 50px - 68px);
 	}
 	[type=app] .has-footer-menu .launcherNav{
@@ -2860,6 +2865,12 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .pluginFrame{
 		height: calc(100% - 51px - 68px);
 		padding-top: 0 !important;
+	}
+	[type="app"] .pluginFrame.showTitleBar:not(.has-navbar){
+		height: calc(100% - 51px) !important;
+	}
+	[type="app"] .pluginFrame:not(.has-navbar):not(.showTitleBar){
+		height: 100% !important;
 	}
 	[type="app"] .shell-sdk .pluginFrame{
 		padding-top: 49px !important;
