@@ -10,3 +10,6 @@ body *:hover {
     box-shadow: 0 0 0 1px var(--bf-theme-body-text) !important;
 
 }
+.bf-wysiwyg-hide-app {
+	display: inherit;
+}

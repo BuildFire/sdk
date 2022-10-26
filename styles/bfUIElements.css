@@ -1,25 +1,25 @@
 .bf-btn-primary {
-    color: white !important; 
+    color: white !important;
     background-color: var(--bf-theme-primary) !important;
 }
 .bf-btn-success {
-    color: white !important; 
+    color: white !important;
     background-color: var(--bf-theme-success) !important;
 }
 .bf-btn-warning {
-    color: white !important; 
+    color: white !important;
     background-color: var(--bf-theme-warning) !important;
 }
-.bf-btn-info { 
-    color: white !important; 
+.bf-btn-info {
+    color: white !important;
     background-color: var(--bf-theme-info) !important;
 }
 .bf-btn-default {
-    color: white !important; 
+    color: white !important;
     background-color: var(--bf-theme-default) !important;
 }
-.bf-btn-danger { 
-    color: white !important; 
+.bf-btn-danger {
+    color: white !important;
     background-color: var(--bf-theme-danger) !important;
 }
 .bf-text-primary {
@@ -95,4 +95,18 @@
 /* solve issue: appTheme forcing color for span children */
 .bf-wysiwyg-top span span {
 	color: inherit;
+}
+.bf-wysiwyg-hide-app {
+	display: none;
+}
+.bf-expression-error {
+	background-color: rgba(0, 0, 0, 0.85);
+	color: rgb(232, 232, 232);
+	font-family: Menlo, Consolas, monospace !important;
+	font-size: medium;
+	padding: 2rem;
+	line-height: 1.2;
+	white-space: pre-wrap;
+	overflow: auto;
+	user-select: text;
 }
