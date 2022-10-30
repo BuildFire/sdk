@@ -47,12 +47,17 @@ var buildfire = {
 			if (typeof buildfire === 'undefined') return;
 			if (typeof (buildfire.components) == 'undefined' || typeof (buildfire.components.ratingSystem) == 'undefined') {
 				loadScript('../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
-					var head = document.head;
+					var parentElement = (document.head || document.body || document);
 					var link = document.createElement('link');
 					link.rel = 'stylesheet';
 					link.type = 'text/css';
 					link.href = '../../../scripts/buildfire/components/ratingSystem/index.min.css';
-					head.appendChild(link);
+					parentElement.appendChild(link);
+					// utf-8 encoding is necessary for the rating system to function
+					const charset = parentElement.querySelector('meta[charset]');
+					if (!charset || !charset.getAttribute('charset').toLowerCase().includes('utf-8')) {
+						console.warn('UTF-8 charset is required for ratingSystem to function properly');
+					}
 					buildfire.components.ratingSystem.injectRatings();
 				});
 			} else buildfire.components.ratingSystem.injectRatings();
@@ -68,13 +73,14 @@ var buildfire = {
 
 			function loadScript(url, callback) {
 				if(hasScript(url)) return;
-				var head = document.head;
+				var parentElement = (document.head || document.body || document);
 				var script = document.createElement('script');
 				script.type = 'text/javascript';
 				script.src = url;
+				script.charset = 'utf-8';
 				script.onreadystatechange = callback;
 				script.onload = callback;
-				head.appendChild(script);
+				parentElement.appendChild(script);
 			}
 		}
 	}
@@ -2435,6 +2441,8 @@ var buildfire = {
 					'720': 720,
 					'1080': 1080,
 					'1440': 1440,
+					'1920': 1920,
+					'2560': 2560,
 					get full_width() {
 						return this.findNearest(1);
 					},
@@ -2455,19 +2463,19 @@ var buildfire = {
 					},
 					findNearest: function (ratio) {
 						var match = null;
-						for (var i = 0; i < this.VALID_SIZES.length; i++) {
-							var size = this.VALID_SIZES[i];
+						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_' < -1));
 
+						for (size of sizes) {
 							if ((window.innerWidth / ratio) < this[size]) {
 								match = size;
 								break;
 							}
 						}
-						return this[match];
+						return match ? this[match] : window.innerWidth;
 					},
 					VALID_SIZES: [
 						'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', //standard
-						'720', '1080', '1440', //desktop
+						'720', '1080', '1440', '1920', '2560', //desktop
 						'full_width', 'half_width', 'third_width', 'quarter_width', 'fifth_width', 'sixth_width' // responsive
 					]
 				},
@@ -3421,6 +3429,35 @@ var buildfire = {
 		searchUsers: function (params, callback) {
 			var p = new Packet(null, 'auth.searchUsers', params);
 			buildfire._sendPacket(p, callback);
+		},
+		getDeletedUsers: function(params , callback){
+			if (!params || !params.fromDate) {
+				return callback('params or fromDate not defined', null);
+			}
+			if ((params.fromDate instanceof Date) == false) {
+				return callback('fromDate must be a Date type.', null);
+			}
+			buildfire.appData.search(
+				{
+					filter: {
+						'_buildfire.index.date1': { $gte: params.fromDate.getTime() },
+					},
+				},
+				'$$deletedUsers',
+				(err,result) => {
+					if (err) return callback(err, null);
+					if (result) {
+						const deletedUsers  = result.map(({data}) => {
+							return {
+								userId: data.userId,
+								deletedOn: new Date(data._buildfire.index.date1)
+							};
+						});
+						return callback(null, deletedUsers);
+					}
+					return callback(null, []);
+				}
+			);
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Device-Features
@@ -3675,6 +3712,8 @@ var buildfire = {
 											}
 										});
 									}
+									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element
+									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add("bf-wysiwyg-top") });
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',

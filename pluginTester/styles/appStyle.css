@@ -1140,16 +1140,29 @@ html[ios="true"][view="app"] nav.menu .menu-close-container{
 	padding-top: 30px!important;
 }
 
+:root {
+	--extra-padding: 0px;
+}
+
+@media only
+screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-device-height: 852px) and (-webkit-device-pixel-ratio: 3) {
+	:root {
+		--extra-padding: 12px;
+	}
+}
+
 /* iPhone X, Xr, Xs and Xs Max*/
 @media only
 screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
-screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3) {
+screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
 
 	/* iOS Transparent Nav */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
-		padding-top:50px !important;
-		height: 88px !important;
+		padding-top:calc(50px + var(--extra-padding)) !important;
+		height: calc(88px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav,
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
@@ -1162,7 +1175,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
 	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
-		padding-top: 88px !important;
+		padding-top: calc(88px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
 		padding-top:0px !important;
@@ -1170,10 +1183,10 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 
 	/* Menu and Back */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #menu-location{
-		top:47px !important;
+		top: calc(47px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon{
-		top:37px !important;
+		top: calc(37px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .search-container{
 		/* margin: 30px 16px 8px 16px !important; */
@@ -1195,7 +1208,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
-		top:54px !important;
+		top:calc(54px + var(--extra-padding)) !important;
 		padding-bottom:23px !important;
 	}
 
@@ -1223,10 +1236,10 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
 	html[ios="true"][view="app"] .login-holder .sso-back.input {
-		top: 50px !important;
+		top: calc(50px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu {
-		padding-top:15px !important;
+		padding-top: calc(15px + var(--extra-padding)) !important;
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .notificationHolder{
@@ -1260,7 +1273,7 @@ screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-dev
 	}
 
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame { 
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
 		padding-bottom: 0px;
 	}
 
@@ -2737,7 +2750,34 @@ html:not([type="app"]) .snackbar-hero{
 }
 
 @media(min-width: 1200px){
-	[type="app"] #footerMenuParent{
+	[type="app"] .plugin-overlay {
+		height: 100%;
+		margin: 0 auto;
+		padding-bottom: 0;
+	}
+
+	[type="app"] body:not(.has-footer-menu) .plugin-overlay {
+		padding-top: 68px;
+	}
+
+	[type="app"] body:not(.menu-disabled) .plugin-overlay {
+		padding-left: 280px;
+	}
+
+	[type="app"] .screen-overlay {
+		display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+	}
+	[type="app"] .pluginFrame.has-navbar:not(.showTitleBar) {
+		padding-top:68px !important;
+		height: 100% !important;
+	}
+
+	[type="app"] #footerMenuParent:not(.ng-hide){
 		top: 0;
 		height: 68px;
 		z-index: 99999999;
@@ -2770,10 +2810,11 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] #footerMenuParent .action-group{
 		justify-content: flex-end;
-		max-width: calc(280px + 900px);
 		margin: 0 auto;
 		cursor: auto;
-		padding-left: 40%;
+	}
+	[type="app"] body:not(.full) #footerMenuParent .action-group{
+		max-width: calc(280px + 900px);
 	}
 	[type="app"] #footerMenuParent .action-group .action-item{
 		width: auto;
@@ -2788,14 +2829,14 @@ html:not([type="app"]) .snackbar-hero{
 		padding-top: 0;
 		padding-bottom: 0;
 	}
-	[type="app"] .notes-wrapper,
+	[type="app"] .notes-wrapper.has-footer-menu,
 	[type="app"] .menu-body-container,
-	[type="app"] .search-container,
+	[type="app"] .search-container.has-footer-menu,
 	[type="app"] #inputDialog{
 		padding-top: 68px;
 		padding-bottom: 0;
 	}
-	[type="app"] #plugin #pluginNav{
+	[type="app"] #pluginNav.has-navbar{
 		margin-top: 68px;
 	}
 	[type="app"] #pluginNav{
@@ -2807,50 +2848,86 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] #pluginNav a.menu-btn-icon{
 		left: 17px;
 	}
-	[type="app"] #launcherPlugin{
+	[type="app"] .has-footer-menu #launcherPlugin{
 		padding-top: 68px;
 	}
 	[type=app] #launcherPlugin.showNav{
 		padding-top: 0;
+		height: calc(100% - 50px);
+	}
+	[type=app] .has-footer-menu #launcherPlugin.showNav{
+		padding-top: 0;
 		height: calc(100% - 50px - 68px);
 	}
-	[type=app] .launcherNav{
+	[type=app] .has-footer-menu .launcherNav{
 		margin-top: 68px;
 	}
 	[type="app"] .pluginFrame{
 		height: calc(100% - 51px - 68px);
 		padding-top: 0 !important;
 	}
+	[type="app"] .pluginFrame.showTitleBar:not(.has-navbar){
+		height: calc(100% - 51px) !important;
+	}
+	[type="app"] .pluginFrame:not(.has-navbar):not(.showTitleBar){
+		height: 100% !important;
+	}
 	[type="app"] .shell-sdk .pluginFrame{
 		padding-top: 49px !important;
+	}
+	[type="app"] body.menu-disabled #appBody {
+		padding-left: 0px! important;
+		padding-top: 0px! important;
+	}
+	[type="app"] #menuNav {
+		transition: none !important;
+	}
+	[type="app"] #menuNav.hideMenuWeb {
+		display: none !important;
 	}
 	[type="app"] #appBody,
 	[type="app"] #notesDialog .notes-wrapper,
 	[type="app"] #inputDialog,
 	[type="app"] #gifDialog{
-		max-width: calc(280px + 900px) !important;
-		width: calc(280px + 900px) !important;
+		margin: 0 auto 0 280px;
+	}
+	[type="app"] body:not(.full) #appBody,
+	[type="app"] body:not(.full) #notesDialog .notes-wrapper,
+	[type="app"] body:not(.full) #inputDialog,
+	[type="app"] body:not(.full) #gifDialog{
 		padding-left: 280px;
 		margin: 0 auto;
+		max-width: calc(280px + 900px) !important;
+		width: calc(280px + 900px) !important;
 	}
+
 	[type="app"] .menu-disabled #appBody,
 	[type="app"] .menu-disabled #notesDialog .notes-wrapper,
 	[type="app"] .menu-disabled #inputDialog,
 	[type="app"] .menu-disabled #gifDialog{
-		padding-left: 0;
+		margin-left: 0;
 	}
 	[type="app"] .menu-now-playing-body {
     padding: 24px 0 0 16px;
 	}
-	[type="app"] #plugin,
-	[type="app"] .bookmarks-container{
+	[type="app"] body #plugin,
+	[type="app"] body .bookmarks-container{
+		width: calc(100% - 280px);
+		max-width: calc(100% - 280px);
+	}
+	[type="app"] body:not(.full) #plugin,
+	[type="app"] body:not(.full) .bookmarks-container{
 		width: 900px;
 		max-width: 900px;
 	}
-	[type="app"] .menu-disabled #plugin,
-	[type="app"] .menu-disabled .bookmarks-container{
+	[type="app"] body:not(.full).menu-disabled #plugin,
+	[type="app"] body:not(.full).menu-disabled .bookmarks-container{
 		max-width: calc(280px + 900px) !important;
 		width: calc(280px + 900px) !important;
+	}
+	[type="app"] body.full.menu-disabled #plugin,
+	[type="app"] body.full.menu-disabled .bookmarks-container{
+		min-width: 100vw !important;
 	}
 	[type="app"] #notesDialog{
 		z-index: 99999999;
@@ -2865,14 +2942,6 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] #notesDialog .notes-wrapper,
 	[type="app"] #notesDialog .notes-secondary-wrapper{
 		height: 100%;
-	}
-	[type="app"] #notesDialog .backdrop{
-		display: block;
-		position: absolute;
-		height: 100%;
-		width: 100%;
-		top: 0;
-		left: 0;
 	}
 	[type="app"] .notes-container{
 		height: calc(100% - 50px);
@@ -2944,10 +3013,12 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .menu-close-container{
 		padding: 0 1px;
     width: calc(280px + 900px);
-    margin: 0 auto;
     padding-right: calc(900px - 1px);
 		pointer-events: none;
 		background: transparent !important;
+	}
+	[type="app"] body:not(.full) .menu-close-container{
+		margin: 0 auto;
 	}
 	[type="app"] .menu-close-container .search-container{
 		pointer-events: auto;
@@ -3021,20 +3092,22 @@ html:not([type="app"]) .snackbar-hero{
 		display: none;
 	}
 	[type="app"] .menu-body-container{
-		pointer-events: none !important;
-    width: calc(280px + 900px + -2px);
-		margin: 0 auto;
 		padding-top: 52px;
     padding-right: 912px;
+		pointer-events: none !important;
+		width: calc(280px + 900px + -2px);
+	}
+	[type="app"] body:not(.full) .menu-body-container{
+		margin: 0 auto;
 	}
 	[type="app"] .menu-body-container.no-search{
 		padding-top: 0;
     z-index: 9999;
 	}
-	[type="app"] .search-container {
+	[type="app"] .search-container.has-footer-menu {
     margin-top: 66px;
 	}
-	[type="app"] .menu-body-container{
+	[type="app"] .menu-body-container.has-footer-menu{
 		padding-top: 122px;
     /* z-index: 9999; */
 	}
@@ -4973,6 +5046,12 @@ button.list-group-item {
 #webviewBackdrop.closing {
 	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
 }
+#webviewBackdrop .webview-backdrop-wrapper {
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 #sideMenuHeaderImage {
 	height: 26px;
 	width: 26px;
@@ -4993,4 +5072,27 @@ button.list-group-item {
 .delete-account-overlay button.btn-danger {
   display: block;
   margin: 30px auto 20px;
+}
+
+.pswp .pswp__img {
+	max-width: none;
+	object-fit: contain;
+}
+
+.bf-pswp-close {
+	top: 0;
+	right: 0;
+	font-weight: 900;
+	font-size: 20px;
+	position: relative;
+	transition: opacity 0.2s;
+	opacity: 0.9;
+	float: right;
+	cursor: pointer;
+	overflow: visible;
+	-webkit-appearance: none;
+	display: block;
+	border: 0;
+	margin: 0;
+	padding: 20px;
 }
