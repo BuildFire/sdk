@@ -914,6 +914,20 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 			header.classList.add('border');
 		}
 
+
+		// buildfire.appearance.titlebar.isVisible(null, (err, result = true) => {
+		const headerCancel = document.createElement('a');
+		headerCancel.innerText = 'Cancel'; // todo add it to translations
+		headerCancel.href = '#';
+		headerCancel.style.position = 'absolute';
+		headerCancel.style.top = '16px';
+		headerCancel.style.left = '12px';
+		headerCancel.addEventListener('click', () => {
+			buildfire.navigation.goBack();
+		});
+		header.appendChild(headerCancel);
+		// });
+
 		let headerTitle = document.createElement('h5');
 		headerTitle.innerText = (options && options.translations && options.translations.overallRating) || defaultOptions.translations.overallRating;
 		headerTitle.style.fontWeight = 400;
