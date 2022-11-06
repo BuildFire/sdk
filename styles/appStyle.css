@@ -875,11 +875,7 @@ nav.menu.layout7 a.notifications span.icon{
 .plugin-slide.show-map{
 	height:320px;
 }
-.js_slide {
-	text-align: center;
-}
 .plugin-slide img,
-.js_slide img,
 .contact-maps img{
 	max-height: 380px;
 	width: auto !important;
