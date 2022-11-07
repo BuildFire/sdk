@@ -415,3 +415,9 @@ span#closeButton {
   top: 20px;
   z-index: 100;
 }
+
+.ovarall-rating-container a.rating-cancel-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}

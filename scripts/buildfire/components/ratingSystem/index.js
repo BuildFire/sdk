@@ -372,7 +372,8 @@ const defaultOptions = {
 		'reviews': 'Reviews',
 		'viewAll': 'View All',
 		'overallRating': 'Overall rating',
-		'emptyStateText': 'No reivews yet. Be the first to leave a review!'
+		'emptyStateText': 'No reivews yet. Be the first to leave a review!',
+		'cancel': 'Cancel',
 	}
 };
 function getNotRatedUI(container) {
@@ -915,18 +916,13 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 		}
 
 
-		// buildfire.appearance.titlebar.isVisible(null, (err, result = true) => {
-		const headerCancel = document.createElement('a');
-		headerCancel.innerText = 'Cancel'; // todo add it to translations
-		headerCancel.href = '#';
-		headerCancel.style.position = 'absolute';
-		headerCancel.style.top = '16px';
-		headerCancel.style.left = '12px';
-		headerCancel.addEventListener('click', () => {
+		const cancelBtn = document.createElement('a');
+		cancelBtn.classList.add('text-primary', 'rating-cancel-btn');
+		cancelBtn.innerText = (options && options.translations && options.translations.cancel) || defaultOptions.translations.cancel;
+		cancelBtn.addEventListener('click', () => {
 			buildfire.navigation.goBack();
 		});
-		header.appendChild(headerCancel);
-		// });
+		header.appendChild(cancelBtn);
 
 		let headerTitle = document.createElement('h5');
 		headerTitle.innerText = (options && options.translations && options.translations.overallRating) || defaultOptions.translations.overallRating;
