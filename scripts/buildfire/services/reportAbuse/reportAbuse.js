@@ -133,9 +133,9 @@ if (typeof (buildfire.services.reportAbuse) == "undefined") buildfire.services.r
       * @param {string} params.deeplink - The deeplink data 
     */
     buildfire.services.reportAbuse.report = (params, callback) => {
-        // validate the required params
-        if (typeof (buildfire.components.drawer) == 'undefined') throw ("please add buildfire.js first to use BuildFire services");
+        if (typeof (buildfire.components.drawer) == 'undefined') throw ("please add drawer.js first to use BuildFire drawer component");
 
+        // validate the required params
         if (!params || !params.itemId || !params.reportedUserId || !params.deeplink) {
             callback(new Error("Missing required data: {itemId, reportedUserId, deeplink} must be specified"), null);
             return;
@@ -226,7 +226,6 @@ if (typeof (buildfire.services.reportAbuse) == "undefined") buildfire.services.r
                 buildfire.components.drawer.closeDrawer();
                 if (result.text) {
                     // open text dialog
-                    let reason = { id: result.id, value: result.text }
                     buildfire.input.showTextDialog(
                         {
                             saveText: "Report",
@@ -236,7 +235,7 @@ if (typeof (buildfire.services.reportAbuse) == "undefined") buildfire.services.r
                             if (err) return console.error(err, null);
                             if (res.cancelled) return;
                             if (res.results[0].textValue) {
-                                return callback(null, { reason: reason, comment: res.results[0].textValue })
+                                return callback(null, { reason: { id: result.id, value: result.text }, comment: res.results[0].textValue })
                             }
                             else {
                                 callback(new Error('comment is required'), null);
