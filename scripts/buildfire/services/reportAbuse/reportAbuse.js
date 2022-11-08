@@ -135,7 +135,6 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
       * @param {string} params.deeplink - The deeplink data
     */
 	buildfire.services.reportAbuse.report = (params, callback) => {
-		debugger
 		if (typeof (buildfire.components) == 'undefined' || typeof (buildfire.components.drawer) == 'undefined')
 			throw ('please add drawer.js first to use BuildFire drawer component');
 
@@ -144,10 +143,13 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 			callback(new Error('Missing required data: {itemId, reportedUserId, deeplink} must be specified'), null);
 			return;
 		}
+
+		buildfire.spinner.show();
 		// require Login
 		getCurrentUser().then((user) => {
 
 			if (!user) {
+				buildfire.spinner.hide();
              	callback(new Error('Login is required'));
 				return;
 			}
@@ -164,6 +166,7 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 				itemId: params.itemId,
 				reportingUserId: user.userId,
 			}, (err, res) => {
+				buildfire.spinner.hide();
 				if (err) {
 					callback(err, null);
 					return;
@@ -181,10 +184,11 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 						return callback(null, data);
 					}).catch(callback);
 				}).catch(callback);
-
 			});
-
-		}).catch(callback);
+		}).catch((err) => {
+			buildfire.spinner.hide();
+			callback(err);
+		});
 	};
 
 	/**
