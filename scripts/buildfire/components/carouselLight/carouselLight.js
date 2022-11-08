@@ -39,12 +39,13 @@ buildfire.components.carousel.view = function (options) {
 	this.config = this.mergeSettings(options);
 	this._initDimensions(self.config.layout);
 	this.selector = typeof this.config.selector === 'string' ? document.querySelector(this.config.selector) : this.config.selector;
+	this._attachEventListeners();
 	if (options.items && options.items.length > 0) {
 		this._applyConfigurations(options, (err, result) => {
 			if (options.items.length > 1 && result.shouldInitializeLory) { // loryCarousel
 				self.init();
 			} else {
-				self._handleStaticSlides(options.items);
+				self._renderStaticSlides(options.items);
 			}
 		});
 		if (options.selector) {
@@ -131,7 +132,7 @@ buildfire.components.carousel.view.prototype = {
         let self = this;
 		let carouselImage = null;
         if (random) {
-                this._handleStaticSlides(carouselImages, true);
+                this._changeStaticSlides(carouselImages, true);
         } else {
             let index = carouselImages.indexOf(this.lastImage);
             let sendIndex = 0;
@@ -145,25 +146,17 @@ buildfire.components.carousel.view.prototype = {
             let isHome = buildfire.getFrameType() == 'LAUNCHER_PLUGIN';
             let storagePlace = (isHome) ? "carouselLastImageHome" : "carouselLastImage";
             buildfire.localStorage.setItem(storagePlace, sendIndex, function(e, r) {
-                self._handleStaticSlides(carouselImages);
+                self._changeStaticSlides(carouselImages);
             });
         }
     },
-	_handleStaticSlides: function(carouselImages, random) {
-		let staticSlides = document.querySelectorAll('.static_slide');
-		if (staticSlides.length) {
-			this._changeStaticSlides(carouselImages, random);
-		} else {
-			this._renderStaticSlides(carouselImages);
-		}
-	},
 	_changeStaticSlides: function (carouselImages, random) {
 		let activeSlide = document.querySelector('.js_slide.static_slide.active');
 		let siblingSlide = activeSlide.nextSibling;
 		if (random) {
 			let nextSlide = document.querySelectorAll('.js_slide.static_slide')[Math.floor(Math.random() * carouselImages.length)];
 			if (nextSlide.children[0].src == activeSlide.children[0].src) {
-				this._handleStaticSlides(carouselImages, true);
+				this._changeStaticSlides(carouselImages, true);
 			} else {
 				activeSlide.classList.remove('active');
 				nextSlide.classList.add('active');
@@ -189,7 +182,7 @@ buildfire.components.carousel.view.prototype = {
 				slide.classList.add('active');
 			}
 			slide.addEventListener('click', function () {
-				buildfire.actionItems.execute(item, function (err, result) {
+				buildfire.actionItems.execute(carouselImage, function (err, result) {
 					if (err) {
 						console.warn('Error opening slider action: ', err);
 					}
@@ -343,10 +336,14 @@ buildfire.components.carousel.view.prototype = {
 		}
 	},
 	_appendItem: function (item, callback) {
+		let self = this;
 		let slide = document.createElement('li');
 		slide.classList.add('js_slide');
 
 		slide.addEventListener('click', function () {
+			if (self.preventClicks) {
+				return;
+			}
 			buildfire.actionItems.execute(item, function (err, result) {
 				if (err) {
 					console.warn('Error opening slider action: ', err);
@@ -459,6 +456,20 @@ buildfire.components.carousel.view.prototype = {
 			} else {
 				callback(err, null);
 			}
+		});
+	},
+	_attachEventListeners: function() {
+		let self = this;
+		// add event listeners to prevent immediate click event after scrolling 
+		this.selector.addEventListener('on.lory.touchmove', function () {
+			if (!self.preventClicks) {
+				self.preventClicks = true;
+			}
+		});
+		this.selector.addEventListener('on.lory.touchend', function () {
+			setTimeout(() => {
+				self.preventClicks = false;
+			}, 0);
 		});
 	}
 };
