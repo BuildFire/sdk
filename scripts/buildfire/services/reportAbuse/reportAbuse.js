@@ -258,8 +258,8 @@ if (typeof (buildfire.services.reportAbuse) == "undefined") buildfire.services.r
     */
     buildfire.services.reportAbuse.getReport = function (params, callback) {
         // validate the required params
-        if (!(params && params.itemId && params.reportedUserId)) {
-            callback(new Error("Missing required data: {itemId, reportedUserId} must be specified"), null);
+        if (!params || !params.itemId || !params.createdBy) {
+            callback(new Error("Missing required data: {itemId, createdBy} must be specified"), null);
             return;
         }
         const option = {
