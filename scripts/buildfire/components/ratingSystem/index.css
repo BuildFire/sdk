@@ -421,3 +421,13 @@ span#closeButton {
   top: 16px;
   left: 16px;
 }
+
+html[ios="true"] .ovarall-rating-container {
+  padding-top: calc(env(safe-area-inset-top)) !important;
+  padding-top: calc(const(safe-area-inset-top)) !important;
+}
+
+[safe-area="true"] .ovarall-rating-container {
+  padding-top: calc(env(safe-area-inset-top)) !important;
+  padding-top: calc(const(safe-area-inset-top)) !important;
+}
