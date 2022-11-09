@@ -202,8 +202,29 @@ var buildfire = {
 			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
 		};
 
+		function readPluginJsonInPluginTester(callback) {
+			url = '../plugin.json';
+			fetch(url)
+			.then(response => response.json())
+			.then(res => {
+				callback(null,res);
+			})
+			.catch(error => {
+				callback(error, null);
+			});
+		};
+
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
-			attachPluginJsScript();
+			const context = buildfire.getContext();
+			if (context && context.scope === 'sdk') {
+				readPluginJsonInPluginTester((err,pluginJson)=>{
+					if(err) console.error(err);
+					window.pluginJson = pluginJson;
+					buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+				});
+			}else{
+				attachPluginJsScript();
+			}
 		}
 
 		
@@ -3916,7 +3937,6 @@ var buildfire = {
 					activeLayoutStyleElement.remove();
 				};
 			};
-		
 			buildfire.datastore.get(activeLayoutTag, (err, result) => {
 		
 				if (err) console.error("Error while retrieving active layout", err);
