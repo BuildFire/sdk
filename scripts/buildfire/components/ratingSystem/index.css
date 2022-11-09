@@ -252,6 +252,8 @@ span.rating-time-ago {
 .ovarall-rating-container {
   padding: 10px 20px 17px;
   position: relative;
+  
+  padding-top: calc(env(safe-area-inset-top) + 10px) !important;
 }
 
 .ovarall-rating-container.shadow {
@@ -420,14 +422,4 @@ span#closeButton {
   position: absolute;
   top: 16px;
   left: 16px;
-}
-
-html[ios="true"] .ovarall-rating-container {
-  padding-top: calc(env(safe-area-inset-top)) !important;
-  padding-top: calc(const(safe-area-inset-top)) !important;
-}
-
-[safe-area="true"] .ovarall-rating-container {
-  padding-top: calc(env(safe-area-inset-top)) !important;
-  padding-top: calc(const(safe-area-inset-top)) !important;
 }

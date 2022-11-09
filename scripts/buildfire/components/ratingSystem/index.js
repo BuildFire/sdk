@@ -372,7 +372,7 @@ const defaultOptions = {
 		'reviews': 'Reviews',
 		'viewAll': 'View All',
 		'overallRating': 'Overall rating',
-		'emptyStateText': 'No reivews yet. Be the first to leave a review!',
+		'emptyStateText': 'No reviews yet. Be the first to leave a review!',
 		'cancel': 'Cancel',
 	}
 };
