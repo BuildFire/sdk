@@ -359,6 +359,7 @@ const FULL_STAR = '&#9733;';
 const ADMIN_TAG = 'bf_ratings_admin';
 const defaultOptions = {
 	hideAverage: true,
+	allowToReportAbuse: false,
 	showRatingsOnClick: true,
 	translations: {
 		'ratings': 'Ratings',
@@ -411,6 +412,11 @@ function injectRatings(options = defaultOptions, callback) {
 	if (options.pluginLevel === true) {
 		let instanceId = buildfire.getContext().instanceId;
 		ratingIds = ratingIds.map(id => `${id}-${instanceId}`);
+	}
+	
+	// buildfire drawer is a dependency
+	if (buildfire.getContext().type !== 'control' && options.showRatingsOnClick) {
+		_injectDrawerScript();
 	}
 
 	const filters = {
@@ -763,12 +769,11 @@ function closeAddRatingScreen() {
 	let addRatingButton = document.querySelector('.add-rating-button');
 	if (addRatingButton) addRatingButton.disabled = false;
 
-	let editRatingButton = document.querySelector('.edit-rating-button');
-	if (editRatingButton) editRatingButton.disabled = false;
 	document.body.removeChild(addRatingScreen);
 }
 
-function createRatingUI(rating, editRatingButton, options) {
+function createRatingUI(rating, options, { allowToEdit = false, onUpdateRequested } = {}) {
+	const { allowToReportAbuse } = options;
 	let container = document.createElement('div');
 	container.className = 'ratings-screen-rating';
 	container.id = rating.id;
@@ -800,10 +805,60 @@ function createRatingUI(rating, editRatingButton, options) {
         rating.user && rating.user.displayName
         	? rating.user.displayName
         	: 'Unknown User';
+	
+	const _createDrawerUI = () => {
+		if (buildfire.getContext().type === 'control') return;
+		const drawerListItems = [];
+		if (allowToEdit) {
+			drawerListItems.push({
+				id: 'updateRating',
+				text: options && options.translations && (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating
+			});
+		}
+		if (allowToReportAbuse) {
+			drawerListItems.push({ id: 'reportAbuse', text:'Report Abuse' });
+		}
+		if (drawerListItems.length) {
+			const btn = document.createElement('div');
+			const btnIcon = document.createElement('i');
+			btnIcon.classList.add('bf-more-alt');
+			btn.appendChild(btnIcon);
+			btn.classList.add('edit-rating-button', 'primaryTheme');
+			
+			btn.addEventListener('click', () => {
+				buildfire.components.drawer.open(
+					{
+						allowSelectAll : false,
+						enableFilter : false,
+						isHTML: false,
+						triggerCallbackOnUIDismiss: true,
+						autoUseImageCdn: true,
+						listItems: drawerListItems
+					},
+					(err, result) => {
+						if (err) return console.error(err);
+						if (result) {
+							switch(result.id) {
+							case 'reportAbuse':
+								// rating.createdBy || rating.user._id
+								// rating.id
+								// buildfire.services.reportAbuse.report({}, () => {});
+								break;
+							case 'updateRating':
+								onUpdateRequested();
+								break;
+							}
+						}
+						buildfire.components.drawer.closeDrawer();
+					}
+				);
 
-	if (editRatingButton && buildfire.getContext().type !== 'control') {
-		userName.appendChild(editRatingButton);
-	}
+			});
+			userName.appendChild(btn);
+		}
+	};
+
+	_createDrawerUI();
 
 	nameAndStars.appendChild(userName);
 
@@ -983,18 +1038,16 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 						header.appendChild(addRatingButton);
 					}
 				} else {
-					const editRatingButton = document.createElement('div');
-					editRatingButton.className = 'edit-rating-button primaryTheme';
-					editRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.updateRating) || defaultOptions.translations.updateRating;
-					editRatingButton.addEventListener('click', () => {
-						if (editRatingButton.disabled) return;
-						editRatingButton.disabled = true;
-						openAddRatingScreen(ratingId, options, () => {
-							reRender();
-							reRenderComponent();
-						});
-					});
-					let ratingUI = createRatingUI(rating, editRatingButton, options);
+					const editingOptions = {
+						onUpdateRequested: () => {
+							openAddRatingScreen(ratingId, options, () => {
+								reRender();
+								reRenderComponent();
+							});
+						},
+						allowToEdit: true,
+					};
+					const ratingUI = createRatingUI(rating, options, editingOptions);
 					if (isAdmin) {
 						addControlsToRating(ratingUI);
 					}
@@ -1017,7 +1070,7 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 					if (err) return console.error(err);
 
 					ratings.forEach((rating) => {
-						let ratingUI = createRatingUI(rating);
+						const ratingUI = createRatingUI(rating, options);
 						if (isAdmin) {
 							addControlsToRating(ratingUI);
 						}
@@ -1257,6 +1310,42 @@ function addControlsToRating(ratingElement) {
 
 function onRating() {
 
+}
+
+/**
+ * Inject and load drawer script if not exist
+ *  @param {function} callback - callback function
+ *  @private
+ */
+function _injectDrawerScript(callback = Function()) {
+	let script = document.getElementById('bfDrawerComponent');
+	const scripts = document.getElementsByTagName('script');
+	const url = 'scripts/buildfire/components/drawer/drawer.js';
+	
+	// script exist
+	if (script || typeof buildfire.components.drawer !== 'undefined' ||  Array.from(scripts).some((s) =>  s.src.includes(url))) {
+		return callback();
+	}
+
+	if (!document.head) {
+		return callback(new Error('please add head element to the document first to use ratingSystem component'));
+	}
+	
+	script = document.createElement('script');
+	script.setAttribute('type', 'text/javascript');
+	script.setAttribute('src', '../../../scripts/buildfire/components/drawer/drawer.js');
+	script.id = 'bfDrawerComponent';
+
+	document.head.appendChild(script);
+
+	script.onload = function () {
+		callback();
+		console.info('loaded drawer component successfully');
+	};
+	script.onerror = function () {
+		callback(new Error('failed to load drawer component'));
+		console.error('failed to load drawer component');
+	};
 }
 
 buildfire.components.ratingSystem = {
