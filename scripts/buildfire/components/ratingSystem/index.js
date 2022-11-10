@@ -385,7 +385,8 @@ function getNotRatedUI(container) {
 	}
 }
 
-function injectRatings(options = defaultOptions, callback) {
+function injectRatings(options = {}, callback) {
+	options = Object.assign(options, defaultOptions);
 	let elements = options.elements;
 	if (typeof elements === 'undefined')
 		elements = document.querySelectorAll('[data-rating-id]');
@@ -535,10 +536,10 @@ function loadIcons() {
 
 function openAddRatingScreen(
 	ratingId,
-	options = defaultOptions,
+	options = {},
 	callback = () => { }
 ) {
-
+	options = Object.assign(options, defaultOptions);
 	buildfire.auth.getCurrentUser((err, loggedInUser) => {
 		if (err || !loggedInUser) {
 			return buildfire.auth.login(
@@ -1198,7 +1199,8 @@ function createStarsUI(container, averageRating, options, ratingId, reRender, is
 	}
 }
 
-function injectRatingComponent(container, ratingId, options = defaultOptions) {
+function injectRatingComponent(container, ratingId, options = {}) {
+	options = Object.assign(options, defaultOptions);
 	container.innerHTML = '';
 	let ratings = document.createElement('div');
 	ratings.className = 'ratings';
