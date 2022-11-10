@@ -77,7 +77,7 @@ buildfire.components.carousel.editor.prototype = {
 	},
 	// This will be triggered when you add a new item, item index will be items.length
 	onAddItems: function (items) {
-		console.warn('please handle onAddItems', item);
+		console.warn('please handle onAddItems', items);
 	},
 	onOptionSpeedChange:function (speed){//added
 		console.warn('please handle onOptionSpeedChange', speed);//added
@@ -348,7 +348,6 @@ buildfire.components.carousel.editor.prototype = {
 		var button = document.createElement('a');
 		var sliderContainer = document.createElement('div');
 
-
 		componentContainer.className = 'item clearfix row';
 		componentName.className = 'labels col-md-3 padding-right-zero pull-left';
 		componentName.innerHTML = 'Image Carousel';
@@ -362,7 +361,6 @@ buildfire.components.carousel.editor.prototype = {
         
 		componentContainer.appendChild(componentName);
 		buttonContainer.appendChild(button);
-        
 		contentContainer.appendChild(buttonContainer);
 		contentContainer.appendChild(sliderContainer);
 		componentContainer.appendChild(contentContainer);
