@@ -208,6 +208,7 @@ html[wkwebview="true"] #footerMenuParent{
 	/*padding-bottom: 43px;*/
 	padding-bottom: 7vh;
 }
+.keyboard-visible .has-footer-menu,
 .has-footer-menu.notes-wrapper,
 .has-footer-menu.menu-body-container,
 .has-footer-menu.search-container,
@@ -1260,6 +1261,7 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
 		padding-bottom: 10vh !important;
 	}
+	[ios="true"][view="app"][storyboard-launch-images="true"].keyboard-visible  .has-footer-menu,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.menu-body-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.search-container{
@@ -1285,6 +1287,10 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 }
 [ios="true"][view="browser"][ispwaorhtml5ios="true"] #footerMenuParent {
 	min-height: 10% !important;
+}
+
+.keyboard-visible #footerMenuParent {
+	display: none !important;
 }
 
 /* iFrame */

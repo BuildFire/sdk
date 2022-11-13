@@ -306,9 +306,13 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
      */
 	buildfire.services.reportAbuse.onAdminResponse = function (action) {
 		console.log('Admin Response', action);
-		Analytics.adminResponseCall();
 	};
 
+
+	buildfire.services.reportAbuse.triggerWidgetReadyForAdminResponse = function (data) {
+		const p = new Packet(null, 'messaging.triggerOnWidgetReadyForReportAbuseAdminResponse', data);
+		buildfire._sendPacket(p);
+	};
 
 	class Analytics {
 
