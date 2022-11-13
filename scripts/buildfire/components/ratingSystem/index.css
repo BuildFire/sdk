@@ -455,7 +455,7 @@ span#closeButton {
 
 .ovarall-rating-container a.rating-cancel-btn {
   position: absolute;
-  top: 16px;
+  top: calc(env(safe-area-inset-top) + 16px) !important;
   left: 16px;
   cursor: pointer;
 }
