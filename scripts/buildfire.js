@@ -1031,7 +1031,11 @@ var buildfire = {
 			hide: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.hide');
 				buildfire._sendPacket(p, callback);
-			}
+			},
+			isVisible: function(options, callback) {
+				var p = new Packet(null, 'appearance.titlebar.isVisible');
+				buildfire._sendPacket(p, callback);
+			},
 		}, navbar: {
 			show: function(options, callback) {
 				var p = new Packet(null, 'appearance.navbar.show');

@@ -373,7 +373,8 @@ const defaultOptions = {
 		'reviews': 'Reviews',
 		'viewAll': 'View All',
 		'overallRating': 'Overall rating',
-		'emptyStateText': 'No reivews yet. Be the first to leave a review!'
+		'emptyStateText': 'No reviews yet. Be the first to leave a review!',
+		'cancel': 'Cancel',
 	}
 };
 function getNotRatedUI(container) {
@@ -936,110 +937,121 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 				}
 			);
 		}
-		let container = document.createElement('div');
-		container.id = 'ratingsScreenContainer';
-		container.className = 'ratings-screen backgroundColorTheme';
-
-		buildfire.spinner.show();
-
-		loadIcons();
-
-		buildfire.navigation.onBackButtonClick = () => {
-			if (options.callback) options.callback(undefined, null);
-			closeRatingsScreen();
-			buildfire.navigation.onBackButtonClick = options.onBackButtonClick;
-		};
-
-		if (buildfire.getContext().type == 'control') {
-			let closeButton = document.createElement('span');
-			closeButton.className = 'icon icon-chevron-left';
-			closeButton.id = 'closeButton';
-			closeButton.addEventListener('click', () => {
+		buildfire.appearance.titlebar.isVisible(null, (err, isTitleBarVisible) => {
+			let container = document.createElement('div');
+			container.id = 'ratingsScreenContainer';
+			container.className = 'ratings-screen backgroundColorTheme';
+	
+			buildfire.spinner.show();
+	
+			loadIcons();
+	
+			buildfire.navigation.onBackButtonClick = () => {
 				if (options.callback) options.callback(undefined, null);
 				closeRatingsScreen();
-			});
-			container.appendChild(closeButton);
-		}
-
-		let header = document.createElement('div');
-		header.className = 'ovarall-rating-container';
-
-		if (buildfire.getContext().type !== 'control') {
-			header.classList.add('shadow');
-		} else {
-			header.classList.add('border');
-		}
-
-		let headerTitle = document.createElement('h5');
-		headerTitle.innerText = (options && options.translations && options.translations.overallRating) || defaultOptions.translations.overallRating;
-		headerTitle.style.fontWeight = 400;
-		headerTitle.style.fontSize = '14px';
-		header.appendChild(headerTitle);
-
-		let headerSubtitle = document.createElement('h6');
-		headerSubtitle.style.fontSize = '12px';
-		headerSubtitle.style.fontWeight = 'normal';
-		header.appendChild(headerSubtitle);
-
-		let overallRating = document.createElement('div');
-		overallRating.className = 'overall-rating-stars';
-		header.appendChild(overallRating);
-
-		container.appendChild(header);
-
-		let myRating = document.createElement('div');
-		container.appendChild(myRating);
-
-		let emptyState = document.createElement('div');
-		emptyState.className = 'empty-state-container';
-
-		let emptyStateText = document.createElement('h5');
-		emptyStateText.innerText = (options && options.translations && options.translations.emptyStateText) || defaultOptions.translations.emptyStateText;
-		emptyState.appendChild(emptyStateText);
-
-		Summaries.search(
-			{
-				filter: {
-					'_buildfire.index.string1': ratingId,
-				},
-			},
-			(err, summaries) => {
-				if (err) return console.error(err);
-				if (!summaries[0]) {
-					getNotRatedUI(overallRating);
-					return container.appendChild(emptyState);
-				}
-
-				const { count, total } = summaries[0];
-
-				createStarsUI(overallRating, total / count, { hideAverage: true });
-
-				headerSubtitle.innerText = `${(options && options.translations && options.translations.basedOn) || defaultOptions.translations.basedOn} ${count} ${(options && options.translations && options.translations.reviews) || defaultOptions.translations.reviews}`;
+				buildfire.navigation.onBackButtonClick = options.onBackButtonClick;
+			};
+	
+			if (buildfire.getContext().type == 'control') {
+				let closeButton = document.createElement('span');
+				closeButton.className = 'icon icon-chevron-left';
+				closeButton.id = 'closeButton';
+				closeButton.addEventListener('click', () => {
+					if (options.callback) options.callback(undefined, null);
+					closeRatingsScreen();
+				});
+				container.appendChild(closeButton);
 			}
-		);
-
-		checkIfUserIsAdmin((user, isAdmin) => {
-			// Find review by current user
-			Ratings.findRatingByUser(ratingId, user._id, (err, rating) => {
-				if (err) return console.error(err);
-
-				if (!rating) {
-					let addRatingButton = document.createElement('div');
-					addRatingButton.className = 'add-rating-button primaryTheme';
-					addRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
-					addRatingButton.addEventListener('click', () => {
-						if (addRatingButton.disabled) return;
-						addRatingButton.disabled = true;
-						openAddRatingScreen(ratingId, options, () => {
-							reRender();
-							reRenderComponent();
-						});
-					});
-					if (buildfire.getContext().type !== 'control') {
-						header.appendChild(addRatingButton);
+	
+			let header = document.createElement('div');
+			header.className = 'ovarall-rating-container';
+	
+			if (buildfire.getContext().type !== 'control') {
+				header.classList.add('shadow');
+			} else {
+				header.classList.add('border');
+			}
+			
+			
+			// add cancel button for launcher screens
+			if (!isTitleBarVisible)  {
+				const cancelBtn = document.createElement('a');
+				cancelBtn.classList.add('text-primary', 'rating-cancel-btn');
+				cancelBtn.innerText = (options && options.translations && options.translations.cancel) || defaultOptions.translations.cancel;
+				cancelBtn.addEventListener('click', () => { buildfire.navigation.goBack(); });
+				header.appendChild(cancelBtn);	
+			}
+	
+			let headerTitle = document.createElement('h5');
+			headerTitle.innerText = (options && options.translations && options.translations.overallRating) || defaultOptions.translations.overallRating;
+			headerTitle.style.fontWeight = 400;
+			headerTitle.style.fontSize = '14px';
+			header.appendChild(headerTitle);
+	
+			let headerSubtitle = document.createElement('h6');
+			headerSubtitle.style.fontSize = '12px';
+			headerSubtitle.style.fontWeight = 'normal';
+			header.appendChild(headerSubtitle);
+	
+			let overallRating = document.createElement('div');
+			overallRating.className = 'overall-rating-stars';
+			header.appendChild(overallRating);
+	
+			container.appendChild(header);
+	
+			let myRating = document.createElement('div');
+			container.appendChild(myRating);
+	
+			let emptyState = document.createElement('div');
+			emptyState.className = 'empty-state-container';
+	
+			let emptyStateText = document.createElement('h5');
+			emptyStateText.innerText = (options && options.translations && options.translations.emptyStateText) || defaultOptions.translations.emptyStateText;
+			emptyState.appendChild(emptyStateText);
+	
+			Summaries.search(
+				{
+					filter: {
+						'_buildfire.index.string1': ratingId,
+					},
+				},
+				(err, summaries) => {
+					if (err) return console.error(err);
+					if (!summaries[0]) {
+						getNotRatedUI(overallRating);
+						return container.appendChild(emptyState);
 					}
-				} else {
-					const editingOptions = {
+	
+					const { count, total } = summaries[0];
+	
+					createStarsUI(overallRating, total / count, { hideAverage: true });
+	
+					headerSubtitle.innerText = `${(options && options.translations && options.translations.basedOn) || defaultOptions.translations.basedOn} ${count} ${(options && options.translations && options.translations.reviews) || defaultOptions.translations.reviews}`;
+				}
+			);
+	
+			checkIfUserIsAdmin((user, isAdmin) => {
+				// Find review by current user
+				Ratings.findRatingByUser(ratingId, user._id, (err, rating) => {
+					if (err) return console.error(err);
+	
+					if (!rating) {
+						let addRatingButton = document.createElement('div');
+						addRatingButton.className = 'add-rating-button primaryTheme';
+						addRatingButton.innerText = options && options.translations && (options && options.translations && options.translations.addRating) || defaultOptions.translations.addRating;
+						addRatingButton.addEventListener('click', () => {
+							if (addRatingButton.disabled) return;
+							addRatingButton.disabled = true;
+							openAddRatingScreen(ratingId, options, () => {
+								reRender();
+								reRenderComponent();
+							});
+						});
+						if (buildfire.getContext().type !== 'control') {
+							header.appendChild(addRatingButton);
+						}
+					} else {
+						const editingOptions = {
 						onUpdateRequested: () => {
 							openAddRatingScreen(ratingId, options, () => {
 								reRender();
@@ -1049,45 +1061,46 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 						allowToEdit: true,
 					};
 					const ratingUI = createRatingUI(rating, options, editingOptions);
-					if (isAdmin) {
-						addControlsToRating(ratingUI);
-					}
-					myRating.appendChild(ratingUI);
-				}
-			}
-			);
-			// Find reviews by other users
-			Ratings.search(
-				{
-					filter: {
-						'_buildfire.index.string1': ratingId,
-						'_buildfire.index.number1': 1,
-						'_buildfire.index.array1': {
-							'$ne': user._id
-						},
-					},
-				},
-				(err, ratings) => {
-					if (err) return console.error(err);
-
-					ratings.forEach((rating) => {
-						const ratingUI = createRatingUI(rating, options);
 						if (isAdmin) {
 							addControlsToRating(ratingUI);
 						}
-						container.appendChild(ratingUI);
-					});
-					const ratingsScreenContainer = document.getElementById('ratingsScreenContainer');
-					if (ratingsScreenContainer) document.body.removeChild(ratingsScreenContainer);
-					document.body.appendChild(container);
-					buildfire.spinner.hide();
+						myRating.appendChild(ratingUI);
+					}
 				}
-			);
+				);
+				// Find reviews by other users
+				Ratings.search(
+					{
+						filter: {
+							'_buildfire.index.string1': ratingId,
+							'_buildfire.index.number1': 1,
+							'_buildfire.index.array1': {
+								'$ne': user._id
+							},
+						},
+					},
+					(err, ratings) => {
+						if (err) return console.error(err);
+	
+						ratings.forEach((rating) => {
+							const ratingUI = createRatingUI(rating, options);
+							if (isAdmin) {
+								addControlsToRating(ratingUI);
+							}
+							container.appendChild(ratingUI);
+						});
+						const ratingsScreenContainer = document.getElementById('ratingsScreenContainer');
+						if (ratingsScreenContainer) document.body.removeChild(ratingsScreenContainer);
+						document.body.appendChild(container);
+						buildfire.spinner.hide();
+					}
+				);
+			});
+	
+			const reRender = () => {
+				openRatingsScreen(ratingId, options, reRenderComponent);
+			};
 		});
-
-		const reRender = () => {
-			openRatingsScreen(ratingId, options, reRenderComponent);
-		};
 	});
 }
 

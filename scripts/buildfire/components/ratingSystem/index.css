@@ -251,8 +251,9 @@ span.rating-time-ago {
 }
 
 .ovarall-rating-container {
-  padding: 10px 20px 17px;
+  padding: 0 20px 17px;
   position: relative;
+  padding-top: calc(env(safe-area-inset-top) + 10px) !important;
 }
 
 .ovarall-rating-container.shadow {
@@ -451,3 +452,9 @@ span#closeButton {
 .bf-more-alt::before {
   right: -6px
 } 
+
+.ovarall-rating-container a.rating-cancel-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
