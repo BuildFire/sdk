@@ -48,6 +48,13 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 					$scope.activeTab = 'content';
 				}
 			}
+			
+			if (config.control.cssInjection && config.control.cssInjection.enabled) {
+				$scope.layoutsSrc = 'https://uat3-app.buildfire.com/pages/plugins/pluginControl/layouts/pluginLayouts.html';
+				if (lastTabName === 'layouts' || !$scope.currentControl) {
+					$scope.activeTab = 'layouts';
+				}
+			}
 
 			if (config.control.design.enabled) {
 				$scope.designSrc = pluginRoot + '/control/design/index.html?fid=controlDesign&' + contextQueryParameter;

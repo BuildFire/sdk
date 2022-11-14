@@ -41,7 +41,9 @@
        
         <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
                 ng-src="{{currentControl}}"></iframe>
-        <iframe ng-hide="pluginControlIframeVisible" class="non-control-iframe" id="iframeNonControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
-                ng-src="{{currentNonControl}}"></iframe>
+      
+            <div ng-if="layoutsSrc && activeTab === 'layouts'" ng-include="'https://uat3-app.buildfire.com/pages/plugins/pluginControl/layouts/pluginLayouts.html'">
+            </div>
+                 
     </div>
 </div>
