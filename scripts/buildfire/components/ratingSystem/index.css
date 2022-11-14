@@ -192,6 +192,7 @@ span.rating-time-ago {
   align-items: center;
   margin-bottom: 4px;
   width: 100%;
+  position: relative;
 }
 
 .rating-review-text {
@@ -250,8 +251,9 @@ span.rating-time-ago {
 }
 
 .ovarall-rating-container {
-  padding: 10px 20px 17px;
+  padding: 0 20px 17px;
   position: relative;
+  padding-top: calc(env(safe-area-inset-top) + 10px) !important;
 }
 
 .ovarall-rating-container.shadow {
@@ -351,10 +353,15 @@ span.rating-time-ago {
 }
 
 .edit-rating-button {
-  margin-left: auto;
-  font-size: 14px;
   cursor: pointer;
-  text-transform: uppercase;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 4px;
 }
 
 .add-rating-button {
@@ -414,4 +421,41 @@ span#closeButton {
   left: 20px;
   top: 20px;
   z-index: 100;
+}
+.bf-more-alt {
+  transform: scale(1)
+}
+
+.bf-more-alt,
+.bf-more-alt::after,
+.bf-more-alt::before {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 100%
+}
+
+.bf-more-alt::after,
+.bf-more-alt::before {
+  content: "";
+  position: absolute;
+  top: 0
+}
+
+.bf-more-alt::after {
+  left: -6px
+}
+
+.bf-more-alt::before {
+  right: -6px
+} 
+
+.ovarall-rating-container a.rating-cancel-btn {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16px) !important;
+  left: 16px;
+  cursor: pointer;
 }
