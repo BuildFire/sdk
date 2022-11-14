@@ -43,6 +43,9 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 	$scope.loadWebpackFrames = function(config) {
 		var root =  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack;
         	postMaster.widgetPluginAPI.getContext(null, function(err, context){
+				if(context && window.siteConfig){
+					context.scope = window.siteConfig.scope;
+				}
 			var widgetFrame = document.querySelector('#widget');
             	context.initialWidth = widgetFrame.clientWidth;
             	context.initialHeight = widgetFrame.clientHeight;
@@ -70,6 +73,9 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 	$scope.loadFrames = function (pluginFolder, config) {
 		var root =  '../plugins/';
 		postMaster.widgetPluginAPI.getContext(null, function(err, context){
+			if(context && window.siteConfig){
+				context.scope = window.siteConfig.scope;
+			}
 			var widgetFrame = document.querySelector('#widget');
             	context.initialWidth = widgetFrame.clientWidth;
             	context.initialHeight = widgetFrame.clientHeight;
@@ -154,6 +160,9 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 
 	$scope.sendDeeplinkData = function () {
 		postMaster.widgetPluginAPI.getContext(null, function(err, context){
+			if(context && window.siteConfig){
+				context.scope = window.siteConfig.scope;
+			}
 			widgetIframe.src = $scope.widgetSrc.split('?')[0] + '?fid=widget&dld=' + $scope.link.deeplinkData + '&appcontext=' + encodeURIComponent(JSON.stringify(context));
 		});
 	};
