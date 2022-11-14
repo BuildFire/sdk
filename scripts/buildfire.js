@@ -3945,8 +3945,8 @@ var buildfire = {
 
 			buildfire._cssInjection.onUpdate((data)=>{
 				if (data.tag === activeLayoutTag) {
-					if (data.$set) {
-						data.data = data.$set
+					if (data.data && data.data.$set) {
+						data.data = data.data.$set
 					}
 					_handleDataStoreActiveLayoutResponse(data);
 				}
