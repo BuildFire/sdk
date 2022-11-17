@@ -228,7 +228,7 @@ var buildfire = {
 		, 'notes.triggerOnSeekTo'
 		, 'navigation.triggerOnPluginOpened'
 		, 'deeplink.triggerOnUpdate'
-		, 'services.reportAbuse.onAdminResponse'
+		, 'services.reportAbuse._triggerOnAdminResponse'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
