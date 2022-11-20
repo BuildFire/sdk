@@ -10,7 +10,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 		constructor(record = {}) {
 			if (!record.data) record.data = {};
 			this.id = record.id || undefined;
-			this.resolvedOn = record.data.resolvedOn ? new Date().getTime() : 0;
+			this.resolvedOn = record.data.resolvedOn ? record.data.resolvedOn : 0;
 			this.createdOn = record.data.createdOn || new Date();
 			this.createdBy = record.data.createdBy || undefined;
 			this.lastUpdatedOn = record.data.lastUpdatedOn || undefined;
@@ -147,7 +147,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 
 	/**
 	 * @param {Object} params - insert params.
-	 * @param {string} [params.itemId] - This reported item id
+	 * @param {string} params.itemId - This reported item id
 	 * @param {string} params.itemType - This reported item type
 	 * @param {string} params.reportedUserId - The user that you wanna reported him
 	 * @param {object} params.deeplink - The deeplink data
@@ -158,14 +158,14 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 			throw 'please add drawer.js first to use BuildFire drawer component';
 
 		// validate the required params
-		if (!params || !params.itemId || !params.reportedUserId || !params.deeplink) {
-			callback('Missing required data: {itemId, reportedUserId, deeplink} must be specified', null);
+		if (!params || !params.itemId || !params.itemType || !params.reportedUserId || !params.deeplink) {
+			callback('Missing required data: {itemId, itemType, reportedUserId, deeplink} must be specified', null);
 			return;
 		}
 
 		buildfire.spinner.show();
 		// require Login
-		getCurrentUser()
+		getCurrentUser(true)
 			.then((user) => {
 				if (!user) {
 					buildfire.spinner.hide();
@@ -238,7 +238,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 	/**
 	 * get the user information
 	 */
-	function getCurrentUser() {
+	function getCurrentUser(forceLogin) {
 		return new Promise((resolve, reject) => {
 			buildfire.auth.getCurrentUser((err, user) => {
 				if (err) {
@@ -247,16 +247,23 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 				}
 				if (user) {
 					resolve(user);
-				} else {
-					buildfire.auth.login({ allowCancel: true }, (err, user) => {
-						if (err || !user) {
-							reject(err);
-							return;
-						}
-
-						resolve(user);
-					});
+					return;
 				}
+
+				if (!forceLogin) {
+					resolve(user);
+					return;
+				}
+
+				buildfire.auth.login({ allowCancel: true }, (err, user) => {
+					if (err || !user) {
+						reject(err);
+						return;
+					}
+
+					resolve(user);
+				});
+
 			});
 		});
 	}
@@ -339,7 +346,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 			return;
 		}
 
-		getCurrentUser().then((user) => {
+		getCurrentUser(false).then((user) => {
 			if (!user) {
 				callback('Login is required');
 				return;
@@ -364,7 +371,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 				page: params.page? params.page : 0,
 				pageSize: params.pageSize || 50,
 			};
-			Analytics.searchReportCall();
+			// Analytics.searchReportCall();
 			ReportsAbuse.search(option)
 				.then((data) => {
 					callback(null, data);
@@ -396,7 +403,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 	 * @param {string} data.reportId
 	 */
 	buildfire.services.reportAbuse.triggerOnAdminResponseHandled = function (data) {
-		const p = new Packet(null, 'triggerReportAbuseOnAdminResponseHandled', data);
+		const p = new Packet(null, 'reportAbuse.triggerOnAdminResponseHandled', data);
 		buildfire._sendPacket(p);
 	};
 
@@ -405,7 +412,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 	 * @param {obj} data
 	 */
 	buildfire.services.reportAbuse.triggerWidgetReadyForAdminResponse = function (data) {
-		const p = new Packet(null, 'triggerReportAbuseOnWidgetReadyForAdminResponse', data);
+		const p = new Packet(null, 'reportAbuse.triggerOnWidgetReady', data);
 		buildfire._sendPacket(p);
 	};
 
