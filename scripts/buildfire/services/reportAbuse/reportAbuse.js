@@ -353,7 +353,8 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 			}
 
 			const arrayOfIndex = [
-				{ '_buildfire.index.string1': user.userId }
+				{ '_buildfire.index.number1': 0 },
+				{ '_buildfire.index.string1': user.userId },
 			];
 
 			if (params.itemId){
