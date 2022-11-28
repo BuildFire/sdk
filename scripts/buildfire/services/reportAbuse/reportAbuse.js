@@ -303,6 +303,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 						{
 							saveText: 'Report',
 							placeholder: 'Enter your comment here',
+							maxLength: 255,
 						},
 						(err, res) => {
 							if (err) {
