@@ -196,6 +196,38 @@ var buildfire = {
 		buildfire.localStorage.overrideNativeLocalStorage();
 
 		buildfire.wysiwyg.extend();
+
+		//attach plugin.js script that contains plugin.json content.
+		function attachPluginJsScript () {
+			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
+		};
+
+		function getPluginJson(callback) {
+			url = '../plugin.json';
+			fetch(url)
+			.then(response => response.json())
+			.then(res => {
+				callback(null,res);
+			})
+			.catch(error => {
+				callback(error, null);
+			});
+		};
+
+		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
+			const context = buildfire.getContext();
+			if (context && context.scope === 'sdk') {
+				getPluginJson((err,pluginJson)=>{
+					if(err) console.error(err);
+					window.pluginJson = pluginJson;
+					buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+				});
+			}else{
+				attachPluginJsScript();
+			}
+		}
+
+		
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -215,6 +247,7 @@ var buildfire = {
 		, 'auth.triggerOnUpdate'
 		, 'logger.attachRemoteLogger'
 		, 'appearance.triggerOnUpdate'
+		, '_cssInjection.triggerOnUpdate'
 		, 'device.triggerOnAppBackgrounded'
 		, 'device.triggerOnAppResumed'
 		, 'notifications.localNotification.onClick'
@@ -3836,6 +3869,105 @@ var buildfire = {
 			}
 		}
 	},
+	_cssInjection:{
+		handleCssLayoutInjection: function (pluginJson) {
+			if (typeof pluginJson == "undefined" || !pluginJson || !pluginJson.control.cssInjection || !pluginJson.control.cssInjection.enabled || !pluginJson.control.cssInjection.layouts.length ) {
+				return;
+			}
+
+			let activeLayoutTag = '$$activeLayout';
+			if (pluginJson.control.cssInjection.activeLayoutTag) {
+				activeLayoutTag = pluginJson.control.cssInjection.activeLayoutTag;
+			}
+
+			function _handleDataStoreActiveLayoutResponse (result) {
+				let activeLayout;
+				result = result && result.data ? result.data : {};
+				//check if nothing saved as selected layout, so save the default one
+				if (!Object.keys(result).length) {
+					activeLayout = pluginJson.control.cssInjection.layouts[0];
+				} else {
+					//this to handle old instances to make it backwards compatible. the old data saved inside `design` property.
+					if (result.design && result.design.selectedLayout) {
+						activeLayout = result.design.selectedLayout;
+					} else if (result.selectedLayout) {
+						activeLayout = result.selectedLayout;
+					}
+				};
+		
+				if (activeLayout.cssPath) {
+					// so it's predefined
+		
+					let cssUrl;
+					//check if the cssPath from old instances that doesn't include `widget` in the path or not.
+					if (activeLayout.cssPath.startsWith('widget')) {
+						cssUrl= `../${activeLayout.cssPath}`;
+					} else {
+						cssUrl= `./${activeLayout.cssPath}`;
+					}
+					_attachActiveLayoutCSSFile(cssUrl,'$$bf_layout_css');
+				} else if (activeLayout.css) {
+					// so it's custom layout
+					_attachActiveLayoutCSSContent(activeLayout.css,'$$bf_layout_css');
+				};
+		
+			};
+
+			function _attachActiveLayoutCSSFile (url, id){
+				let activeLayoutStyleElement = document.getElementById(id);
+
+				let linkElement = document.createElement('link');
+				linkElement.setAttribute('rel', 'stylesheet');
+				linkElement.setAttribute('type', 'text/css');
+				linkElement.setAttribute('id', id);
+				linkElement.setAttribute('href', url);
+				document.head.appendChild(linkElement);
+
+				if (activeLayoutStyleElement) {
+					activeLayoutStyleElement.remove();
+				};
+			};
+			
+			function _attachActiveLayoutCSSContent (cssContent, id){
+			
+				let activeLayoutStyleElement = document.getElementById(id);
+			
+				let styleElement = document.createElement("style");
+				styleElement.id = id;
+				styleElement.innerHTML = cssContent;
+				document.head.appendChild(styleElement);
+
+				if (activeLayoutStyleElement) {
+					activeLayoutStyleElement.remove();
+				};
+			};
+			buildfire.datastore.get(activeLayoutTag, (err, result) => {
+		
+				if (err) console.error("Error while retrieving active layout", err);
+				_handleDataStoreActiveLayoutResponse(result);
+			});
+
+			buildfire._cssInjection.onUpdate((data)=>{
+				if (data.tag === activeLayoutTag) {
+					if (data.data && data.data.$set) {
+						data.data = data.data.$set
+					}
+					_handleDataStoreActiveLayoutResponse(data);
+				}
+			},true);
+			
+		
+		}
+		, onUpdate: function (callback, allowMultipleHandlers) {
+			return buildfire.eventManager.add('cssInjectionOnUpdate', callback, allowMultipleHandlers);
+		}
+		, triggerOnUpdate: function (obj) {
+			buildfire.eventManager.trigger('cssInjectionOnUpdate', obj);
+		}
+	},
+	onPluginJsonLoaded: function (pluginJson) {
+		buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+	}
 };
 
 window.parsedQuerystring = buildfire.parseQueryString();

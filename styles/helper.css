@@ -644,3 +644,102 @@ html[buildfire] .btn-link-icon::after{
 html[buildfire] .btn-delete-icon::after{
 	top:-2.5px;
 }
+
+.flex{
+	display: flex;
+}
+
+.flex-auto {
+    flex: auto;
+}
+.space-between {
+	justify-content: space-between;
+}
+.flex-justify-end{
+	justify-content: flex-end;
+}
+
+.flex-align-center{
+	align-items: center;
+}
+.flex-align-start{
+	align-items: flex-start;
+}
+.flex-justify-center{
+justify-content: center;
+}
+.display-none {
+	display: none !important;
+}
+.padded-sm {
+    padding: 12px;
+}
+.margin-right-ten {
+    margin-right: 10px !important;
+}
+.text-medium {
+    font-size: 16px;
+}
+.text-small {
+    font-size: 12px;
+}
+.button-switch > input[type="checkbox"] {
+    display: none;
+}
+
+.button-switch > label {
+    cursor: pointer;
+    height: 0px;
+    position: relative;
+    width: 40px;
+    text-align: left;
+}
+.button-switch > label::before {
+    background: #909090;
+    border-radius: 18px;
+    content: '';
+    height: 27px;
+    margin-top: -13.5px;
+    position: absolute;
+    opacity: 0.3;
+    transition: all 0.4s ease-in-out;
+    width: 40px;
+}
+.button-switch > label::after {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    box-shadow: 0px 0px 5px rgb(0 0 0 / 30%);
+    content: '';
+    height: 24px;
+    left: -4px;
+    margin-top: -8px;
+    position: absolute;
+    top: -4px;
+    transition: all 0.3s ease-in-out;
+    width: 24px;
+}
+.button-switch > input[type="checkbox"]:checked + label::before {
+    background: inherit;
+    opacity: 0.5;
+}
+.button-switch > input[type="checkbox"]:checked + label::after {
+    background: inherit;
+    left: 20px;
+}
+.relative-position {
+    position: relative;
+}
+.padded-md {
+    padding: 16px;
+}
+
+.btn-outlined.btn-danger {
+    border: 1px solid #ddd;
+    color: #ed4b4b !important;
+}
+.d-inline-block {
+    display: inline-block !important;
+}
+.btn-outlined {
+    background-color: transparent !important;
+}
