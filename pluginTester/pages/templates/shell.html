@@ -45,7 +45,7 @@
         <iframe ng-if="activeTab !== 'layouts'" ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
                 ng-src="{{currentControl}}"></iframe>
       
-            <div ng-if="layoutsSrc && activeTab === 'layouts'" ng-include="'https://app.buildfire.com/pages/plugins/pluginControl/layouts/pluginLayouts.html'">
+            <div ng-if="layoutsSrc && activeTab === 'layouts'" ng-include="'pages/templates/pluginLayouts.html'">
             </div>
                  
     </div>

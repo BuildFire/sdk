@@ -50,7 +50,7 @@
 			}
 			
 			if (config.control.cssInjection && config.control.cssInjection.enabled) {
-				$scope.layoutsSrc = 'https://app.buildfire.com/pages/plugins/pluginControl/layouts/pluginLayouts.html';
+				$scope.layoutsSrc = 'pages/templates/pluginLayouts.html';
 				if (lastTabName === 'layouts' || !$scope.currentControl) {
 					$scope.activeTab = 'layouts';
 				}

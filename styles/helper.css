@@ -662,6 +662,9 @@ html[buildfire] .btn-delete-icon::after{
 .flex-align-center{
 	align-items: center;
 }
+.flex-align-start{
+	align-items: flex-start;
+}
 .flex-justify-center{
 justify-content: center;
 }

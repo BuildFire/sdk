@@ -202,7 +202,7 @@ var buildfire = {
 			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
 		};
 
-		function readPluginJsonInPluginTester(callback) {
+		function getPluginJson(callback) {
 			url = '../plugin.json';
 			fetch(url)
 			.then(response => response.json())
@@ -217,7 +217,7 @@ var buildfire = {
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
 			const context = buildfire.getContext();
 			if (context && context.scope === 'sdk') {
-				readPluginJsonInPluginTester((err,pluginJson)=>{
+				getPluginJson((err,pluginJson)=>{
 					if(err) console.error(err);
 					window.pluginJson = pluginJson;
 					buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
