@@ -16,7 +16,7 @@
                             <a id="btnLoadContent" ng-class="{'active' : activeTab === 'content' || !activeTab}" ng-click="loadIFrame('content')">Content</a>
                         </li>
                         <li ng-if="layoutsSrc">
-                            <a id="btnLoadLayouts" ng-class="{'active' : activeTab === 'layouts'}" ng-click="loadIFrame('layouts')">Layouts</a>
+                            <a id="btnLoadLayouts" ng-class="{'active' : activeTab === 'layouts'}" ng-click="loadIFrame('layouts')">{{pluginConfig.control.design.enabled ? "Layouts" : "Design" }}</a>
                         </li>
                         <li ng-if="designSrc">
                             <a id="btnLoadDesign" ng-class="{'active' : activeTab === 'design'}" ng-click="loadIFrame('design')">Design</a>

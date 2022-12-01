@@ -668,9 +668,7 @@ html[buildfire] .btn-delete-icon::after{
 .flex-justify-center{
 justify-content: center;
 }
-.display-none {
-	display: none !important;
-}
+
 .padded-sm {
     padding: 12px;
 }
