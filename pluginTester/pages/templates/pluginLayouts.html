@@ -32,7 +32,7 @@
 
             <div  class="flex flex-align-center flex-justify-end padded-sm">
                 <div class="flex flex-align-center margin-right-ten">
-                    <span class="text-medium padded-sm">Advanced Mode</span>
+                    <span class="padded-sm">Advanced Mode</span>
                     <span class="tip btn-info-icon btn-primary transition-third"
                         uib-tooltip="Select a layout and modify its CSS code to customize it."
                         tooltip-placement="right">
@@ -59,15 +59,11 @@
             <div class="flex flex-align-start margin-top-ten text-small">
                 <span class="flex flex-align-center text-danger margin-right-ten"> Danger!</span> Changes made to this code might result in your feature not working as expected. Proceed at your own risk.
             </div>
-            <div class="flex flex-justify-end" ng-if="siteConfigScope == 'cp'">
-               <a ng-click="showCssColorsVariables()">CSS Color Variables</a>
-            </div>
         </div>
         <!-- loading state for code editor -->
         <div ng-show="isCssLoading || !editor" class="loading-container">
             <div class="loader"></div>
         </div>
-        <!-- empty container for init loading state of code editor -->
         <div style="height: 300px;" ng-show="!editor"></div>
 
         <div ng-show="editor" ng-class="{'border-danger': cssError}">
