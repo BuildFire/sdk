@@ -1,23 +1,7 @@
 $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
     function ($scope, $http, $routeParams) {
 
-
-        let siteConfigScope = 'cp';
-        if (window.siteConfig &&
-            window.siteConfig.endPoints &&
-            window.siteConfig.endPoints.appHost && window.siteConfig.scope == "sdk") {
-            siteConfigScope = 'sdk';
-        }
-
-        let pluginJson;
-        $scope.siteConfigScope = siteConfigScope;
-        if(siteConfigScope == "cp"){
-            pluginJson = $scope.$parent.config;
-        }else if (siteConfigScope === 'sdk') {
-            pluginJson = $scope.$parent.$parent.$parent.pluginConfig;
-        }
-
-        
+        const pluginJson = $scope.$parent.$parent.$parent.pluginConfig;
 
         let activeLayoutTag = '$$activeLayout';
         if (pluginJson.control.cssInjection.activeLayoutTag) {
@@ -32,16 +16,10 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
         //this hash map to store all fetched css files for predefined layouts
         const cssMap = new Map();
 
-        let pluginId;
-        if(siteConfigScope == "cp"){
-            pluginId = window.appContext.currentPlugin.pluginId;
-        }else if (siteConfigScope === 'sdk') {
-            pluginId = $routeParams.pluginFolder;
-        }
         //create datastore api 
         const datastoreAPI = new DatastoreAPI({
             appId: window.appContext.currentApp.appId,
-            pluginId: pluginId,
+            pluginId: $routeParams.pluginFolder,
             instanceId: window.appContext.currentPlugin.instanceId,
             liveMode: window.appContext.liveMode,
             writeKey: window.appContext.currentApp.keys.datastoreKey,
@@ -81,7 +59,7 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
             if (!$scope.$$phase) $scope.$digest();
 
             if (activeLayout) {
-                $scope.selectLayout(activeLayout,false);
+                $scope.selectLayout(activeLayout, false);
             };
         };
 
@@ -155,12 +133,8 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
                 }
                 $scope.isDeleteLayoutLoading = false;
 
-                if (siteConfigScope === 'cp') {
-                    emulatorSync.triggerCssInjectionOnUpdate(result);
-                }else if(siteConfigScope === 'sdk') {
-                    const iframe = document.getElementById('widget');
-                    iframe.src = iframe.src;
-                }
+                const iframe = document.getElementById('widget');
+                iframe.src = iframe.src;
             });
         };
 
@@ -169,17 +143,13 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
 
             return new Promise(function (resolve, reject) {
                 const relativePath = predefinedLayout.cssPath.includes('widget/') ? '/' : '/widget/';
-                let cssFilePath;
-                if (siteConfigScope === 'cp') {
-                    cssFilePath = window.siteConfig.endPoints.pluginHost + "/" + $routeParams.folderName + relativePath + predefinedLayout.cssPath;
-                } else if (siteConfigScope === 'sdk') {
 
-                    if (pluginJson.webpack) {
-                        cssFilePath = `${window.location.origin}/plugins/${$routeParams.pluginFolder}/src`+ relativePath + predefinedLayout.cssPath;
-                        
-                    } else {
-                        cssFilePath = `${window.location.origin}/plugins/${$routeParams.pluginFolder}`+ relativePath + predefinedLayout.cssPath;
-                    }
+                let cssFilePath;
+                if (pluginJson.webpack) {
+                    cssFilePath = `${window.location.origin}/plugins/${$routeParams.pluginFolder}/src`+ relativePath + predefinedLayout.cssPath;
+                    
+                } else {
+                    cssFilePath = `${window.location.origin}/plugins/${$routeParams.pluginFolder}`+ relativePath + predefinedLayout.cssPath;
                 }
               
                 $http.get(cssFilePath)
@@ -192,11 +162,9 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
                         reject(error);
                     });
             });
-
-
         };
 
-        $scope.selectLayout = function (layout,autoSave,proceedToSave) {
+        $scope.selectLayout = function (layout, autoSave, proceedToSave) {
             // To prevent make a save for the first time we render the layouts
             if ($scope.selectedLayout && $scope.selectedLayout.name === layout.name && !proceedToSave) {
                 $scope.isDeleteLayoutLoading = false;
@@ -215,7 +183,7 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
 
         };
 
-        const setEditorValue = function (css,turnOffAutoSave) {
+        const setEditorValue = function (css, turnOffAutoSave) {
             if (!$scope.editor) {
                 return;
             };
@@ -263,7 +231,7 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
                     setEditorValue('',true);
                 });
             };
-        }
+        };
 
         const injectEditorFiles = ({ type, src }) => {
             return new Promise((resolve, reject) => {
@@ -286,10 +254,8 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
         };
 
         const initializeEditor = () => {
-            let pluginTesterPath='';
-            if (siteConfigScope === 'sdk') {
-                pluginTesterPath = window.siteConfig.endPoints.appHost;
-            }
+
+            let pluginTesterPath = window.siteConfig.endPoints.appHost;
 
             const customCSSFiles = [
                 { type: "css", src: pluginTesterPath + "/scripts/lib/codeMirror/lib/codemirror.css" },
@@ -364,28 +330,15 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
             const relativePath = layout.imageUrl.includes('resources/') ? '/' : '/resources/';
 
             let url;
-            let resizedUrl;
-            if (siteConfigScope === 'cp') {
-                url = window.siteConfig.endPoints.pluginHost + "/" + $routeParams.folderName + relativePath + layout.imageUrl;
-
-                resizedUrl = $scope.$parent.tools.resizeImage(url, {
-                    width: 144,
-                    height: 317
-                });
-
-            } else if (siteConfigScope === 'sdk') {
+            if (pluginJson.webpack) {
+                url = window.location.protocol + '//' + window.location.hostname + ':' + pluginJson.webpack + relativePath + layout.imageUrl;
+                url = `${window.location.origin}/plugins/${$routeParams.pluginFolder}/src`+ relativePath + layout.imageUrl;
                 
-                if (pluginJson.webpack) {
-                    url = window.location.protocol + '//' + window.location.hostname + ':' + pluginJson.webpack + relativePath + layout.imageUrl;
-                    url = `${window.location.origin}/plugins/${$routeParams.pluginFolder}/src`+ relativePath + layout.imageUrl;
-                    
-                } else {
-                    url = `${window.location.origin}/plugins/${$routeParams.pluginFolder}`+ relativePath + layout.imageUrl;
-                }
-                resizedUrl = url;
+            } else {
+                url = `${window.location.origin}/plugins/${$routeParams.pluginFolder}`+ relativePath + layout.imageUrl;
             }
 
-            return resizedUrl ? resizedUrl : url;
+            return url;
         };
 
         $scope.advancedModeSwitch = function () {
@@ -394,9 +347,10 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
                 $scope.showAdvancedMode = false;
             } else {
                 $scope.showAdvancedMode = true;
+                $scope.turnOffAutoSave = false;
             }
             if (!$scope.$$phase) $scope.$digest();
-        }
+        };
 
         $scope.autoSave = function () {
             if (!$scope.showAdvancedMode) {
@@ -446,7 +400,7 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
                
                 $scope.allLayouts = [...$scope.predefinedLayouts, ...$scope.customLayouts];
                 saveCustomLayouts();
-                $scope.selectLayout($scope.customLayouts[customLayoutIndex],true,proceedToSave);
+                $scope.selectLayout($scope.customLayouts[customLayoutIndex], true, proceedToSave);
             }
         };
 
@@ -496,7 +450,7 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
             let originalLayoutIndex = $scope.allLayouts.findIndex(layout => layout.name === deletedLayout.originalLayoutName);
             let selectedLayout = $scope.allLayouts[originalLayoutIndex]
 
-            $scope.selectLayout(selectedLayout,true);
+            $scope.selectLayout(selectedLayout, true);
         };
 
         const cloneLayout = function (layoutName, css, newName) {
@@ -515,7 +469,7 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
             const proceedToSave = true;
 
             saveCustomLayouts();
-            $scope.selectLayout(clonedLayout,true,proceedToSave);
+            $scope.selectLayout(clonedLayout, true, proceedToSave);
         };
 
         $scope.cloneCustomLayout = function () {
@@ -545,9 +499,9 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
                 layoutName += " clone-1"
             }
             const clonedLayout = {
-                originalLayoutName:$scope.selectedLayout.originalLayoutName,
-                imageUrl:$scope.selectedLayout.imageUrl,
-                css:$scope.selectedLayout.css,
+                originalLayoutName: $scope.selectedLayout.originalLayoutName,
+                imageUrl: $scope.selectedLayout.imageUrl,
+                css: $scope.selectedLayout.css,
                 name: layoutName
             };
             
@@ -556,139 +510,6 @@ $app.controller('pluginLayoutsCtrl', ['$scope', '$http', '$routeParams',
             $scope.allLayouts.push(clonedLayout)
             saveCustomLayouts();
             $scope.selectLayout(clonedLayout, true, true);
-        };
-
-        $scope.showCssColorsVariables = function () {
-            if (siteConfigScope === 'sdk'){
-                return;
-            }
-            
-            window.appearanceHelper.get((err,res)=>{
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-                if (res && res.data && res.data.colors && Object.keys(res.data.colors).length) {
-                    const colorsObj = res.data.colors;
-                    const colorsArray = [];
-                    for (const [colorName, value] of Object.entries(colorsObj)) {
-    
-                        const colorObj = {
-                            colorName: colorName,
-                            colorValue: value
-                        };
-                        switch(colorName) {
-                            case 'primaryTheme':
-                                colorObj.cssVariableName = "--bf-theme-primary";
-                                colorObj.renderedColorName = "Primary Links & Buttons";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'successTheme':
-                                colorObj.cssVariableName = "--bf-theme-success";
-                                colorObj.renderedColorName = "Success Links & Buttons";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'warningTheme':
-                                colorObj.cssVariableName = "--bf-theme-warning";
-                                colorObj.renderedColorName = "Warning Links & Buttons";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'infoTheme':
-                                colorObj.cssVariableName = "--bf-theme-info";
-                                colorObj.renderedColorName = "Info Links & Buttons";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'defaultTheme':
-                                colorObj.cssVariableName = "--bf-theme-default";
-                                colorObj.renderedColorName = "Default Links & Buttons";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'dangerTheme':
-                                colorObj.cssVariableName = "--bf-theme-danger";
-                                colorObj.renderedColorName = "Danger Links & Buttons";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'backgroundColor':
-                                colorObj.cssVariableName = "--bf-theme-background";
-                                colorObj.renderedColorName = "Background Color";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'bodyText':
-                                colorObj.cssVariableName = "--bf-theme-body-text";
-                                colorObj.renderedColorName = "Body Text";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'footerMenuBackgroundColor':
-                                colorObj.cssVariableName = "--bf-theme-footer-background";
-                                colorObj.renderedColorName = "Navbar Background";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'footerMenuIconColor':
-                                colorObj.cssVariableName = "--bf-theme-footer-icon";
-                                colorObj.renderedColorName = "Navbar Icon Color";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'headerText':
-                                colorObj.cssVariableName = "--bf-theme-header-text";
-                                colorObj.renderedColorName = "Header Text";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'icons':
-                                colorObj.cssVariableName = "--bf-theme-icons";
-                                colorObj.renderedColorName = "Icons";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'titleBar':
-                                colorObj.cssVariableName = "--bf-theme-title-bar";
-                                colorObj.renderedColorName = "Title Bar";
-                                colorsArray.push(colorObj);
-                              break;
-                            case 'titleBarTextAndIcons':
-                                colorObj.cssVariableName = "--bf-theme-text-icons";
-                                colorObj.renderedColorName = "Title Bar Text & Icons";
-                                colorsArray.push(colorObj);
-                              break;
-                            default:
-                          }
-                        }
-    
-                    const colorsList = `<ul class="padding-left-fifteen padding-top-ten">
-                    ${colorsArray.reduce((acc, elem) => acc +=`<div class="colors-list-grid_css-injection">
-                    <span class="border-grey border-radius-two" style="width:17px; height:17px; background-color:${elem.colorValue}; margin: auto 0; "></span>
-                    <span style="margin: auto 0;">${elem.renderedColorName}</span>
-                    <span style="margin: auto 0;">var(${elem.cssVariableName})</span>
-                    <span style="text-align: right; margin: auto 0 !important; margin-right: 10px !important; scale: 1.4;">
-                    <a class="icon icon-copy copy-icon margin-zero" onclick="(function(){
-                        const copyElement = document.createElement('textarea');
-                        copyElement.style.position = 'fixed';
-                        copyElement.style.opacity = '0';
-                        copyElement.textContent = 'var(${elem.cssVariableName})';
-                        const body = document.getElementsByTagName('body')[0];
-                        body.appendChild(copyElement);
-                        copyElement.select();
-                        document.execCommand('copy');
-                        body.removeChild(copyElement);
-                        window.toast('Copied!');
-                    })()"></a>
-                    </span>
-                    </div> \n`, '')}
-                    </ul>
-                    <hr/>
-                    <div class="text-bold">Copy color from the list and paste it in the CSS code like here:</div>
-                    <div style="background-color: #F2F2F2">.list-item-title { color: <span class="text-bold">var(--bf-theme-header-text)</span>; }</div>
-                    `;
-                    window.PopupLibAPI.showDialog({
-                        title: "CSS Color Variables",
-                        message: colorsList,
-                        buttons: [
-                            { text: "Close", type: "default", key: "close" }
-                        ],
-                        size: 'md'
-                    }, (err, result) => {
-                       
-                    });
-                }
-            });
         };
 
         const start = function () {
