@@ -78,6 +78,20 @@ class Ratings {
 		});
 	}
 
+	static findRatingsByUser(userId, callback) {
+		Ratings.search(
+			{
+				filter: {
+					'_buildfire.index.array1': userId,
+				}
+			},
+			(err, ratings) => {
+				if (err) return callback(err);
+				return callback(null, ratings);
+			}
+		);
+	}
+
 	static findRatingByUser(ratingId, userId, callback) {
 		Ratings.search(
 			{
@@ -351,6 +365,83 @@ class Summaries {
 					return callback(null, new Summary(record));
 				}
 			);
+		});
+	}
+}
+
+class RatingDeletionDate {
+	static get TAG() {
+		return 'rating_user_deletion';
+	}
+
+	static getDate(callback) {
+		buildfire.appData.get(this.TAG, (err, response) => {
+			if (err) return callback(err);
+			callback(null, response)
+		});
+	}
+
+	static saveDate(date, callback) {
+		buildfire.appData.save({ date }, this.TAG, (err, response) => {
+			if (err) return callback(err);
+			callback(null, response);
+		});
+	}
+
+	static deleteRatings(ratings, callback) {
+		let iterateRatings = (ratings, index) => {
+			if (index !== ratings.length) {
+				Ratings.del(ratings[index], (err, deleted) => {
+					if (err) console.error(err);
+					iterateRatings(ratings, index + 1);
+				});
+			} else {
+ 				callback();
+			}
+		}
+		iterateRatings(ratings, 0);
+	}
+
+	static processUsers(users, callback) {
+		let iterateUsers = (users, index) => {
+			if (index !== users.length) {
+				Ratings.findRatingsByUser(users[index].data.userId, (err, ratings) => {
+					if (err) console.error(err);
+					this.deleteRatings(ratings, () => {
+						iterateUsers(users, index + 1);
+					});
+				});
+			} else {
+				this.saveDate(new Date(), (err, saved) => {
+					if (err) return console.error(err);
+					if (saved) callback();
+				});
+			}
+		}
+		iterateUsers(users, 0);
+	}
+
+	static processRatingsDeletion(callback) {
+		this.getDate((err, savedDate) => {
+			if (err) return console.error(err);
+			let date = savedDate && savedDate.data && savedDate.data.date ? new Date(savedDate.data.date) : new Date(2022, 6, 1);
+			let hoursPassed = Math.abs(date - new Date()) / 36e5;
+
+			if (hoursPassed >= 24) {
+				buildfire.auth.getDeletedUsers({ fromDate: new Date(date) }, (err, users) => {
+					if (err) return console.error(err);
+
+					if (users && users.length) {
+						this.processUsers(users, () => {
+							callback();
+						});
+					} else {
+						this.saveDate(new Date(), (err, saved) => {
+							if (err) return console.error(err);
+						});
+					}
+				});
+			}
 		});
 	}
 }
@@ -972,6 +1063,16 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 				}
 			);
 		}
+
+		const reRender = () => {
+			openRatingsScreen(ratingId, options, reRenderComponent);
+		};
+
+		RatingDeletionDate.processRatingsDeletion(() => {
+			reRender();
+			reRenderComponent();
+		});
+		
 		buildfire.appearance.titlebar.isVisible(null, (err, isTitleBarVisible) => {
 			let container = document.createElement('div');
 			container.id = 'ratingsScreenContainer';
@@ -1144,9 +1245,6 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 				});
 			}
 
-			const reRender = () => {
-				openRatingsScreen(ratingId, options, reRenderComponent);
-			};
 		});
 	});
 }
