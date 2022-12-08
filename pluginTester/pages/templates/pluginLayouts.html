@@ -1,0 +1,92 @@
+<div class="layout padded clearfix layouts-view layouts-tab-container" ng-controller="pluginLayoutsCtrl">
+
+    <!-- loading state -->
+    <div ng-show="!isLoadingDone" class="loading-container">
+        <div class="text-center well margin-zero padded border-none">
+            <h4 class="margin-zero"><span class="loading-spinner"></span>Loading...</h4>
+        </div>
+    </div>
+
+    <div ng-show="isLoadingDone" class="layout-selector flex">
+        <div class="selected-layout">
+            <a class="layout">
+                <img ng-if="selectedLayout" id="selectedLayout" ng-src={{getImageSrc(selectedLayout)}}
+                    alt='active_layout_image' />
+            </a>
+        </div>
+        <div class="features-grid-container flex-auto" ng-style="{'background-color': '#ffff' }">
+            <div class="infinite-scroll-container custom_height_for_plugin_tester border-grey" ng-style="{'min-height': '450px' }">
+                <div class="layoutgrid padding-top-ten" ng-style="{'grid-template-columns': 'repeat(4, 1fr)' }">
+                    <a ng-repeat="layout in allLayouts" id={{layout.name}} class="layout"
+                        ng-class="{'custom-layout': !layout.cssPath, 'relative-position': !layout.cssPath, 'active': layout.name == selectedLayout.name }"
+                        ng-click="selectLayout(layout,true)">
+                        <span ng-if="!layout.cssPath">
+                            {{layout.name}}
+                        </span>
+
+                        <img ng-src={{getImageSrc(layout)}} alt='layout_image' />
+
+                    </a>
+                </div>
+            </div>
+
+            <div  class="flex flex-align-center flex-justify-end padded-sm">
+                <div class="flex flex-align-center margin-right-ten">
+                    <span class="padded-sm">Advanced Mode</span>
+                    <span class="tip btn-info-icon btn-primary transition-third"
+                        uib-tooltip="Select a layout and modify its CSS code to customize it."
+                        tooltip-placement="right">
+                    </span>
+                </div>
+                <div class="button-switch switch-sm advanced-mode-switch">
+                    <input id="advancedModeSwitch" ng-checked="showAdvancedMode" ng-click="advancedModeSwitch()"
+                        type="checkbox">
+                    <label for="advancedModeSwitch" class="label-success"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Editor -->
+    <div ng-show="showAdvancedMode && isLoadingDone" class="code-editor-container border-grey border-radius-five relative-position">
+        <div class="border-bottom-grey padded-md">
+            <div class="relative-position">
+                <input id="layoutNameInput" class="form-control" ng-model="selectedLayoutName"
+                    placeholder="Layout Name" maxlength="50" ng-model-options="{ debounce: 800 }" ng-change="layoutNameOnChange()">
+                <span ng-show="!selectedLayout.cssPath" class="inner-input-text text-small" id="basedOnSpan">Based
+                    on {{selectedLayout.originalLayoutName}}</span>
+            </div>
+            <div class="flex flex-align-start margin-top-ten text-small">
+                <span class="flex flex-align-center text-danger margin-right-ten"> Danger!</span> Changes made to this code might result in your feature not working as expected. Proceed at your own risk.
+            </div>
+        </div>
+        <!-- loading state for code editor -->
+        <div ng-show="isCssLoading || !editor" class="loading-container">
+            <div class="loader"></div>
+        </div>
+        <div style="height: 300px;" ng-show="!editor"></div>
+
+        <div ng-show="editor" ng-class="{'border-danger': cssError}">
+            <textarea id="codeEditor"></textarea>
+        </div>
+
+        <div class="text-left text-danger margin-top-five margin-left-five text-small" ng-show="cssError">
+            {{ cssError }}
+        </div>
+        <div class="flex flex-align-center space-between border-top-grey padded-md">
+            <div>
+                <button class="btn btn-danger btn-outlined" id="resetLayout"
+                ng-disabled="isCssLoading"
+                ng-click="resetLayout()">Reset
+                    Layout</button>
+                <button class="btn btn-danger btn-outlined"
+                    ng-if="!selectedLayout.cssPath" id="deleteCustomLayout"
+                    ng-disabled="isDeleteLayoutLoading" ng-click="deleteCustomLayout()">Delete Custom Layout</button>
+            </div>
+            <button class="btn btn-default" id="cloneCustomLayout" ng-if="!selectedLayout.cssPath"
+                ng-click="cloneCustomLayout()" ng-disabled="isCloneCustomLayoutLoading || isEditorEmpty" style="min-width: 90px">Clone</button>
+        </div>
+
+    </div>
+
+</div>

@@ -15,6 +15,9 @@
                         <li ng-if="contentSrc">
                             <a id="btnLoadContent" ng-class="{'active' : activeTab === 'content' || !activeTab}" ng-click="loadIFrame('content')">Content</a>
                         </li>
+                        <li ng-if="layoutsSrc">
+                            <a id="btnLoadLayouts" ng-class="{'active' : activeTab === 'layouts'}" ng-click="loadIFrame('layouts')">{{pluginConfig.control.design.enabled ? "Layouts" : "Design" }}</a>
+                        </li>
                         <li ng-if="designSrc">
                             <a id="btnLoadDesign" ng-class="{'active' : activeTab === 'design'}" ng-click="loadIFrame('design')">Design</a>
                         </li>
@@ -39,9 +42,11 @@
             </ol>
         </div>
        
-        <iframe ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
+        <iframe ng-if="activeTab !== 'layouts'" ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
                 ng-src="{{currentControl}}"></iframe>
-        <iframe ng-hide="pluginControlIframeVisible" class="non-control-iframe" id="iframeNonControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
-                ng-src="{{currentNonControl}}"></iframe>
+      
+            <div ng-if="layoutsSrc && activeTab === 'layouts'" ng-include="'pages/templates/pluginLayouts.html'">
+            </div>
+                 
     </div>
 </div>
