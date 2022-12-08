@@ -1,3 +1,9 @@
+:root {
+	--full-app-height: 100vh;
+}
+[ios="true"][view="browser"][is-pwa-or-html5-ios="true"] {
+	--full-app-height: 100%;
+}
 *{
 	outline:none;
 	-webkit-box-sizing: border-box;
@@ -39,9 +45,10 @@ body{
 	font-weight:400;
 	color:#5f5f5f;
 	margin:0px;
-	height:100%;
+	height: 100%;
 	overflow:hidden !important;
 }
+
 html[wkwebview="true"] {
 	height: 100vh;
 }
@@ -173,7 +180,7 @@ section.showNav #plugin, #plugin.access-code-visible{
 	z-index: 1;
 }
 
-html[wkwebview="true"] #footerMenuParent{
+html[ios="true"] #footerMenuParent{
 	position: fixed;
 }
 
@@ -1256,24 +1263,33 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent{
 		min-height:10% !important;
 	}
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
+	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iapMessage,
+	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
 	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
 	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
 		padding-bottom: 10vh !important;
 	}
+	[ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.menu-body-container,
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.search-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"].keyboard-visible  .has-footer-menu,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.menu-body-container,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.search-container{
 		padding-bottom: 0 !important;
 	}
+	[ios="true"][view="browser"][is-pwa-ios="true"] .snackbar-hero.has-footer-menu,
 	[ios="true"][view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
 		padding-bottom: 0px !important;
 	}
 	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent.has-footer-menu-border-right .action-group {
 		border-bottom: 	1px solid rgba(193, 193, 193, .47)
 	}
-
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe#launcherPlugin,
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe.pluginFrame,
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
 		padding-bottom: 0px;
@@ -1281,12 +1297,12 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 
 }
 
-[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent, [ios="true"][view="browser"][ispwaorhtml5ios="true"] #footerMenuParent {
+[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent, [ios="true"][view="browser"][is-pwa-ios="true"] #footerMenuParent {
 	padding-bottom: constant(safe-area-inset-bottom) !important; /* iOS 11.0 */
 	padding-bottom: env(safe-area-inset-bottom) !important; /* iOS 11.2 */
 }
-[ios="true"][view="browser"][ispwaorhtml5ios="true"] #footerMenuParent {
-	min-height: 10% !important;
+[ios="true"][view="browser"][is-pwa-ios="true"] #footerMenuParent {
+	min-height: 10vh !important;
 }
 
 .keyboard-visible #footerMenuParent {
@@ -1782,7 +1798,7 @@ textarea.md-input{
 }
 
 #launcherIap .iap-subscriptions {
-	height: 100vh !important;
+	height: var(--full-app-height, 100vh) !important;
 }
 
 /** Lory */
@@ -2127,7 +2143,7 @@ nav.menu a .media{
 	}
 }
 #notesDialog {
-	height: 100vh;
+	height: var(--full-app-height, 100vh);
 	background-color: #fff;
 	position: fixed;
 	top: 0;
@@ -3303,7 +3319,7 @@ html:not([type="app"]) .snackbar-hero{
 	/**
      * (optional) wrapper width, specifies width of the slider frame.
      */
-	height: 100vh;
+	height: var(--full-app-height, 100vh);
 	width: 100vw;
 	position: relative;
 	font-size: 0;
@@ -3393,7 +3409,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 .onboarding{
 	top: 0;
 	left: 0;
-	height: 100vh;
+	height: var(--full-app-height, 100vh);
 	width: 100vw;
 	position: absolute;
 	overflow: hidden;
@@ -3509,7 +3525,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 	left: 0;
 	opacity: 0;
 	width: 100vw;
-	height: 100vh;
+	height: var(--full-app-height, 100vh);
 	background-color: rgba(0, 0, 0, .5);
 	z-index: 99999;
 	transition: opacity ease-in-out .3s;
@@ -3982,13 +3998,9 @@ html:not([type="app"]) .bottom-drawer{
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100vh;
-	overflow: hidden;
-	pointer-events: none;
-}
-html[wkwebview="true"][ios="true"] #userProfile {
-	height: 100vh !important;
+	height: var(--full-app-height, 100vh) !important;
 	overflow: hidden !important;
+	pointer-events: none;
 }
 .profile-container{
 	position: absolute;
@@ -4369,7 +4381,7 @@ html[ios="true"] .profile-overlay .profile-content{
 }
 @media(min-width: 582px){
 	.pofile-header{
-		max-height: calc(100vh - 300px - 169px);
+		max-height: calc(var(--full-app-height, 100vh) - 300px - 169px);
 	}
 }
 
@@ -4786,7 +4798,7 @@ html[ios="true"] .profile-overlay .profile-content{
 	}
 	/* Fade In Animation - Side Menu END*/
 	#pluginContainer{
-		height: 100vh;
+		height: var(--full-app-height, 100vh);
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -5042,7 +5054,7 @@ button.list-group-item {
 }
 #webviewBackdrop {
 	z-index: 999999999;
-	min-height: 100vh;
+	min-height: var(--full-app-height, 100vh);
 	min-width: 100vw;
 	position: absolute;
 	top: 0;
@@ -5053,7 +5065,7 @@ button.list-group-item {
 	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
 }
 #webviewBackdrop .webview-backdrop-wrapper {
-	height: 100vh;
+	height: var(--full-app-height, 100vh);
 	display: flex;
 	align-items: center;
 	justify-content: center;
