@@ -97,6 +97,7 @@ buildfire.services.bluetooth.bleCentral = {
 	}
 };
 
+// TODO: Hardcode to buildfire._whitelistedCommands to avoid packet errors
 if (buildfire._whitelistedCommands) {
 	//////////////////////////////////// SCANNING /////////////////////////////////////
 	buildfire._whitelistedCommands.push('services.bluetooth.bleCentral.triggerOnDeviceDiscovered');

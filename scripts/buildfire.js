@@ -228,6 +228,8 @@ var buildfire = {
 		, 'notes.triggerOnSeekTo'
 		, 'navigation.triggerOnPluginOpened'
 		, 'deeplink.triggerOnUpdate'
+		, 'services.commerce.inAppPurchase._triggerOnPurchaseRequested'
+		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
