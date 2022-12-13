@@ -498,8 +498,13 @@ function injectRatings(options = {}, callback) {
 	options = { ...defaultOptions, ...options };
 
 	let elements = options.elements;
-	if (typeof elements === 'undefined')
+
+	if(options.isFromWysiwyg) {
+		elements = document.querySelectorAll('[data-rating-id$=tinymce]');
+	} else {
+		if (typeof elements === 'undefined')
 		elements = document.querySelectorAll('[data-rating-id]');
+	}
 
 	let ratingIds = options.ratingIds;
 	if (typeof ratingIds === 'undefined')
