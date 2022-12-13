@@ -261,6 +261,8 @@ var buildfire = {
 		, 'notes.triggerOnSeekTo'
 		, 'navigation.triggerOnPluginOpened'
 		, 'deeplink.triggerOnUpdate'
+		, 'services.commerce.inAppPurchase._triggerOnPurchaseRequested'
+		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 		, 'services.reportAbuse._triggerOnAdminResponse'
 	]
 	, _postMessageHandler: function (e) {
