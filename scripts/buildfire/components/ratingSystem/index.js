@@ -79,17 +79,29 @@ class Ratings {
 	}
 
 	static findRatingsByUser(userId, callback) {
-		Ratings.search(
-			{
+		let page = 0, pageSize = 1, allRatings = [];
+		
+		let getRatings = () => {
+			buildfire.appData.search({
+				page,
+				pageSize,
+				recordCount: true,
 				filter: {
 					'_buildfire.index.array1': userId,
 				}
-			},
+			}, Ratings.TAG, 
 			(err, ratings) => {
 				if (err) return callback(err);
-				return callback(null, ratings);
-			}
-		);
+				allRatings = allRatings.concat(ratings.result);
+				if (allRatings.length === ratings.totalRecord) {
+					callback(null, allRatings.map(el => new Rating(el)));
+				} else {
+					page++;
+					getRatings();
+				}
+			});
+		}
+		getRatings();
 	}
 
 	static findRatingByUser(ratingId, userId, callback) {
