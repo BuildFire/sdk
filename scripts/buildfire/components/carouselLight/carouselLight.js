@@ -42,7 +42,7 @@ buildfire.components.carousel.view = function (options) {
 	this._attachEventListeners();
 	if (options.items && options.items.length > 0) {
 		this._applyConfigurations(options, (err, result) => {
-			if (result.shouldInitializeLory) { // loryCarousel
+			if (options.items.length > 1 && result.shouldInitializeLory) { // loryCarousel
 				self.init();
 			} else {
 				self._renderStaticSlides(options.items);
@@ -105,8 +105,6 @@ buildfire.components.carousel.view.prototype = {
 			this._randomizeArray(items);
 			buildfire.localStorage.removeItem(storagePlace);
 			callback(null, {shouldInitializeLory: true});
-		} else if (display == 1) {
-			callback(null, {shouldInitializeLory: false});
 		} else {
 			callback(null, {shouldInitializeLory: true});
 		}
@@ -270,7 +268,7 @@ buildfire.components.carousel.view.prototype = {
 				rewindSpeed: 600,//ms
 				slideSpeed: this.config.speed,//ms
 				slidesToScroll: this.config.slidesToScroll || 1,
-				infinite: this.config.items.length > 1 ? 1 : 0,
+				infinite: this.config.infinite || 1,
 				enableMouseEvents: true
 			});
 		}
@@ -371,15 +369,10 @@ buildfire.components.carousel.view.prototype = {
 				this.config.items.push(items[i]);
 			}
 			var self = this;
-			if (this.config.display == 0) {
-				this.slideContainer.innerHTML = '';
+			if (this.config.display == 0 && this.config.items.length > 1) {
+				self.slideContainer.innerHTML = '';
 				this._loadImages(this.config.items, function () {
-					if (self.config.items.length > 1 && !self.timerInterval) {
-						self.lorySlider = null;
-						self._applySlider();
-					} else {
-						self.lorySlider.setup();
-					}
+					self.lorySlider.setup();
 				});
 			} else {
 				this._renderStaticSlides(this.config.items);
@@ -392,22 +385,13 @@ buildfire.components.carousel.view.prototype = {
 		} else {
 			let self = this;
 			this.config.items = items;
-			if (this.config.display == 0) {
+			if (this.config.display == 0 && items.length > 1) {
 				if (this.config.order == 1) {
 					this._randomizeArray(items);
 				}
 				this.slideContainer.innerHTML = '';
 				this._loadImages(items, function () {
-					if (items.length > 1 && !self.timerInterval) {
-						self.lorySlider = null;
-						self._applySlider();
-					} else if (items.length <= 1 && self.timerInterval) {
-						self._destroySlider();
-						self.lorySlider = null;
-						self._applySlider();
-					} else {
-						self.lorySlider.setup();
-					}
+					self.lorySlider.setup();
 				});
 			} else {
 				if (buildfire.components.carousel.view.lastCarouselTimer) {
@@ -415,9 +399,7 @@ buildfire.components.carousel.view.prototype = {
 					buildfire.components.carousel.view.lastCarouselTimer = null;
 				}
 				this._renderStaticSlides(items);
-				if (items.length > 1) {
-					buildfire.components.carousel.view.lastCarouselTimer = setInterval(this._changeImage.bind(this), this.config.autoInterval, items, this.config.order);
-				}
+				buildfire.components.carousel.view.lastCarouselTimer = setInterval(this._changeImage.bind(this), this.config.autoInterval, items, this.config.order);
 			}
 		}
 	},
