@@ -581,27 +581,26 @@ function injectAverageRating(container, ratingId, options) {
 
 	const reRender = () => {
 		delete options.summary;
-		container.innerHTML = containerClone.innerHTML;
-		injectAverageRating(container, ratingId, options);
-	};
-
-	if (options && options.summary) {
-		let averageRating = options.summary.total / options.summary.count;
-		createStarsUI(container, averageRating, options, ratingId, reRender, isFromWysiwyg);
-	} else {
 		Summaries.search(filters, (err, summaries) => {
 			if (err) return console.error(err);
 
+			container.innerHTML = containerClone.innerHTML;
 			if (!summaries || !summaries[0] || summaries[0].count === 0) {
 				summaries = [{ total: 0, count: 1 }];
 			}
 
 			options.summary = summaries[0];
 
-			let averageRating = summaries[0].total / summaries[0].count;
-
-			createStarsUI(container, averageRating, options, ratingId, reRender, isFromWysiwyg);
+			injectAverageRating(container, ratingId, options);
 		});
+	};
+
+	let averageRating = 0;
+	if (options && options.summary) {
+		averageRating = options.summary.total / options.summary.count;
+		createStarsUI(container, averageRating, options, ratingId, reRender, isFromWysiwyg);
+	} else {
+		createStarsUI(container, averageRating, options, ratingId, reRender, isFromWysiwyg);
 	}
 }
 
