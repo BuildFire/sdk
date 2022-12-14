@@ -321,7 +321,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 #gif-backdrop {
 	display: none;
 	position: absolute;
-	height: 100vh;
+	height: var(--full-app-height, 100vh);
 	width: 100vw;
 	top: 0;
 	left: 0;

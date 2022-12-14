@@ -28,5 +28,20 @@ buildfire.services.commerce.inAppPurchase = {
 	checkIsPurchased: function (options, callback) {
 		var p = new Packet(null, 'inAppPurchase.checkIsPurchased', options);
 		buildfire._sendPacket(p, callback);
+	},
+
+	//////////////////////////////////// EVENTS /////////////////////////////////////
+
+	onPurchaseResult: function (callback, allowMultipleHandlers) {
+		buildfire.eventManager.add('inAppPurchase.onPurchaseResult', callback, allowMultipleHandlers);
+	},
+	_triggerOnPurchaseResult: function (purchaseResult) {
+		buildfire.eventManager.trigger('inAppPurchase.onPurchaseResult', purchaseResult);
+	},
+	onPurchaseRequested: function (callback, allowMultipleHandlers) {
+		buildfire.eventManager.add('inAppPurchase.onPurchaseRequested', callback, allowMultipleHandlers);
+	},
+	_triggerOnPurchaseRequested: function (requestData) {
+		buildfire.eventManager.trigger('inAppPurchase.onPurchaseRequested', requestData);
 	}
 };
