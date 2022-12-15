@@ -78,32 +78,6 @@ class Ratings {
 		});
 	}
 
-	static findRatingsByUser(userId, callback) {
-		let page = 0, pageSize = 1, allRatings = [];
-		
-		let getRatings = () => {
-			buildfire.appData.search({
-				page,
-				pageSize,
-				recordCount: true,
-				filter: {
-					'_buildfire.index.array1': userId,
-				}
-			}, Ratings.TAG, 
-			(err, ratings) => {
-				if (err) return callback(err);
-				allRatings = allRatings.concat(ratings.result);
-				if (allRatings.length === ratings.totalRecord) {
-					callback(null, allRatings.map(el => new Rating(el)));
-				} else {
-					page++;
-					getRatings();
-				}
-			});
-		}
-		getRatings();
-	}
-
 	static findRatingByUser(ratingId, userId, callback) {
 		Ratings.search(
 			{
@@ -1003,10 +977,6 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 			);
 		}
 
-		const reRender = () => {
-			openRatingsScreen(ratingId, options, reRenderComponent);
-		};
-
 		buildfire.appearance.titlebar.isVisible(null, (err, isTitleBarVisible) => {
 			let container = document.createElement('div');
 			container.id = 'ratingsScreenContainer';
@@ -1178,7 +1148,10 @@ function openRatingsScreen(ratingId, options, reRenderComponent) {
 					);
 				});
 			}
-
+			
+			const reRender = () => {
+				openRatingsScreen(ratingId, options, reRenderComponent);
+			};
 		});
 	});
 }
