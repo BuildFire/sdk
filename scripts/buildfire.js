@@ -1032,6 +1032,9 @@ var buildfire = {
 		, onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('appearanceOnUpdate', callback, allowMultipleHandlers);
 		}
+		, _onInternalUpdate: function (callback, allowMultipleHandlers = true) {
+			return buildfire.eventManager.add('_internalAppearanceOnUpdate', callback, allowMultipleHandlers);
+		}
 		, triggerOnUpdate: function (appTheme) {
 			var appThemeCSSElement = document.getElementById('appThemeCSS');
 			if(appThemeCSSElement) {
@@ -1058,6 +1061,7 @@ var buildfire = {
 					});
 				}
 				buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
+				buildfire.eventManager.trigger('_internalAppearanceOnUpdate', appTheme);
 			}
 		}, titlebar: {
 			show: function(options, callback) {
@@ -3384,14 +3388,22 @@ var buildfire = {
 		onLogin: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogin', callback, allowMultipleHandlers);
 		},
+		_onInternalLogin: function (callback, allowMultipleHandlers = true) {
+			return buildfire.eventManager.add('_internalAuthOnLogin', callback, allowMultipleHandlers);
+		},
 		triggerOnLogin: function (user) {
 			buildfire.eventManager.trigger('authOnLogin', user);
+			buildfire.eventManager.trigger('_internalAuthOnLogin', user);
 		},
 		onLogout: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
 		},
 		triggerOnLogout: function (data) {
-			return buildfire.eventManager.trigger('authOnLogout', data);
+			buildfire.eventManager.trigger('authOnLogout', data);
+			buildfire.eventManager.trigger('_internalAuthOnLogout', data);
+		},
+		_onInternalLogout: function (data, allowMultipleHandlers = true) {
+			return buildfire.eventManager.add('_internalAuthOnLogout', data, allowMultipleHandlers);
 		},
 		onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
@@ -3700,6 +3712,133 @@ var buildfire = {
 			buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
 		}
 	},
+	dynamicBlocks: {
+		execute: function(e) {
+			if (!e.parentElement) return;
+			const parent = e.parentElement;
+			const targets = parent.querySelectorAll('[data-type]');
+			const VALID_TYPES = ['dynamic-expression'];
+
+			Array.from(targets).forEach((e) => {
+				const { type } = e.dataset;
+				if (!type || !VALID_TYPES.includes(type)) {
+					throw 'invalid_dynamic_block_type';
+				}
+
+				switch(type) {
+				case 'dynamic-expression':
+					this.expressions.handleContentExecution(e);
+					break;
+				case 'dynamic-api':
+					// todo
+					break;
+				}
+			});
+		},
+		expressions: {
+			_getExpressionContext(done) {
+				const { appId, appTheme, pluginId } = buildfire.getContext();
+				buildfire.auth.getCurrentUser((err, user) => {
+					if (err) return console.error(err);
+					done(null, {
+						user,
+						appId,
+						appTheme,
+						pluginId,
+					});
+				});
+			},
+			/**
+			 * _evaluateExpression
+			 * @description evaluate a JS expression result within a defined context
+			 * @private
+			 */
+			_evaluateExpression(expression, args = {}) {
+				return Function(`"use strict"; const context = this;return (${expression})`).bind(args)();
+			},
+			/**
+			 * _refreshContent
+			 * @description used to refresh already executed content and reflect it
+			 * @private
+			 */
+			_refreshContent({ content, target, handlers, updatedContext = {} }) {
+				// verify content is still in DOM, remove if not
+				if (!target.parentElement) {
+					for (const key in handlers) {
+						if (handlers[key]) {
+							handlers[key].clear();
+						}
+					}
+					return;
+				}
+				this._getExpressionContext((err, context) => {
+					try {
+						target.innerHTML = this._evaluateExpression('`' + content + '`', Object.assign(context, updatedContext));
+						target.classList.remove('bf-expression-error');
+					} catch (err) {
+						if (buildfire.getContext().liveMode) throw err;
+						target.classList.add('bf-expression-error');
+						target.innerHTML = `<span class="text-danger">Failed to execute.</span><br><br>${err.stack}`;
+					}
+				});
+			},
+			/**
+			 * handleContentExecution
+			 * @description dynamic expressions handler, prepare the content, context and then evaluate it.
+			 * @public
+			 */
+			handleContentExecution(e) {
+				const container = e.parentElement.classList.contains('bf-wysiwyg-top')
+					? e.parentElement.parentElement
+					: e.parentElement;
+
+				e.remove();
+				const content = container.innerHTML.replace(/bf-wysiwyg-hide-app/g, '');
+
+				this._getExpressionContext((err, context) => {
+					const _context = {
+						_handlers: {
+							onLogin: null,
+							onLogout: null,
+							onAppearanceUpdate: null,
+						},
+						get user() {
+							if (!this._handlers.onLogin) {
+								this._handlers.onLogin = buildfire.auth._onInternalLogin(() => { buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this.handlers }); });
+							}
+							if (!this._handlers.onLogout) {
+								this._handlers.onLogout = buildfire.auth._onInternalLogout(() => { buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this.handlers }); });
+							}
+							return context.user || {};
+						},
+						get appId() {
+							return context.appId;
+						},
+						get appTheme() {
+							if (!this._handlers.onAppearanceUpdate) {
+								this._handlers.onAppearanceUpdate = buildfire.appearance._onInternalUpdate((appearance) => {
+									buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this._handlers, updatedContext: { appTheme: appearance }});
+								});
+							}
+							return context.appTheme;
+						},
+						get pluginId() {
+							return context.pluginId;
+						},
+					};
+
+					try {
+						container.innerHTML = this._evaluateExpression('`' + content + '`', _context);
+						container.classList.remove('bf-expression-error');
+					} catch (err) {
+						if (buildfire.getContext().liveMode) throw err;
+						container.classList.add('bf-expression-error');
+						container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
+					}
+				});
+			},
+		},
+	},
 	wysiwyg: {
 		injectPluginStyles: function(css) {
 			var tinymcePluginStylesElement = document.getElementById('tinymcePluginStyles');
@@ -3714,25 +3853,62 @@ var buildfire = {
 			}
 		},
 		extend: function() {
-			if(typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
+			if (typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
 				var appContext = buildfire.getContext();
 				if (appContext && appContext.endPoints) {
 					var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
 					var originalTinymceInit = tinymce.init.bind(tinymce);
+
 					tinymce.init = function(options) {
 						if (options._bfInitialize === true) {
 							return originalTinymceInit(options);
 						}
+						var dynamicExpressionsEnabled = (typeof options.bf_dynamic_expressions !== 'undefined') ? options.bf_dynamic_expressions : true;
 						var originalSetup = options.setup;
 						if (originalSetup) {
 							options.setup = function (editor) {
+								let dynamicExpressionsActivated;
+								const EXPRESSION_HTML = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamicBlocks.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />';
+								const _injectExpressionNode = () => {
+									const currentContent = editor.getContent();
+									editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
+									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add('bf-wysiwyg-hide-app'); });
+								};
+								const _removeExpressionNode = () => {
+									const div = document.createElement('div');
+									div.innerHTML = editor.getContent();
+									const elements = div.querySelectorAll('[data-type="dynamic-expression"]');
+									Array.from(elements).forEach((e) => {
+										if (e.parentElement) {
+											e.parentElement.remove();
+										}
+										e.remove();
+									});
+									editor.setContent(div.innerHTML);
+									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.remove('bf-wysiwyg-hide-app'); });
+								};
+								const _syncExpressionNodes = () => {
+									const div = document.createElement('div');
+									div.innerHTML = editor.getContent();
+									const expression = div.querySelector('[data-type="dynamic-expression"]');
+									if (typeof dynamicExpressionsActivated === 'undefined') {
+										dynamicExpressionsActivated = !!expression;
+									}
+									if (dynamicExpressionsActivated && !expression) {
+										_injectExpressionNode();
+									} else if (!dynamicExpressionsActivated && expression) {
+										_removeExpressionNode();
+									}
+								};
+
 								editor.on('init', function () {
 									// add a mimic of buildfire object to prevent errors in tinymce
 									var scriptElm = editor.dom.create( 'script', {},
 										'var buildfire = {'
-                                        +   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
-                                        +   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
-                                        +'};'
+										+   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
+										+   'dynamicBlocks: { execute: function() { console.log("ignore handleScriptExecution in tinymce")}},'
+										+   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
+										+'};'
 									);
 									editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
 								});
@@ -3753,7 +3929,19 @@ var buildfire = {
 										});
 									}
 									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element
-									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add("bf-wysiwyg-top") });
+									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) {
+										const classes = ['bf-wysiwyg-top'];
+										if (dynamicExpressionsEnabled && dynamicExpressionsActivated) {
+											classes.push('bf-wysiwyg-hide-app');
+										} else {
+											ele.classList.remove('bf-wysiwyg-hide-app');
+										}
+										ele.classList.add(...classes);
+									});
+
+									if (dynamicExpressionsEnabled) {
+										_syncExpressionNodes();
+									}
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',
@@ -3791,6 +3979,21 @@ var buildfire = {
 										return element.dataset.bfLayout ? '' : 'cut copy paste bf_insertBefore bf_insertAfter | bf_delete';
 									}
 								});
+								editor.ui.registry.addToggleMenuItem('bf_toggleDynamicExpression', {
+									text: 'Dynamic expressions',
+									onAction: () => {
+										dynamicExpressionsActivated = !dynamicExpressionsActivated;
+										if (dynamicExpressionsActivated) {
+											_injectExpressionNode();
+										} else {
+											_removeExpressionNode();
+										}
+									},
+									onSetup: (api) => {
+										api.setActive(dynamicExpressionsActivated);
+										return () => {};
+									}
+								});
 								originalSetup(editor);
 							};
 						}
@@ -3822,7 +4025,7 @@ var buildfire = {
 							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
-							tools: {title: 'Tools', items: 'code'},
+							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
 						};
 						if (userMenu) {
 							for (item in userMenu) {
@@ -3858,10 +4061,10 @@ var buildfire = {
 						}
 						options.toolbar_mode = 'floating';
 						options.theme = 'silver';
-						options.skin = 'bf-skin',
+						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|height|width|onclick|alt],button[style|class|onclick]';
+						options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick]';
 						options.height = options.height || 265;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
@@ -3870,7 +4073,7 @@ var buildfire = {
 					};
 				}
 			}
-		}
+		},
 	},
 	_cssInjection:{
 		handleCssLayoutInjection: function (pluginJson) {
