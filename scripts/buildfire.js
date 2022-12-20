@@ -3754,7 +3754,7 @@ var buildfire = {
 			 * @private
 			 */
 			_evaluateExpression(expression, args = {}) {
-				return Function(`"use strict"; const ctx = this;return (${expression})`).bind(args)();
+				return Function(`"use strict"; const context = this;return (${expression})`).bind(args)();
 			},
 			/**
 			 * _refreshContent
@@ -3778,7 +3778,7 @@ var buildfire = {
 					} catch (err) {
 						if (buildfire.getContext().liveMode) throw err;
 						target.classList.add('bf-expression-error');
-						target.innerHTML = `<span style="color: #E36049">Failed to execute.</span><br><br>${err.stack}`;
+						target.innerHTML = `<span class="text-danger">Failed to execute.</span><br><br>${err.stack}`;
 					}
 				});
 			},
@@ -3833,7 +3833,7 @@ var buildfire = {
 					} catch (err) {
 						if (buildfire.getContext().liveMode) throw err;
 						container.classList.add('bf-expression-error');
-						container.innerHTML = `<span style="color: #E36049">Failed to execute.</span><br><br>${err.stack}`;
+						container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
 					}
 				});
 			},
@@ -3863,20 +3863,27 @@ var buildfire = {
 						if (options._bfInitialize === true) {
 							return originalTinymceInit(options);
 						}
+						var dynamicExpressionsEnabled = (typeof options.bf_dynamic_expressions !== 'undefined') ? options.bf_dynamic_expressions : true;
 						var originalSetup = options.setup;
 						if (originalSetup) {
 							options.setup = function (editor) {
-								let dynamicExpressionsEnabled;
+								let dynamicExpressionsActivated;
 								const EXPRESSION_HTML = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamicBlocks.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />';
 								const _injectExpressionNode = () => {
-									editor.setContent(EXPRESSION_HTML + editor.getContent());
+									const currentContent = editor.getContent();
+									editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add('bf-wysiwyg-hide-app'); });
 								};
 								const _removeExpressionNode = () => {
 									const div = document.createElement('div');
 									div.innerHTML = editor.getContent();
 									const elements = div.querySelectorAll('[data-type="dynamic-expression"]');
-									Array.from(elements).forEach((e) => e.remove());
+									Array.from(elements).forEach((e) => {
+										if (e.parentElement) {
+											e.parentElement.remove();
+										}
+										e.remove();
+									});
 									editor.setContent(div.innerHTML);
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.remove('bf-wysiwyg-hide-app'); });
 								};
@@ -3884,11 +3891,12 @@ var buildfire = {
 									const div = document.createElement('div');
 									div.innerHTML = editor.getContent();
 									const expression = div.querySelector('[data-type="dynamic-expression"]');
-									if (typeof dynamicExpressionsEnabled === 'undefined') {
-										dynamicExpressionsEnabled = !!expression;
-									} if (dynamicExpressionsEnabled && !expression) {
+									if (typeof dynamicExpressionsActivated === 'undefined') {
+										dynamicExpressionsActivated = !!expression;
+									}
+									if (dynamicExpressionsActivated && !expression) {
 										_injectExpressionNode();
-									} else if (!dynamicExpressionsEnabled && expression) {
+									} else if (!dynamicExpressionsActivated && expression) {
 										_removeExpressionNode();
 									}
 								};
@@ -3923,7 +3931,7 @@ var buildfire = {
 									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) {
 										const classes = ['bf-wysiwyg-top'];
-										if (dynamicExpressionsEnabled) {
+										if (dynamicExpressionsEnabled && dynamicExpressionsActivated) {
 											classes.push('bf-wysiwyg-hide-app');
 										} else {
 											ele.classList.remove('bf-wysiwyg-hide-app');
@@ -3931,7 +3939,9 @@ var buildfire = {
 										ele.classList.add(...classes);
 									});
 
-									_syncExpressionNodes();
+									if (dynamicExpressionsEnabled) {
+										_syncExpressionNodes();
+									}
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',
@@ -3972,15 +3982,15 @@ var buildfire = {
 								editor.ui.registry.addToggleMenuItem('bf_toggleDynamicExpression', {
 									text: 'Dynamic expressions',
 									onAction: () => {
-										dynamicExpressionsEnabled = !dynamicExpressionsEnabled;
-										if (dynamicExpressionsEnabled) {
+										dynamicExpressionsActivated = !dynamicExpressionsActivated;
+										if (dynamicExpressionsActivated) {
 											_injectExpressionNode();
 										} else {
 											_removeExpressionNode();
 										}
 									},
 									onSetup: (api) => {
-										api.setActive(dynamicExpressionsEnabled);
+										api.setActive(dynamicExpressionsActivated);
 										return () => {};
 									}
 								});
@@ -4012,10 +4022,10 @@ var buildfire = {
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout bf_toggleDynamicExpression'},
+							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
-							tools: {title: 'Tools', items: 'code'},
+							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
 						};
 						if (userMenu) {
 							for (item in userMenu) {
