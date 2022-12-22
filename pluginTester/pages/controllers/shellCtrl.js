@@ -56,6 +56,13 @@
 				}
 			}
 
+			if (config.control.language && config.control.language.enabled) {
+				$scope.languageSrc = 'pages/templates/languageSettings.html';
+				if (lastTabName === 'language' || !$scope.currentControl) {
+					$scope.activeTab = 'language';
+				}
+			}
+
 			if (config.control.design.enabled) {
 				$scope.designSrc = pluginRoot + '/control/design/index.html?fid=controlDesign&' + contextQueryParameter;
 				if (lastTabName === 'design' || !$scope.currentControl) {

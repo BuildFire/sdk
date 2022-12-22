@@ -1,0 +1,66 @@
+<div ng-controller="languageSettingsCtrl" class="language-settings-container">
+    <!-- loading state -->
+    <div ng-if="!isLoadingDone" class="loading-container padded">
+        <div class="text-center well margin-zero padded border-none">
+            <h4 class="margin-zero"><span class="loading-spinner"></span>Loading...</h4>
+        </div>
+    </div>
+    <div ng-if="isLoadingDone" class="margin-bottom-fifteen"> 
+        <form name="frmLanguageSettings" ng-submit="save(frmLanguageSettings.$pristine)" novalidate>
+            <div class="cp-scroll-section">
+                <p class="info-note background-info" ng-if="pluginLanguageJson.mainInfo">{{pluginLanguageJson.mainInfo}}</p>
+                <div ng-repeat="(sectionKey, sectionObj) in pluginLanguageJson.sections">
+                    <section>
+                        <div class="margin-bottom-twenty margin-top-thirty">
+                            <h1 class="section-title margin-bottom-ten">
+                                {{sectionObj.title}}
+                            </h1>
+                            <p class="info-note background-info margin-bottom-ten" ng-if="sectionObj.info">
+                                {{sectionObj.info}}
+                            </p>
+                        </div>
+                        <div ng-repeat="(labelKey, labelObj) in sectionObj.labels" class="item row margin-bottom-fifteen">
+                            <div>
+                                <div class="col-md-3 labels pull-left">
+                                    <span ng-class="{'required-field': labelObj.required}">
+                                        {{labelObj.title}}
+                                    </span>
+                                    <span class="tip btn-info-icon btn-primary transition-third" uib-tooltip="{{labelObj.toolTip}}" tooltip-placement="right" ng-if="labelObj.toolTip">
+                                    </span>
+                                </div>
+                                <div class="col-md-9 pull-left" ng-class="{'has-error': (frmLanguageSettings.$submitted && (!labelObj.defaultValue || labelObj.wysiwygRequiredEmpty) && labelObj.required), 'margin-bottom-fifteen': (labelObj.inputType === 'textarea' || labelObj.inputType === 'wysiwyg')}">
+    
+                                    <!-- text input type -->
+                                    <input ng-if="!labelObj.inputType || labelObj.inputType === 'text'" type="text" class="form-control" ng-value="labelObj.defaultValue" placeholder="{{labelObj.placeholder}}" maxLength="{{labelObj.hasOwnProperty('maxLength') ? labelObj.maxLength : 200}}" ng-model="labelObj.defaultValue" required="labelObj.required" ng-change="inputOnChange(labelObj.defaultValue, labelObj.required)"/>
+    
+                                    
+                                    <!-- text area input type -->
+                                    <textarea ng-if="labelObj.inputType === 'textarea'" type="textarea" class="form-control" ng-value="labelObj.defaultValue" placeholder="{{labelObj.placeholder}}" maxLength="{{labelObj.hasOwnProperty('maxLength') ? labelObj.maxLength : 1000}}" ng-model="labelObj.defaultValue" required="labelObj.required" ng-change="inputOnChange(labelObj.defaultValue, labelObj.required)">
+                                    </textarea>
+    
+                                    <!-- wysiwyg input type -->
+                                    <textarea ng-if="labelObj.inputType === 'wysiwyg'" class="form-control" ng-value="labelObj.defaultValue" placeholder="{{labelObj.placeholder}}" ng-model="labelObj.defaultValue" required="labelObj.required" ui-tinymce="WYSIWYGOptions" name="{{sectionKey+'&'+labelKey}}" cols="45" rows="3"></textarea>
+    
+                                    <!-- required danger -->
+                                    <div class="alert text-danger alert-sm text-left" ng-show="frmLanguageSettings.$submitted && (!labelObj.defaultValue || labelObj.wysiwygRequiredEmpty) && labelObj.required">
+                                        Required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="w-100 pull-right padded">
+                <div class="col-md-6 pull-right padding-right-zero padding-left-ten">
+                    <button type="submit" id="saveButton" class="btn btn-success pull-right" style="min-width: 90px;">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </form>
+        
+        
+        
+    </div>
+</div>

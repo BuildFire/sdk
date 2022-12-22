@@ -201,7 +201,7 @@ var buildfire = {
 		function attachPluginJsScript () {
 			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
 		};
-
+		
 		function getPluginJson(callback) {
 			url = '../plugin.json';
 			fetch(url)
@@ -217,10 +217,30 @@ var buildfire = {
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
 			const context = buildfire.getContext();
 			if (context && context.scope === 'sdk') {
-				getPluginJson((err,pluginJson)=>{
+				getPluginJson((err, pluginJson)=>{
 					if(err) console.error(err);
 					window.pluginJson = pluginJson;
 					buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+
+					//handle language settings
+					function getPluginLanguageJson(callback) {
+						url = '../resources/languages.json';
+						fetch(url)
+						.then(response => response.json())
+						.then(res => {
+							callback(null,res);
+						})
+						.catch(error => {
+							callback(error, null);
+						});
+					};
+					if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
+						getPluginLanguageJson((err, pluginLanguageJson)=>{
+							if(err) console.error(err);
+							window.pluginLanguageJson = pluginLanguageJson;
+							buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
+						});
+					}
 				});
 			}else{
 				attachPluginJsScript();
@@ -248,6 +268,7 @@ var buildfire = {
 		, 'logger.attachRemoteLogger'
 		, 'appearance.triggerOnUpdate'
 		, '_cssInjection.triggerOnUpdate'
+		, 'language.triggerOnUpdate'
 		, 'device.triggerOnAppBackgrounded'
 		, 'device.triggerOnAppResumed'
 		, 'notifications.localNotification.onClick'
@@ -3968,7 +3989,276 @@ var buildfire = {
 			buildfire.eventManager.trigger('cssInjectionOnUpdate', obj);
 		}
 	},
+	language: (function () {
+		let _strings;
+		return {
+			handleLanguageSettings: function (pluginJson, pluginLanguageJson) {
+				if (typeof pluginJson == "undefined" || !pluginJson || !pluginJson.control.language || !pluginJson.control.language.enabled || !pluginJson.control.language.languageJsonPath || !pluginLanguageJson) {
+					return;
+				}
+	
+				let languageTag = '$$languageSettings';
+				if (pluginJson.control.language.tagName) {
+					languageTag = pluginJson.control.language.tagName;
+				}
+	
+				//get data from datastore
+				const getLanguage = () => {
+					buildfire.datastore.get(languageTag, (err, result) => {
+						//even if there is an error found, continue and load default stings.
+						_handleDataStoreLanguageSettingsResponse(result);
+					});
+				};
+	
+				//handle data format
+				const prepareDataObjectToRead = (pluginLanguageJson) => {
+					const sections = pluginLanguageJson.sections;
+					if (!Object.keys(sections).length) {
+						return null;
+					}
+		
+					let obj = {};
+					for (let sectionKey in sections) {
+						let section = obj[sectionKey] = {};
+						for (let labelKey in sections[sectionKey].labels) {
+							section[labelKey] = {
+								value : sections[sectionKey].labels[labelKey].defaultValue
+							};
+						}
+					};
+		
+					return obj;
+				};
+	
+				//inject strings into targeted html elements.
+				const injectStrings = (strings) => {
+					if (!strings || !Object.keys(strings).length) {
+						return;
+					}
+					document.querySelectorAll("*[bfString], *[data-attr-to-inject]").forEach(e => {
+						if (!e.getAttribute("bfString")) {
+							return;
+						}
+						const stringKeys = e.getAttribute("bfString").split(".");
+						const section = stringKeys[0];
+						const label = stringKeys[1];
+						if (!strings[section]) {
+							return;
+						}
+						const valueObj = strings[section][label];
+						const injectAttributes = e.getAttribute("data-attr-to-inject");
+						let attributes;
+						//handle multiple attributes.
+						if (injectAttributes) {
+							attributes = injectAttributes.split(",");
+						}
+						if (valueObj && valueObj.hasOwnProperty("value")) {
+							if (attributes && attributes.length) {
+								attributes.forEach(attr => e.setAttribute(attr, valueObj.value));
+							} else {
+								e.innerHTML = valueObj.value;
+							}
+						} else if (valueObj && valueObj.hasOwnProperty("defaultValue")) {
+							if (attributes && attributes.length) {
+								attributes.forEach(attr => e.setAttribute(attr, valueObj.defaultValue));
+							} else {
+								e.innerHTML = valueObj.defaultValue;
+							}
+						}
+	
+						//trigger on string injected to this element.
+						buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
+						buildfire.language.watch();
+					});
+	
+	
+				};
+				
+				//merge updated default strings into datastore strings.
+				const mergeUpdatedDefaultStrings = (strings, pluginLanguageJson) => {
+					const sections = pluginLanguageJson.sections;
+					let obj = {};
+					// merge values from datastore into pluginLanguageJson
+					for (const sectionKey in sections) {
+						const dbSection = strings[sectionKey];
+						const defaultSection = sections[sectionKey].labels;
+						obj[sectionKey] = {};
+	
+						for (const labelKey in defaultSection) {
+							if (dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty("value") || dbSection[labelKey].hasOwnProperty("defaultValue"))) {
+								//handle backward compatibility, cuz some plugins has it in "value" and the others in "defaultValue"
+								if (dbSection[labelKey].hasOwnProperty("value")) {
+									obj[sectionKey][labelKey] = {
+										value: dbSection[labelKey].value
+									}
+								} else if (dbSection[labelKey].hasOwnProperty("defaultValue")) {
+									obj[sectionKey][labelKey] = {
+										defaultValue: dbSection[labelKey].defaultValue
+									}
+								}
+								
+							} else {
+								obj[sectionKey][labelKey] = {
+									defaultValue: defaultSection[labelKey].defaultValue
+								}
+							}
+						};
+						
+					};
+	
+					return obj;
+				};
+	
+				function _handleDataStoreLanguageSettingsResponse (result) {
+					result = result && result.data ? result.data : {};
+					//check if no languages saved or on error, use default strings.
+					if (!Object.keys(result).length) {
+						_strings = prepareDataObjectToRead(pluginLanguageJson);
+					} else {
+						if (result && result.strings) {
+							_strings = result.strings;
+						// handle backward compatibility
+						} else {
+							_strings = result;
+						}
+	
+						//merge objects to get the updated default strings values.
+						_strings = mergeUpdatedDefaultStrings(_strings, pluginLanguageJson);
+					};
+	
+					//attach strings in html.
+					injectStrings(_strings);
+				};
+	
+				function init() {
+					getLanguage();
+				}
+	
+				init();
+	
+				buildfire.language.onUpdate((data)=>{
+					if (data.tag === languageTag) {
+						_handleDataStoreLanguageSettingsResponse(data);
+					}
+				}, true);
+			}
+			,
+			get: function (params, callback) {
+				let error;
+				if (!params) {
+					error = "Invalid options";
+					callback(error, null);
+					return;
+				}
+				if (!params.stringKey) {
+					error = "Invalid options";
+					callback(error, null);
+					return;
+				}
+				const stringKeys = params.stringKey.split(".");
+				if (!stringKeys || stringKeys.length !== 2) {
+					error = "Invalid options";
+					callback(error, null);
+					return;
+				}
+				const section = stringKeys[0];
+				const label = stringKeys[1];
+	
+				if (!_strings || !_strings[section] || !_strings[section][label] || (!_strings[section][label].hasOwnProperty("value") && !_strings[section][label].hasOwnProperty("defaultValue"))) {
+					error = "String not found.";
+					callback(error, null);
+					return;
+				}
+
+				const valueObj = _strings[section][label];
+	
+				if (valueObj.hasOwnProperty("value")) {
+					callback(null, valueObj.value);
+					return;
+				} else if (valueObj.hasOwnProperty("defaultValue")) {
+					callback(null, valueObj.defaultValue);
+					return;
+				}
+	
+				callback(null, null);
+				return;
+			}
+			,
+			watch: function () {
+
+				const targetNode = document.body;
+
+				// Options for the observer (which mutations to observe)
+				const config = {childList: true, subtree: true };
+
+				const handleAddedNode = (node) => {
+
+					if (!node.tagName) {// not an element
+						return;
+					}  
+					if (!node.hasAttribute("bfString")) {
+						return;
+					}
+					const injectAttributes = node.getAttribute("data-attr-to-inject");
+					let attributes;
+					//handle multiple attributes.
+					if (injectAttributes) {
+						attributes = injectAttributes.split(",");
+					}
+					const stringKey = node.getAttribute("bfString");
+					buildfire.language.get({stringKey}, (err, string) => {
+						//inject the string into the element.
+						if (string) {
+							if (attributes && attributes.length) {
+								attributes.forEach(attr => node.setAttribute(attr, string));
+							} else {
+								node.innerHTML = string;
+							}
+						}
+					});
+				};
+
+				// Callback function to execute when mutations are observed
+				const callback = (mutationList, observer) => {
+					for (const mutation of mutationList) {
+						if (mutation.type === 'childList') {
+							Array.from( mutation.addedNodes).map( node => {
+								handleAddedNode(node);
+							});
+						  }
+					}
+				};
+
+				// Create an observer instance linked to the callback function
+				const observer = new MutationObserver(callback);
+
+				// Start observing the target node for configured mutations
+				observer.observe(targetNode, config);
+			}
+			,
+			onStringsReady: function (callback, allowMultipleHandlers) {
+				return buildfire.eventManager.add('languageSettingsOnStringsInjected', callback, allowMultipleHandlers);
+			}
+			, onUpdate: function (callback, allowMultipleHandlers) {
+				return buildfire.eventManager.add('languageSettingsOnUpdate', callback, allowMultipleHandlers);
+			}
+			, triggerOnUpdate: function (obj) {
+				buildfire.eventManager.trigger('languageSettingsOnUpdate', obj);
+			}
+			,
+			onPluginLanguageJsLoaded: function (pluginLanguageJson) {
+				buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
+			}
+		}
+	})(),
 	onPluginJsonLoaded: function (pluginJson) {
+		//attach pluginLanguage.js script that contains languages.json content.
+		function attachPluginLanguageJsScript () {
+			document.write('<script src="pluginLanguage.js" type=\"text/javascript\"><\/script>');
+		};
+		if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
+			attachPluginLanguageJsScript();
+		}
 		buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
 	}
 };

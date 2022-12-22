@@ -27,6 +27,9 @@
                         <li ng-repeat="tab in customTabs">
                             <a ng-class="{'active' : activeTab === tab.title}" ng-click="loadCustomTab(tab)">{{tab.title}}</a>
                         </li>
+                        <li ng-if="languageSrc">
+                            <a id="btnLoadLanguage" ng-class="{'active' : activeTab === 'language'}" ng-click="loadIFrame('language')">Language</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -42,11 +45,12 @@
             </ol>
         </div>
        
-        <iframe ng-if="activeTab !== 'layouts'" ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
+        <iframe ng-if="activeTab !== 'layouts' && activeTab !== 'language'" ng-show="pluginControlIframeVisible"  id="iframeControl" sandbox="allow-scripts allow-forms allow-downloads allow-same-origin allow-popups"
                 ng-src="{{currentControl}}"></iframe>
-      
-            <div ng-if="layoutsSrc && activeTab === 'layouts'" ng-include="'pages/templates/pluginLayouts.html'">
-            </div>
+        <div ng-if="layoutsSrc && activeTab === 'layouts'" ng-include="'pages/templates/pluginLayouts.html'">
+        </div>
+        <div ng-if="languageSrc && activeTab === 'language'" ng-include="'pages/templates/languageSettings.html'">
+        </div>
                  
     </div>
 </div>

@@ -741,3 +741,38 @@ justify-content: center;
 .btn-outlined {
     background-color: transparent !important;
 }
+
+/* Text Styles */
+.section-title{
+	font-family: Conv_apercu_bold;
+	color: #000;
+	font-size: 18px;
+	line-height: 1.5;
+	padding-top: 8px;
+	margin-top: 0;
+	margin-bottom: 32px;
+	position: relative;
+}
+.section-title::before{
+	content: '';
+	display: block;
+	width: 40px;
+	height: 4px;
+	background-color: #000;
+	left: 0;
+	top: 0;
+	position: absolute;
+}
+.info-note{
+	background-color: #f9f9f9;
+	font-family: 'Conv_apercu_regular';
+	line-height: 1.33;
+	text-align: left;
+	color: #9e9e9e;
+	padding: 8px 16px;
+	display: block;
+	margin-bottom: 24px;
+}
+.background-info {
+	background-color: #f2f2f2;
+}
