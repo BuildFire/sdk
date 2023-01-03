@@ -61,6 +61,9 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
         const handleWysiwygData = (pluginLanguageJson, sectionKey, labelKey, isFieldRequired) => {
             const wysiwygElement = document.getElementsByName(`${sectionKey}&${labelKey}`);
             if (wysiwygElement && wysiwygElement[0]) {
+                if (typeof tinymce == "undefined") { //if tinymce disabled handle it as normal textarea tag.
+                    return wysiwygElement[0].value;
+                }
                 const _tinymce = tinymce.get(wysiwygElement[0].id);
                 if (!(_tinymce && _tinymce.getContent)) {
                     return;
