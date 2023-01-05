@@ -203,7 +203,7 @@ var buildfire = {
 		};
 		
 		function getPluginJson(callback) {
-			const url = '../plugin.json';
+			const url = `../plugin.json?v=${(new Date()).getTime()}`;
 			fetch(url)
 			.then(response => response.json())
 			.then(res => {
@@ -4269,6 +4269,7 @@ var buildfire = {
 
 					//trigger on string injected to this element.
 					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
+					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
 					buildfire.language.watch();
 				});
 
@@ -4370,26 +4371,36 @@ var buildfire = {
 			}
 			const section = stringKeys[0];
 			const label = stringKeys[1];
-			const strings = buildfire.language._strings;
 
-			if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty("value") && !strings[section][label].hasOwnProperty("defaultValue"))) {
-				error = "String not found.";
-				callback(error, null);
+			function onStringsReady() {
+				const strings = buildfire.language._strings;
+				if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty("value") && !strings[section][label].hasOwnProperty("defaultValue"))) {
+					error = "String not found.";
+					callback(error, null);
+					return;
+				}
+	
+				const valueObj = strings[section][label];
+	
+				if (valueObj.hasOwnProperty("value")) {
+					callback(null, valueObj.value);
+					return;
+				} else if (valueObj.hasOwnProperty("defaultValue")) {
+					callback(null, valueObj.defaultValue);
+					return;
+				}
+	
+				callback(null, null);
 				return;
+			};
+
+			if (!buildfire.language._strings) {
+				buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
+					onStringsReady();
+				}, true);
+			} else {
+				onStringsReady();
 			}
-
-			const valueObj = strings[section][label];
-
-			if (valueObj.hasOwnProperty("value")) {
-				callback(null, valueObj.value);
-				return;
-			} else if (valueObj.hasOwnProperty("defaultValue")) {
-				callback(null, valueObj.defaultValue);
-				return;
-			}
-
-			callback(null, null);
-			return;
 		}
 		,
 		watch: function () {
