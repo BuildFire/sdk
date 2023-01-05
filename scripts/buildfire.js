@@ -58,9 +58,9 @@ var buildfire = {
 					if (!charset || !charset.getAttribute('charset').toLowerCase().includes('utf-8')) {
 						console.warn('UTF-8 charset is required for ratingSystem to function properly');
 					}
-					buildfire.components.ratingSystem.injectRatings();
+					buildfire.components.ratingSystem.injectRatings({ isFromWysiwyg: true });
 				});
-			} else buildfire.components.ratingSystem.injectRatings();
+			} else buildfire.components.ratingSystem.injectRatings({ isFromWysiwyg: true });
 
 			function hasScript(url) {
 				while (url.includes('../')) url = url.replace('../', '');
