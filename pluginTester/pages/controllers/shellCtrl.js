@@ -3,7 +3,7 @@
  */
 
 
-$app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$http', function ($rootScope, $scope, $routeParams, $sce, $http) {
+ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$http', function ($rootScope, $scope, $routeParams, $sce, $http) {
 	window.$http = $http;
 	var config = null;
 	$scope.link = {
@@ -33,6 +33,59 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 		fontName: 'Lato'
 	};
 
+	const checkDefaultLayout = function () {
+		//create datastore api 
+		const datastoreAPI = new DatastoreAPI({
+            appId: window.appContext.currentApp.appId,
+            pluginId: $routeParams.pluginFolder,
+            instanceId: window.appContext.currentPlugin.instanceId,
+            liveMode: window.appContext.liveMode,
+            writeKey: window.appContext.currentApp.keys.datastoreKey,
+        });
+
+		let activeLayoutTag = '$$activeLayout';
+		if ($scope.pluginConfig.control.cssInjection.activeLayoutTag) {
+			activeLayoutTag = $scope.pluginConfig.control.cssInjection.activeLayoutTag;
+		}
+
+		const defaultLayout = $scope.pluginConfig.control.cssInjection.layouts[0];
+		if(!defaultLayout) {
+			return;
+		}
+
+		//get selected layout from datastore
+		const getSelectedLayout = function () {
+
+			const options = {
+				tag: activeLayoutTag,
+			};
+
+			datastoreAPI.get(options, function (err, results) {
+				if (err) console.error(err);
+				//check if nothing saved as selected layout, so save the default one
+				if (results && !Object.keys(results.data).length) {
+					saveDefaultLayout();
+				}
+
+			});
+		};
+		//save default layout to datastore
+		const saveDefaultLayout = function () {
+			const options = {
+				tag: activeLayoutTag,
+				obj:  {
+					selectedLayout: defaultLayout
+				}
+			};
+
+
+			datastoreAPI.save(options, function (err, result) {
+			});
+		};
+
+		getSelectedLayout();
+	};
+
 	$scope.loadFrames = function (pluginRoot, config) {
 		postMaster.controlPluginAPI.getContext(null, function(err, controlContext){
 			var context = JSON.parse(JSON.stringify(controlContext));
@@ -47,6 +100,15 @@ $app.controller('shellCtrl', ['$rootScope', '$scope', '$routeParams', '$sce', '$
 					$scope.currentControl = $scope.contentSrc;
 					$scope.activeTab = 'content';
 				}
+			}
+			
+			if (config.control.cssInjection && config.control.cssInjection.enabled) {
+				$scope.layoutsSrc = 'pages/templates/pluginLayouts.html';
+				if (lastTabName === 'layouts' || !$scope.currentControl) {
+					$scope.activeTab = 'layouts';
+				}
+				//handle saving default layout on plugin initialization.
+				checkDefaultLayout();
 			}
 
 			if (config.control.design.enabled) {

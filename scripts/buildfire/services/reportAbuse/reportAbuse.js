@@ -1,16 +1,16 @@
 'use strict';
 
-if (typeof (buildfire) == 'undefined') throw ('please add buildfire.js first to use BuildFire services');
-if (typeof (buildfire.services) == 'undefined') buildfire.services = {};
-if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.reportAbuse = {};
+if (typeof buildfire == 'undefined')
+	throw 'please add buildfire.js first to use BuildFire services';
+if (typeof buildfire.services == 'undefined') buildfire.services = {};
+if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.reportAbuse = {};
 
 (function () {
-
 	class Abuse {
 		constructor(record = {}) {
 			if (!record.data) record.data = {};
 			this.id = record.id || undefined;
-			this.archivedOn = record.data.archivedOn ? new Date().getTime() : 0;
+			this.resolvedOn = record.data.resolvedOn ? record.data.resolvedOn : 0;
 			this.createdOn = record.data.createdOn || new Date();
 			this.createdBy = record.data.createdBy || undefined;
 			this.lastUpdatedOn = record.data.lastUpdatedOn || undefined;
@@ -23,13 +23,14 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 			this.itemType = record.data.itemType || undefined;
 			this.reason = record.data.reason || {};
 			this.comment = record.data.comment || '';
+			this.resolvedAction = record.data.resolvedAction || undefined;
 			this.pluginId = record.data.pluginId || buildfire.getContext().pluginId;
 			this.instanceId = record.data.instanceId || buildfire.getContext().instanceId;
 		}
 		toJSON() {
 			return {
 				id: this.id,
-				archivedOn: this.archivedOn,
+				resolvedOn: this.resolvedOn,
 				createdOn: this.createdOn,
 				createdBy: this.createdBy,
 				lastUpdatedOn: this.lastUpdatedOn,
@@ -44,9 +45,10 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 				comment: this.comment,
 				instanceId: this.instanceId,
 				pluginId: this.pluginId,
+				resolvedAction: this.resolvedAction,
 				_buildfire: {
 					index: {
-						number1: this.archivedOn,
+						number1: this.resolvedOn,
 						date1: this.createdOn,
 						string1: this.createdBy,
 						text: this.reason.value,
@@ -55,9 +57,12 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 								string1: `itemId_${this.itemId}`,
 							},
 							{
+								string1: `itemType_${this.itemType}`,
+							},
+							{
 								string1: `reportedUserId_${this.reportedUserId}`,
-							}
-						]
+							},
+						],
 					},
 				},
 			};
@@ -66,16 +71,16 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 
 	class ReportsAbuse {
 		/**
-       * Get AppData Tag
-       */
+		 * Get AppData Tag
+		 */
 		static get TAG() {
 			return '$$reportedAbuse';
 		}
 		/**
-        * Get List Of ReportsAbuse
-        * @param {Object} filters Filters object with search operators
-        * @param {Function} callback Callback function
-        */
+		 * Get List Of ReportsAbuse
+		 * @param {Object} filters Filters object with search operators
+		 * @param {Function} callback Callback function
+		 */
 		static search(filters) {
 			return new Promise((resolve, reject) => {
 				buildfire.appData.search(filters, this.TAG, (err, records) => {
@@ -83,38 +88,51 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 						reject(err);
 						return;
 					}
-					resolve(
-						records.map((record) => new Abuse(record))
-					);
+					records = records? records : [];
+					records = records.map((record) => new Abuse(record));
+					resolve(records);
 				});
-
 			});
 		}
 		/**
-         * Add new abuse
-         * @param {abuse} abuse Instance of abuse data class
-         * @param {Function} callback Callback function
-         */
+		 * Add new abuse
+		 * @param {abuse} abuse Instance of abuse data class
+		 * @param {Function} callback Callback function
+		 */
 		static add(abuse) {
 			return new Promise((resolve, reject) => {
 				if (!(abuse instanceof Abuse)) {
-					reject(new Error('Only Abuse instance can be used'));
+					reject('Only Abuse instance can be used');
 					return;
 				}
-				buildfire.appData.insert(
-					abuse.toJSON(),
-					this.TAG,
-					false,
-					(err, record) => {
-						if (err) {
-							reject(err);
-							return;
-						}
-						Analytics.newReportCall();
-						record = new Abuse(record);
-						resolve(record);
+
+				buildfire.appData.insert(abuse.toJSON(), this.TAG, false,(err, record) => {
+					if (err) {
+						reject(err);
+						return;
 					}
-				);
+					Analytics.newReportCall();
+					record = new Abuse(record);
+					resolve(record);
+				});
+			});
+		}
+
+		static update(id, abuse) {
+			return new Promise((resolve, reject) => {
+				if (!(abuse instanceof Abuse)) {
+					reject('Only Abuse instance can be used');
+					return;
+				}
+
+				buildfire.appData.update(id, abuse.toJSON(), this.TAG, (err, record) => {
+					if (err) {
+						reject(err);
+						return;
+					}
+					record = new Abuse(record);
+					resolve(record);
+				});
 			});
 		}
 	}
@@ -128,73 +146,99 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 	];
 
 	/**
-      * @param {Object} params - insert params.
-      * @param {string} [params.itemId] - This reported item id
-      * @param {string} params.itemType - This reported item type
-      * @param {string} params.reportedUserId - The user that you wanna reported him
-      * @param {string} params.deeplink - The deeplink data
-    */
+	 * @param {Object} params - insert params.
+	 * @param {string} params.itemId - This reported item id
+	 * @param {string} params.itemType - This reported item type
+	 * @param {string} params.reportedUserId - The user that you wanna reported him
+	 * @param {object} params.deeplink - The deeplink data
+	 * @param {boolean} params.allowReportOverride -
+	 */
 	buildfire.services.reportAbuse.report = (params, callback) => {
-		if (typeof (buildfire.components) == 'undefined' || typeof (buildfire.components.drawer) == 'undefined')
-			throw ('please add drawer.js first to use BuildFire drawer component');
+		if (typeof buildfire.components == 'undefined' || typeof buildfire.components.drawer == 'undefined')
+			throw 'please add drawer.js first to use BuildFire drawer component';
 
 		// validate the required params
-		if (!params || !params.itemId || !params.reportedUserId || !params.deeplink) {
-			callback(new Error('Missing required data: {itemId, reportedUserId, deeplink} must be specified'), null);
+		if (!params || !params.itemId || !params.itemType || !params.reportedUserId || !params.deeplink) {
+			callback('Missing required data: {itemId, itemType, reportedUserId, deeplink} must be specified', null);
 			return;
 		}
 
 		buildfire.spinner.show();
 		// require Login
-		getCurrentUser().then((user) => {
-
-			if (!user) {
-				buildfire.spinner.hide();
-             	callback(new Error('Login is required'));
-				return;
-			}
-
-			const insertedData = {
-				itemId: params.itemId,
-				itemType: params.itemType,
-				reportedUserId: params.reportedUserId,
-				createdBy: user.userId,
-				deeplink: params.deeplink,
-			};
-			// check if this item is already reported
-			buildfire.services.reportAbuse.getReport({
-				itemId: params.itemId,
-				reportingUserId: user.userId,
-			}, (err, res) => {
-				buildfire.spinner.hide();
-				if (err) {
-					callback(err, null);
+		getCurrentUser(true)
+			.then((user) => {
+				if (!user) {
+					buildfire.spinner.hide();
+					callback('Login is required');
 					return;
 				}
-				if (res.length > 0) {
-					callback(new Error('This item is already reported!'), null);
-					return;
-				}
-				// open drawer to choice reason
-				showAbuseComponent().then((res) => {
-					insertedData.reason = res.reason;
-					insertedData.comment = res.comment;
-					const abuse = new Abuse({ data: insertedData });
-					ReportsAbuse.add(abuse).then((data) => {
-						return callback(null, data);
-					}).catch(callback);
-				}).catch(callback);
+
+				const insertedData = {
+					itemId: params.itemId,
+					itemType: params.itemType,
+					reportedUserId: params.reportedUserId,
+					createdBy: user.userId,
+					deeplink: params.deeplink,
+				};
+				// check if this item is already reported
+				buildfire.services.reportAbuse.getCurrentUserReports(
+					{
+						itemId: params.itemId,
+						itemType: params.itemType,
+					},
+					(err, abuses) => {
+						buildfire.spinner.hide();
+						if (err) {
+							callback(err, null);
+							return;
+						}
+						if (abuses.length > 0 && !params.allowReportOverride) {
+							callback('This item is already reported!', null);
+							return;
+						}
+						// open drawer to choice reason
+						showAbuseComponent()
+							.then((res) => {
+
+								let abuse = new Abuse();
+
+								if (abuses.length > 0) {
+									abuse = abuses[0];
+									abuse.comment = res.comment;
+									abuse.reason = res.reason;
+									abuse.lastUpdatedOn = new Date();
+									ReportsAbuse.update(abuse.id, abuse)
+										.then((data) => {
+											return callback(null, data);
+										})
+										.catch(callback);
+								} else {
+									insertedData.reason = res.reason;
+									insertedData.comment = res.comment;
+									abuse = new Abuse({ data: insertedData });
+									ReportsAbuse.add(abuse)
+										.then((data) => {
+											return callback(null, data);
+										})
+										.catch(callback);
+								}
+
+
+							})
+							.catch(callback);
+					}
+				);
+			})
+			.catch((err) => {
+				buildfire.spinner.hide();
+				callback(err);
 			});
-		}).catch((err) => {
-			buildfire.spinner.hide();
-			callback(err);
-		});
 	};
 
 	/**
-    * get the user information
-    */
-	function getCurrentUser() {
+	 * get the user information
+	 */
+	function getCurrentUser(forceLogin) {
 		return new Promise((resolve, reject) => {
 			buildfire.auth.getCurrentUser((err, user) => {
 				if (err) {
@@ -203,29 +247,39 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 				}
 				if (user) {
 					resolve(user);
-				} else {
-					buildfire.auth.login({ allowCancel: true }, (err, user) => {
-						if (err || !user) {
-							reject(err);
-							return;
-						}
-
-						resolve(user);
-					});
+					return;
 				}
+
+				if (!forceLogin) {
+					resolve(user);
+					return;
+				}
+
+				buildfire.auth.login({ allowCancel: true }, (err, user) => {
+					if (err || !user) {
+						reject(err);
+						return;
+					}
+
+					resolve(user);
+				});
+
 			});
 		});
 	}
 
 	/**
-     * open the drawer and input area to got the reason and comment text
-     */
+	 * open the drawer and input area to got the reason and comment text
+	 */
 	function showAbuseComponent() {
 		return new Promise((resolve, reject) => {
 			//open drawer
 			buildfire.components.drawer.open(
 				{
-					listItems: abuseReasonList.map((reason) => ({ id: reason.id, text: reason.value })),
+					listItems: abuseReasonList.map((reason) => ({
+						id: reason.id,
+						text: reason.value,
+					})),
 				},
 				(err, reason) => {
 					if (err) {
@@ -236,11 +290,11 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 					buildfire.components.drawer.closeDrawer();
 
 					if (!reason || !reason.text) {
-						reject(new Error('Reason is required'));
+						reject('Reason is required');
 						return;
 					}
 
-					const data = { };
+					const data = {};
 
 					data.reason = { id: reason.id, value: reason.text };
 
@@ -249,69 +303,122 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 						{
 							saveText: 'Report',
 							placeholder: 'Enter your comment here',
-						}, (err, res) => {
+							maxLength: 255,
+						},
+						(err, res) => {
 							if (err) {
 								reject(err);
 								return;
 							}
 
 							if (res.cancelled) {
-								resolve(data);
+								reject('Report is cancelled');
 								return;
 							}
 
-
 							if (res && res.results && res.results[0] && res.results[0].textValue) {
 								data.comment = res.results[0].textValue;
-							} else {
-								console.error(new Error('comment is required'));
 							}
 
 							resolve(data);
-						});
-
-				});
+						}
+					);
+				}
+			);
 		});
 	}
 
-
 	/**
-    * @param {Object} params - query params.
-    * @param {string} [params.itemId] - The reported item id
-    * @param {string} params.reportingUserId - The user who's created the report
-    */
+	 * @param {Object} params - query params.
+	 * @param {string} [params.itemType] - The reported item type
+	 * @param {string} [params.itemId] - The reported item id
+	 * @param {number} [params.page] - The pageIndex
+	 * @param {number} [params.pageSize] - The page size for pagination.
+	 */
 
-	buildfire.services.reportAbuse.getReport = function (params, callback) {
-		// validate the required params
-		if (!params || !params.itemId || !params.reportingUserId) {
-			callback(new Error('Missing required data: {itemId, reportingUserId} must be specified'), null);
+	buildfire.services.reportAbuse.getCurrentUserReports = function (params, callback) {
+		// if (!params || !params.itemType) {
+		// 	callback('Missing required data: itemType must be specified', null);
+		// 	return;
+		// }
+
+		if (params.pageSize && params.pageSize > 50) {
+			callback('Invalid page size: must be less than or equal 50', null);
 			return;
 		}
 
-		const option = {
-			filter: {
-				'_buildfire.index.string1': params.reportingUserId,
-				'_buildfire.index.array1.string1': `itemId_${params.itemId}`
-			},
-		};
-		Analytics.searchReportCall();
-		ReportsAbuse.search(option).then((data) => {
-			return callback(null, data);
+		getCurrentUser(false).then((user) => {
+			if (!user) {
+				callback('Login is required');
+				return;
+			}
+
+			const arrayOfIndex = [
+				{ '_buildfire.index.number1': 0 },
+				{ '_buildfire.index.string1': user.userId },
+			];
+
+			if (params.itemId){
+				arrayOfIndex.push({'_buildfire.index.array1.string1': `itemId_${params.itemId}`});
+			}
+
+			if (params.itemType) {
+				arrayOfIndex.push({'_buildfire.index.array1.string1': `itemType_${params.itemType}`});
+			}
+
+			const option = {
+				filter: {
+					$and: arrayOfIndex
+				},
+				page: params.page? params.page : 0,
+				pageSize: params.pageSize || 50,
+			};
+			// Analytics.searchReportCall();
+			ReportsAbuse.search(option)
+				.then((data) => {
+					callback(null, data);
+				}).catch(callback);
 		}).catch(callback);
 	};
 
+
 	/**
-     * listing to app owner event when take the action for an reported item.
-     * @param {action} action
-     */
-	buildfire.services.reportAbuse.onAdminResponse = function (action) {
-		console.log('Admin Response', action);
-		Analytics.adminResponseCall();
+	 * listing to app owner event when take the action for an reported item.
+	 * @param {funtion} callback
+	 * @param {boolean} allowMultipleHandlers
+	 */
+	buildfire.services.reportAbuse.onAdminResponse = function (callback, allowMultipleHandlers) {
+		buildfire.eventManager.add('reportAbuseOnAdminReponse', callback, allowMultipleHandlers);
 	};
 
+	/**
+	 * trigger on admin response when take the action for an reported item.
+	 * @param {object} data
+	 */
+	 buildfire.services.reportAbuse._triggerOnAdminResponse = function (data) {
+		buildfire.eventManager.trigger('reportAbuseOnAdminReponse', data);
+	};
+
+	/**
+	 * listing to app owner event when take the action for an reported item.
+	 * @param {obj} data
+	 * @param {string} data.reportId
+	 */
+	buildfire.services.reportAbuse.triggerOnAdminResponseHandled = function (data) {
+		const p = new Packet(null, 'reportAbuse.triggerOnAdminResponseHandled', data);
+		buildfire._sendPacket(p);
+	};
+
+	/**
+	 * listing to app owner event when take the action for an reported item.
+	 * @param {obj} data
+	 */
+	buildfire.services.reportAbuse.triggerWidgetReadyForAdminResponse = function (data) {
+		const p = new Packet(null, 'reportAbuse.triggerOnWidgetReady', data);
+		buildfire._sendPacket(p);
+	};
 
 	class Analytics {
-
 		static get NEW_REPORT() {
 			return 'newReportCreated';
 		}
@@ -336,5 +443,4 @@ if (typeof (buildfire.services.reportAbuse) == 'undefined') buildfire.services.r
 			buildfire.analytics.trackAction(this.ADMIN_RESPONSE);
 		}
 	}
-
 })();

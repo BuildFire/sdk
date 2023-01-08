@@ -877,9 +877,9 @@ nav.menu.layout7 a.notifications span.icon{
 }
 .plugin-slide img,
 .contact-maps img{
-	max-height:380px;
-	width:auto !important;
-	margin:0 auto;
+	max-height: 380px;
+	width: auto !important;
+	margin: 0 auto;
 }
 .no-background .plugin-slide{
 	background:none;
