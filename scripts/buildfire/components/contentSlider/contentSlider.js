@@ -2,11 +2,16 @@ if (typeof buildfire == 'undefined') throw 'please add buildfire.js first to use
 if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
 
-function ContentSliderStateManager() {
-    this.currentIndex = 0;
+class ContentSliderStateManager {
+    constructor() {
+        this.currentIndex = 0;
+        this.items = [];
+    }
 }
 
 buildfire.components.contentSlider = class ContentSlider {
+    #state;
+
     constructor(selector, options = {}) {
         if (!document.querySelector(selector)) throw new Error('Element not found!');
 
@@ -17,23 +22,29 @@ buildfire.components.contentSlider = class ContentSlider {
                 startingIndex: 0
             }
         };
+
         this.options.settings = options.settings ? Object.assign(this.options.settings, options.settings) : this.options.settings;
 
+        if (!this.#state) {
+            this.#state = new ContentSliderStateManager();
+        }
+        this.#state.currentIndex = this.options.settings.startingIndex;
+
         if (options.items && options.items.length)
-            this.items = options.items;
+            this.#state.items = options.items;
         else throw new Error('Items must be provided!');
 
-        this._state = new ContentSliderStateManager();
-        this._state.currentIndex = this.options.settings.startingIndex;
         this.init();
     }
     //================================================================================================            
     init() {
         this.selector.classList.add('content-slider-container');
-        this._renderSlider(this.items[this.options.settings.startingIndex]);
+        this._renderSlider(this.#state.items[this.options.settings.startingIndex]);
     }
 
     _renderSlider(item = null) {
+        this._startLoading();
+
         let container = this.selector,
             leftArrow = this._createUIElement('i', 'bf-chevron-left'),
             rightArrow = this._createUIElement('i', 'bf-chevron-right'),
@@ -41,28 +52,32 @@ buildfire.components.contentSlider = class ContentSlider {
 
         leftArrow.onclick = () => {
             let previousItem = this.previous();
-            previousItem ? this.onPreviousClick({ item: previousItem }) : null;
+            previousItem ? this.onPrevious({ item: previousItem }) : null;
         };
 
         rightArrow.onclick = () => {
             let nextItem = this.next();
-            nextItem ? this.onNextClick({ item: nextItem }) : null;
+            nextItem ? this.onNext({ item: nextItem }) : null;
         };
 
         container.appendChild(leftArrow);
         container.appendChild(sliderTitleHolder);
         container.appendChild(rightArrow);
 
-        if (this._state.currentIndex <= 0)//disable left arrow if on first item
+        if (this.#state.currentIndex <= 0)//disable left arrow if on first item
             leftArrow.classList.add('disabled');
 
-        if (this.items.length <= 1)//disable right arrow if there is only one item
+        if (this.#state.items.length <= 1)//disable right arrow if there is only one item
             rightArrow.classList.add('disabled');
 
-        if (this._state.currentIndex == (this.items.length - 1))//disable right arrow if current index is equal to items length
+        if (this.#state.currentIndex == (this.#state.items.length - 1))//disable right arrow if current index is equal to items length
             rightArrow.classList.add('disabled');
 
-        this._renderItem(item ? item : this.items[0]);
+        this._renderItem(item ? item : this.#state.items[0]);
+
+        setTimeout(() => {
+            this._stopLoading();    
+        }, 300);
     }
 
     _renderItem(item) {
@@ -86,28 +101,58 @@ buildfire.components.contentSlider = class ContentSlider {
         }
     }
     //================================================================================================
+    _prepend(options, callback) {
+        this.#state.items.splice(options.index, 0, ...options.items);
+        callback();
+    }
+
+    _append(options, callback) {
+        this.#state.items.splice(options.index + 1, 0, ...options.items);
+        callback();
+    }
+
+
+    insertAt(options, callback) {
+        if (!(this.#state.items[options.index])) throw new Error('Invalid parameters!');
+
+        if (!options.items instanceof Array)
+            options.items = [options.items];
+
+        if (options.position === 'before') {
+            this._prepend({ items: options.items, index: options.index }, () => {
+                this.refresh();
+                callback();
+            });
+        } else if (options.position === 'after') {
+            this._append({ items: options.items, index: options.index }, () => {
+                this.refresh();
+                callback();
+            });
+        }
+    }
+
     append(items) {
-        if ((items instanceof Array)) this.items = items;
-        else if ((items instanceof Object)) this.items = [items, ...this.items];
+        if ((items instanceof Array)) this.#state.items = [...this.#state.items, ...items];
+        else if ((items instanceof Object)) this.#state.items = [...this.#state.items, items];
         else throw new Error('Invalid parameters!');
         this.refresh();
     }
 
     update(id, data) {
-        let item = this.items.find(el => el.id === id);
-        let index = this.items.indexOf(item);
-        this.items[index] = data;
+        let item = this.#state.items.find(el => el.id === id);
+        let index = this.#state.items.indexOf(item);
+        this.#state.items[index] = data;
 
-        if (index == this._state.currentIndex)
-            this._renderItem(this.items[index]);
+        if (index == this.#state.currentIndex)
+            this._renderItem(this.#state.items[index]);
     }
 
     remove(id) {
-        let item = this.items.find(el => el.id === id);
-        let index = this.items.indexOf(item);
+        let item = this.#state.items.find(el => el.id === id);
+        let index = this.#state.items.indexOf(item);
 
-        if (index == this._state.currentIndex) {
-            if (this._state.currentIndex == (this.items.length - 1)) {
+        if (index == this.#state.currentIndex) {
+            if (this.#state.currentIndex == (this.#state.items.length - 1)) {
                 this.previous();
                 this.disable('next');
             }
@@ -120,21 +165,39 @@ buildfire.components.contentSlider = class ContentSlider {
             }
         }
 
-        this.items = this.items.filter(el => el.id !== id);
+        this.#state.items = this.#state.items.filter(el => el.id !== id);
     }
     //================================================================================================
-    getCurrentIndex() {
-        return this._state.currentIndex;
+    getCurrent() {
+        if (this.#state.currentId) {
+            return this.#state.items.find(el => el.id === this.#state.currentId);
+        }
+        else if (this.#state.currentIndex) {
+            return this.#state.items[this.#state.currentIndex];
+        }
+        else throw new Error("Item not found!");
     }
 
-    setCurrentIndex(index) {
-        this._state.currentIndex = index;
+    setCurrent(options) {
+        if (options.id && options.index)
+            throw new Error('Only one option is available!');
+        if (!options.id && !options.index)
+            throw new Error('Id or index is required!');
+
+        let item = null;
+        if (options.id) {
+            this.#state.currentId = options.id;
+            item = this.#state.items.find(el => el.id === options.id);
+            this.#state.currentIndex = this.#state.items.indexOf(item);
+        }
+        else if (options.index) {
+            this.#state.currentIndex = index;
+            this.#state.currentId = null;
+            item = this.#state.items[index];
+        }
+
         this.selector.innerHTML = '';
-        this._renderSlider(this.items[index]);
-    }
-    
-    getCurrentIndex() {
-      return this._state.currentIndex;
+        this._renderSlider(item);
     }
 
     next() {
@@ -145,18 +208,17 @@ buildfire.components.contentSlider = class ContentSlider {
         if (leftArrow.classList.contains('disabled'))
             leftArrow.classList.remove('disabled');
 
-        let nextItemIndex = this._state.currentIndex + 1;
+        let nextItemIndex = this.#state.currentIndex + 1;
 
         this._getSliderTitleElement().innerHTML = '';
 
-        if (nextItemIndex == (this.items.length - 1)) {
+        if (nextItemIndex == (this.#state.items.length - 1)) {
             rightArrow.classList.add('disabled');
         }
 
-        this._renderItem(this.items[nextItemIndex]);
-        this._state.currentIndex++;
-
-        return this.items[nextItemIndex];
+        this._renderItem(this.#state.items[nextItemIndex]);
+        this.#state.currentIndex++;
+        return this.#state.items[nextItemIndex];
     }
 
     previous() {
@@ -168,19 +230,19 @@ buildfire.components.contentSlider = class ContentSlider {
         if (rightArrow.classList.contains('disabled'))
             rightArrow.classList.remove('disabled');
 
-        this._state.currentIndex--;
+        this.#state.currentIndex--;
 
         this._getSliderTitleElement().innerHTML = '';
 
-        if (this._state.currentIndex <= 0) {
+        if (this.#state.currentIndex <= 0) {
             leftArrow.classList.add('disabled');
-            this._renderItem(this.items[this._state.currentIndex]);
+            this._renderItem(this.#state.items[this.#state.currentIndex]);
         }
         else {
-            this._renderItem(this.items[this._state.currentIndex]);
+            this._renderItem(this.#state.items[this.#state.currentIndex]);
         }
 
-        return this.items[this._state.currentIndex]
+        return this.#state.items[this.#state.currentIndex]
     }
 
     enable(direction) {
@@ -195,13 +257,21 @@ buildfire.components.contentSlider = class ContentSlider {
     //================================================================================================
     refresh() {
         this.selector.innerHTML = '';
-        let currentItem = this.items[this._state.currentIndex];
+        let currentItem = this.#state.items[this.#state.currentIndex];
         this._renderSlider(currentItem);
     }
     //================================================================================================        
-    onNextClick() { }
+    onNext() { }
 
-    onPreviousClick() { }
+    onPrevious() { }
+    //================================================================================================        
+    _startLoading() {
+        this.selector.classList.add('bf-slider-loading');
+    }
+
+    _stopLoading() {
+        this.selector.classList.remove('bf-slider-loading');
+    }
     //================================================================================================        
     _getLeftArrowElement() {
         return this.selector.querySelector('.bf-chevron-left');
