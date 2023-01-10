@@ -76,7 +76,7 @@ buildfire.components.contentSlider = class ContentSlider {
         this._renderItem(item ? item : this.#state.items[0]);
 
         setTimeout(() => {
-            this._stopLoading();    
+            this._stopLoading();
         }, 300);
     }
 
@@ -101,41 +101,63 @@ buildfire.components.contentSlider = class ContentSlider {
         }
     }
     //================================================================================================
-    _prepend(options, callback) {
-        this.#state.items.splice(options.index, 0, ...options.items);
-        callback();
-    }
+    prepend(items, callback) {
+        let options = {
+            index: 0,
+            position: 'before'
+        };
 
-    _append(options, callback) {
-        this.#state.items.splice(options.index + 1, 0, ...options.items);
-        callback();
+        if ((items instanceof Array))
+            options.items = items;
+        else if ((items instanceof Object))
+            options.item = items;
+
+        else throw new Error('Invalid parameters!');
+
+        this.insertAt(options, () => {
+            this.refresh();
+            callback();
+        });
     }
 
 
     insertAt(options, callback) {
         if (!(this.#state.items[options.index])) throw new Error('Invalid parameters!');
 
-        if (!options.items instanceof Array)
-            options.items = [options.items];
+        if (options.items && options.item)
+            throw new Error('You can not pass item and items at the same time!');
+        if (!options.items && !options.item)
+            throw new Error('Item or items are required!');
+
+        let items = options.items ? options.items : [options.item];
 
         if (options.position === 'before') {
-            this._prepend({ items: options.items, index: options.index }, () => {
-                this.refresh();
-                callback();
-            });
+            this.#state.items.splice(options.index, 0, ...items);
         } else if (options.position === 'after') {
-            this._append({ items: options.items, index: options.index }, () => {
-                this.refresh();
-                callback();
-            });
+            this.#state.items.splice(options.index + 1, 0, ...items);
         }
+
+        this.refresh();
+        callback();
     }
 
-    append(items) {
-        if ((items instanceof Array)) this.#state.items = [...this.#state.items, ...items];
-        else if ((items instanceof Object)) this.#state.items = [...this.#state.items, items];
+    append(items, callback) {
+        let options = {
+            index: this.#state.items.length - 1,
+            position: 'after'
+        };
+
+        if ((items instanceof Array))
+            options.items = items;
+        else if ((items instanceof Object))
+            options.item = items;
+
         else throw new Error('Invalid parameters!');
-        this.refresh();
+
+        this.insertAt(options, () => {
+            this.refresh();
+            callback();
+        });
     }
 
     update(id, data) {
@@ -168,31 +190,28 @@ buildfire.components.contentSlider = class ContentSlider {
         this.#state.items = this.#state.items.filter(el => el.id !== id);
     }
     //================================================================================================
-    getCurrent() {
-        if (this.#state.currentId) {
-            return this.#state.items.find(el => el.id === this.#state.currentId);
-        }
-        else if (this.#state.currentIndex) {
-            return this.#state.items[this.#state.currentIndex];
-        }
+    getCurrent(callback) {
+        if (this.#state.items[this.#state.currentIndex])
+            callback({
+                index: this.#state.currentIndex,
+                item: this.#state.items[this.#state.currentIndex]
+            });
         else throw new Error("Item not found!");
     }
 
     setCurrent(options) {
         if (options.id && options.index)
-            throw new Error('Only one option is available!');
+            throw new Error('You can not pass id and index at the same time!');
         if (!options.id && !options.index)
             throw new Error('Id or index is required!');
 
         let item = null;
         if (options.id) {
-            this.#state.currentId = options.id;
             item = this.#state.items.find(el => el.id === options.id);
             this.#state.currentIndex = this.#state.items.indexOf(item);
         }
         else if (options.index) {
             this.#state.currentIndex = index;
-            this.#state.currentId = null;
             item = this.#state.items[index];
         }
 
