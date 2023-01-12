@@ -183,14 +183,14 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
                 }
                 const defaultSection = sections[sectionKey].labels;
                 for (const labelKey in defaultSection) {
-                    if (!dbSection[labelKey]) {
-                        break;
-                    }
-                    //handle backward compatibility, cuz some plugins has it in "value" and the others in "defaultValue"
-                    if (dbSection[labelKey].hasOwnProperty("value")) {
-                        defaultSection[labelKey].defaultValue = dbSection[labelKey].value;
-                    }else if (dbSection[labelKey].hasOwnProperty("defaultValue")) {
-                        defaultSection[labelKey].defaultValue = dbSection[labelKey].defaultValue;
+
+                    if (dbSection[labelKey]) {
+                        //handle backward compatibility, cuz some plugins has it in "value" and the others in "defaultValue"
+                        if (dbSection[labelKey].hasOwnProperty("value")) {
+                            defaultSection[labelKey].defaultValue = dbSection[labelKey].value;
+                        }else if (dbSection[labelKey].hasOwnProperty("defaultValue")) {
+                            defaultSection[labelKey].defaultValue = dbSection[labelKey].defaultValue;
+                        }
                     }
                 };
                 
