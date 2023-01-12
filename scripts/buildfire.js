@@ -4236,7 +4236,7 @@ var buildfire = {
 				if (!strings || !Object.keys(strings).length) {
 					return;
 				}
-				document.querySelectorAll("*[bfString], *[bfString-attrs]").forEach(e => {
+				document.querySelectorAll("*[bfString]").forEach(e => {
 					if (!e.getAttribute("bfString")) {
 						return;
 					}
@@ -4259,21 +4259,23 @@ var buildfire = {
 						} else {
 							e.innerHTML = valueObj.value;
 						}
+						//mark initialized elements.
+						e.setAttribute("bfString-initialized", "");
 					} else if (valueObj && valueObj.hasOwnProperty("defaultValue")) {
 						if (attributes && attributes.length) {
 							attributes.forEach(attr => e.setAttribute(attr, valueObj.defaultValue));
 						} else {
 							e.innerHTML = valueObj.defaultValue;
 						}
+						//mark initialized elements.
+						e.setAttribute("bfString-initialized", "");
 					}
 
 					//trigger on string injected to this element.
 					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
 					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
-					buildfire.language.watch();
 				});
-
-
+				buildfire.language.watch();
 			};
 			
 			//merge updated default strings into datastore strings.
@@ -4340,9 +4342,7 @@ var buildfire = {
 			init();
 
 			buildfire.language.onUpdate((data)=>{
-				if (data.tag === languageTag) {
-					_handleDataStoreLanguageSettingsResponse(data);
-				}
+				window.location.reload();
 			}, true);
 		}
 		,
@@ -4404,13 +4404,13 @@ var buildfire = {
 		}
 		,
 		watch: function () {
-
 			const targetNode = document.body;
-
 			// Options for the observer (which mutations to observe)
-			const config = { childList: true, subtree: true };
-
-			const handleAddedNode = (node) => {
+			// attributes should be false >> performance issues
+			const config = { childList: true, subtree: true, attributes: false };
+			
+			//inject strings for [bfString] elements. 
+			const handleNode = (node) => {
 				if (!node.tagName) {// not an element
 					return;
 				}  
@@ -4442,20 +4442,29 @@ var buildfire = {
 				});
 			};
 
+			const checkAddedNodes = (addedNodes) => {
+				Array.from(addedNodes).map( node => {
+					if (node.childNodes && node.childNodes.length) {
+						//traverse over all childNodes of all Added Nodes. to check [bfString] elements.
+						checkAddedNodes(node.childNodes);
+					}
+					handleNode(node);
+				});
+			};
+
 			// Callback function to execute when mutations are observed
 			const callback = (mutationList, observer) => {
 				for (const mutation of mutationList) {
 					if (mutation.type === 'childList') {
-						Array.from( mutation.addedNodes).map( node => {
-							handleAddedNode(node);
-						});
-						}
+						handleNode(mutation.target);
+						checkAddedNodes(mutation.addedNodes);
+
+					}
 				}
 			};
 
 			// Create an observer instance linked to the callback function
 			const observer = new MutationObserver(callback);
-
 			// Start observing the target node for configured mutations
 			observer.observe(targetNode, config);
 		}
