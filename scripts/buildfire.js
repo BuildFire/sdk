@@ -4237,40 +4237,7 @@ var buildfire = {
 					return;
 				}
 				document.querySelectorAll("*[bfString]").forEach(e => {
-					if (!e.getAttribute("bfString")) {
-						return;
-					}
-					const stringKeys = e.getAttribute("bfString").split(".");
-					const section = stringKeys[0];
-					const label = stringKeys[1];
-					if (!strings[section]) {
-						return;
-					}
-					const valueObj = strings[section][label];
-					const injectAttributes = e.getAttribute("bfString-attrs");
-					let attributes;
-					//handle multiple attributes.
-					if (injectAttributes) {
-						attributes = injectAttributes.split(",");
-					}
-					if (valueObj && valueObj.hasOwnProperty("value")) {
-						if (attributes && attributes.length) {
-							attributes.forEach(attr => e.setAttribute(attr, valueObj.value));
-						} else {
-							e.innerHTML = valueObj.value;
-						}
-						//mark initialized elements.
-						e.setAttribute("bfString-initialized", "");
-					} else if (valueObj && valueObj.hasOwnProperty("defaultValue")) {
-						if (attributes && attributes.length) {
-							attributes.forEach(attr => e.setAttribute(attr, valueObj.defaultValue));
-						} else {
-							e.innerHTML = valueObj.defaultValue;
-						}
-						//mark initialized elements.
-						e.setAttribute("bfString-initialized", "");
-					}
-
+					buildfire.language._handleNode(e);
 					//trigger on string injected to this element.
 					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
 					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
@@ -4341,8 +4308,9 @@ var buildfire = {
 
 			init();
 
-			buildfire.language.onUpdate((data)=>{
-				window.location.reload();
+			buildfire.language._onUpdate((data)=>{
+				window.location.reload(); //reload frame to update strings for non-bfString html elements in widget.
+				// _handleDataStoreLanguageSettingsResponse(data);
 			}, true);
 		}
 		,
@@ -4404,65 +4372,24 @@ var buildfire = {
 		}
 		,
 		watch: function () {
+			
+			// Callback function to execute when mutations are observed
+			const callback = (mutationList, observer) => {
+				for (const mutation of mutationList) {
+					if (mutation.type === 'childList' && mutation.target) {
+						buildfire.language._handleNode(mutation.target);
+						let childList = mutation.target.querySelectorAll("*[bfString]");
+						for (let i = 0; i < childList.length; i++) {
+							buildfire.language._handleNode(childList[i]);
+						}
+					}
+				}
+			};
+
 			const targetNode = document.body;
 			// Options for the observer (which mutations to observe)
 			// attributes should be false >> performance issues
 			const config = { childList: true, subtree: true, attributes: false };
-			
-			//inject strings for [bfString] elements. 
-			const handleNode = (node) => {
-				if (!node.tagName) {// not an element
-					return;
-				}  
-				if (!node.hasAttribute("bfString")) {
-					return;
-				}
-				//check if this element got bfString value already
-				if (node.hasAttribute("bfString-initialized")) {
-					return;
-				}
-				const injectAttributes = node.getAttribute("bfString-attrs");
-				let attributes;
-				//handle multiple attributes.
-				if (injectAttributes) {
-					attributes = injectAttributes.split(",");
-				}
-				const stringKey = node.getAttribute("bfString");
-				buildfire.language.get({stringKey}, (err, string) => {
-					//inject the string into the element.
-					if (string) {
-						if (attributes && attributes.length) {
-							attributes.forEach(attr => node.setAttribute(attr, string));
-						} else {
-							node.innerHTML = string;
-						}
-						//mark initialized elements.
-						node.setAttribute("bfString-initialized", "");
-					}
-				});
-			};
-
-			const checkAddedNodes = (addedNodes) => {
-				Array.from(addedNodes).map( node => {
-					if (node.childNodes && node.childNodes.length) {
-						//traverse over all childNodes of all Added Nodes. to check [bfString] elements.
-						checkAddedNodes(node.childNodes);
-					}
-					handleNode(node);
-				});
-			};
-
-			// Callback function to execute when mutations are observed
-			const callback = (mutationList, observer) => {
-				for (const mutation of mutationList) {
-					if (mutation.type === 'childList') {
-						handleNode(mutation.target);
-						checkAddedNodes(mutation.addedNodes);
-
-					}
-				}
-			};
-
 			// Create an observer instance linked to the callback function
 			const observer = new MutationObserver(callback);
 			// Start observing the target node for configured mutations
@@ -4475,8 +4402,44 @@ var buildfire = {
 		, onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('languageSettingsOnUpdate', callback, allowMultipleHandlers);
 		}
+		, _onUpdate: function (callback, allowMultipleHandlers) {
+			return buildfire.eventManager.add('_languageSettingsOnUpdate', callback, allowMultipleHandlers);
+		}
 		, triggerOnUpdate: function (obj) {
+			buildfire.eventManager.trigger('_languageSettingsOnUpdate', obj);
 			buildfire.eventManager.trigger('languageSettingsOnUpdate', obj);
+		}
+		,
+		_handleNode: function (node) { //inject strings for [bfString] elements. 
+			if (!node.tagName) {// not an element
+				return;
+			}  
+			if (!node.hasAttribute("bfString")) {
+				return;
+			}
+			//check if this element got bfString value already
+			if (node.hasAttribute("bfString-initialized")) {
+				return;
+			}
+			const injectAttributes = node.getAttribute("bfString-attrs");
+			let attributes;
+			//handle multiple attributes.
+			if (injectAttributes) {
+				attributes = injectAttributes.split(",");
+			}
+			const stringKey = node.getAttribute("bfString");
+			buildfire.language.get({stringKey}, (err, string) => {
+				//inject the string into the element.
+				if (string) {
+					if (attributes && attributes.length) {
+						attributes.forEach(attr => node.setAttribute(attr, string));
+					} else {
+						node.innerHTML = string;
+					}
+					//mark initialized elements.
+					node.setAttribute("bfString-initialized", "");
+				}
+			});
 		}
 		,
 		onPluginLanguageJsLoaded: function (pluginLanguageJson) {
