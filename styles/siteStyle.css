@@ -2639,3 +2639,10 @@ html.translated-ltr body{
     }
 }
 /* Layouts tab styles ENDS here */
+
+/* Language Settings styles starts */
+.cp-scroll-section {
+	height: calc(100vh - 290px - 80px);
+	overflow: auto;
+}
+/* Language Settings styles ends */
