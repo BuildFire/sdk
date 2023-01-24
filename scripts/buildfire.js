@@ -3482,7 +3482,7 @@ var buildfire = {
 				}
 			}
 
-			return authUrl + '/src/server.js/user/picture?' + qString;
+			return authUrl + '/src/server.js/user/picture?' + qString + '&v=' + new Date().getTime();
 		},
 		showUsersSearchDialog: function(options,callback){
 			var p = new Packet(null, 'usersLib.showSearchDialog', options);
