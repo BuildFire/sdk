@@ -23,7 +23,7 @@ buildfire.components.tagsInput = class TagsInput {
             allowAutoComplete: typeof (data.settings?.allowAutoComplete) === 'undefined' ? true : data.settings.allowAutoComplete,
             allowUserInput: typeof (data.settings?.allowUserInput) === 'undefined' ? true : data.settings.allowUserInput,
         }
-        // languageSettings strings
+        // languageSettings = strings
         this.languageSettings = {
             placeholder: data.languageSettings?.placeholder || "Select Tags",
         }
@@ -65,9 +65,8 @@ buildfire.components.tagsInput = class TagsInput {
     }
 
     _tagify(input) {
-        const tagifyOptions = { whitelist: this.settings.source, autoComplete: {enabled: this.settings.allowAutoComplete}, enforceWhitelist: false, userInput: this.settings.allowUserInput }
+        const tagifyOptions = { whitelist: this.settings.source, autoComplete: {enabled: this.settings.allowAutoComplete, rightKey: this.settings.allowAutoComplete}, enforceWhitelist: false, userInput: this.settings.allowUserInput }
 
-        console.log("🚀 ~ file: userTags.js:70 ~ TagsInput ~ _tagify ~ tagifyOptions", tagifyOptions)
         this._tagifyTags = new Tagify(input, tagifyOptions);
 
         this._tagifyTags.on('remove', () => this._onAddRemoveTag())
@@ -97,6 +96,7 @@ buildfire.components.tagsInput = class TagsInput {
 
     _onAddRemoveTag() {
         this.activeTags = (this._tagifyTags.value.length) ? this._tagifyTags.value.map(tag => {
+            if(!tag.hasOwnProperty('tagName')) tag.tagName = tag.value; // to maintain the same object format returned by buildfire.auth.showTagsSearchDialog
             delete tag.value;
             return tag;
         }) : [];
@@ -123,7 +123,6 @@ buildfire.components.userTagsInput = class UserTagsInput extends buildfire.compo
     }
 
     // User-Tag view methods
-
     onRequest() {
         buildfire.auth.showTagsSearchDialog(null, (err, result) => {
             if (err) return console.error(err);
