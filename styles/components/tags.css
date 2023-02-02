@@ -626,3 +626,7 @@
 .add_tagBtn{
     cursor: pointer;
 }
+
+.tagify_input_hide_courser{
+    cursor: unset !important;
+}

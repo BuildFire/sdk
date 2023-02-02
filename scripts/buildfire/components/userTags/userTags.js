@@ -79,7 +79,7 @@ buildfire.components.tagsInput = class TagsInput {
         else {
             this.container.innerHTML = `
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="${this.languageSettings.placeholder}" >
+                <input type="text" class="form-control tagify_input_hide_courser" placeholder="${this.languageSettings.placeholder}" >
                 <span class="input-group-addon icon icon-plus add_tagBtn"></span>
             </div>`
 
@@ -98,13 +98,14 @@ buildfire.components.tagsInput = class TagsInput {
         this.activeTags = (this._tagifyTags.value.length) ? this._tagifyTags.value.map(tag => {
             if(!tag.hasOwnProperty('tagName')) tag.tagName = tag.value; // to maintain the same object format returned by buildfire.auth.showTagsSearchDialog
             delete tag.value;
+            delete tag.__tagId;
             return tag;
         }) : [];
 
-        this._onChangeHandler();
+        this._onChangeHandler(this.activeTags);
     }
 
-    _onChangeHandler() { }
+    _onChangeHandler(tags) { }
 }
 
 buildfire.components.userTagsInput = class UserTagsInput extends buildfire.components.tagsInput {
