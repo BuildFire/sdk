@@ -42,6 +42,27 @@ var buildfire = {
 			// don't return anything if context is not ready but we have a callback
 		}
 
+	}
+	, loadScript: function({ url, scriptId }, callback = Function()) {
+		let script = document.getElementById(scriptId);
+		const scripts = document.getElementsByTagName('script');
+	
+		// script exist
+		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url))) {
+			return callback();
+		}
+
+		const parentElement = (document.head || document.body);
+		script = document.createElement('script');
+		script.id = scriptId || '';
+		script.type = 'text/javascript';
+		script.src = url;
+		script.onload = callback;
+		script.onerror = function () {
+			callback(new Error('failed to load script component'));
+			console.error('failed to load script component');
+		};
+		parentElement.appendChild(script);
 	}, ratingSystem: {
 		inject: function () {
 			if (typeof buildfire === 'undefined') return;
@@ -259,6 +280,7 @@ var buildfire = {
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
+		, 'dynamic.onReceivedWidgetContextRequest'
 		, 'history.triggerOnPop'
 		, 'navigation.onBackButtonClick'
 		, 'services.media.audioPlayer.triggerOnEvent'
@@ -313,7 +335,14 @@ var buildfire = {
 				else
 					return; // sorry i cant help you
 			}
-			obj.apply(parent, [packet.data]);
+
+			let callback = function (err, result) {
+				if (err) console.warn(e.data, err);
+				let newPacket = new Packet(packet.id, 'noop', result, err);
+				buildfire._parentPost(newPacket);
+			};
+
+			obj.apply(parent, [packet.data, callback]);
 
 		}
 		else {
@@ -328,6 +357,12 @@ var buildfire = {
 				//console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
 			};
 
+			if (buildfire.getContext().type == 'control') {
+				packet.source = 'control';
+			} else {
+				packet.source = 'widget';
+			}
+			
 		var retryInterval = 3000,
 			command = packet.cmd,
 			maxResendAttempts = 5,
@@ -1053,9 +1088,6 @@ var buildfire = {
 		, onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('appearanceOnUpdate', callback, allowMultipleHandlers);
 		}
-		, _onInternalUpdate: function (callback, allowMultipleHandlers = true) {
-			return buildfire.eventManager.add('_internalAppearanceOnUpdate', callback, allowMultipleHandlers);
-		}
 		, triggerOnUpdate: function (appTheme) {
 			var appThemeCSSElement = document.getElementById('appThemeCSS');
 			if(appThemeCSSElement) {
@@ -1082,7 +1114,7 @@ var buildfire = {
 					});
 				}
 				buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
-				buildfire.eventManager.trigger('_internalAppearanceOnUpdate', appTheme);
+				buildfire.dynamic.triggerExpressionStateChange({type: 'appTheme', data: appTheme});
 			}
 		}, titlebar: {
 			show: function(options, callback) {
@@ -3409,22 +3441,16 @@ var buildfire = {
 		onLogin: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogin', callback, allowMultipleHandlers);
 		},
-		_onInternalLogin: function (callback, allowMultipleHandlers = true) {
-			return buildfire.eventManager.add('_internalAuthOnLogin', callback, allowMultipleHandlers);
-		},
 		triggerOnLogin: function (user) {
 			buildfire.eventManager.trigger('authOnLogin', user);
-			buildfire.eventManager.trigger('_internalAuthOnLogin', user);
+			buildfire.dynamic.triggerExpressionStateChange({type: 'appUser', data: user});
 		},
 		onLogout: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
 		},
 		triggerOnLogout: function (data) {
 			buildfire.eventManager.trigger('authOnLogout', data);
-			buildfire.eventManager.trigger('_internalAuthOnLogout', data);
-		},
-		_onInternalLogout: function (data, allowMultipleHandlers = true) {
-			return buildfire.eventManager.add('_internalAuthOnLogout', data, allowMultipleHandlers);
+			buildfire.dynamic.triggerExpressionStateChange({type: 'appUser', data: data});
 		},
 		onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
@@ -3481,7 +3507,7 @@ var buildfire = {
 					qString = qString + '&externalAppId=' + encodeURIComponent(buildfire._context.appId);
 				}
 			}
-
+			// TODO: move caching invalidation logic to KAUTH rather than adding (new Date().getTime())
 			return authUrl + '/src/server.js/user/picture?' + qString + '&v=' + new Date().getTime();
 		},
 		showUsersSearchDialog: function(options,callback){
@@ -3733,11 +3759,26 @@ var buildfire = {
 			buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
 		}
 	},
-	dynamicBlocks: {
-		execute: function(e) {
+	dynamic: {
+		requestWidgetContext(options, callback) {
+			var p = new Packet(null, 'dynamic.triggerRequestWidgetContext', options);
+			buildfire._sendPacket(p, callback);
+		},
+		onReceivedWidgetContextRequest(options, callback) {
+			buildfire.dynamic.expressions._getContext(null, (err, result) => {
+				if (err) return callback(err);
+				callback(null , result);
+			});
+		},
+		triggerExpressionStateChange(options) {
+			if (typeof expressionsEngine !== 'undefined') {
+				expressionsEngine.triggerExpressionStateChange(...arguments);
+			}
+		},
+		execute(e) {
 			if (!e.parentElement) return;
-			const parent = e.parentElement;
-			const targets = parent.querySelectorAll('[data-type]');
+			const imageContainer = e.parentElement; // give an id to the parent
+			const targets = imageContainer.querySelectorAll('[data-type]');
 			const VALID_TYPES = ['dynamic-expression'];
 
 			Array.from(targets).forEach((e) => {
@@ -3747,60 +3788,71 @@ var buildfire = {
 				}
 
 				switch(type) {
-				case 'dynamic-expression':
-					this.expressions.handleContentExecution(e);
-					break;
-				case 'dynamic-api':
-					// todo
-					break;
+					case 'dynamic-expression':
+						this.expressions.handleContentExecution(e);
+						break;
+					case 'dynamic-api':
+						// todo
+						break;
 				}
 			});
 		},
 		expressions: {
-			_getExpressionContext(done) {
-				const { appId, appTheme, pluginId } = buildfire.getContext();
-				buildfire.auth.getCurrentUser((err, user) => {
-					if (err) return console.error(err);
-					done(null, {
-						user,
-						appId,
-						appTheme,
-						pluginId,
+			_getContext(options, callback) {
+				if (buildfire.getContext().type == 'control') {
+					// get the widget's context to evaluate expressions against it rather than the control's context
+					let options = {
+						instanceId: buildfire.getContext().instanceId
+					}
+					buildfire.dynamic.requestWidgetContext(options, (err, result) => {
+						if (err) return callback(err);
+						callback(null, result);
 					});
-				});
-			},
-			/**
-			 * _evaluateExpression
-			 * @description evaluate a JS expression result within a defined context
-			 * @private
-			 */
-			_evaluateExpression(expression, args = {}) {
-				return Function(`"use strict"; const context = this;return (${expression})`).bind(args)();
-			},
-			/**
-			 * _refreshContent
-			 * @description used to refresh already executed content and reflect it
-			 * @private
-			 */
-			_refreshContent({ content, target, handlers, updatedContext = {} }) {
-				// verify content is still in DOM, remove if not
-				if (!target.parentElement) {
-					for (const key in handlers) {
-						if (handlers[key]) {
-							handlers[key].clear();
-						}
-					}
-					return;
+				} else {
+					const { appId, appTheme, pluginId } = buildfire.getContext();
+					buildfire.auth.getCurrentUser((err, appUser) => {
+						if (err) return callback(err);
+						callback(null, { appUser, appId, appTheme, pluginId });
+					});
 				}
-				this._getExpressionContext((err, context) => {
-					try {
-						target.innerHTML = this._evaluateExpression('`' + content + '`', Object.assign(context, updatedContext));
-						target.classList.remove('bf-expression-error');
-					} catch (err) {
-						if (buildfire.getContext().liveMode) throw err;
-						target.classList.add('bf-expression-error');
-						target.innerHTML = `<span class="text-danger">Failed to execute.</span><br><br>${err.stack}`;
+			},
+			_expressionsEngineQueue: [],
+			_htmlContainers: {},
+			_getExpressionsEngine(callback) {
+				if (this._expressionsEngineQueue.length > 0) {
+					this._expressionsEngineQueue.push(callback);
+				} else if (typeof expressionsEngine !== 'undefined') { // this object will be assigned from the new file (expressions.js)
+				  callback(null, expressionsEngine);
+				} else {
+					let url;
+					this._expressionsEngineQueue.push(callback);
+					if (buildfire.getContext().type == 'control') { 
+						url = '../../../../scripts/expressionsEngine.js';
+					} else {
+						url = '../../../scripts/expressionsEngine.js';
 					}
+					const scriptId = 'expressionsEngine';
+					buildfire.loadScript({ url, scriptId }, () => {
+						expressionsEngine.getContext = this._getContext; // overwrite the getContext to be suitable for the sdk environment
+						_executeExpressionsEngineQueue(expressionsEngine);
+					});
+				}
+				const _executeExpressionsEngineQueue = (expressionsEngine) => {
+					this._expressionsEngineQueue.forEach((callback) => {
+						callback(null, expressionsEngine);
+					});
+					this._expressionsEngineQueue = [];
+				}
+			},
+			/**
+			 * evaluate
+			 * @description evaluate a JS expression result within a defined context
+			 * @public
+			 */
+			evaluate(options, callback) {
+				this._getExpressionsEngine((err, expressionsEngine) => {
+					if (err) return callback(err);
+					expressionsEngine.evaluate(options, callback);
 				});
 			},
 			/**
@@ -3813,48 +3865,30 @@ var buildfire = {
 					? e.parentElement.parentElement
 					: e.parentElement;
 
+				if (!container) return;
 				e.remove();
+				let id = e.getAttribute("data-id");
+				let expressionHtmlContainers = buildfire.dynamic.expressions._htmlContainers;
+				expressionHtmlContainers[id] = expressionHtmlContainers[id] || []; 
+				expressionHtmlContainers[id].push(container);
+
 				const content = container.innerHTML.replace(/bf-wysiwyg-hide-app/g, '');
 
-				this._getExpressionContext((err, context) => {
-					const _context = {
-						_handlers: {
-							onLogin: null,
-							onLogout: null,
-							onAppearanceUpdate: null,
-						},
-						get user() {
-							if (!this._handlers.onLogin) {
-								this._handlers.onLogin = buildfire.auth._onInternalLogin(() => { buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this.handlers }); });
-							}
-							if (!this._handlers.onLogout) {
-								this._handlers.onLogout = buildfire.auth._onInternalLogout(() => { buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this.handlers }); });
-							}
-							return context.user || {};
-						},
-						get appId() {
-							return context.appId;
-						},
-						get appTheme() {
-							if (!this._handlers.onAppearanceUpdate) {
-								this._handlers.onAppearanceUpdate = buildfire.appearance._onInternalUpdate((appearance) => {
-									buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this._handlers, updatedContext: { appTheme: appearance }});
-								});
-							}
-							return context.appTheme;
-						},
-						get pluginId() {
-							return context.pluginId;
-						},
-					};
+				this.evaluate({id: id, expression: content}, (err, result) => {
 
-					try {
-						container.innerHTML = this._evaluateExpression('`' + content + '`', _context);
-						container.classList.remove('bf-expression-error');
-					} catch (err) {
-						if (buildfire.getContext().liveMode) throw err;
-						container.classList.add('bf-expression-error');
-						container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
+					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null );
+					if (!container) {
+						expressionHtmlContainers[id] = []; // reset to cleanup in case of DOM elements being removed and added again
+					} else {
+						expressionHtmlContainers[id] = [container]; // reset to cleanup in case of DOM elements being removed and added again
+						if (err) {
+							if (buildfire.getContext().liveMode) throw err;
+							container.classList.add('bf-expression-error');
+							container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
+						} else {
+							container.innerHTML = result;
+							container.classList.remove('bf-expression-error');
+						}
 					}
 				});
 			},
@@ -3884,12 +3918,17 @@ var buildfire = {
 						if (options._bfInitialize === true) {
 							return originalTinymceInit(options);
 						}
+						options.images_dataimg_filter = function(img) {
+							// adding (data-no-blob) attribute to an image, prevents its (src) from being converted from (base64) to (blob)
+							return !img.hasAttribute('data-no-blob');
+						}
 						var dynamicExpressionsEnabled = (typeof options.bf_dynamic_expressions !== 'undefined') ? options.bf_dynamic_expressions : true;
 						var originalSetup = options.setup;
 						if (originalSetup) {
 							options.setup = function (editor) {
 								let dynamicExpressionsActivated;
-								const EXPRESSION_HTML = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamicBlocks.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />';
+								const timestamp = new Date().getTime();
+								const EXPRESSION_HTML = `<img data-no-blob data-id="${timestamp}" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamic.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />`;
 								const _injectExpressionNode = () => {
 									const currentContent = editor.getContent();
 									editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
@@ -3927,7 +3966,7 @@ var buildfire = {
 									var scriptElm = editor.dom.create( 'script', {},
 										'var buildfire = {'
 										+   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
-										+   'dynamicBlocks: { execute: function() { console.log("ignore handleScriptExecution in tinymce")}},'
+										+   'dynamic: { execute: function() { console.log("ignore handleScriptExecution in tinymce")}},'
 										+   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
 										+'};'
 									);
@@ -4009,6 +4048,7 @@ var buildfire = {
 										} else {
 											_removeExpressionNode();
 										}
+										editor.fire("change");
 									},
 									onSetup: (api) => {
 										api.setActive(dynamicExpressionsActivated);
