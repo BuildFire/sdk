@@ -27,40 +27,42 @@ const dynamicEngine = {
 			dynamicEngine.expressions._evaluate(evaluationRequest);
 			return evaluationRequest;
 		},
-		_evaluate: function(evaluationRequest) {
-			dynamicEngine.expressions._prepareContext({extendedContext: evaluationRequest.extendedContext}, (err, context) => {
-				evaluationRequest.context = context;
-				dynamicEngine.expressions._evaluationRequests[evaluationRequest.id] = evaluationRequest;
-				try {
-					let preparedExpression = '`' + evaluationRequest.expression + '`';
-					dynamicEngine.expressions._getBaseContextProxy(null, (err, contextProxy) => {
-						// consider switching to javascript proxy (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#finding_an_array_item_object_by_its_property)
-						// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#a_complete_traps_list_example
-						for (let key in context) {
-							// eslint-disable-next-line no-prototype-builtins
-							if (context.hasOwnProperty(key)) {
-								let clonedKey = key; // should be cloned because key inside the getter is referencing the last key every time
-								Object.defineProperty(contextProxy, key, {
-									get: function() { 
-										contextProxy._used[clonedKey] = true;
-										return context[clonedKey]; 
-									}
-								});
+		_evaluate: function(request) {
+			const { expressions } = dynamicEngine;
+			const { id, extendedContext, expression, callback } = request;
+
+			expressions._prepareContext(
+				{ extendedContext },
+				(err, context) => {
+					try {
+						const handler = {
+							_usedProperties: {},
+							get(target, prop) {
+								if (prop === '__handler__') return this;
+								if (prop in target) {
+									handler._usedProperties[prop] = true;
+									return target[prop];
+								}
+								return undefined;
+							},
+							set() {
+								throw 'not_allowed';
 							}
-						}
-		
-						evaluationRequest.contextProxy = contextProxy;
-						let evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(contextProxy)();
-						evaluationRequest.callback(null, evaluatedExpression);
-					});
-				} catch (err) {
-					evaluationRequest.callback(err);
-				}
-			});
+						};
+						const preparedExpression = '`' + expression + '`';
+						request._context = new Proxy(context, handler);
+						request.context = context;
+						const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request.context)();
+						expressions._evaluationRequests[id] = request;
+						request.callback(null, evaluatedExpression);
+					} catch (err) {
+						callback(err);
+					}
+				});
 		},
 		/**
 		* Get the base context
-		* @param {string} id - The unique id of the request that should be deleted 
+		* @param {string} id - The unique id of the request that should be deleted
 		* @private
 		*/
 		_destroyRequest: function(id) {
@@ -68,17 +70,7 @@ const dynamicEngine = {
 		},
 		/**
 		* Get the base context
-		* @param {Function} callback - Returns the base baseContextProxy
-		* @private
-		*/
-		_getBaseContextProxy(options, callback) {
-			let baseContextProxy = {
-				_used: {}
-			};
-			callback(null, baseContextProxy);
-		},
-		/**
-		* Get the base context
+		* @param {Object} options
 		* @param {Function} callback - Returns the base context (shared between all platforms)
 		* @private
 		*/
@@ -88,6 +80,7 @@ const dynamicEngine = {
 		},
 		/**
 		* @desc This function will be overridden in each platform; so it would get correctly the context of the platform
+		* @param {Object} options
 		* @param {Function} callback - Returns the context of the platform, which requested dynamicEngine.expressions
 		* @public
 		*/
@@ -96,15 +89,16 @@ const dynamicEngine = {
 		},
 		/**
 		* @desc This function will merge the different contexts (baseContext, platform's context and the extendedContext) and return them
+		* @param {Object} options
 		* @param {Function} callback - Returns the final version of the context to be used in the evaluation
 		* @private
 		*/
-		_prepareContext({extendedContext}, callback) { 
+		_prepareContext({extendedContext}, callback) {
 			dynamicEngine.expressions._getBaseContext(null, (err, baseContext) => {
 				dynamicEngine.expressions.getContext(null, (err, context) => {
 					Object.assign(baseContext, context, extendedContext);
 					callback(null, baseContext);
-				});     
+				});
 			});
 		},
 		/**
@@ -131,7 +125,7 @@ const dynamicEngine = {
 		triggerExpressionContextChange(options) {
 			for (let key in dynamicEngine.expressions._evaluationRequests) {
 				let request = dynamicEngine.expressions._evaluationRequests[key];
-				if (request.contextProxy && request.contextProxy._used[options.contextProperty]) {
+				if (request.context && request._context['__handler__']._usedProperties[options.contextProperty]) {
 					dynamicEngine.expressions._evaluate(request);
 				}
 			}
