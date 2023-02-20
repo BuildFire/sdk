@@ -4,8 +4,8 @@ if (typeof buildfire.components == 'undefined') buildfire.components = {};
 if (typeof buildfire.components.control == 'undefined') buildfire.components.control = {};
 
 if (typeof Tagify == 'undefined') {
-	document.write('<script src="' + '../../../scripts/tagify/tagify.min.js"></script>');
-	document.write('<script src="' + '../../../scripts/tagify/tagify.polyfills.min.js"></script>');
+	document.write('<script src="' + '../../../../scripts/tagify/tagify.min.js"></script>');
+	document.write('<script src="' + '../../../../scripts/tagify/tagify.polyfills.min.js"></script>');
 }
 
 buildfire.components.control.tagsInput = class TagsInput {
