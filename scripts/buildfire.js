@@ -47,7 +47,7 @@ var buildfire = {
 			if (typeof buildfire === 'undefined') return;
 			if (typeof (buildfire.components) == 'undefined' || typeof (buildfire.components.ratingSystem) == 'undefined') {
 				loadScript('../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
-					var parentElement = (document.head || document.body || document);
+					var parentElement = (document.head || document.body);
 					var link = document.createElement('link');
 					link.rel = 'stylesheet';
 					link.type = 'text/css';
@@ -73,7 +73,7 @@ var buildfire = {
 
 			function loadScript(url, callback) {
 				if(hasScript(url)) return;
-				var parentElement = (document.head || document.body || document);
+				var parentElement = (document.head || document.body);
 				var script = document.createElement('script');
 				script.type = 'text/javascript';
 				script.src = url;
@@ -201,7 +201,7 @@ var buildfire = {
 		function attachPluginJsScript () {
 			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
 		};
-		
+
 		function getPluginJson(callback) {
 			const url = `../plugin.json?v=${(new Date()).getTime()}`;
 			fetch(url)
@@ -247,7 +247,7 @@ var buildfire = {
 			}
 		}
 
-		
+
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -818,7 +818,7 @@ var buildfire = {
 				bfWidgetTheme.id = 'bfWidgetTheme';
 				bfWidgetTheme.rel = 'stylesheet';
 				bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(theme);
-				(document.head || document.body || document).appendChild(bfWidgetTheme);
+				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 			});
 
@@ -912,7 +912,7 @@ var buildfire = {
 				}
 				buildfire.appearance.getAppTheme(function(err, appTheme) {
 					applyMDTheme(err, appTheme);
-					(document.head || document.body || document).appendChild(styleElement);
+					(document.head || document.body).appendChild(styleElement);
 				});
 				buildfire.appearance.onUpdate(function(appTheme){
 					buildfire.getContext((err, context) => {
@@ -952,7 +952,7 @@ var buildfire = {
                     'scrollbar-width: none;' +
                     '}' +
                     '}';
-				(document.head || document.body || document).appendChild(_sharedStyle);
+				(document.head || document.body).appendChild(_sharedStyle);
 			}
 
 			for (var i = 0; i < files.length; i++)
@@ -3870,7 +3870,7 @@ var buildfire = {
 				tinymcePluginStyles.id = 'tinymcePluginStyles';
 				tinymcePluginStyles.rel = 'stylesheet';
 				tinymcePluginStyles.innerHTML = css;
-				(document.head || document.body || document).appendChild(tinymcePluginStyles);
+				(document.head || document.body).appendChild(tinymcePluginStyles);
 			}
 		},
 		extend: function() {
@@ -4121,10 +4121,10 @@ var buildfire = {
 						activeLayout = result.selectedLayout;
 					}
 				};
-		
+
 				if (activeLayout.cssPath) {
 					// so it's predefined
-		
+
 					let cssUrl;
 					//check if the cssPath from old instances that doesn't include `widget` in the path or not.
 					if (activeLayout.cssPath.startsWith('widget')) {
@@ -4137,7 +4137,7 @@ var buildfire = {
 					// so it's custom layout
 					_attachActiveLayoutCSSContent(activeLayout.css,'$$bf_layout_css');
 				};
-		
+
 			};
 
 			function _attachActiveLayoutCSSFile (url, id){
@@ -4154,11 +4154,11 @@ var buildfire = {
 					activeLayoutStyleElement.remove();
 				};
 			};
-			
+
 			function _attachActiveLayoutCSSContent (cssContent, id){
-			
+
 				let activeLayoutStyleElement = document.getElementById(id);
-			
+
 				let styleElement = document.createElement("style");
 				styleElement.id = id;
 				styleElement.innerHTML = cssContent;
@@ -4169,7 +4169,7 @@ var buildfire = {
 				};
 			};
 			buildfire.datastore.get(activeLayoutTag, (err, result) => {
-		
+
 				if (err) console.error("Error while retrieving active layout", err);
 				_handleDataStoreActiveLayoutResponse(result);
 			});
@@ -4182,8 +4182,8 @@ var buildfire = {
 					_handleDataStoreActiveLayoutResponse(data);
 				}
 			},true);
-			
-		
+
+
 		}
 		, onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('cssInjectionOnUpdate', callback, allowMultipleHandlers);
@@ -4244,7 +4244,7 @@ var buildfire = {
 				});
 				buildfire.language.watch();
 			};
-			
+
 			//merge updated default strings into datastore strings.
 			const mergeUpdatedDefaultStrings = (strings, pluginLanguageJson) => {
 				const sections = pluginLanguageJson.sections;
@@ -4267,14 +4267,14 @@ var buildfire = {
 									defaultValue: dbSection[labelKey].defaultValue
 								}
 							}
-							
+
 						} else {
 							obj[sectionKey][labelKey] = {
 								defaultValue: defaultSection[labelKey].defaultValue
 							}
 						}
 					};
-					
+
 				};
 
 				return obj;
@@ -4347,9 +4347,9 @@ var buildfire = {
 					callback(error, null);
 					return;
 				}
-	
+
 				const valueObj = strings[section][label];
-	
+
 				if (valueObj.hasOwnProperty("value")) {
 					callback(null, valueObj.value);
 					return;
@@ -4357,7 +4357,7 @@ var buildfire = {
 					callback(null, valueObj.defaultValue);
 					return;
 				}
-	
+
 				callback(null, null);
 				return;
 			};
@@ -4372,7 +4372,7 @@ var buildfire = {
 		}
 		,
 		watch: function () {
-			
+
 			// Callback function to execute when mutations are observed
 			const callback = (mutationList, observer) => {
 				for (const mutation of mutationList) {
@@ -4410,10 +4410,10 @@ var buildfire = {
 			buildfire.eventManager.trigger('languageSettingsOnUpdate', obj);
 		}
 		,
-		_handleNode: function (node) { //inject strings for [bfString] elements. 
+		_handleNode: function (node) { //inject strings for [bfString] elements.
 			if (!node.tagName) {// not an element
 				return;
-			}  
+			}
 			if (!node.hasAttribute("bfString")) {
 				return;
 			}
