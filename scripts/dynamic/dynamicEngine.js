@@ -1,5 +1,20 @@
 // eslint-disable-next-line no-redeclare
 const dynamicEngine = {
+	/**
+	* Trigger reevaluation when (onLogin, onLogout, appTheme change) happens
+	* @param {Object} options - information about the triggered source (contextProperty, data)
+	* @param {string} options.contextProperty - The event that have been triggered (onLogin, onLogout, appTheme change)
+	* @param {Object} options.data - Data coming from the event triggering
+	* @public
+	*/
+	triggerContextChange(options) {
+		for (let key in dynamicEngine.expressions._evaluationRequests) {
+			let request = dynamicEngine.expressions._evaluationRequests[key];
+			if (request.context && request._context['__handler__']._usedProperties[options.contextProperty]) {
+				dynamicEngine.expressions._evaluate(request);
+			}
+		}
+	},
 	expressions: {
 		_evaluationRequests: {},
 		/**
@@ -40,7 +55,7 @@ const dynamicEngine = {
 							get(target, prop) {
 								if (prop === '__handler__') return this;
 								if (prop in target) {
-									handler._usedProperties[prop] = true;
+									this._usedProperties[prop] = true;
 									return target[prop];
 								}
 								return undefined;
@@ -52,7 +67,7 @@ const dynamicEngine = {
 						const preparedExpression = '`' + expression + '`';
 						request._context = new Proxy(context, handler);
 						request.context = context;
-						const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request.context)();
+						const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request._context)();
 						expressions._evaluationRequests[id] = request;
 						request.callback(null, evaluatedExpression);
 					} catch (err) {
@@ -114,21 +129,6 @@ const dynamicEngine = {
 		*/
 		_nanoid(t=21) {
 			return crypto.getRandomValues(new Uint8Array(t)).reduce(((t,e)=>t+=(e&=63)<36?e.toString(36):e<62?(e-26).toString(36).toUpperCase():e>62?'-':'_'),'');
-		},
-		/**
-		* Trigger reevaluation when (onLogin, onLogout, appTheme change) happens
-		* @param {Object} options - information about the triggered source (contextProperty, data)
-		* @param {string} options.contextProperty - The event that have been triggered (onLogin, onLogout, appTheme change)
-		* @param {Object} options.data - Data coming from the event triggering
-		* @public
-		*/
-		triggerExpressionContextChange(options) {
-			for (let key in dynamicEngine.expressions._evaluationRequests) {
-				let request = dynamicEngine.expressions._evaluationRequests[key];
-				if (request.context && request._context['__handler__']._usedProperties[options.contextProperty]) {
-					dynamicEngine.expressions._evaluate(request);
-				}
-			}
 		}
 	}
 };

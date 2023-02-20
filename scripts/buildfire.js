@@ -1114,7 +1114,7 @@ var buildfire = {
 					});
 				}
 				buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
-				buildfire.dynamic.triggerExpressionContextChange({contextProperty: 'appTheme', data: appTheme});
+				buildfire.dynamic.triggerContextChange({contextProperty: 'appTheme', data: appTheme});
 			}
 		}, titlebar: {
 			show: function(options, callback) {
@@ -3443,14 +3443,14 @@ var buildfire = {
 		},
 		triggerOnLogin: function (user) {
 			buildfire.eventManager.trigger('authOnLogin', user);
-			buildfire.dynamic.triggerExpressionContextChange({contextProperty: 'appUser', data: user});
+			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: user});
 		},
 		onLogout: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
 		},
 		triggerOnLogout: function (data) {
 			buildfire.eventManager.trigger('authOnLogout', data);
-			buildfire.dynamic.triggerExpressionContextChange({contextProperty: 'appUser', data: data});
+			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: data});
 		},
 		onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
@@ -3770,9 +3770,9 @@ var buildfire = {
 				callback(null , result);
 			});
 		},
-		triggerExpressionContextChange(options) {
+		triggerContextChange(options) {
 			if (typeof dynamicEngine !== 'undefined') {
-				dynamicEngine.expressions.triggerExpressionContextChange(...arguments);
+				dynamicEngine.triggerContextChange(...arguments);
 			}
 		},
 		execute(e) {
