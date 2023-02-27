@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 'use strict';
 /**
  * Created by Daniel on 5/23/2015.
@@ -85,14 +87,24 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
 
-	PluginAPI.prototype.messaging.triggerOnNewControlMessage =function (message) {
+	PluginAPI.prototype.messaging.triggerOnNewControlMessage = function (message) {
 		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
 		postMaster.controlPluginAPI.sendMessage(null, packet);
 	};
 
+	PluginAPI.prototype.messaging.sendMessageToService = function(message, callback) {
+		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
+		if (postMaster.servicePluginAPIs && postMaster.servicePluginAPIs.service) {
+			postMaster.servicePluginAPIs.service.sendMessage(null, packet);
+			if (callback) callback(null, true);
+		} else {
+			if (callback) callback('no service available for the current widget');
+		}
+	};
+	
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
-	    console.warn('supress navigation in shell');
-	    alert('supress navigation in shell');
+		console.warn('supress navigation in shell');
+		alert('supress navigation in shell');
 	};
 
 	/**************************************************/
