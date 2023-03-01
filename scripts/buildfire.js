@@ -3760,6 +3760,8 @@ var buildfire = {
 		}
 	},
 	dynamicBlocks: {
+		// keep for backward compatability (old namespace)
+		// content will not be transformed but will be visible as is
 		execute: function(e){ 
 			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
 				e.classList.remove("bf-wysiwyg-hide-app");
