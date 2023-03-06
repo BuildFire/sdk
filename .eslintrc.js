@@ -24,5 +24,10 @@ module.exports = {
 			'error',
 			'always'
 		]
+	},
+	"globals": {
+		"dynamicEngine": true,
+		"tinymce": true,
+		"FastClick": true
 	}
 };
