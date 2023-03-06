@@ -2,23 +2,23 @@
 :root {
 	--tagify-dd-color-primary: rgb(53, 149, 246);
 	--tagify-dd-bg-color: white;
-	--tags-disabled-bg: var(--c-primary);
-	--tags-border-color: var(--c-gray3);
-	--tags-hover-border-color: var(--c-gray3);
-	--tags-focus-border-color: var(--c-gray3);
-	--tag-bg: var(--c-primary);
-	--tag-hover: var(--c-primary);
-	--tag-text-color: var(--c-white);
-	--tag-text-color--edit: var(--c-white);
-	--tag-remove-bg: var(--c-primary);
-	--tag-remove-btn-color: var(--c-white);
+	--tags-disabled-bg: #05acf0;
+	--tags-border-color: #ddd;
+	--tags-hover-border-color: #ddd;
+	--tags-focus-border-color: #ddd;
+	--tag-bg: #05acf0;
+	--tag-hover: #05acf0;
+	--tag-text-color: #fff;
+	--tag-text-color--edit: #fff;
+	--tag-remove-bg: #05acf0;
+	--tag-remove-btn-color: #fff;
 	--tag-remove-btn-bg: none;
-	--tag-remove-btn-bg--hover: var(--c-danger);
-	--tag-error: var(--c-danger);
+	--tag-remove-btn-bg--hover: #ed4b4b;
+	--tag-error: #ed4b4b;
 	--tag-invalid-color: none;
 	--tag-invalid-bg: none;
-	--placeholder-color: var(--c-gray3);
-	--placeholder-color-focus: var(--c-gray3);
+	--placeholder-color: #ddd;
+	--placeholder-color-focus: #ddd;
 	--tag-pad: 0.3em 0.5em;
 	--tag-inset-shadow-size: 1.1em;
 	--input-color: inherit;
@@ -577,7 +577,7 @@
 }
 
 ::placeholder {
-	color: var(--c-gray3);
+	color: #ddd;
 }
 
 .tagify-tag{
