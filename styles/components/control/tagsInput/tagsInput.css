@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 :root {
 	--tagify-dd-color-primary: rgb(53, 149, 246);
 	--tagify-dd-bg-color: white;
@@ -328,7 +329,7 @@
 }
 
 .tagify__tag__removeBtn::after {
-	content: "×";
+	content: "x";
 	transition: .3s, color 0s
 }
 
@@ -413,7 +414,7 @@
 	opacity: 0;
 	position: absolute;
 	font-family: 'Conv_apercu_regular', 'Helvetica', 'Sans-Serif', 'Arial' !important;
-	font-size: .875rem;
+	font-size: 14px;
 }
 
 .tagify__input::after {
