@@ -19,6 +19,9 @@ buildfire.components.drawer.open = function (options, callback) {
 	if (!options.multiSelection && options.multiSelectionActionButton) {
 		console.warn('Cannot use multiSelectionActionButton when multiSelection is not enabled');
 	}
+	if (!options.multiSelection && options.requireSelection) {
+		console.warn('Cannot use requireSelection when multiSelection is not enabled');
+	}
 	if (!options.multiSelection && options.allowSelectAll) {
 		console.warn('Cannot use allowSelectAll when multiSelection is not enabled');
 	}

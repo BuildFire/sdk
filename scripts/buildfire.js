@@ -42,6 +42,27 @@ var buildfire = {
 			// don't return anything if context is not ready but we have a callback
 		}
 
+	}
+	, loadScript: function({ url, scriptId }, callback = Function()) {
+		let script = document.getElementById(scriptId);
+		const scripts = document.getElementsByTagName('script');
+
+		// script exist
+		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url))) {
+			return callback();
+		}
+
+		const parentElement = (document.head || document.body);
+		script = document.createElement('script');
+		script.id = scriptId || '';
+		script.type = 'text/javascript';
+		script.src = url;
+		script.onload = callback;
+		script.onerror = function () {
+			callback(new Error('failed to load script component'));
+			console.error('failed to load script component');
+		};
+		parentElement.appendChild(script);
 	}, ratingSystem: {
 		inject: function () {
 			if (typeof buildfire === 'undefined') return;
@@ -212,7 +233,7 @@ var buildfire = {
 			.catch(error => {
 				callback(error, null);
 			});
-		};
+		}
 
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
 			const context = buildfire.getContext();
@@ -234,7 +255,7 @@ var buildfire = {
 							.catch(error => {
 								callback(error, null);
 							});
-						};
+						}
 						getPluginLanguageJson((err, pluginLanguageJson)=>{
 							if(err) console.error(err);
 							window.pluginLanguageJson = pluginLanguageJson;
@@ -259,6 +280,7 @@ var buildfire = {
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
+		, 'dynamic.onReceivedWidgetContextRequest'
 		, 'history.triggerOnPop'
 		, 'navigation.onBackButtonClick'
 		, 'services.media.audioPlayer.triggerOnEvent'
@@ -313,7 +335,14 @@ var buildfire = {
 				else
 					return; // sorry i cant help you
 			}
-			obj.apply(parent, [packet.data]);
+
+			let callback = function (err, result) {
+				if (err) console.warn(e.data, err);
+				let newPacket = new Packet(packet.id, 'noop', result, err);
+				buildfire._parentPost(newPacket);
+			};
+
+			obj.apply(parent, [packet.data, callback]);
 
 		}
 		else {
@@ -327,6 +356,12 @@ var buildfire = {
 			callback = function (err, result) {
 				//console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
 			};
+
+		if (buildfire.getContext().type == 'control') {
+			packet.source = 'control';
+		} else {
+			packet.source = 'widget';
+		}
 
 		var retryInterval = 3000,
 			command = packet.cmd,
@@ -1053,9 +1088,6 @@ var buildfire = {
 		, onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('appearanceOnUpdate', callback, allowMultipleHandlers);
 		}
-		, _onInternalUpdate: function (callback, allowMultipleHandlers = true) {
-			return buildfire.eventManager.add('_internalAppearanceOnUpdate', callback, allowMultipleHandlers);
-		}
 		, triggerOnUpdate: function (appTheme) {
 			var appThemeCSSElement = document.getElementById('appThemeCSS');
 			if(appThemeCSSElement) {
@@ -1082,7 +1114,7 @@ var buildfire = {
 					});
 				}
 				buildfire.eventManager.trigger('appearanceOnUpdate', appTheme);
-				buildfire.eventManager.trigger('_internalAppearanceOnUpdate', appTheme);
+				buildfire.dynamic.triggerContextChange({contextProperty: 'appTheme', data: appTheme});
 			}
 		}, titlebar: {
 			show: function(options, callback) {
@@ -3409,22 +3441,16 @@ var buildfire = {
 		onLogin: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogin', callback, allowMultipleHandlers);
 		},
-		_onInternalLogin: function (callback, allowMultipleHandlers = true) {
-			return buildfire.eventManager.add('_internalAuthOnLogin', callback, allowMultipleHandlers);
-		},
 		triggerOnLogin: function (user) {
 			buildfire.eventManager.trigger('authOnLogin', user);
-			buildfire.eventManager.trigger('_internalAuthOnLogin', user);
+			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: user});
 		},
 		onLogout: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
 		},
 		triggerOnLogout: function (data) {
 			buildfire.eventManager.trigger('authOnLogout', data);
-			buildfire.eventManager.trigger('_internalAuthOnLogout', data);
-		},
-		_onInternalLogout: function (data, allowMultipleHandlers = true) {
-			return buildfire.eventManager.add('_internalAuthOnLogout', data, allowMultipleHandlers);
+			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: data});
 		},
 		onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
@@ -3481,7 +3507,7 @@ var buildfire = {
 					qString = qString + '&externalAppId=' + encodeURIComponent(buildfire._context.appId);
 				}
 			}
-
+			// TODO: move caching invalidation logic to KAUTH rather than adding (new Date().getTime())
 			return authUrl + '/src/server.js/user/picture?' + qString + '&v=' + new Date().getTime();
 		},
 		showUsersSearchDialog: function(options,callback){
@@ -3733,11 +3759,26 @@ var buildfire = {
 			buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
 		}
 	},
-	dynamicBlocks: {
-		execute: function(e) {
+	dynamic: {
+		requestWidgetContext(options, callback) {
+			var p = new Packet(null, 'dynamic.triggerRequestWidgetContext', options);
+			buildfire._sendPacket(p, callback);
+		},
+		onReceivedWidgetContextRequest(options, callback) {
+			buildfire.dynamic.expressions._prepareContext(null, (err, result) => {
+				if (err) return callback(err);
+				callback(null , result);
+			});
+		},
+		triggerContextChange(options) {
+			if (typeof dynamicEngine !== 'undefined') {
+				dynamicEngine.triggerContextChange(...arguments);
+			}
+		},
+		execute(e) {
 			if (!e.parentElement) return;
-			const parent = e.parentElement;
-			const targets = parent.querySelectorAll('[data-type]');
+			const imageContainer = e.parentElement; // give an id to the parent
+			const targets = imageContainer.querySelectorAll('[data-type]');
 			const VALID_TYPES = ['dynamic-expression'];
 
 			Array.from(targets).forEach((e) => {
@@ -3757,50 +3798,71 @@ var buildfire = {
 			});
 		},
 		expressions: {
-			_getExpressionContext(done) {
-				const { appId, appTheme, pluginId } = buildfire.getContext();
-				buildfire.auth.getCurrentUser((err, user) => {
-					if (err) return console.error(err);
-					done(null, {
-						user,
-						appId,
-						appTheme,
-						pluginId,
+			_prepareContext(options, callback) {
+				if (buildfire.getContext().type == 'control') {
+					// get the widget's context to evaluate expressions against it rather than the control's context
+					let options = {
+						instanceId: buildfire.getContext().instanceId
+					};
+					buildfire.dynamic.requestWidgetContext(options, (err, context) => {
+						if (err) return callback(err);
+						buildfire.dynamic.expressions._mergeContext({context}, callback);
 					});
-				});
-			},
-			/**
-			 * _evaluateExpression
-			 * @description evaluate a JS expression result within a defined context
-			 * @private
-			 */
-			_evaluateExpression(expression, args = {}) {
-				return Function(`"use strict"; const context = this;return (${expression})`).bind(args)();
-			},
-			/**
-			 * _refreshContent
-			 * @description used to refresh already executed content and reflect it
-			 * @private
-			 */
-			_refreshContent({ content, target, handlers, updatedContext = {} }) {
-				// verify content is still in DOM, remove if not
-				if (!target.parentElement) {
-					for (const key in handlers) {
-						if (handlers[key]) {
-							handlers[key].clear();
-						}
-					}
-					return;
+				} else {
+					const { appId, appTheme, pluginId } = buildfire.getContext();
+					buildfire.auth.getCurrentUser((err, appUser) => {
+						if (err) return callback(err);
+						const context = { appUser, appId, appTheme, pluginId };
+						buildfire.dynamic.expressions._mergeContext({context}, callback);
+					});
 				}
-				this._getExpressionContext((err, context) => {
-					try {
-						target.innerHTML = this._evaluateExpression('`' + content + '`', Object.assign(context, updatedContext));
-						target.classList.remove('bf-expression-error');
-					} catch (err) {
-						if (buildfire.getContext().liveMode) throw err;
-						target.classList.add('bf-expression-error');
-						target.innerHTML = `<span class="text-danger">Failed to execute.</span><br><br>${err.stack}`;
+			},
+			_mergeContext({context}, callback) {
+				if (buildfire.dynamic.expressions.getContext) {
+					buildfire.dynamic.expressions.getContext(null, (err, newContext) => {
+						callback(null, { ...context, ...newContext });
+					});
+				} else {
+					callback(null, context);
+				}
+			},
+			_dynamicEngineQueue: [],
+			_htmlContainers: {},
+			_getDynamicEngine(callback) {
+				if (this._dynamicEngineQueue.length > 0) {
+					this._dynamicEngineQueue.push(callback);
+				} else if (typeof dynamicEngine !== 'undefined') { // this object will be assigned from the new file (expressions.js)
+					callback(null, dynamicEngine);
+				} else {
+					let url;
+					this._dynamicEngineQueue.push(callback);
+					if (buildfire.getContext().type == 'control') {
+						url = '../../../../scripts/dynamic/dynamicEngine.min.js';
+					} else {
+						url = '../../../scripts/dynamic/dynamicEngine.min.js';
 					}
+					const scriptId = 'dynamicEngine';
+					buildfire.loadScript({ url, scriptId }, () => {
+						dynamicEngine.expressions.getContext = this._prepareContext; // overwrite the getContext to be suitable for the sdk environment
+						_executeDynamicEngineQueue(dynamicEngine);
+					});
+				}
+				const _executeDynamicEngineQueue = (dynamicEngine) => {
+					this._dynamicEngineQueue.forEach((callback) => {
+						callback(null, dynamicEngine);
+					});
+					this._dynamicEngineQueue = [];
+				};
+			},
+			/**
+			 * evaluate
+			 * @description evaluate a JS expression result within a defined context
+			 * @public
+			 */
+			evaluate(options, callback) {
+				this._getDynamicEngine((err, dynamicEngine) => {
+					if (err) return callback(err);
+					dynamicEngine.expressions.evaluate(options, callback);
 				});
 			},
 			/**
@@ -3813,48 +3875,30 @@ var buildfire = {
 					? e.parentElement.parentElement
 					: e.parentElement;
 
+				if (!container) return;
 				e.remove();
+				let id = e.getAttribute('data-id');
+				let expressionHtmlContainers = buildfire.dynamic.expressions._htmlContainers;
+				expressionHtmlContainers[id] = expressionHtmlContainers[id] || [];
+				expressionHtmlContainers[id].push(container);
+
 				const content = container.innerHTML.replace(/bf-wysiwyg-hide-app/g, '');
 
-				this._getExpressionContext((err, context) => {
-					const _context = {
-						_handlers: {
-							onLogin: null,
-							onLogout: null,
-							onAppearanceUpdate: null,
-						},
-						get user() {
-							if (!this._handlers.onLogin) {
-								this._handlers.onLogin = buildfire.auth._onInternalLogin(() => { buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this.handlers }); });
-							}
-							if (!this._handlers.onLogout) {
-								this._handlers.onLogout = buildfire.auth._onInternalLogout(() => { buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this.handlers }); });
-							}
-							return context.user || {};
-						},
-						get appId() {
-							return context.appId;
-						},
-						get appTheme() {
-							if (!this._handlers.onAppearanceUpdate) {
-								this._handlers.onAppearanceUpdate = buildfire.appearance._onInternalUpdate((appearance) => {
-									buildfire.dynamicBlocks.expressions._refreshContent({ target: container, content, handlers: this._handlers, updatedContext: { appTheme: appearance }});
-								});
-							}
-							return context.appTheme;
-						},
-						get pluginId() {
-							return context.pluginId;
-						},
-					};
+				this.evaluate({id: id, expression: content}, (err, result) => {
 
-					try {
-						container.innerHTML = this._evaluateExpression('`' + content + '`', _context);
-						container.classList.remove('bf-expression-error');
-					} catch (err) {
-						if (buildfire.getContext().liveMode) throw err;
-						container.classList.add('bf-expression-error');
-						container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
+					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null );
+					if (!container) {
+						expressionHtmlContainers[id] = []; // reset to cleanup in case of DOM elements being removed and added again
+					} else {
+						expressionHtmlContainers[id] = [container]; // reset to cleanup in case of DOM elements being removed and added again
+						if (err) {
+							if (buildfire.getContext().liveMode) throw err;
+							container.classList.add('bf-expression-error');
+							container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
+						} else {
+							container.innerHTML = result;
+							container.classList.remove('bf-expression-error');
+						}
 					}
 				});
 			},
@@ -3884,12 +3928,17 @@ var buildfire = {
 						if (options._bfInitialize === true) {
 							return originalTinymceInit(options);
 						}
+						options.images_dataimg_filter = function(img) {
+							// adding (data-no-blob) attribute to an image, prevents its (src) from being converted from (base64) to (blob)
+							return !img.hasAttribute('data-no-blob');
+						};
 						var dynamicExpressionsEnabled = (typeof options.bf_dynamic_expressions !== 'undefined') ? options.bf_dynamic_expressions : true;
 						var originalSetup = options.setup;
 						if (originalSetup) {
 							options.setup = function (editor) {
 								let dynamicExpressionsActivated;
-								const EXPRESSION_HTML = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamicBlocks.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />';
+								const timestamp = new Date().getTime();
+								const EXPRESSION_HTML = `<img data-no-blob data-id="${timestamp}" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamic.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />`;
 								const _injectExpressionNode = () => {
 									const currentContent = editor.getContent();
 									editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
@@ -3900,7 +3949,7 @@ var buildfire = {
 									div.innerHTML = editor.getContent();
 									const elements = div.querySelectorAll('[data-type="dynamic-expression"]');
 									Array.from(elements).forEach((e) => {
-										if (e.parentElement) {
+										if (e.parentElement && !e.parentElement.innerText && e.parentElement.children.length === 1) {
 											e.parentElement.remove();
 										}
 										e.remove();
@@ -3927,7 +3976,7 @@ var buildfire = {
 									var scriptElm = editor.dom.create( 'script', {},
 										'var buildfire = {'
 										+   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
-										+   'dynamicBlocks: { execute: function() { console.log("ignore handleScriptExecution in tinymce")}},'
+										+   'dynamic: { execute: function() { console.log("ignore handleScriptExecution in tinymce")}},'
 										+   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
 										+'};'
 									);
@@ -3949,6 +3998,12 @@ var buildfire = {
 											}
 										});
 									}
+									// delete all the existed (bf-wysiwyg-top/bf-wysiwyg-hide-app) classes from the WYSIWYG, where they should be (at the root) of the WYSIWYG body element
+									// but sometimes they are not; so we will delete all of them before adding them to root elements again
+									editor.dom.doc.body.querySelectorAll('.bf-wysiwyg-top, .bf-wysiwyg-hide-app').forEach(function(ele) {
+										const classes = ['bf-wysiwyg-top', 'bf-wysiwyg-hide-app'];
+										ele.classList.remove(...classes);
+									});
 									// add the class (bf-wysiwyg-top) to all first level elements (at the root) of the WYSIWYG body element
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) {
 										const classes = ['bf-wysiwyg-top'];
@@ -4001,7 +4056,7 @@ var buildfire = {
 									}
 								});
 								editor.ui.registry.addToggleMenuItem('bf_toggleDynamicExpression', {
-									text: 'Dynamic expressions',
+									text: 'Expressions',
 									onAction: () => {
 										dynamicExpressionsActivated = !dynamicExpressionsActivated;
 										if (dynamicExpressionsActivated) {
@@ -4009,6 +4064,8 @@ var buildfire = {
 										} else {
 											_removeExpressionNode();
 										}
+										editor.isNotDirty = false;
+										editor.fire('change');
 									},
 									onSetup: (api) => {
 										api.setActive(dynamicExpressionsActivated);
@@ -4049,7 +4106,7 @@ var buildfire = {
 							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
 						};
 						if (userMenu) {
-							for (item in userMenu) {
+							for (let item in userMenu) {
 								options.menu[item] = userMenu[item];
 							}
 						}
@@ -4098,7 +4155,7 @@ var buildfire = {
 	},
 	_cssInjection:{
 		handleCssLayoutInjection: function (pluginJson) {
-			if (typeof pluginJson == "undefined" || !pluginJson || !pluginJson.control.cssInjection || !pluginJson.control.cssInjection.enabled || !pluginJson.control.cssInjection.layouts.length ) {
+			if (typeof pluginJson == 'undefined' || !pluginJson || !pluginJson.control.cssInjection || !pluginJson.control.cssInjection.enabled || !pluginJson.control.cssInjection.layouts.length ) {
 				return;
 			}
 
@@ -4120,7 +4177,7 @@ var buildfire = {
 					} else if (result.selectedLayout) {
 						activeLayout = result.selectedLayout;
 					}
-				};
+				}
 
 				if (activeLayout.cssPath) {
 					// so it's predefined
@@ -4136,9 +4193,9 @@ var buildfire = {
 				} else if (activeLayout.css) {
 					// so it's custom layout
 					_attachActiveLayoutCSSContent(activeLayout.css,'$$bf_layout_css');
-				};
+				}
 
-			};
+			}
 
 			function _attachActiveLayoutCSSFile (url, id){
 				let activeLayoutStyleElement = document.getElementById(id);
@@ -4152,32 +4209,31 @@ var buildfire = {
 
 				if (activeLayoutStyleElement) {
 					activeLayoutStyleElement.remove();
-				};
-			};
-
+				}
+			}
 			function _attachActiveLayoutCSSContent (cssContent, id){
 
 				let activeLayoutStyleElement = document.getElementById(id);
 
-				let styleElement = document.createElement("style");
+				let styleElement = document.createElement('style');
 				styleElement.id = id;
 				styleElement.innerHTML = cssContent;
 				document.head.appendChild(styleElement);
 
 				if (activeLayoutStyleElement) {
 					activeLayoutStyleElement.remove();
-				};
-			};
+				}
+			}
 			buildfire.datastore.get(activeLayoutTag, (err, result) => {
 
-				if (err) console.error("Error while retrieving active layout", err);
+				if (err) console.error('Error while retrieving active layout', err);
 				_handleDataStoreActiveLayoutResponse(result);
 			});
 
 			buildfire._cssInjection.onUpdate((data)=>{
 				if (data.tag === activeLayoutTag) {
 					if (data.data && data.data.$set) {
-						data.data = data.data.$set
+						data.data = data.data.$set;
 					}
 					_handleDataStoreActiveLayoutResponse(data);
 				}
@@ -4194,7 +4250,7 @@ var buildfire = {
 	},
 	language: {
 		handleLanguageSettings: function (pluginJson, pluginLanguageJson) {
-			if (typeof pluginJson == "undefined" || !pluginJson || !pluginJson.control.language || !pluginJson.control.language.enabled || !pluginJson.control.language.languageJsonPath || !pluginLanguageJson) {
+			if (typeof pluginJson == 'undefined' || !pluginJson || !pluginJson.control.language || !pluginJson.control.language.enabled || !pluginJson.control.language.languageJsonPath || !pluginLanguageJson) {
 				return;
 			}
 
@@ -4226,7 +4282,7 @@ var buildfire = {
 							value : sections[sectionKey].labels[labelKey].defaultValue
 						};
 					}
-				};
+				}
 
 				return obj;
 			};
@@ -4236,7 +4292,7 @@ var buildfire = {
 				if (!strings || !Object.keys(strings).length) {
 					return;
 				}
-				document.querySelectorAll("*[bfString]").forEach(e => {
+				document.querySelectorAll('*[bfString]').forEach(e => {
 					buildfire.language._handleNode(e);
 					//trigger on string injected to this element.
 					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
@@ -4256,26 +4312,26 @@ var buildfire = {
 					obj[sectionKey] = {};
 
 					for (const labelKey in defaultSection) {
-						if (dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty("value") || dbSection[labelKey].hasOwnProperty("defaultValue"))) {
+						if (dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty('value') || dbSection[labelKey].hasOwnProperty('defaultValue'))) {
 							//handle backward compatibility, cuz some plugins has it in "value" and the others in "defaultValue"
-							if (dbSection[labelKey].hasOwnProperty("value")) {
+							if (dbSection[labelKey].hasOwnProperty('value')) {
 								obj[sectionKey][labelKey] = {
 									value: dbSection[labelKey].value
-								}
-							} else if (dbSection[labelKey].hasOwnProperty("defaultValue")) {
+								};
+							} else if (dbSection[labelKey].hasOwnProperty('defaultValue')) {
 								obj[sectionKey][labelKey] = {
 									defaultValue: dbSection[labelKey].defaultValue
-								}
+								};
 							}
 
 						} else {
 							obj[sectionKey][labelKey] = {
 								defaultValue: defaultSection[labelKey].defaultValue
-							}
+							};
 						}
-					};
+					}
 
-				};
+				}
 
 				return obj;
 			};
@@ -4296,15 +4352,15 @@ var buildfire = {
 
 					//merge objects to get the updated default strings values.
 					strings = mergeUpdatedDefaultStrings(strings, pluginLanguageJson);
-				};
+				}
 				buildfire.language._strings = strings;
 				//attach strings in html.
 				injectStrings(strings);
-			};
+			}
 
 			function init() {
 				getLanguage();
-			};
+			}
 
 			init();
 
@@ -4317,23 +4373,23 @@ var buildfire = {
 		get: function (params, callback) {
 			let error;
 			if (!params) {
-				error = "Invalid options";
+				error = 'Invalid options';
 				callback(error, null);
 				return;
 			}
 			if (typeof callback !== 'function') {
-				error = "callback is not a function";
+				error = 'callback is not a function';
 				callback(error, null);
 				return;
 			}
 			if (!params.stringKey) {
-				error = "Invalid options";
+				error = 'Invalid options';
 				callback(error, null);
 				return;
 			}
-			const stringKeys = params.stringKey.split(".");
+			const stringKeys = params.stringKey.split('.');
 			if (!stringKeys || stringKeys.length !== 2) {
-				error = "Invalid options";
+				error = 'Invalid options';
 				callback(error, null);
 				return;
 			}
@@ -4342,25 +4398,25 @@ var buildfire = {
 
 			function onStringsReady() {
 				const strings = buildfire.language._strings;
-				if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty("value") && !strings[section][label].hasOwnProperty("defaultValue"))) {
-					error = "String not found.";
+				if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty('value') && !strings[section][label].hasOwnProperty('defaultValue'))) {
+					error = 'String not found.';
 					callback(error, null);
 					return;
 				}
 
 				const valueObj = strings[section][label];
 
-				if (valueObj.hasOwnProperty("value")) {
+				if (valueObj.hasOwnProperty('value')) {
 					callback(null, valueObj.value);
 					return;
-				} else if (valueObj.hasOwnProperty("defaultValue")) {
+				} else if (valueObj.hasOwnProperty('defaultValue')) {
 					callback(null, valueObj.defaultValue);
 					return;
 				}
 
 				callback(null, null);
 				return;
-			};
+			}
 
 			if (!buildfire.language._strings) {
 				buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
@@ -4378,7 +4434,7 @@ var buildfire = {
 				for (const mutation of mutationList) {
 					if (mutation.type === 'childList' && mutation.target) {
 						buildfire.language._handleNode(mutation.target);
-						let childList = mutation.target.querySelectorAll("*[bfString]");
+						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
 							buildfire.language._handleNode(childList[i]);
 						}
@@ -4414,20 +4470,20 @@ var buildfire = {
 			if (!node.tagName) {// not an element
 				return;
 			}
-			if (!node.hasAttribute("bfString")) {
+			if (!node.hasAttribute('bfString')) {
 				return;
 			}
 			//check if this element got bfString value already
-			if (node.hasAttribute("bfString-initialized")) {
+			if (node.hasAttribute('bfString-initialized')) {
 				return;
 			}
-			const injectAttributes = node.getAttribute("bfString-attrs");
+			const injectAttributes = node.getAttribute('bfString-attrs');
 			let attributes;
 			//handle multiple attributes.
 			if (injectAttributes) {
-				attributes = injectAttributes.split(",");
+				attributes = injectAttributes.split(',');
 			}
-			const stringKey = node.getAttribute("bfString");
+			const stringKey = node.getAttribute('bfString');
 			buildfire.language.get({stringKey}, (err, string) => {
 				//inject the string into the element.
 				if (string) {
@@ -4437,7 +4493,7 @@ var buildfire = {
 						node.innerHTML = string;
 					}
 					//mark initialized elements.
-					node.setAttribute("bfString-initialized", "");
+					node.setAttribute('bfString-initialized', '');
 				}
 			});
 		}
@@ -4452,7 +4508,7 @@ var buildfire = {
 		//attach pluginLanguage.js script that contains languages.json content.
 		function attachPluginLanguageJsScript () {
 			document.write('<script src="pluginLanguage.js" type=\"text/javascript\"><\/script>');
-		};
+		}
 		if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
 			attachPluginLanguageJsScript();
 		}
