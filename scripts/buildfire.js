@@ -3759,6 +3759,15 @@ var buildfire = {
 			buildfire._sendPacket(new Packet(null, 'notes.getByItemId', options), callback);
 		}
 	},
+	dynamicBlocks: {
+		// keep for backward compatability (old namespace)
+		// content will not be transformed but will be visible as is
+		execute: function(e){ 
+			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
+				e.classList.remove("bf-wysiwyg-hide-app");
+			});
+		},
+	},
 	dynamic: {
 		requestWidgetContext(options, callback) {
 			var p = new Packet(null, 'dynamic.triggerRequestWidgetContext', options);
