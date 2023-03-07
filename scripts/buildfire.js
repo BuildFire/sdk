@@ -3911,6 +3911,11 @@ var buildfire = {
 					}
 				});
 			},
+			showDialog: function (options, callback) {
+				debugger;
+				var p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
+				buildfire._sendPacket(p, callback); 
+			},
 		},
 	},
 	wysiwyg: {
