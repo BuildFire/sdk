@@ -42,7 +42,7 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 	 * @private
 	 */
 	_init() {
-		this.selector.classList.add('speedDial-container'); // todo class name
+		this.selector.classList.add('speed-dial-container'); // todo class name
 		this._state.bodyTextColor = getComputedStyle(document.documentElement)
 			.getPropertyValue('--bf-theme-body-text')
 			.trim();
