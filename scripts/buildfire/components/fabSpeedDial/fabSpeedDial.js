@@ -32,6 +32,8 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		}
 
 		this._state = new State();
+        this._onMainBtnClick = this._onMainBtnClick.bind(this);
+        this._onOverlayClick = this._onOverlayClick.bind(this);
 		this._init();
 	}
 
@@ -57,7 +59,6 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	 * @public
 	 */
 	close(e) {
-		e?.stopPropagation();
         if (!this.selector) return;
 
         this.selector.classList.remove(FabSpeedDial.ACTIVE_CLASS_NAME);
@@ -81,8 +82,6 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	 * @public
 	 */
 	open(e) {
-        e?.stopPropagation();
-        if (!this.selector) return;
         if (!this.selector) return;
 		this.selector.classList.add(FabSpeedDial.ACTIVE_CLASS_NAME);
 		document.querySelectorAll('.fab-button-container').forEach((el) => el.classList.remove('hidden'));
@@ -133,8 +132,8 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	destroy() {
 		if (!this.selector) throw 'speedDial instance destroyed';
 
-        this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick());
-		this._state.overlayElement.removeEventListener('click', this.close());
+        this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick);
+		this._state.overlayElement.removeEventListener('click', this._onOverlayClick);
 		this._state.overlayElement.remove();
         this.selector.innerHTML = '';
         delete this.options;
@@ -163,7 +162,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		)}),0px 1px 10px rgba(${this._colorToRGBA(this._state.bodyTextColor, 0.1)})
 		  `;
 
-		this._state.mainFabBtnElement.addEventListener('click', (e) => this._onMainBtnClick(e));
+		this._state.mainFabBtnElement.addEventListener('click', this._onMainBtnClick);
 	}
 
     /**
@@ -171,12 +170,12 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
      * @function
      * @private
      */
-	_onMainBtnClick(e) {
+	_onMainBtnClick() {
 		if (!this._state.isOpen) {
-			this.open(e);
+			this.open();
 			this.onOpen();
 		} else {
-			this.close(e);
+			this.close();
 			this.onClose();
 		}
 	}
@@ -258,7 +257,16 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
         if (!this.options.showOverlay) {
             this._state.overlayElement.style.backgroundColor = 'transparent';
         }
-        this._state.overlayElement.addEventListener('click', (e) => this.close(e));
+        this._state.overlayElement.addEventListener('click',this._onOverlayClick);
+    }
+
+	/**
+     * Handle on overlay clicked
+     * @function
+     * @private
+     */
+    _onOverlayClick(){
+        this.close();
     }
 
     /**
