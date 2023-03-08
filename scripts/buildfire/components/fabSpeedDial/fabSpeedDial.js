@@ -9,7 +9,7 @@ function State() {
 	this.bodyTextColor = '#000000';
 }
 
-buildfire.components.speedDialFab = class SpeedDialFab {
+buildfire.components.speedDialFab = class FabSpeedDial {
 	constructor(selector, options = {}) {
 		if (!document.querySelector(selector)) throw new Error('Element not found!');
 
@@ -60,7 +60,7 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		e?.stopPropagation();
         if (!this.selector) return;
 
-        this.selector.classList.remove(SpeedDialFab.ACTIVE_CLASS_NAME);
+        this.selector.classList.remove(FabSpeedDial.ACTIVE_CLASS_NAME);
         this._state.overlayElement.classList.add('fade-out');
         this._state.overlayElement.classList.remove('fade-in');
         setTimeout(() => {
@@ -84,7 +84,7 @@ buildfire.components.speedDialFab = class SpeedDialFab {
         e?.stopPropagation();
         if (!this.selector) return;
         if (!this.selector) return;
-		this.selector.classList.add(SpeedDialFab.ACTIVE_CLASS_NAME);
+		this.selector.classList.add(FabSpeedDial.ACTIVE_CLASS_NAME);
 		document.querySelectorAll('.fab-button-container').forEach((el) => el.classList.remove('hidden'));
 
 		this._state.overlayElement.classList.remove('fade-out', 'hidden');
