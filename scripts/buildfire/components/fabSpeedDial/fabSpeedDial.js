@@ -46,11 +46,7 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		this._state.bodyTextColor = getComputedStyle(document.documentElement)
 			.getPropertyValue('--bf-theme-body-text')
 			.trim();
-        if (this.options.showOverlay) {
-            this._buildOverlay();
-        } else {
-            document.addEventListener('click', (e) => this._onClickOutside(e));
-        }
+        this._buildOverlay();
 		this._buildMainButton();
 		this._buildButtons();
 	}
@@ -61,23 +57,22 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 	 * @public
 	 */
 	close(e) {
-        e?.stopPropagation();
-		if (!this.selector) return;
+		e?.stopPropagation();
+        if (!this.selector) return;
 
         this.selector.classList.remove(SpeedDialFab.ACTIVE_CLASS_NAME);
-		this._state.isOpen = false;
-        if (this.options.showOverlay) {
-            this._state.overlayElement.classList.add('fade-out');
-            this._state.overlayElement.classList.remove('fade-in');
-			setTimeout(() => {
-				this._state.overlayElement.classList.add('hidden');
-			}, 200);
-        }
-		document.querySelectorAll('.fab-button-container').forEach((el) => {
-			setTimeout(() => {
-				el.classList.add('hidden');
-			}, 200);
-		});
+        this._state.overlayElement.classList.add('fade-out');
+        this._state.overlayElement.classList.remove('fade-in');
+        setTimeout(() => {
+            this._state.overlayElement.classList.add('hidden');
+        }, 200);
+        this._state.isOpen = false;
+
+        document.querySelectorAll('.fab-button-container').forEach((el) => {
+            setTimeout(() => {
+                el.classList.add('hidden');
+            }, 200);
+        });
 	}
 
 	/**
@@ -92,10 +87,8 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		this.selector.classList.add(SpeedDialFab.ACTIVE_CLASS_NAME);
 		document.querySelectorAll('.fab-button-container').forEach((el) => el.classList.remove('hidden'));
 
-        if (this.options.showOverlay) {
-            this._state.overlayElement.classList.remove('fade-out', 'hidden');
-            this._state.overlayElement.classList.add('fade-in');
-        }
+		this._state.overlayElement.classList.remove('fade-out', 'hidden');
+		this._state.overlayElement.classList.add('fade-in');
 		this._state.isOpen = true;
 	}
 
@@ -140,17 +133,9 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 	destroy() {
 		if (!this.selector) throw 'speedDial instance destroyed';
 
-        this._state.mainFabBtnElement.removeEventListener('click', (e) =>
-            this._onMainBtnClick(e)
-        );
-        if (this.overlayElement) {
-            this._state.overlayElement.removeEventListener('click', (e) =>
-                this._onClickOutside(e)
-				);
-			this._state.overlayElement.remove();
-        } else {
-            document.addEventListener('click', (e) => this._onClickOutside(e));
-        }
+        this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick());
+		this._state.overlayElement.removeEventListener('click', this.close());
+		this._state.overlayElement.remove();
         this.selector.innerHTML = '';
         delete this.options;
         delete this._state;
@@ -269,19 +254,11 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 			'',
 			['expanded-fab-overlay', 'hidden', 'fade-in']
 		);
-        this._state.overlayElement.addEventListener('click', (e) =>
-            this._onClickOutside(e)
-        );
-    }
 
-    /**
-     * On click outside of the speed dial buttons
-     * @function
-     * @private
-     */
-    _onClickOutside(e) {
-        if (e.target.closest('.main-fab-button')) return;
-        this.close(e);
+        if (!this.options.showOverlay) {
+            this._state.overlayElement.style.backgroundColor = 'transparent';
+        }
+        this._state.overlayElement.addEventListener('click', (e) => this.close(e));
     }
 
     /**
