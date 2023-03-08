@@ -269,10 +269,6 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 			'',
 			['expanded-fab-overlay', 'hidden', 'fade-in']
 		);
-
-        // if (!this.options.showOverlay) {
-        //     this._state.overlayElement.style.backgroundColor = 'transparent';
-        // }
         this._state.overlayElement.addEventListener('click', (e) =>
             this._onClickOutside(e)
         );
