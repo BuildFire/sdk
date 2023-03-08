@@ -64,7 +64,7 @@ buildfire.components.speedDialFab = class SpeedDialFab {
         this._state.overlayElement.classList.add('fade-out');
         this._state.overlayElement.classList.remove('fade-in');
         setTimeout(() => {
-            this._state.overlayElement.classList.add('hidden');
+            this._state?.overlayElement.classList.add('hidden');
         }, 200);
         this._state.isOpen = false;
 
