@@ -1,0 +1,57 @@
+<!-- expressionsBuilder Template -->
+<div class="header clearfix border-bottom-grey">
+    <h4 class="margin-zero">Expression Builder</h4>
+    <span class="icon icon-cross2 close-modal" ng-click="close()"></span>
+</div>
+<!-- initial loading state -->
+<div ng-show="isInitLoading" class="text-center well margin-zero padded border-none dialog-template-container flex flex-align-center flex-justify-center">
+    <h4 class="margin-zero"><span class="loading-spinner"></span>Loading...</h4>
+</div>
+
+<div id="expressionsBuilderTemplate" class="dialog-template-container padding-left-ten" ng-if="!isInitLoading">
+    <ul class="dialog-template-options-list expressions-builder">
+        <h4 class="margin-bottom-twenty text-bold">Variables</h4>
+        <div ng-repeat="expression in presetsExpressions" ng-if="!expression.scope || expression.scope.includes(expressionScope)">
+            <div class="flex">
+                <h5 class="text-bold margin-right-ten">{{expression.name}}</h5>
+                <span ng-if="expression.tooltip" class="tip btn-info-icon btn-primary transition-third tip-custom margin-top-five"
+                uib-tooltip="{{expression.tooltip}}"
+                tooltip-placement="right"></span>
+            </div>
+            <section ng-repeat="exp in expression.expressions" class="padding-left-fifteen" ng-click="appendPresetExpression(exp.expression)">
+                <h6 class="cursor-pointer">{{exp.name}}</h6>
+            </section>
+        </div>
+    </ul>
+    <div class="dialog-template-scrollable padded-md">
+        <div>
+            <h5>Expression</h5>
+            <textarea class="w-100 margin-bottom-five padded-sm textarea-resize-none" ng-model="expression.string" ng-change="onChangeExpression()" ng-trim="false" rows="3" cols="100"></textarea>
+            <div class="flex flex-justify-end">
+                <button ng-disabled="!expression.string || isEvaluateLoading" class="btn margin-left-auto btn-outlined btn-primary" ng-click="evaluate()">Evaluate</button>
+            </div>
+        </div>
+
+        <br/>
+
+        <div class="relative-position">
+            <h5>Results</h5>
+            <div class="w-100 border-grey default-background expression-result-field padded-sm" ng-class="{'text-danger': error}">{{expression.evaluatedExpression ? expression.evaluatedExpression : error}}
+                <!-- loading state for results -->
+                <div ng-show="isEvaluateLoading" class="flex flex-justify-center flex-align-center text-center h-100">
+                    <div  class="loader"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bottom border-top-grey clearfix">
+            <div class="pull-right text-center">
+                <a class="btn btn-primary" ng-disabled="!expression.evaluatedExpression || !expression.string" ng-click="useExpression()">Use Expression</a>
+            </div>
+            <div class="pull-right text-center">
+                <a class="btn btn-secondary transition-third" ng-click="close()">Close</a>
+            </div>
+        </div>
+    </div>
+</div>
