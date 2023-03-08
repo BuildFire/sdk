@@ -19,11 +19,11 @@ class Reaction {
 
 class Reactions {
     static get TAG() {
-       return "$$reactions";
+        return "$$reactions";
     }
     // methods
-    static add(reaction, type, callback) {
-        if (!reaction || !reaction.itemId || !reaction.userId || !type) {
+    static add(reaction, reactionType, callback) {
+        if (!reaction || !reaction.itemId || !reaction.userId || !reactionType) {
             throw Error("Invalid reaction object!");
         }
 
@@ -34,19 +34,23 @@ class Reactions {
         buildfire.appData.insert(
             reaction, Reactions.TAG, false,
             (err, result) => {
-                if (err) return callback(err);
+                if (err) {
+                    return callback(err);
+                }
 
-                ReactionsSummaries.increment({itemId:reaction.itemId, reactionType:type}, (e,r)=>{if(e)return console.log(e)});
+                ReactionsSummaries.increment({ itemId: reaction.itemId, reactionType }, (e, r) => { if (e) return console.log(e) });
                 // toggle on the selected reaction type
-                if (result) return callback(null, result);
+                if (result) {
+                    return callback(null, result);
+                }
                 return callback(null, null);
             }
         );
     }
 
-    static update(reactionId, oldData, newData, callback) {
-        if (!reactionId || typeof reactionId !== 'string') {
-            throw Error("Invalid reaction ID!");
+    static update(itemId, oldData, newData, callback) {
+        if (!itemId || typeof itemId !== 'string') {
+            throw Error("Invalid item ID!");
         }
         // data need to be checked 
         if (!oldData || !newData) {
@@ -58,14 +62,14 @@ class Reactions {
         }
 
         var filter = {
-            "_buildfire.index.string1": oldData.itemId + "-" + oldData.userId, 
-            "_buildfire.index.array1.string1": "reactionType-" + oldData.itemId + "-" + oldData.type, 
+            "_buildfire.index.string1": itemId + "-" + oldData.userId,
+            "_buildfire.index.array1.string1": "reactionType-" + itemId + "-" + oldData.type,
             "reactions.type": oldData.type
         }
         var set = {
-            $set:{
-                "reactions.$.type": newData.type, 
-                "_buildfire.index.array1.$.string1": "reactionType-" + newData.itemId + "-" + newData.type
+            $set: {
+                "reactions.$.type": newData.type,
+                "_buildfire.index.array1.$.string1": "reactionType-" + itemId + "-" + newData.type
             }
         }
 
@@ -74,20 +78,24 @@ class Reactions {
             filter, set, // set the reaction [{type:'like', ...}]
             Reactions.TAG,
             (err, result) => {
-                if (err) return callback(err);
+                if (err) {
+                    return callback(err);
+                }
 
                 // decrement for the old type and increment the new one
-                ReactionsSummaries.decrement({itemId:oldData.itemId, reactionType:oldData.type}, (e,r)=>{if(e)return console.log(e)});
-                ReactionsSummaries.increment({itemId:newData.itemId, reactionType:newData.type}, (e,r)=>{if(e)return console.log(e)});
+                ReactionsSummaries.decrement({ itemId, reactionType: oldData.type }, (e, r) => { if (e) return console.log(e) });
+                ReactionsSummaries.increment({ itemId, reactionType: newData.type }, (e, r) => { if (e) return console.log(e) });
                 // toggle on the selected reaction type, and toggle off the old one
-                if (result) return callback(null, result);
+                if (result) {
+                    return callback(null, result);
+                }
                 return callback(null, null);
             }
         );
     }
 
     static remove(options, callback) {
-        var {reactionId, itemId, reactionType} = options;
+        var { reactionId, itemId, reactionType } = options;
 
         if (!reactionId || typeof reactionId !== 'string' || !itemId || !reactionType) {
             throw Error("Invalid reaction Data!");
@@ -98,11 +106,15 @@ class Reactions {
         }
 
         buildfire.appData.delete(reactionId, Reactions.TAG, (err, result) => {
-            if (err) return callback(err);
+            if (err) {
+                return callback(err);
+            }
 
-            ReactionsSummaries.decrement({itemId, reactionType}, (e,r)=>{if(e)return console.log(e)});
+            ReactionsSummaries.decrement({ itemId, reactionType }, (e, r) => { if (e) return console.log(e) });
             // toggle off the reaction
-            if (result) return callback(null, result);
+            if (result) {
+                return callback(null, result);
+            }
             return callback(null, null);
         });
     }
@@ -118,11 +130,11 @@ class Reactions {
             throw Error("callback must be a function!");
         }
 
-        if(!pageIndex){
+        if (typeof pageIndex !== 'number') {
             pageIndex = 0;
         }
 
-        if(!pageSize){
+        if (!pageSize) {
             pageIndex = 50;
         }
 
@@ -135,9 +147,13 @@ class Reactions {
                 pageSize,
             }, Reactions.TAG,
             (err, result) => {
-                if (err) return callback(err);
+                if (err) {
+                    return callback(err);
+                }
 
-                if (result) return callback(null, result)
+                if (result) {
+                    return callback(null, result);
+                }
                 return callback(null, null);
             }
         );
@@ -151,18 +167,20 @@ class Reactions {
         if (!callback || typeof callback !== 'function') {
             throw Error("callback must be a function!");
         }
-        
-        var searchOptions = {
-            filter:{"$json.itemId":{$in:itemIds}, "$json.userId":userId}
+
+        var searchOptions = { // need to be check ----
+            filter: { "$json.itemId": { $in: itemIds }, "$json.userId": userId }
         }
 
         buildfire.appData.search(searchOptions, Reactions.TAG, (err, result) => {
-            if (err) return callback(err);
-            if(result) return callback(null, result);
+            if (err) {
+                return callback(err);
+            }
+            if (result) {
+                return callback(null, result);
+            }
             return callback(null, null);
         })
-
-
     }
 }
 
@@ -182,8 +200,8 @@ class ReactionsSummaries {
         return "$$reactionsSummary";
     }
 
-    static add(summery, callback){
-        if(!summery.itemId || !summery.reactions){
+    static add(summery, callback) {
+        if (!summery.itemId || !summery.reactions || !summery.reactions.length) {
             throw Error("Invalid reaction summery object!");
         }
 
@@ -194,34 +212,42 @@ class ReactionsSummaries {
         buildfire.publicData.insert(
             summery, ReactionsSummaries.TAG, true,
             (err, result) => {
-                if (err) return callback(err);
+                if (err) {
+                    return callback(err);
+                }
 
-                if (result) return callback(null, result);
+                if (result) {
+                    return callback(null, result);
+                }
+                return callback(null, null);
             }
         );
     }
 
     static get(itemIds, callback) {
-        if (!itemIds || !callback) {
+        if (!itemIds) {
             throw Error("Invalid get options!");
         }
 
-        if (typeof callback !== 'function') {
+        if (typeof callback !== 'function' || !callback) {
             throw Error("callback must be a function!");
         }
 
         buildfire.publicData.search(
             {
                 filter: {
-                    "_buildfire.index.string1": {$in: itemIds}
+                    "_buildfire.index.string1": { $in: itemIds }
                 }
             }, ReactionsSummaries.TAG,
             (err, result) => {
-                if (err) return callback(err);
+                if (err) {
+                    return callback(err);
+                }
 
                 if (result) {
                     return callback(null, result);
                 }
+                return callback(null, null);
             }
         );
     }
@@ -242,7 +268,7 @@ class ReactionsSummaries {
             "_buildfire.index.string1": itemId,
             "reactions.type": reactionType,
         }
-        var inc = { $inc: {"reactions.$.count": 1} }
+        var inc = { $inc: { "reactions.$.count": 1 } }
 
         buildfire.publicData.searchAndUpdate(
             filter, inc, ReactionsSummaries.TAG,
@@ -250,6 +276,7 @@ class ReactionsSummaries {
                 if (err) return callback(err);
 
                 if (result) callback(null, result);
+                return callback(null, null);
             }
         );
     }
@@ -269,7 +296,7 @@ class ReactionsSummaries {
             "_buildfire.index.string1": itemId,
             "reactions.type": reactionType,
         }
-        var inc = { $inc:{"reactions.$.count": -1 }}
+        var inc = { $inc: { "reactions.$.count": -1 } }
 
         buildfire.publicData.searchAndUpdate(
             filter, inc, ReactionsSummaries.TAG,
@@ -277,10 +304,40 @@ class ReactionsSummaries {
                 if (err) return callback(err);
 
                 if (result) callback(null, result);
+                return callback(null, null);
             }
         );
     }
 
+    static insertOrIncrement(options, callback){
+        if (!options.summery || !options.reactionType) {
+            throw Error("Invalid reaction summery data!");
+        }
+
+        if (typeof callback !== 'function') {
+            throw Error("callback must be a function!");
+        }
+
+        ReactionsSummaries.add(options.summery, (err,res)=>{
+            if (err && err.message=="Duplicate Entry") {
+                ReactionsSummaries.increment({itemId: options.summery.itemId, reactionType:options.reactionType}, (e,r)=>{
+                    if(e) {
+                        return callback(e);
+                    }
+
+                    if(r) {
+                        callback(null, r);
+                    }
+                })
+            }
+
+            if (res) {
+                return callback(null, result);
+            }
+            return callback(null, null);
+        })
+        
+    }
     // add new method called -=> insertOrIncrement to be called only if itemId is not returned by get() "no reactions yet"
     // use checkDuplicate for insert to avoid duplicate insertions
 }
@@ -298,11 +355,34 @@ class ReactionsTypes {
 
 buildfire.components.reactions = class ReactionComponent {
 
+    // debounce getting item reactions to avoid multi-request to server
+    static _itemIds = [];
+    static _timer;
+    static _reactionDebounce(itemId) {
+        if(itemId && ReactionComponent._itemIds.indexOf(itemId)<0){
+            ReactionComponent._itemIds.push(itemId);
+        }
+        clearTimeout(ReactionComponent._timer);
+        ReactionComponent._timer = setTimeout(()=>{
+            var __itemIds = ReactionComponent._itemIds;
+            ReactionComponent._itemIds = []; // if the user send new itemIds after the delay and before getting the res from db
+
+            ReactionsSummaries.get(__itemIds, (err,res)=>{
+                if(err) console.log(err)
+                if(res){/* show reaction summaries on items */}
+
+                Reactions.getByUserId(userId, __itemIds, (e,r)=>{
+                    if(e) console.log(e);
+                    if(r){/* show users reactions on items */}
+                })
+            })
+        }, 300)
+    }
+
     constructor(data = {}) {
         this.selector = data.selector || null; // make sure that selector is valid
         this.showCount = typeof data.showCount === 'boolean' ? data.showCount : false; // default false
         this.showUsersReactions = typeof data.showUsersReactions === 'boolean' ? data.showUsersReactions : false; // show who reacted for each reaction
-        this.userReactedWith = null; // reaction type that the user is reacted with
 
         if (data.types && data.types.length) {
             for (var i = 0; i < data.types.length; i++) {
@@ -323,6 +403,7 @@ buildfire.components.reactions = class ReactionComponent {
         }
 
         this._init();
+        ReactionComponent._reactionDebounce(this.itemId);
     }
 
     _validateReactionTypes(reaction) {
@@ -351,7 +432,6 @@ buildfire.components.reactions = class ReactionComponent {
     _buildComponent() {
         // build the component HTML elements
         // if the user is logged in, then we will check if he is reacted with this item or not
-        // this._userReactedWith();
 
         // when click on a reaction type
         // this._react(type)
@@ -360,73 +440,12 @@ buildfire.components.reactions = class ReactionComponent {
         // this._registerAnalytics();
     }
 
-    _userReactedWith() {
-        buildfire.auth.getCurrentUser((err, user) => {
-            if (err) return console.error(err);
-
-            Reactions.getByUserId(user._id, this.itemId, (e, r) => {
-                if (e) {
-                    throw new Error('error while getting user reaction ' + e);
-                }
-                if (r) {
-                    this.userReactedWith = r.data;
-                }
-            })
-        });
-    }
-
     _react(type) {
         // trigger when the user click on reaction icon
 
         // if the user select a type that he reacted with, then it will be removed
-        if (!this.userReactedWith) {
-            var reactionData = {
-                itemId: this.itemId,
-                reactions: {},
-                _buildfire: {
-                    index: {
-                        array1: [{ string1: this.itemId + '-' + type }]
-                    }
-                }
-            }
-            buildfire.auth.getCurrentUser((err, user) => {
-                if (err) return console.error(err);
-
-                if (!user) {
-                    buildfire.auth.login({}, (err, user) => {
-                        if (err) return console.error(err);
-                        if (user) {
-                            reactionData.userId = user._id;
-                            reactionData._buildfire.index.string1 = this.itemId + "-" + user._id;
-
-                            var reaction = new Reaction(reactionData);
-                            this.add(reaction, (e, r) => {
-                                if (e) throw new Error('error while adding reaction ' + e);
-                                if (r) {
-                                    // add analytics (reaction title);
-                                    userReactedWith = r.data;
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    reactionData.userId = user._id;
-                    reactionData._buildfire.index.string1 = this.itemId + "-" + user._id;
-
-                    var reaction = new Reaction(reactionData);
-                    this.add(reaction, (e, r) => {
-                        if (e) throw new Error('error while adding reaction ' + e);
-                        if (r) {
-                            // add analytics (reaction title);
-                            userReactedWith = r.data;
-                        }
-                    });
-                }
-            })
-        } else {
-            // if the user click on the same reaction type, then the reaction will be removed
-            // otherwise the reaction will be updated
-        }
+        // if the user click on the same reaction type, then the reaction will be removed
+        // otherwise the reaction will be updated
 
         // edge cases: 
         // 1. if the user reacted with other type
@@ -441,3 +460,26 @@ buildfire.components.reactions = class ReactionComponent {
     }
 
 }
+
+//////////////////////////////////////////
+//////////////////////////////////////////
+////////////  Testing Part ///////////////
+//////////////////////////////////////////
+//////////////////////////////////////////
+function testToApplyDebounce(arg) {
+    console.log(arg)
+}
+
+function _reactionDebounce(func, delay) {
+    var timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+const debouncedFunc = _reactionDebounce(testToApplyDebounce, 1000);
+
+debouncedFunc('l')
+
