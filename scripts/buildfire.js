@@ -3912,9 +3912,16 @@ var buildfire = {
 				});
 			},
 			showDialog: function (options, callback) {
-				debugger;
-				var p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
-				buildfire._sendPacket(p, callback); 
+				if (typeof options === 'undefined' || !options) {
+					options = {};
+				};
+				buildfire.getContext(function(err, context){
+					if(context && context.instanceId) {
+						options.instanceId = context.instanceId;
+					}
+					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
+					buildfire._sendPacket(p, callback); 
+				});
 			},
 		},
 	},
