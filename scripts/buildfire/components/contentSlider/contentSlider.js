@@ -122,6 +122,7 @@ buildfire.components.contentSlider = class ContentSlider {
 
 
     insertAt(options, callback) {
+        if (!options) throw new Error('Options must be provided!');
         if (!(this.#state.items[options.index])) throw new Error('Invalid parameters!');
 
         if (options.items && options.item)
@@ -138,7 +139,7 @@ buildfire.components.contentSlider = class ContentSlider {
         }
 
         this.refresh();
-        callback();
+        if (callback) callback();
     }
 
     append(items, callback) {
@@ -156,7 +157,7 @@ buildfire.components.contentSlider = class ContentSlider {
 
         this.insertAt(options, () => {
             this.refresh();
-            callback();
+            if (callback) callback();
         });
     }
 
@@ -188,6 +189,7 @@ buildfire.components.contentSlider = class ContentSlider {
         }
 
         this.#state.items = this.#state.items.filter(el => el.id !== id);
+        this.#state.currentIndex--;
     }
     //================================================================================================
     getCurrent(callback) {
@@ -208,11 +210,13 @@ buildfire.components.contentSlider = class ContentSlider {
         let item = null;
         if (options.id) {
             item = this.#state.items.find(el => el.id === options.id);
+            if (!item) throw new Error('Item not found!');
             this.#state.currentIndex = this.#state.items.indexOf(item);
         }
         else if (options.index) {
-            this.#state.currentIndex = index;
-            item = this.#state.items[index];
+            item = this.#state.items[options.index];
+            if (!item) throw new Error('Item not found!');
+            this.#state.currentIndex = options.index;
         }
 
         this.selector.innerHTML = '';
