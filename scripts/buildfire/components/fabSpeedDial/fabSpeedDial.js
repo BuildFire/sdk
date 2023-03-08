@@ -9,7 +9,7 @@ function State() {
 	this.bodyTextColor = '#000000';
 }
 
-buildfire.components.FabSpeedDial = class FabSpeedDial {
+buildfire.components.fabSpeedDial = class FabSpeedDial {
 	constructor(selector, options = {}) {
 		if (!document.querySelector(selector)) throw new Error('Element not found!');
 
