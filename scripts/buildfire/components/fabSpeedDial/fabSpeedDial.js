@@ -46,7 +46,11 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		this._state.bodyTextColor = getComputedStyle(document.documentElement)
 			.getPropertyValue('--bf-theme-body-text')
 			.trim();
-		this._buildOverlay();
+        if (this.options.showOverlay) {
+            this._buildOverlay();
+        } else {
+            document.addEventListener('click', (e) => this._onClickOutside(e));
+        }
 		this._buildMainButton();
 		this._buildButtons();
 	}
@@ -56,17 +60,19 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 	 * @function
 	 * @public
 	 */
-	close() {
+	close(e) {
+        e?.stopPropagation();
 		if (!this.selector) return;
 
-		this.selector.classList.remove(SpeedDialFab.ACTIVE_CLASS_NAME);
-		this._state.overlayElement.classList.add('fade-out');
-		this._state.overlayElement.classList.remove('fade-in');
+        this.selector.classList.remove(SpeedDialFab.ACTIVE_CLASS_NAME);
 		this._state.isOpen = false;
-
-		setTimeout(() => {
-			this._state.overlayElement.classList.add('hidden');
-		}, 200);
+        if (this.options.showOverlay) {
+            this._state.overlayElement.classList.add('fade-out');
+            this._state.overlayElement.classList.remove('fade-in');
+			setTimeout(() => {
+				this._state.overlayElement.classList.add('hidden');
+			}, 200);
+        }
 		document.querySelectorAll('.fab-button-container').forEach((el) => {
 			setTimeout(() => {
 				el.classList.add('hidden');
@@ -79,13 +85,17 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 	 * @function
 	 * @public
 	 */
-	open() {
-		if (!this.selector) return;
+	open(e) {
+        e?.stopPropagation();
+        if (!this.selector) return;
+        if (!this.selector) return;
 		this.selector.classList.add(SpeedDialFab.ACTIVE_CLASS_NAME);
 		document.querySelectorAll('.fab-button-container').forEach((el) => el.classList.remove('hidden'));
 
-		this._state.overlayElement.classList.remove('fade-out', 'hidden');
-		this._state.overlayElement.classList.add('fade-in');
+        if (this.options.showOverlay) {
+            this._state.overlayElement.classList.remove('fade-out', 'hidden');
+            this._state.overlayElement.classList.add('fade-in');
+        }
 		this._state.isOpen = true;
 	}
 
@@ -130,18 +140,30 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 	destroy() {
 		if (!this.selector) throw 'speedDial instance destroyed';
 
-		this.selector.innerHTML = '';
-		this._state.overlayElement.remove();
-		delete this.options;
-		delete this._state;
-		delete this.selector;
-		delete this.onButtonClick;
+        this._state.mainFabBtnElement.removeEventListener('click', (e) =>
+            this._onMainBtnClick(e)
+        );
+        if (this.overlayElement) {
+            this._state.overlayElement.removeEventListener('click', (e) =>
+                this._onClickOutside(e)
+				);
+			this._state.overlayElement.remove();
+        } else {
+            document.addEventListener('click', (e) => this._onClickOutside(e));
+        }
+        this.selector.innerHTML = '';
+        delete this.options;
+        delete this._state;
+        delete this.selector;
+        delete this.onButtonClick;
+    }
 
-		this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick);
-		this._state.overlayElement.removeEventListener('click', this.close);
-	}
-
-	_buildMainButton() {
+    /**
+     * Build main button
+     * @function
+     * @private
+     */
+    _buildMainButton() {
 		this._state.mainFabBtnElement = this._createUIElement(
 			'button',
 			this.selector,
@@ -156,19 +178,29 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		)}),0px 1px 10px rgba(${this._colorToRGBA(this._state.bodyTextColor, 0.1)})
 		  `;
 
-		this._state.mainFabBtnElement.addEventListener('click', this._onMainBtnClick);
+		this._state.mainFabBtnElement.addEventListener('click', (e) => this._onMainBtnClick(e));
 	}
 
+    /**
+     * Toggle the speed dial opened or closed
+     * @function
+     * @private
+     */
 	_onMainBtnClick(e) {
 		if (!this._state.isOpen) {
-			this.open();
+			this.open(e);
 			this.onOpen();
 		} else {
-			this.close();
+			this.close(e);
 			this.onClose();
 		}
 	}
 
+    /**
+     * Build speed dial buttons
+     * @function
+     * @private
+     */
 	_buildButtons() {
 		const buttonsContainer = this._createUIElement('div', this.selector, '', [
 			'fab-button-container',
@@ -225,6 +257,11 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		});
 	}
 
+    /**
+     * Build overlay
+     * @function
+     * @private
+     */
 	_buildOverlay() {
 		this._state.overlayElement = this._createUIElement(
 			'div',
@@ -233,12 +270,29 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 			['expanded-fab-overlay', 'hidden', 'fade-in']
 		);
 
-		if (!this.options.showOverlay) {
-			this._state.overlayElement.style.backgroundColor = 'transparent';
-		}
-		this._state.overlayElement.addEventListener('click', this.close);
-	}
+        // if (!this.options.showOverlay) {
+        //     this._state.overlayElement.style.backgroundColor = 'transparent';
+        // }
+        this._state.overlayElement.addEventListener('click', (e) =>
+            this._onClickOutside(e)
+        );
+    }
 
+    /**
+     * On click outside of the speed dial buttons
+     * @function
+     * @private
+     */
+    _onClickOutside(e) {
+        if (e.target.closest('.main-fab-button')) return;
+        this.close(e);
+    }
+
+    /**
+     * Create a dom element
+     * @function
+     * @private
+     */
 	_createUIElement(
 		elementType,
 		appendTo = null,
@@ -260,6 +314,12 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		return e;
 	}
 
+    /**
+     * Build main button content
+     * @function
+     * @private
+     * @return element
+     */
 	_defaultMainBtnContent() {
 		const contentButtonContainer = document.createElement('i');
 		contentButtonContainer.classList.add('icon', 'default');
@@ -282,6 +342,12 @@ buildfire.components.speedDialFab = class SpeedDialFab {
 		return contentButtonContainer;
 	}
 
+    /**
+     * convert HEX color to RGBA color
+     * @function
+     * @private
+     * @return RGBA color
+     */
 	_colorToRGBA(color, opacity = 1) {
 		const isHexColor = (color) => /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(color);
 		const getChunksFromString = (st, chunkSize) =>

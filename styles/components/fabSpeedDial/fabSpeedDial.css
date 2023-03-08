@@ -151,7 +151,7 @@ html[safe-area="true"] .speed-dial-container {
 }
 
 .speed-dial-container .fab-button-container.hidden,
-.speed-dial-container .expanded-fab-overlay.hidden {
+.expanded-fab-overlay.hidden {
 	display: none !important;
 }
 
