@@ -24,11 +24,11 @@ class Reactions {
     // methods
     static add(reaction, reactionType, callback) {
         if (!reaction || !reaction.itemId || !reaction.userId || !reactionType) {
-            throw Error("Invalid reaction object!");
+            throw new Error("Invalid reaction object!");
         }
 
         if (typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         buildfire.appData.insert(
@@ -38,7 +38,6 @@ class Reactions {
                     return callback(err);
                 }
 
-                ReactionsSummaries.increment({ itemId: reaction.itemId, reactionType }, (e, r) => { if (e) return console.log(e) });
                 // toggle on the selected reaction type
                 if (result) {
                     return callback(null, result);
@@ -50,15 +49,15 @@ class Reactions {
 
     static update(itemId, oldData, newData, callback) {
         if (!itemId || typeof itemId !== 'string') {
-            throw Error("Invalid item ID!");
+            throw new Error("Invalid item ID!");
         }
         // data need to be checked 
         if (!oldData || !newData) {
-            throw Error("Invalid reaction data!");
+            throw new Error("Invalid reaction data!");
         }
 
         if (typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         var filter = {
@@ -98,11 +97,11 @@ class Reactions {
         var { reactionId, itemId, reactionType } = options;
 
         if (!reactionId || typeof reactionId !== 'string' || !itemId || !reactionType) {
-            throw Error("Invalid reaction Data!");
+            throw new Error("Invalid reaction Data!");
         }
 
         if (typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         buildfire.appData.delete(reactionId, Reactions.TAG, (err, result) => {
@@ -123,11 +122,11 @@ class Reactions {
         var { itemId, reactionType, pageIndex, pageSize } = options;
 
         if (!itemId || !reactionType) {
-            throw Error("Invalid get options!");
+            throw new Error("Invalid get options!");
         }
 
         if (!callback || typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         if (typeof pageIndex !== 'number') {
@@ -161,11 +160,11 @@ class Reactions {
 
     static getByUserId(userId, itemIds, callback) { // array of item ids ????
         if (!userId || typeof userId !== 'string' || !itemIds || !itemIds.length) {
-            throw Error('Invalid arguments');
+            throw new Error('Invalid arguments');
         }
 
         if (!callback || typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         var searchOptions = { // need to be check ----
@@ -199,14 +198,16 @@ class ReactionsSummaries {
     static get TAG() {
         return "$$reactionsSummary";
     }
+   
+    static _itemsWithoutSummery = [];
 
     static add(summery, callback) {
         if (!summery.itemId || !summery.reactions || !summery.reactions.length) {
-            throw Error("Invalid reaction summery object!");
+            throw new Error("Invalid reaction summery object!");
         }
 
         if (typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         buildfire.publicData.insert(
@@ -226,11 +227,11 @@ class ReactionsSummaries {
 
     static get(itemIds, callback) {
         if (!itemIds) {
-            throw Error("Invalid get options!");
+            throw new Error("Invalid get options!");
         }
 
         if (typeof callback !== 'function' || !callback) {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         buildfire.publicData.search(
@@ -257,11 +258,11 @@ class ReactionsSummaries {
         var { itemId, reactionType } = options;
 
         if (!itemId || !reactionType || !callback) {
-            throw Error("Invalid get options!");
+            throw new Error("Invalid get options!");
         }
 
         if (typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         var filter = {
@@ -285,11 +286,11 @@ class ReactionsSummaries {
         var { itemId, reactionType } = options;
 
         if (!itemId || !reactionType || !callback) {
-            throw Error("Invalid get options!");
+            throw new Error("Invalid get options!");
         }
 
         if (typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
         var filter = {
@@ -309,34 +310,34 @@ class ReactionsSummaries {
         );
     }
 
-    static insertOrIncrement(options, callback){
+    static insertOrIncrement(options, callback) {
         if (!options.summery || !options.reactionType) {
-            throw Error("Invalid reaction summery data!");
+            throw new Error("Invalid reaction summery data!");
         }
 
         if (typeof callback !== 'function') {
-            throw Error("callback must be a function!");
+            throw new Error("callback must be a function!");
         }
 
-        ReactionsSummaries.add(options.summery, (err,res)=>{
-            if (err && err.message=="Duplicate Entry") {
-                ReactionsSummaries.increment({itemId: options.summery.itemId, reactionType:options.reactionType}, (e,r)=>{
-                    if(e) {
+        ReactionsSummaries.add(options.summery, (err, res) => {
+            if (err && err.message == "Duplicate Entry") {
+                ReactionsSummaries.increment({ itemId: options.summery.itemId, reactionType: options.reactionType }, (e, r) => {
+                    if (e) {
                         return callback(e);
                     }
 
-                    if(r) {
+                    if (r) {
                         callback(null, r);
                     }
                 })
             }
 
             if (res) {
-                return callback(null, result);
+                return callback(null, res);
             }
             return callback(null, null);
         })
-        
+
     }
     // add new method called -=> insertOrIncrement to be called only if itemId is not returned by get() "no reactions yet"
     // use checkDuplicate for insert to avoid duplicate insertions
@@ -359,22 +360,38 @@ buildfire.components.reactions = class ReactionComponent {
     static _itemIds = [];
     static _timer;
     static _reactionDebounce(itemId) {
-        if(itemId && ReactionComponent._itemIds.indexOf(itemId)<0){
+        if (itemId && ReactionComponent._itemIds.indexOf(itemId) < 0) {
             ReactionComponent._itemIds.push(itemId);
         }
         clearTimeout(ReactionComponent._timer);
-        ReactionComponent._timer = setTimeout(()=>{
+        ReactionComponent._timer = setTimeout(() => {
             var __itemIds = ReactionComponent._itemIds;
             ReactionComponent._itemIds = []; // if the user send new itemIds after the delay and before getting the res from db
 
-            ReactionsSummaries.get(__itemIds, (err,res)=>{
-                if(err) console.log(err)
-                if(res){/* show reaction summaries on items */}
+            ReactionsSummaries.get(__itemIds, (err, res) => {
+                if (err) console.log(err)
+                if (res) {/* show reaction summaries on items */ }
+                if(res.length<__itemIds.length){
+                    __itemIds.forEach(item=>{
+                        var validSummery = res.find(i=>i.data.itemId == item);
+                        if(!validSummery){
+                            ReactionsSummaries._itemsWithoutSummery.push(item);
+                        }
+                    })
+                }
+                console.log(res);
 
-                Reactions.getByUserId(userId, __itemIds, (e,r)=>{
-                    if(e) console.log(e);
-                    if(r){/* show users reactions on items */}
-                })
+                buildfire.auth.getCurrentUser((err, user) => {
+                    if (err) return console.error(err);
+
+                    if (user && user._id) {
+                        Reactions.getByUserId(user._id, __itemIds, (e, r) => {
+                            if (e) console.log(e);
+                            if (r) {/* show users reactions on items */ }
+                            console.log(r);
+                        })
+                    }
+                });
             })
         }, 300)
     }
@@ -385,39 +402,34 @@ buildfire.components.reactions = class ReactionComponent {
         this.showUsersReactions = typeof data.showUsersReactions === 'boolean' ? data.showUsersReactions : false; // show who reacted for each reaction
 
         if (data.types && data.types.length) {
-            for (var i = 0; i < data.types.length; i++) {
-                if (!this._validateReactionTypes(data.types[i])) {
-                    throw Error('Invalid reaction types');
-                    return;
+            this.types = data.types.map(t => {
+                if (!t.type) {
+                    throw new Error('Reaction must have a property type');
                 }
-            }
+
+                var availableReactionTypes = ReactionsTypes.types;
+                t.type = t.type.toLowerCase();
+                var validReactionType = availableReactionTypes.find(r => r.type === t.type);
+                if (validReactionType) {
+                    var _t = { ...validReactionType, ...t };
+                    this._registerAnalytics(_t.title, _t.type);
+                    return _t;
+                } else {
+                    throw new Error('Invalid reaction type' + t.type);
+                }
+            })
         } else {
-            throw Error('Invalid reaction types');
+            throw new Error('Invalid reaction types');
         }
-        this.types = data.types.map(t => ({ ...t, type: t.type.toLowerCase() }));
 
         if (data.itemId && typeof data.itemId === 'string') {
             this.itemId = data.itemId;
         } else {
-            throw Error('Invalid Item ID');
+            throw new Error('Invalid Item ID');
         }
 
         this._init();
         ReactionComponent._reactionDebounce(this.itemId);
-    }
-
-    _validateReactionTypes(reaction) {
-        var availableReactions = ReactionsTypes.types;
-
-        if (reaction && reaction.type && reaction.title) {
-            var validReaction = availableReactions.find(r => r.type.toLowerCase() === reaction.type.toLowerCase());
-            if (!validReaction) {
-                return false;
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
 
     _init() {
@@ -431,16 +443,43 @@ buildfire.components.reactions = class ReactionComponent {
 
     _buildComponent() {
         // build the component HTML elements
-        // if the user is logged in, then we will check if he is reacted with this item or not
+        var iconsContainer = '';
+        this.types.forEach(t => {
+            iconsContainer += `<span bf-reactions-type="${t.type}" bf-reactions-color="${t.color}" class="${t.type} reactionIcon">${t.title}</span>`
+        });
 
+        this.container.setAttribute('bf-reactions-itemid', this.itemId);
+        this.container.setAttribute('bf-user_react-type', ''); // to save the reaction type that user reacted with
+        this.container.setAttribute('bf-user_react-id', ''); // to save the reaction id that the user reacted with 
+        this.container.classList.add('reactions');
+        this.container.innerHTML = `
+            <div class="iconContainer">${iconsContainer}</div>
+            <div bf-reactions-count="" class="count">
+                <span class="reactionCount">0</span>
+            </div>
+        `;
+
+        var reactionIcons = this.container.querySelectorAll('[bf-reactions-type]');
+        reactionIcons.forEach(icon => {
+            icon.addEventListener('click', () => {
+                buildfire.auth.getCurrentUser((err, user) => {
+                    if (err || !user) {
+                        buildfire.auth.login({}, (err, user) => {
+                            if (user && user._id) {
+                                this._react(icon.getAttribute('bf-reactions-type'), icon, user._id)
+                            }
+                        });
+                    } else if (user && user._id) {
+                        this._react(icon.getAttribute('bf-reactions-type'), icon, user._id)
+                    }
+                })
+            })
+        })
         // when click on a reaction type
         // this._react(type)
-
-        // ...
-        // this._registerAnalytics();
     }
 
-    _react(type) {
+    _react(newReactionType, icon, userId) {
         // trigger when the user click on reaction icon
 
         // if the user select a type that he reacted with, then it will be removed
@@ -450,36 +489,88 @@ buildfire.components.reactions = class ReactionComponent {
         // edge cases: 
         // 1. if the user reacted with other type
         // 2. if the user is not logged in
+        var userReactType = this.container.getAttribute('bf-user_react-type');
+
+        var selectedReaction = {
+            type: newReactionType,
+            reactionId: this.container.getAttribute('bf-user_react-id'),
+            itemId: this.container.getAttribute('bf-reactions-itemid'),
+        }
+
+        if (userReactType) {
+            if (userReactType === newReactionType) {
+                // delete the reaction
+                icon.classList.remove('reacted');
+                icon.style.backgroundColor = '#fff';
+                this.container.setAttribute('bf-user_react-type', '');
+                // Reactions.remove({}, (e,r)=>{});
+            } else {
+                // update the reaction
+                icon.classList.add('reacted');
+                icon.style.backgroundColor = icon.getAttribute('bf-reactions-color');
+                this.container.querySelector(`[bf-reactions-type="${userReactType}"]`).classList.remove('reacted');
+                this.container.querySelector(`[bf-reactions-type="${userReactType}"]`).style.backgroundColor = '#fff';
+                this.container.setAttribute('bf-user_react-type', newReactionType);
+            }
+        } else {
+            // add new reaction
+            icon.classList.add('reacted');
+            icon.style.backgroundColor = icon.getAttribute('bf-reactions-color');
+            this.container.setAttribute('bf-user_react-type', newReactionType);
+
+            var reaction = new Reaction({
+                itemId: selectedReaction.itemId,
+                userId,
+                reactions: [{ type: selectedReaction.type }],
+                _buildfire: {
+                    index: {
+                        string1: selectedReaction.itemId + '-' + userId,
+                        array1: [{ string1: "reactionType-" + selectedReaction.itemId + "-" + selectedReaction.type }]
+                    }
+                },
+            })
+            Reactions.add(reaction, selectedReaction.type, (e, r) => {
+                if (e) {
+                    icon.classList.remove('reacted');
+                    icon.style.backgroundColor = '#fff';
+                    this.container.setAttribute('bf-user_react-type', '');
+                    throw new Error('Error while adding new Reaction: ' + e)
+                } else if (r) {
+                    if(ReactionsSummaries._itemsWithoutSummery.indexOf(reaction.itemId)>=0){
+                        var reactions = this.types.map(t=>({type:t.type, count: 0, lastReactionBy: userId}));
+                        var array1 = this.types.map(t=>({string1:t.type}));
+
+                        var summery = new ReactionsSummary({
+                            itemId: reaction.itemId,
+                            reactions,
+                            _buildfire:{
+                                index:{
+                                    string1: reaction.itemId,
+                                    array1
+                                }
+                            }
+                        })
+                        ReactionsSummaries.insertOrIncrement({summery, reactionType:selectedReaction.type}, (e, r) => { if (e) return console.log(e) })
+                    }else{
+                        ReactionsSummaries.increment({ itemId: reaction.itemId, reactionType:selectedReaction.type }, (e, r) => { if (e) return console.log(e) });
+                    }
+                }
+            });
+        }
     }
 
-    _registerAnalytics() {
+    _registerAnalytics(title, key) {
         // add analytics methods
-        // 1. for each type, when the user add a reaction with item
-        // 2. for each type, when the user remove a reaction with item
-        // 3. create ReactionsSummary record if not exist
+        // 1. for each type, when the user reacted with an item
+        // 2. for each type, when the user removed the reaction from an item
+        buildfire.analytics.registerEvent(
+            {
+                title: title,
+                key,
+                description: `How many users reacted as ${key} `,
+            },
+            { silentNotification: true }
+        );
     }
 
 }
-
-//////////////////////////////////////////
-//////////////////////////////////////////
-////////////  Testing Part ///////////////
-//////////////////////////////////////////
-//////////////////////////////////////////
-function testToApplyDebounce(arg) {
-    console.log(arg)
-}
-
-function _reactionDebounce(func, delay) {
-    var timer;
-    return function (...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-}
-const debouncedFunc = _reactionDebounce(testToApplyDebounce, 1000);
-
-debouncedFunc('l')
-
