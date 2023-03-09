@@ -7,8 +7,8 @@ body.slim-tinymce {
     margin: 0 auto;
 }
 body *:hover {
-    box-shadow: 0 0 0 1px var(--bf-theme-body-text) !important;
-
+    box-shadow: 0 0 0 1px var(--bf-theme-container-highlight, --bf-theme-body-text) !important;
+    transition: 0.3s;
 }
 .bf-wysiwyg-hide-app:not(style) {
   display: inherit;

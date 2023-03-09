@@ -31,7 +31,7 @@ const dynamicEngine = {
 				expression,
 				extendedContext,
 				id: id || dynamicEngine.expressions._nanoid(),
-				destroy: function() {
+				destroy() {
 					dynamicEngine.expressions._destroyRequest(this.id);
 				}
 			};
@@ -42,7 +42,7 @@ const dynamicEngine = {
 			dynamicEngine.expressions._evaluate(evaluationRequest);
 			return evaluationRequest;
 		},
-		_evaluate: function(request) {
+		_evaluate(request) {
 			const { expressions } = dynamicEngine;
 			const { id, extendedContext, expression, callback } = request;
 
@@ -80,7 +80,7 @@ const dynamicEngine = {
 		* @param {string} id - The unique id of the request that should be deleted
 		* @private
 		*/
-		_destroyRequest: function(id) {
+		_destroyRequest(id) {
 			delete dynamicEngine.expressions._evaluationRequests[id];
 		},
 		/**
