@@ -14,6 +14,9 @@ var buildfire = {
 	isFileServer: function(url){
 		return (url.indexOf('s3.amazonaws.com') !== -1);
 	}
+	, isWidget: function() {
+		return window.location.href.indexOf('/widget/') > 0;
+	}
 	, isWeb: function(callback){
 		var isWebFromContext = function (context) {
 			if (context && context.device && context.device.platform) {
@@ -236,36 +239,38 @@ var buildfire = {
 		}
 
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
-			const context = buildfire.getContext();
-			if (context && context.scope === 'sdk') {
-				getPluginJson((err, pluginJson)=>{
-					if(err) console.error(err);
-					window.pluginJson = pluginJson;
-					buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
-
-					if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
-						//handle language settings
-						function getPluginLanguageJson(callback) {
-							const url = `../${pluginJson.control.language.languageJsonPath}`;
-							fetch(url)
-							.then(response => response.json())
-							.then(res => {
-								callback(null, res);
-							})
-							.catch(error => {
-								callback(error, null);
+			buildfire.getContext((err, context) => {
+				if (err) return console.error(err);
+				if (context && context.scope === 'sdk') {
+					getPluginJson((err, pluginJson)=>{
+						if(err) console.error(err);
+						window.pluginJson = pluginJson;
+						buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+	
+						if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
+							//handle language settings
+							function getPluginLanguageJson(callback) {
+								const url = `../${pluginJson.control.language.languageJsonPath}`;
+								fetch(url)
+								.then(response => response.json())
+								.then(res => {
+									callback(null, res);
+								})
+								.catch(error => {
+									callback(error, null);
+								});
+							}
+							getPluginLanguageJson((err, pluginLanguageJson)=>{
+								if(err) console.error(err);
+								window.pluginLanguageJson = pluginLanguageJson;
+								buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
 							});
 						}
-						getPluginLanguageJson((err, pluginLanguageJson)=>{
-							if(err) console.error(err);
-							window.pluginLanguageJson = pluginLanguageJson;
-							buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
-						});
-					}
-				});
-			}else{
-				attachPluginJsScript();
-			}
+					});
+				} else {
+					attachPluginJsScript();
+				}
+			});
 		}
 
 
@@ -357,11 +362,10 @@ var buildfire = {
 			callback = function (err, result) {
 				//console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
 			};
-
-		if (buildfire.getContext().type == 'control') {
-			packet.source = 'control';
-		} else {
+		if (buildfire.isWidget()) {
 			packet.source = 'widget';
+		} else {
+			packet.source = 'control';
 		}
 
 		var retryInterval = 3000,
