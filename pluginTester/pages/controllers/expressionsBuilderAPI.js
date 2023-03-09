@@ -32,6 +32,12 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
     };
 
     $scope.evaluate = function () {
+        //Expression Service not implemented yet in plugin tester to be used.
+        const dialogAPI = new DialogAPI({});
+        dialogAPI.alert({
+            message: "Expression Builder not available yet in Plugin Tester.",
+          }, ()=>{});
+          return;
         //reset values
         $scope.error = "";
         $scope.expression.evaluatedExpression = "";
