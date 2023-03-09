@@ -9,11 +9,10 @@ class Reaction {
     constructor(data = {}) {
         this.itemId = data.itemId || null;
         this.userId = data.userId || null;
-        // the user can react with multi types for the same item ?????
-        this.reactions = data.reactions || []; // object (type)  {type: "like, title: "like", color:"#FF0000", url:"thumbs_up"}
+        this.createdOn = data.createdOn || new Date();
+
+        this.reactions = data.reactions || []; // object (type)  {type: "like"}
         this._buildfire = data._buildfire || {};
-        // string1 = data.itemId + "-" + data.userId;
-        // array1.string1 = "reactionType-" + data.itemId + "-" + data.type;
     }
 }
 
@@ -23,8 +22,8 @@ class Reactions {
     }
     
     // methods
-    static add(reaction, reactionType, callback) {
-        if (!reaction || !reaction.itemId || !reaction.userId || !reactionType) {
+    static add(reaction, callback) {
+        if (!reaction || !reaction.itemId || !reaction.userId) {
             throw new Error("Invalid reaction object!");
         }
 
@@ -32,8 +31,11 @@ class Reactions {
             throw new Error("callback must be a function!");
         }
 
+        // setting the index
+        reaction._buildfire.index = this.buildIndex(reaction);
+
         buildfire.appData.insert(
-            reaction, Reactions.TAG, false,
+            reaction, Reactions.TAG, true,
             (err, result) => {
                 if (err) {
                     return callback(err);
@@ -183,9 +185,21 @@ class Reactions {
             return callback(null, null);
         })
     }
+    
     // add a new method for 
     static buildIndex(data = {}){
-        
+
+        const index = {
+            date1: data.createdOn,
+            string1: data.itemId + '-' + data.userId,
+            array1: []
+        };
+
+        data.reactions.forEach(reaction => {
+            index.array1.push({ string1: "reactionType-" + data.itemId + "-" + reaction.type })
+        })
+
+        return index;
     }
 }
 
