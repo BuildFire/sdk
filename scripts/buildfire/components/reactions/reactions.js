@@ -448,7 +448,6 @@ buildfire.components.reactions = (() => {
                         })
                     }
                 });
-                this.buildObserver();
             }, 50)
         }
 
