@@ -332,7 +332,7 @@ buildfire.components.reactions = (() => {
             ReactionsSummaries.add(options.summery, (err, res) => {
                 if (err && err.message == "Duplicate Entry") {
                     // remove the item id from the _itemsWithoutSummery array, sence it has a summery 
-                    ReactionsComponentGlobalState._itemsWithoutSummery.splice(ReactionsComponentGlobalState._itemsWithoutSummery.indexOf(options.summery.itemId), 1);
+                    State._itemsWithoutSummery.splice(State._itemsWithoutSummery.indexOf(options.summery.itemId), 1);
     
                     ReactionsSummaries.increment({ itemId: options.summery.itemId, reactionType: options.reactionType }, (e, r) => {
                         if (e) {
@@ -347,7 +347,7 @@ buildfire.components.reactions = (() => {
     
                 if (res) {
                     // remove the item id from the _itemsWithoutSummery array, sence it has a summery 
-                    ReactionsComponentGlobalState._itemsWithoutSummery.splice(ReactionsComponentGlobalState._itemsWithoutSummery.indexOf(options.summery.itemId), 1);
+                    State._itemsWithoutSummery.splice(State._itemsWithoutSummery.indexOf(options.summery.itemId), 1);
                     return callback(null, res);
                 }
                 return callback(null, null);
@@ -377,64 +377,59 @@ buildfire.components.reactions = (() => {
         }
     }
     
-    class ReactionsComponentGlobalState {
+    class State {
         // debounce getting item reactions to avoid multi-request to server
-        static allItemsinDom = [];
         static _itemIds = [];
         static _timer;
         static _itemsWithoutSummery = [];
     
-        static _reactionDebounce(itemId) {
+        static _debounce(itemId) {
             // to save new item ids that will be rendered
-            if (itemId && ReactionsComponentGlobalState._itemIds.indexOf(itemId) < 0) {
-                ReactionsComponentGlobalState._itemIds.push(itemId);
-            }
-            // to save all item ids that rendered to manage them in case the user logged in or logged out 
-            if (itemId && ReactionsComponentGlobalState.allItemsinDom.indexOf(itemId) < 0) {
-                ReactionsComponentGlobalState.allItemsinDom.push(itemId);
+            if (itemId && State._itemIds.indexOf(itemId) < 0) {
+                State._itemIds.push(itemId);
             }
     
-            clearTimeout(ReactionsComponentGlobalState._timer);
-            ReactionsComponentGlobalState._timer = setTimeout(() => {
-                let __itemIds = ReactionsComponentGlobalState._itemIds;
-                ReactionsComponentGlobalState._itemIds = []; // if the user send new itemIds after the delay and before getting the res from db
+            clearTimeout(State._timer);
+            State._timer = setTimeout(() => {
+                let requestedIds = [...State._itemIds];
+                State._itemIds = []; // if the user send new itemIds after the delay and before getting the res from db
     
-                ReactionsSummaries.get(__itemIds, (err, res) => {
+                ReactionsSummaries.get(requestedIds, (err, res) => {
                     if (err) console.log(err)
                     if (res) {/* show reaction summaries on items */
-                        ReactionsComponentGlobalState._showAllReactionCount(res, __itemIds);
+                        State._showAllReactionCount(res, requestedIds);
                     }
-                    console.log(res, __itemIds);
+                    console.log(res, requestedIds);
     
                     buildfire.auth.getCurrentUser((err, user) => {
                         if (err) return console.error(err);
     
                         if (user && user._id) {
-                            Reactions.getByUserId(user._id, __itemIds, (e, r) => {
+                            Reactions.getByUserId(user._id, requestedIds, (e, r) => {
                                 if (e) console.log(e);
                                 if (r) {/* show users reactions on items */
-                                    ReactionsComponentGlobalState._showUserReactions(r)
+                                    State._showUserReactions(r)
                                 }
                                 console.log(r);
                             })
                         }
                     });
                 })
-            }, 300)
+            }, 50)
         }
     
-        static _showAllReactionCount(summeries, itemIds) {
-            // save all items that don't have summeries yet
-            if (summeries.length < itemIds.length) {
+        static _showAllReactionCount(summaries, itemIds) {
+            // save all items that don't have summaries yet
+            if (summaries.length < itemIds.length) {
                 itemIds.forEach(item => {
-                    let validSummery = summeries.find(i => i.data.itemId == item);
+                    let validSummery = summaries.find(i => i.data.itemId == item);
                     if (!validSummery) {
-                        ReactionsComponentGlobalState._itemsWithoutSummery.push(item);
+                        State._itemsWithoutSummery.push(item);
                     }
                 })
             }
             // print reactions count in the dom
-            summeries.forEach(summery => {
+            summaries.forEach(summery => {
                 let container = document.querySelector(`[bf-reactions-itemid="${summery.data.itemId}"]`);
                 if (container) {
                     summery.data.reactions.forEach(r => {
@@ -498,14 +493,19 @@ buildfire.components.reactions = (() => {
     
         _init() {
             let _container = document.querySelector(this.selector);
-            if (!_container) throw new Error('Element not found!');
+            if (!_container) throw new Error('Selector is not valid');
             else {
                 this.container = _container;
                 this._buildComponent();
-                ReactionsComponentGlobalState._reactionDebounce(this.itemId);
+                State._debounce(this.itemId);
             }
         }
-    
+        
+        _refresh() {
+            // TODO: scan all existing DOM elem 
+            // typical use case: after onLOgin / onLogout
+        }
+
         _buildComponent() {
             // build the component HTML elements
             let iconsContainer = '';
@@ -604,7 +604,7 @@ buildfire.components.reactions = (() => {
                 } else if (r) {
                     this.container.setAttribute('bf-user_react-id', r.id);
     
-                    if (ReactionsComponentGlobalState._itemsWithoutSummery.indexOf(reaction.itemId) >= 0) {
+                    if (State._itemsWithoutSummery.indexOf(reaction.itemId) >= 0) {
                         let reactions = this.types.map(t => ({ type: t.type, count: t.type === selectedReaction.type ? 1 : 0, lastReactionBy: userId }));
     
                         let summery = new ReactionsSummary({
