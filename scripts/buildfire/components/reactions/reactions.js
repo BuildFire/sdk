@@ -22,7 +22,22 @@ buildfire.components.reactions = (() => {
             return "$$reactions";
         }
 
-        static _insert(reaction, callback) {
+        // how it should works
+        // on each React:
+        // 1-  we go search()
+        // 2- if DB row not exists -> insert()
+        // 3- if exists and type exists return noAction
+        // 4- if exists and type not exists -> update()
+
+        // options: {itemId, userId, reactionsId=null, reactionType}
+        static _insert(options, callback) {
+            let reaction = new Reaction({
+                itemId: options.itemId,
+                userId: options.userId,
+                reactions: [{ type: options.reactionType, createdOn: new Date() }]
+            })
+            reaction._buildfire.index = this.buildIndex(reaction);
+
             buildfire.appData.insert(
                 reaction, this.TAG, false,
                 (err, result) => {
@@ -35,16 +50,52 @@ buildfire.components.reactions = (() => {
             );
         }
 
-        static _update(reaction, reactionType, callback) {
-            let updatedReaction = new Reaction({
-                itemId: reaction.itemId,
-                userId: reaction.userId,
-                reactions: [{ type: reactionType, createdOn: new Date() }]
-            })
+        // options: reaction, reactionType, operation
+        static _update(options, callback) {
+            
+            if (!options) {
+                throw new Error("Invalid options. Options must be set and have at least reaction, reactionType and operation properties!");
+            }
+            if (!["add","remove","toggle"].includes(options.operations)) {
+                throw new Error("Invalid operations option. Operations coulde be one of the following:  add, remove or toggle");
+            }
+            if (!options.reaction) {
+                throw new Error("Invalid options, Missing reaction!");
+            }
+            // TODO: add new function to check if provided reactionType already defined
+            if (!options.reactionType) {
+                throw new Error("Invalid options, Missing reactionType!");
+            }
+
+            const reactionId = options.reaction.id;
+            let updatedReaction = new Reaction(options.reaction);
+
+            if(options.operation=="add"){
+                updatedReaction.reaction.reactions= [...options.reaction.reactions, { type: options.reactionType, createdOn: new Date() }]
+            } else if(options.operation=="remove") { // remove
+                updatedReaction.reaction.reactions.filter(reaction => reaction.type !== options.reactionType);
+            } else {
+                updatedReaction.reaction.reactions = [{ type: options.reactionType, createdOn: new Date() }];
+            }
+
+            // reaction data is now complete, build the index
             updatedReaction._buildfire.index = this.buildIndex(updatedReaction);
 
-            buildfire.appData.searchAndUpdate(
-                { "_buildfire.index.string1": reaction._buildfire.index.string1 },
+            
+            // this part could be enhanced to use $push and $pull
+            /* $push : {
+                reactions: {...}
+                _buildfire.index.array1.string1: {...}
+            }
+           
+           []
+           ---> like  --> [like]
+           ---> angry --> [angry]
+           ---> happy --> [happy]
+            [like, angry, happy]
+            reactions.$.type = ...
+             */
+            buildfire.appData.update(reactionId,
                 updatedReaction, this.TAG,
                 (err, result) => {
                     if (err) {
@@ -56,54 +107,122 @@ buildfire.components.reactions = (() => {
             );
         }
 
-        static _search(reaction, callback) {
-            let filter = {
-                "_buildfire.index.string1": reaction._buildfire.index.string1,
-            }
-            buildfire.appData.search({ filter, limit: 1 }, this.TAG, (err, result) => {
-                if (err) {
-                    return callback(err)
+        // options: {itemId, userId, reactionsId=null, reactionType}
+        static _search(options, callback) {
+
+            if(options.reactionsId){
+                buildfire.appData.getById(options.reactionsId, this.TAG, (err, result) => {
+                    if (err) {
+                        return callback(err)
+                    }
+                    return callback(null, result)
+                })
+            } else {
+                let filter = {
+                    "_buildfire.index.string1": options.itemId + '-' + options.userId,
                 }
-                return callback(null, result)
-            })
+                buildfire.appData.search({ filter, limit: 1 }, this.TAG, (err, result) => {
+                    if (err) {
+                        return callback(err)
+                    }
+                    return callback(null, result[0] || {})
+                })
+            }
+
         }
 
-        static unReactReact() {
-            // to do
+        // options: {itemId, userId, reactionsId=null, reactionType}
+        static unReactReact(options, callback) {
+                if (!options) {
+                    throw new Error("Invalid options. Options must be set and have at least oldReactionType, newReactionType, userId and itemId properties!");
+                }
+                if (!options.itemId) {
+                    throw new Error("Invalid options, Missing itemId!");
+                }
+                if (!options.userId) {
+                    throw new Error("Invalid options, Messing userId!");
+                }                
+                if (!options.reactionType) {
+                    throw new Error("Invalid options, Missing reactionType!");
+                }
+                if (typeof callback !== 'function') {
+                    throw new Error("callback must be a function!");
+                }
+    
+                this._search(options, (err, result) => {
+                    if (err) {
+                        return callback(err)
+                    }
+    
+                    if (result) {
+                        if (result.data.reactions.find((reaction) => reaction.type === options.reactionType)) {
+                            return callback(null, { status: 'noAction', data: result })
+                        } else {
+                            const reaction = result.data;
+                            const oldReactionType = reaction.reactions.length ? reaction.reactions[0].type : "";
+                            reaction.id = result.id;
+                            let updateOptions = {
+                                reaction: reaction,
+                                reactionType: options.reactionType,
+                                operation: "toggle"
+                            };
+                            this._update(updateOptions, (err, result) => {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                return callback(null, { status: 'done', data: result, oldReactionType: oldReactionType })
+                            })
+                        }
+                    } else {
+                        this._insert(options, (err, result) => {
+                            if (err) {
+                                return callback(err);
+                            }
+                            // analytics should be by  1. itemId-type-react
+                            // analytics should be by  2. itemId-type-unReact
+                            return callback(null, { status: 'done', data: result, oldReactionType:"" })
+                        })
+                    }
+                })
+                        
         }
 
-        static react(reaction, callback) {
-            if (!reaction) {
-                throw new Error("Invalid reaction object!");
+        // options: {itemId, userId, reactionsId=null, reactionType}
+        static react(options, callback) {
+            if (!options) {
+                throw new Error("Invalid options. Options must be set and have at least reactionType, userId and itemId properties!");
             }
-            if (!reaction.itemId) {
-                throw new Error("Invalid reaction object, Missing itemId!");
+            if (!options.itemId) {
+                throw new Error("Invalid options, Missing itemId!");
             }
-            if (!reaction.userId) {
-                throw new Error("Invalid reaction object, Messing userId!");
+            if (!options.reactionType) {
+                throw new Error("Invalid options, Missing reactionType!");
             }
-            if (!reaction.reactions || !reaction.reactions.length) {
-                throw new Error("Invalid reaction object, reaction type!");
+            if (!options.userId) {
+                throw new Error("Invalid options, Messing userId!");
             }
 
             if (typeof callback !== 'function') {
                 throw new Error("callback must be a function!");
             }
 
-            // setting the index
-            reaction._buildfire.index = this.buildIndex(reaction);
-            let reactionType = reaction.reactions[0].type;
-
-            this._search(reaction, (err, result) => {
+            this._search(options, (err, result) => {
                 if (err) {
                     return callback(err)
                 }
 
-                if (result && result.length) {
-                    if (reactionType === result[0].data.reactions[0].type) {
-                        return callback(null, { status: 'noAction', data: result[0] })
+                if (result) {
+                    if (result.data.reactions.find((reaction) => reaction.type === options.reactionType)) {
+                        return callback(null, { status: 'noAction', data: result })
                     } else {
-                        this._update(reaction, reactionType, (err, result) => {
+                        const reaction = result.data;
+                        reaction.id = result.id;
+                        let updateOptions = {
+                            reaction: reaction,
+                            reactionType: options.reactionType,
+                            operation: "add"
+                        };
+                        this._update(updateOptions, (err, result) => {
                             if (err) {
                                 return callback(err);
                             }
@@ -111,7 +230,7 @@ buildfire.components.reactions = (() => {
                         })
                     }
                 } else {
-                    this._insert(reaction, (err, result) => {
+                    this._insert(options, (err, result) => {
                         if (err) {
                             return callback(err);
                         }
@@ -123,22 +242,70 @@ buildfire.components.reactions = (() => {
             })
         }
 
-        static unReact(reactionId, callback) {
-            if (!reactionId || typeof reactionId !== 'string') {
-                throw new Error("Invalid reactionId!");
+        // options: {itemId, userId, reactionsId=null, reactionType}
+        static unReact(options, callback) {
+
+            if (!options) {
+                throw new Error("Invalid options. Options must be set and have at least reactionType, userId and itemId properties!");
             }
-            if (!callback || typeof callback !== 'function') {
+            if (!options.itemId) {
+                throw new Error("Invalid options, Missing itemId!");
+            }
+            if (!options.userId) {
+                throw new Error("Invalid options, Messing userId!");
+            }
+            if (!options.reactionType) {
+                throw new Error("Invalid options, Missing reactionType!");
+            }
+            if (typeof callback !== 'function') {
                 throw new Error("callback must be a function!");
             }
 
-            buildfire.appData.delete(reactionId, this.TAG, (err, result) => {
-                if (err && err.code == "NOTFOUND") {
-                    return callback(null, { status: 'noAction' });
-                } else if (err) {
-                    return callback(err);
+            this._search(options, (err, result) => {
+                if (err) {
+                    return callback(err)
                 }
-                return callback(null, { status: 'done' });
-            });
+
+                if (result) {
+                    if (!result.data.reactions.find((reaction) => reaction.type === options.reactionType)) {
+                        return callback(null, { status: 'noAction', data: result })
+                    } else {
+
+                        const reaction = result.data;
+                        reaction.id = result.id;
+
+                        // if the reaction type we are going to remive is the only one left, delte the whole records
+                        if(reaction.reactions.length==1){
+
+                            buildfire.appData.delete(reaction.id, this.TAG, (err, result) => {
+                                if (err && err.code == "NOTFOUND") {
+                                    return callback(null, { status: 'noAction' });
+                                } else if (err) {
+                                    return callback(err);
+                                }
+                                return callback(null, { status: 'done' });
+                            });
+
+                        } else { // remove only the reaction type from the array
+                            
+                            let updateOptions = {
+                                reaction: reaction,
+                                reactionType: options.reactionType,
+                                operation: "remove"
+                            };
+
+                            this._update(updateOptions, (err, result) => {
+                                if (err) {
+                                    return callback(err);
+                                }
+                                return callback(null, { status: 'done', data: result })
+                            })
+                        }
+                    }
+                } else {
+                    return callback(null, { status: 'noAction' });
+                }
+            })
         }
 
         static get(options, callback) { // fetch who reacted for specific item
