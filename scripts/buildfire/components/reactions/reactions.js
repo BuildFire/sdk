@@ -530,19 +530,19 @@ buildfire.components.reactions = (() => {
                         return callback(null, { status: 'done' })
                     })
                 } else {
-                    let typeData = result[0].data.reactions.find(r=>r.type==reactionType);
-                    let filter = {},obj={};
-                    if(typeData){
+                    let typeData = result[0].data.reactions.find(r => r.type == reactionType);
+                    let filter = {}, obj = {};
+                    if (typeData) {
                         filter = {
                             "_buildfire.index.string1": itemId,
                             "reactions.type": reactionType,
                         }
-                        obj = { $inc: { "reactions.$.count": typeData.count>0?-1:0 }, $set: { "reactions.$.lastReactionBy": null } }
-                    }else{
+                        obj = { $inc: { "reactions.$.count": typeData.count > 0 ? -1 : 0 }, $set: { "reactions.$.lastReactionBy": null } }
+                    } else {
                         filter = {
                             '_buildfire.index.string1': itemId,
                         }
-                        obj = { $addToSet: { reactions: {type:reactionType, count:0, lastReactionBy:null}, "_buildfire.index.array1": { string1: 'reactionType-' + reactionType } } }
+                        obj = { $addToSet: { reactions: { type: reactionType, count: 0, lastReactionBy: null }, "_buildfire.index.array1": { string1: 'reactionType-' + reactionType } } }
                     }
 
                     this._update(filter, obj, (err, res) => {
@@ -556,7 +556,6 @@ buildfire.components.reactions = (() => {
 
         }
 
-        // use checkDuplicate for insert to avoid duplicate insertions
         static buildIndex(data = {}) {
             const index = {
                 string1: data.itemId,
@@ -582,8 +581,10 @@ buildfire.components.reactions = (() => {
         // debounce getting item reactions to avoid multi-request to server
         static _itemIds = [];
         static _timer;
+        static _observerContainers = [];
+        static _observerTimer;
 
-        static _debounce(itemId) {
+        static debounce(itemId) {
             // to save new item ids that will be rendered
             if (itemId && State._itemIds.indexOf(itemId) < 0) {
                 State._itemIds.push(itemId);
@@ -642,14 +643,61 @@ buildfire.components.reactions = (() => {
                 }
             })
         }
+
+        static buildObserver() {
+            const observer = new MutationObserver((mutationList, observer) => {
+                mutationList.forEach(element => {
+                    element.addedNodes.forEach(node => {
+                        if (node instanceof Element) {
+                            if (node.hasAttribute('bf-reactions-itemid')) {
+                                let newReactionInstance = {
+                                    itemId: node.getAttribute("bf-reactions-itemid"),
+                                    container: node,
+                                    types: JSON.parse(node.getAttribute("bf-reactions-types")),
+                                    showCount: JSON.parse(node.getAttribute("bf-reactions-showCount")),
+                                    showUsersReactions: JSON.parse(node.getAttribute("bf-reactions-showUsersReactions")),
+                                }
+                                this._observerContainers.push(newReactionInstance);
+                            } else if (node.hasAttribute('bf-reactions')) {
+                                let newReactionInstance = {
+                                    container: node,
+                                    ...JSON.parse(node.getAttribute("bf-reactions"))
+                                }
+                                this._observerContainers.push(newReactionInstance);
+                            }
+                        }
+                    })
+                })
+                clearTimeout(this._observerTimer);
+
+                this._observerTimer = setTimeout(() => {
+                    let newItems = [...this._observerContainers];
+                    this._observerContainers = [];
+                    this.buildByHTML(newItems);
+                }, 100);
+            });
+
+            const config = { attributes: true, childList: true, subtree: true };
+            observer.observe(document, config);
+        }
+
+        static buildByHTML(elements) {
+            elements.forEach(newReaction=>{
+                new ReactionComponent(newReaction);
+            })
+        }
     }
 
     class ReactionComponent {
 
         constructor(data = {}) {
             this.selector = data.selector || null; // make sure that selector is valid
+            this.container = data.container || null; // make sure that selector is valid
             this.showCount = typeof data.showCount === 'boolean' ? data.showCount : false; // default false
             this.showUsersReactions = typeof data.showUsersReactions === 'boolean' ? data.showUsersReactions : false; // show who reacted for each reaction
+
+            // don't allow user to add, update or add new reaction during 1s after the last update
+            this._allowReact = true;
 
             if (data.types && data.types.length) {
                 this.types = data.types.map(t => {
@@ -682,12 +730,12 @@ buildfire.components.reactions = (() => {
         }
 
         _init() {
-            let _container = document.querySelector(this.selector);
+            let _container = document.querySelector(this.selector) || this.container;
             if (!_container) throw new Error('Selector is not valid');
             else {
                 this.container = _container;
                 this._buildComponent();
-                State._debounce(this.itemId);
+                State.debounce(this.itemId);
             }
         }
 
@@ -744,25 +792,31 @@ buildfire.components.reactions = (() => {
             // edge cases: 
             // 1. if the user reacted with other type
             // 2. if the user is not logged in
-            let userReactType = this.container.getAttribute('bf-user_react-type');
+            if (this._allowReact) {
+                let userReactType = this.container.getAttribute('bf-user_react-type');
 
-            let selectedReaction = {
-                type: newReactionType,
-                reactionId: this.container.getAttribute('bf-user_react-id'),
-                itemId: this.container.getAttribute('bf-reactions-itemid'),
-            }
-
-            if (userReactType) {
-                if (userReactType === newReactionType) {
-                    // delete the reaction
-                    this._deleteReaction(icon)
-                } else {
-                    // update the reaction
-                    this._updateReaction({ icon, userReactType, newReactionType, userId })
+                let selectedReaction = {
+                    type: newReactionType,
+                    reactionId: this.container.getAttribute('bf-user_react-id'),
+                    itemId: this.container.getAttribute('bf-reactions-itemid'),
                 }
-            } else {
-                // add new reaction
-                this._addReaction({ icon, selectedReaction, userId })
+
+                if (userReactType) {
+                    if (userReactType === newReactionType) {
+                        // delete the reaction
+                        this._deleteReaction(icon)
+                    } else {
+                        // update the reaction
+                        this._updateReaction({ icon, userReactType, newReactionType, userId })
+                    }
+                } else {
+                    // add new reaction
+                    this._addReaction({ icon, selectedReaction, userId })
+                }
+                this._allowReact = false;
+                setTimeout(() => {
+                    this._allowReact = true;
+                }, 1000)
             }
         }
 
@@ -772,6 +826,9 @@ buildfire.components.reactions = (() => {
             icon.classList.add('reacted');
             icon.style.backgroundColor = icon.getAttribute('bf-reactions-color');
             this.container.setAttribute('bf-user_react-type', selectedReaction.type);
+
+            let countContainer = this.container.querySelector(`[bf-reactions-count="${selectedReaction.type}"]`);
+            countContainer.innerHTML = parseInt(countContainer.innerText) + 1;
 
             // include buildfire index from the data access
             let reaction = new Reaction({
@@ -789,13 +846,20 @@ buildfire.components.reactions = (() => {
 
                     this.container.setAttribute('bf-user_react-id', r.data.id);
 
-                    if(r.status === 'done'){
+                    if (r.status === 'done') {
                         let summery = new ReactionsSummary({
                             itemId: reaction.itemId,
-                            reactions:  [{ type: selectedReaction.type, count:1, lastReactionBy: userId}],
+                            reactions: [{ type: selectedReaction.type, count: 1, lastReactionBy: userId }],
                         })
-                        ReactionsSummaries.increment(summery, (e, r) => { if (e) return console.log(e) });
-                    }else if(r.status === 'noAction'){
+                        ReactionsSummaries.increment(summery, (e, r) => {
+                            if (e) return console.log(e);
+                            if (r.status === 'done') {
+
+                            } else if (r.status === 'noAction') {
+                                // nothing will be happened
+                            }
+                        });
+                    } else if (r.status === 'noAction') {
                         // nothing will be happened
                     }
                 }
@@ -810,6 +874,12 @@ buildfire.components.reactions = (() => {
             this.container.querySelector(`[bf-reactions-type="${userReactType}"]`).classList.remove('reacted');
             this.container.querySelector(`[bf-reactions-type="${userReactType}"]`).style.backgroundColor = '#fff';
             this.container.setAttribute('bf-user_react-type', newReactionType);
+
+            let oldCountContainer = this.container.querySelector(`[bf-reactions-count="${userReactType}"]`);
+            oldCountContainer.innerHTML = parseInt(oldCountContainer.innerText) - 1;
+
+            let newCountContainer = this.container.querySelector(`[bf-reactions-count="${newReactionType}"]`);
+            newCountContainer.innerHTML = parseInt(newCountContainer.innerText) + 1;
 
             let itemId = this.container.getAttribute('bf-reactions-itemid')
             let reaction = new Reaction({
@@ -826,14 +896,14 @@ buildfire.components.reactions = (() => {
                     this.container.setAttribute('bf-user_react-type', userReactType);
                 } else if (r) {
                     // reaction updated successfully 
-                    if(r.status === 'done'){
+                    if (r.status === 'done') {
                         // decrement for the old type and increment the new one
                         let summary = new ReactionsSummary({
-                            itemId, reactions:[{type:newReactionType, count:1, lastReactionBy:userId}]
+                            itemId, reactions: [{ type: newReactionType, count: 1, lastReactionBy: userId }]
                         })
                         ReactionsSummaries.decrement({ itemId, reactionType: userReactType }, (e, r) => { if (e) return console.log(e) });
                         ReactionsSummaries.increment(summary, (e, r) => { if (e) return console.log(e) });
-                    }else if(r.status === 'noAction'){
+                    } else if (r.status === 'noAction') {
                         // nothing will be happened
                     }
                 }
@@ -844,6 +914,9 @@ buildfire.components.reactions = (() => {
             let reactionId = this.container.getAttribute('bf-user_react-id');
             let itemId = this.container.getAttribute('bf-reactions-itemid');
             let reactionType = this.container.getAttribute('bf-user_react-type');
+
+            let countContainer = this.container.querySelector(`[bf-reactions-count="${reactionType}"]`);
+            countContainer.innerHTML = parseInt(countContainer.innerText) - 1;
 
             icon.classList.remove('reacted');
             icon.style.backgroundColor = '#fff';
@@ -857,10 +930,10 @@ buildfire.components.reactions = (() => {
                     icon.classList.add('reacted');
                     icon.style.backgroundColor = icon.getAttribute('bf-reactions-color');
                 } else if (r) {
-                    if(r.status==='done'){
+                    if (r.status === 'done') {
                         /* Reaction deleted successfully */
                         ReactionsSummaries.decrement({ itemId, reactionType }, (e, r) => { if (e) return console.log(e) });
-                    }else if(r.status === 'noAction'){
+                    } else if (r.status === 'noAction') {
                         // nothing will be happened
                     }
                 }
@@ -881,6 +954,9 @@ buildfire.components.reactions = (() => {
             );
         }
 
+        static build(){
+            State.buildObserver();
+        }
     }
 
     return ReactionComponent;
