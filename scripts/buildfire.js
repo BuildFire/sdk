@@ -293,6 +293,8 @@ var buildfire = {
 		, 'auth.triggerOnLogout'
 		, 'auth.triggerOnUpdate'
 		, 'logger.attachRemoteLogger'
+		, 'device.triggerKeyboardWillShow'
+		, 'device.triggerKeyboardWillHide'
 		, 'appearance.triggerOnUpdate'
 		, '_cssInjection.triggerOnUpdate'
 		, 'language.triggerOnUpdate'
@@ -3584,6 +3586,24 @@ var buildfire = {
 		},
 		triggerOnAppResumed: function (data) {
 			return buildfire.eventManager.trigger('deviceAppResumed', data);
+		},
+		isKeyboardVisible: function() {
+			return document.documentElement.classList.contains('keyboard-visible');
+		},
+		onKeyboardShow: function(callback, allowMultipleHandlers) { 
+			buildfire.eventManager.add('keyboardWillShow', callback, allowMultipleHandlers);
+		},
+		onKeyboardHide: function(callback, allowMultipleHandlers) {
+			buildfire.eventManager.add('keyboardWillHide', callback, allowMultipleHandlers);
+		},
+		triggerKeyboardWillShow: function(options) {
+			document.querySelector('html').classList.add('keyboard-visible');
+			document.documentElement.style.setProperty('--bf-keyboard-height', options.keyboardHeight);
+			buildfire.eventManager.trigger('keyboardWillShow');
+		},
+		triggerKeyboardWillHide: function() {
+			document.querySelector('html').classList.remove('keyboard-visible');	
+			buildfire.eventManager.trigger('keyboardWillHide');
 		},
 		contacts: {
 			showDialog: function (options, callback) {
