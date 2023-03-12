@@ -293,6 +293,8 @@ var buildfire = {
 		, 'auth.triggerOnLogout'
 		, 'auth.triggerOnUpdate'
 		, 'logger.attachRemoteLogger'
+		, 'device.triggerKeyboardWillShow'
+		, 'device.triggerKeyboardWillHide'
 		, 'appearance.triggerOnUpdate'
 		, '_cssInjection.triggerOnUpdate'
 		, 'language.triggerOnUpdate'
@@ -3584,6 +3586,28 @@ var buildfire = {
 		},
 		triggerOnAppResumed: function (data) {
 			return buildfire.eventManager.trigger('deviceAppResumed', data);
+		},
+		_isKeyboardVisible: false,
+		isKeyboardVisible: function() {
+			return this._isKeyboardVisible;
+		},
+		onKeyboardShow: function(callback, allowMultipleHandlers) { 
+			buildfire.eventManager.add('keyboardWillShow', callback, allowMultipleHandlers);
+		},
+		// plugins will subscribe to the keyboard event by calling this function 
+		onKeyboardHide: function(callback, allowMultipleHandlers) {
+			buildfire.eventManager.add('keyboardWillHide', callback, allowMultipleHandlers);
+		},
+		triggerKeyboardWillShow: function(options) {
+			document.querySelector('html').classList.add('keyboard-visible');
+			this._isKeyboardVisible = true;
+			document.documentElement.style.setProperty('--bf-keyboard-height', options.keyboardHeight);
+			buildfire.eventManager.trigger('keyboardWillShow');
+		},
+		triggerKeyboardWillHide: function() {
+			document.querySelector('html').classList.remove('keyboard-visible');	
+			this._isKeyboardVisible = false;
+			buildfire.eventManager.trigger('keyboardWillHide');
 		},
 		contacts: {
 			showDialog: function (options, callback) {
