@@ -246,7 +246,7 @@ var buildfire = {
 						if(err) console.error(err);
 						window.pluginJson = pluginJson;
 						buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
-	
+
 						if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
 							//handle language settings
 							function getPluginLanguageJson(callback) {
@@ -3590,19 +3590,25 @@ var buildfire = {
 		isKeyboardVisible: function() {
 			return document.documentElement.classList.contains('keyboard-visible');
 		},
-		onKeyboardShow: function(callback, allowMultipleHandlers) { 
+		onKeyboardShow: function(callback, allowMultipleHandlers = true) {
 			buildfire.eventManager.add('keyboardWillShow', callback, allowMultipleHandlers);
 		},
-		onKeyboardHide: function(callback, allowMultipleHandlers) {
+		onKeyboardHide: function(callback, allowMultipleHandlers = true) {
 			buildfire.eventManager.add('keyboardWillHide', callback, allowMultipleHandlers);
 		},
 		triggerKeyboardWillShow: function(options) {
-			document.querySelector('html').classList.add('keyboard-visible');
-			document.documentElement.style.setProperty('--bf-keyboard-height', options.keyboardHeight);
+			const root = document.documentElement;
+			const keyboardResizeMode = window.pluginJson?.keyboardResizeMode;
+
+			root.classList.add('keyboard-visible');
+			root.style.setProperty('--bf-keyboard-height', options.keyboardHeight);
+			if (keyboardResizeMode === 'grow') root.classList.add('keyboard-grow');
+			if (keyboardResizeMode === 'shrink') root.classList.add('keyboard-shrink');
 			buildfire.eventManager.trigger('keyboardWillShow');
 		},
 		triggerKeyboardWillHide: function() {
-			document.querySelector('html').classList.remove('keyboard-visible');	
+			const root = document.documentElement;
+			root.classList.remove('keyboard-visible', 'keyboard-shrink', 'keyboard-grow');
 			buildfire.eventManager.trigger('keyboardWillHide');
 		},
 		contacts: {
@@ -3786,7 +3792,7 @@ var buildfire = {
 	dynamicBlocks: {
 		// keep for backward compatability (old namespace)
 		// content will not be transformed but will be visible as is
-		execute: function(e){ 
+		execute: function(e){
 			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
 				e.classList.remove("bf-wysiwyg-hide-app");
 			});
