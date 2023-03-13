@@ -42,7 +42,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         $scope.error = "";
         $scope.expression.evaluatedExpression = "";
         
-        if (!expressionsService) {
+        if (!dynamicEngineService) {
             $scope.error = "Expressions Service not defined!";
             window.toast($scope.error, 'danger');
             return;
@@ -56,7 +56,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         if ($data && $data.options && $data.options.instanceId ) {
             options.instanceId = $data.options.instanceId;
         }
-        expressionsService.evaluate(options, (err, evaluatedExpression) => {
+        dynamicEngineService.expressions.evaluate(options, (err, evaluatedExpression) => {
             $scope.isEvaluateLoading = false;
             if (err) {
                 $scope.error = "Error: " + err.message;
