@@ -17,6 +17,7 @@ ExpressionBuilderAPI.prototype.showDialog = function (data, callback) {
 };
 
 $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http', function ($scope, $data, $dialog, $http) {
+    let extendedContext = null;
 
     $scope.close = function () {
         $scope.$dialog.close(null);
@@ -42,8 +43,8 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         $scope.error = "";
         $scope.expression.evaluatedExpression = "";
         
-        if (!expressionsService) {
-            $scope.error = "Expressions Service not defined!";
+        if (!dynamicEngine || !dynamicEngine.expressions || !dynamicEngine.expressions.evaluate) {
+            $scope.error = "Dynamic Expressions Service not defined!";
             window.toast($scope.error, 'danger');
             return;
         }
@@ -56,7 +57,10 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         if ($data && $data.options && $data.options.instanceId ) {
             options.instanceId = $data.options.instanceId;
         }
-        expressionsService.evaluate(options, (err, evaluatedExpression) => {
+        if (extendedContext) {
+            options.extendedContext = extendedContext;
+        }
+        dynamicEngine.expressions.evaluate(options, (err, evaluatedExpression) => {
             $scope.isEvaluateLoading = false;
             if (err) {
                 $scope.error = "Error: " + err.message;
@@ -79,6 +83,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         $scope.isEvaluateLoading = false;
         $scope.isInitLoading = true;
         $scope.presetsExpressions = [];
+        $scope.pluginCustomExpressions = [];
         $scope.expressionScope = 'cp';
         
         if ($data && $data.options && $data.options.instanceId) {
@@ -86,11 +91,20 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         }
         const appHost = "https://uat3-app.buildfire.com"; //to be changed on prod deployment.
         // const appHost = window.siteConfig.endPoints.appHost;
-        const presetsExpressionJsonPath = appHost + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
+        const presetsExpressionJsonPath = "http://localhost:3005" + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
         $http.get(presetsExpressionJsonPath)
         .success((response)=>{
             $scope.presetsExpressions = response;
+             //check if plugin has custom expressions.
+             if ($scope.expressionScope == 'app') {
+                if ($data.options.pluginCustomExpressions && $data.options.pluginContext) {
+                    $scope.pluginCustomExpressions = $data.options.pluginCustomExpressions;
+                    extendedContext = $data.options.pluginContext;
+                }
+            }
+        
             $scope.isInitLoading = false;
+            if (!$scope.$$phase) $scope.$digest();
         })
         .error((err)=>{
             setTimeout(() => {
