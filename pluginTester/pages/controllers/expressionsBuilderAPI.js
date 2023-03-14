@@ -87,7 +87,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         }
         const appHost = "https://uat3-app.buildfire.com"; //to be changed on prod deployment.
         // const appHost = window.siteConfig.endPoints.appHost;
-        const presetsExpressionJsonPath = "http://localhost:3005" + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
+        const presetsExpressionJsonPath = appHost + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
         $http.get(presetsExpressionJsonPath)
         .success((response)=>{
             if ($scope.expressionScope == 'cp') {
