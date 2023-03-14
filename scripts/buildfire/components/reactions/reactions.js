@@ -6,13 +6,12 @@ if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
 buildfire.components.reactions = (() => {
 
-    // data model
     class Reaction {
         constructor(data = {}) {
             this.itemId = data.itemId || null;
             this.userId = data.userId || null;
 
-            this.reactions = data.reactions || []; // object (type, createdOn)  {type: "like", createdOn: date}, {type: "heart"}
+            this.reactions = data.reactions || [];
             this._buildfire = data._buildfire || {};
         }
     }
@@ -21,13 +20,6 @@ buildfire.components.reactions = (() => {
         static get TAG() {
             return "$$reactions";
         }
-
-        // how it should works
-        // on each React:
-        // 1-  we go search()
-        // 2- if DB row not exists -> insert()
-        // 3- if exists and type exists return noAction
-        // 4- if exists and type not exists -> update()
 
         // options: {itemId, userId, reactionId=null, reactionType}
         static _insert(options, callback) {
@@ -597,9 +589,6 @@ buildfire.components.reactions = (() => {
     }
 
     class State {
-        // TODO: hide count before reciving res
-        // TODO: when recive res hide all types eccept user current reaction type
-
         // debounce getting item reactions to avoid multi-request to server
         static _itemIds = [];
         static _timer;
@@ -666,7 +655,7 @@ buildfire.components.reactions = (() => {
             })
             // show all count containers
             let countContainers = document.querySelectorAll("[bf-reactions-total-count]");
-            countContainers.forEach(el=>{
+            countContainers.forEach(el => {
                 el.style.visibility = 'visible';
             })
         }
@@ -741,7 +730,7 @@ buildfire.components.reactions = (() => {
                 this._observerTimer = setTimeout(() => {
                     let newItems = [...this._observerContainers];
                     this._observerContainers = [];
-                    this.buildByHTML(newItems);
+                    this.buildComponentByHTML(newItems);
                 }, 100);
             });
 
@@ -749,7 +738,7 @@ buildfire.components.reactions = (() => {
             observer.observe(document, config);
         }
 
-        static buildByHTML(elements) {
+        static buildComponentByHTML(elements) {
             elements.forEach(newReaction => {
                 new ReactionComponent(newReaction);
             })
@@ -921,16 +910,6 @@ buildfire.components.reactions = (() => {
         }
 
         _reactionHandler(newReactionType, icon, userId) {
-
-            // trigger when the user click on reaction icon
-
-            // if the user select a type that he reacted with, then it will be removed
-            // if the user click on the same reaction type, then the reaction will be removed
-            // otherwise the reaction will be updated
-
-            // edge cases: 
-            // 1. if the user reacted with other type
-            // 2. if the user is not logged in
             let userReactType = this.container.getAttribute('bf-user_react-type');
 
             let selectedReaction = {
@@ -941,14 +920,11 @@ buildfire.components.reactions = (() => {
 
             if (userReactType) {
                 if (userReactType === newReactionType) {
-                    // delete the reaction
                     this._deleteReaction({ icon, userReactType, userId, selectedReaction })
                 } else {
-                    // update the reaction
                     this._updateReaction({ icon, userReactType, userId, selectedReaction })
                 }
             } else {
-                // add new reaction
                 this._addReaction({ icon, selectedReaction, userId })
             }
         }
@@ -976,6 +952,7 @@ buildfire.components.reactions = (() => {
                             if (res.status === 'done') {
 
                             } else if (res.status === 'noAction') {
+                                this.onReaction({ status: 'add', reactionType: selectedReaction.type, itemId: selectedReaction.itemId, userId })
                                 // nothing will be happened
                             }
                         });
@@ -1095,12 +1072,6 @@ buildfire.components.reactions = (() => {
             })
         }
 
-        // TODO: drawer 
-        // 1. load dynamically --> from app
-        // 2. skeleton --> from app
-        // 3. render icons --> can be solved using CSS injection
-        // 4. text and icons width --> width: calc(100vw - 85px);
-
         _showUsersList(itemId, reactionType) {
             let options = { itemId, reactionType, pageIndex: 0, pageSize: 50 };
             let listItems = [];
@@ -1151,17 +1122,13 @@ buildfire.components.reactions = (() => {
                 },
                 (err, result) => {
                     if (err) return console.error(err);
-                    console.log("Selected Contacts", result);
                 }
             );
         }
 
-        onReaction(event) {
-
-        }
+        onReaction(event) {}
 
         static refresh() {
-            console.log('--------------------------------------------------------');
             let validNodes = document.querySelectorAll('[bf-reactions-itemid]');
             validNodes.forEach(node => {
                 let mainBtn = node.querySelector('[bf-reactions-default-src]');
