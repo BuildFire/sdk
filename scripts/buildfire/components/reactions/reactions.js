@@ -162,7 +162,7 @@ buildfire.components.reactions = (() => {
                             if (err) {
                                 return callback(err);
                             }
-                            return callback(null, { status: 'done', data: result, oldReactionType: oldReactionType })
+                            return callback(null, { status: 'updated', data: result, oldReactionType: oldReactionType })
                         })
                     }
                 } else {
@@ -172,7 +172,7 @@ buildfire.components.reactions = (() => {
                         }
                         // analytics should be by  1. itemId-type-react
                         // analytics should be by  2. itemId-type-unReact
-                        return callback(null, { status: 'done', data: result, oldReactionType: "" })
+                        return callback(null, { status: 'added', data: result, oldReactionType: "" })
                     })
                 }
             })
@@ -218,7 +218,7 @@ buildfire.components.reactions = (() => {
                             if (err) {
                                 return callback(err);
                             }
-                            return callback(null, { status: 'done', data: result })
+                            return callback(null, { status: 'updated', data: result })
                         })
                     }
                 } else {
@@ -228,7 +228,7 @@ buildfire.components.reactions = (() => {
                         }
                         // analytics should be by  1. itemId-type-react
                         // analytics should be by  2. itemId-type-unReact
-                        return callback(null, { status: 'done', data: result })
+                        return callback(null, { status: 'added', data: result })
                     })
                 }
             })
@@ -275,7 +275,7 @@ buildfire.components.reactions = (() => {
                                 } else if (err) {
                                     return callback(err);
                                 }
-                                return callback(null, { status: 'done' });
+                                return callback(null, { status: 'deleted' });
                             });
 
                         } else { // remove only the reaction type from the array
@@ -291,7 +291,7 @@ buildfire.components.reactions = (() => {
                                 if (err) {
                                     return callback(err);
                                 }
-                                return callback(null, { status: 'done', data: result })
+                                return callback(null, { status: 'deleted', data: result })
                             })
                         }
                     }
@@ -458,45 +458,50 @@ buildfire.components.reactions = (() => {
                 }
             );
         }
+        // options = { itemId, reactionType, userId }
+        static increment(options, callback) {
+            let { itemId, reactionType, userId } = options;
 
-        static increment(summery, callback) {
-            if (!summery.itemId || !summery.reactions || !summery.reactions.length) {
-                throw new Error("Invalid ReactionsSummeries data!");
+            if (!itemId || !reactionType) {
+                throw new Error("Invalid get options!");
             }
 
             if (!callback || typeof callback !== 'function') {
                 throw new Error("callback must be a function!");
             }
-
-            summery._buildfire.index = this.buildIndex(summery);
-            this._search(summery.itemId, (err, result) => {
+            this._search(itemId, (err, result) => {
                 if (err) {
-                    return callback(err)
+                    return callback(err);
                 }
-                if (result && result.length) {
-                    let filter = {}, obj = {};
-                    let dbReactions = result[0].data.reactions, newReaction = summery.reactions[0].type;
-                    let validReactionType = dbReactions.find(reaction => reaction.type == newReaction)
-                    if (validReactionType) {
-                        filter = {
-                            '_buildfire.index.string1': summery._buildfire.index.string1,
-                            "reactions.type": newReaction
-                        }
-                        obj = { $inc: { "reactions.$.count": 1 } }
-                    } else {
-                        filter = {
-                            '_buildfire.index.string1': summery._buildfire.index.string1,
-                        }
-                        obj = { $addToSet: { reactions: summery.reactions[0], "_buildfire.index.array1": { string1: 'reactionType-' + newReaction } } }
-                    }
-                    this._update(filter, obj, (err, result) => {
+                if (!result || !result.length) {
+                    let summery = new ReactionsSummary({
+                        itemId,
+                        reactions: [{ type: reactionType, count: 1, lastReactionBy: userId }]
+                    })
+                    summery._buildfire.index = this.buildIndex(summery);
+                    this._create(summery, (err, res) => {
                         if (err) {
-                            return callback(err)
+                            return callback(err);
                         }
                         return callback(null, { status: 'done' })
                     })
                 } else {
-                    this._create(summery, (err, result) => {
+                    let typeData = result[0].data.reactions.find(reaction => reaction.type == reactionType);
+                    let filter = {}, obj = {};
+                    if (typeData) {
+                        filter = {
+                            "_buildfire.index.string1": itemId,
+                            "reactions.type": reactionType,
+                        }
+                        obj = { $inc: { "reactions.$.count": 1 }, $set: { "reactions.$.lastReactionBy": userId } }
+                    } else {
+                        filter = {
+                            '_buildfire.index.string1': itemId,
+                        }
+                        obj = { $addToSet: { reactions: { type: reactionType, count: 1, lastReactionBy: userId }, "_buildfire.index.array1": { string1: 'reactionType-' + reactionType } } }
+                    }
+
+                    this._update(filter, obj, (err, res) => {
                         if (err) {
                             return callback(err)
                         }
@@ -505,7 +510,7 @@ buildfire.components.reactions = (() => {
                 }
             })
         }
-
+        // options = { itemId, reactionType }
         static decrement(options, callback) {
             let { itemId, reactionType } = options;
 
@@ -780,7 +785,7 @@ buildfire.components.reactions = (() => {
                             throw new Error('Invalid reaction type' + reaction.type);
                         }
                         if (res) {
-                            let _reaction = { ...res, ...reaction, reactedUrl:res.reactedUrl, nonReactedUrl:res.nonReactedUrl };
+                            let _reaction = { ...res, ...reaction, reactedUrl: res.reactedUrl, nonReactedUrl: res.nonReactedUrl };
                             this.reactionType.push(_reaction);
                         }
                     })
@@ -957,14 +962,11 @@ buildfire.components.reactions = (() => {
 
                     this.container.setAttribute('bf-user_react-id', result.data.id);
 
-                    if (result.status === 'done') {
+                    if (result.status === 'added') {
                         this.onReaction({ status: 'add', reactionType: selectedReaction.type, itemId: selectedReaction.itemId, userId })
 
-                        let summery = new ReactionsSummary({
-                            itemId: selectedReaction.itemId,
-                            reactions: [{ type: selectedReaction.type, count: 1, lastReactionBy: userId }],
-                        })
-                        ReactionsSummaries.increment(summery, (err, res) => {
+                        let options = { reactionType: selectedReaction.type, itemId: selectedReaction.itemId, userId }
+                        ReactionsSummaries.increment(options, (err, res) => {
                             if (err) return console.log(err);
                             if (res.status === 'done') {
 
@@ -992,15 +994,16 @@ buildfire.components.reactions = (() => {
                     this._hideReactionInconsBox({ oldIcon: icon, newIcon: this.container.querySelector(`[bf-reactions-type="${userReactType}"]`) });
                 } else if (result) {
                     // reaction updated successfully 
-                    if (result.status === 'done') {
+                    if (result.status === 'updated') {
                         this.onReaction({ status: 'update', reactionType: selectedReaction.type, itemId, userId })
 
                         // decrement for the old type and increment the new one
-                        let summary = new ReactionsSummary({
-                            itemId, reactions: [{ type: selectedReaction.type, count: 1, lastReactionBy: userId }]
-                        })
                         ReactionsSummaries.decrement({ itemId, reactionType: userReactType }, (err, res) => { if (err) return console.log(err) });
-                        ReactionsSummaries.increment(summary, (err, res) => { if (err) return console.log(err) });
+                        ReactionsSummaries.increment({ itemId, reactionType: userReactType, userId }, (err, res) => { if (err) return console.log(err) });
+                    } else if (result.status === 'added') {
+                        ReactionsSummaries.increment({ itemId, reactionType: userReactType, userId }, (err, res) => { if (err) return console.log(err) });
+                        this.onReaction({ status: 'update', reactionType: selectedReaction.type, itemId, userId })
+                        // nothing will be happened
                     } else if (result.status === 'noAction') {
                         this.onReaction({ status: 'update', reactionType: selectedReaction.type, itemId, userId })
                         // nothing will be happened
@@ -1023,7 +1026,7 @@ buildfire.components.reactions = (() => {
                 if (error) {
                     this._hideReactionInconsBox({ newIcon: icon });
                 } else if (result) {
-                    if (result.status === 'done') {
+                    if (result.status === 'deleted') {
                         this.onReaction({ status: 'delete', reactionType: userReactType, itemId, userId })
 
                         /* Reaction deleted successfully */
@@ -1143,11 +1146,17 @@ buildfire.components.reactions = (() => {
                 },
                 (err, result) => {
                     if (err) return console.error(err);
+                    console.log("Selected Contacts", result);
                 }
             );
         }
 
+        onReaction(event) {
+
+        }
+
         static refresh() {
+            console.log('--------------------------------------------------------');
             let validNodes = document.querySelectorAll('[bf-reactions-itemid]');
             validNodes.forEach(node => {
                 let mainBtn = node.querySelector('[bf-reactions-default-src]');
