@@ -2,12 +2,10 @@
     min-height: 40px !important;
     position: relative;
     display: inline-block;
-    z-index: 1000;
 }
 
 .reaction-main-button {
     padding: 4px 0 !important;
-    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
