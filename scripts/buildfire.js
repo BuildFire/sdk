@@ -286,6 +286,7 @@ var buildfire = {
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
 		, 'dynamic.onReceivedWidgetContextRequest'
+		, 'dynamic.expressions.onReceivedCustomExpressionsRequest'
 		, 'history.triggerOnPop'
 		, 'navigation.onBackButtonClick'
 		, 'services.media.audioPlayer.triggerOnEvent'
@@ -1182,7 +1183,11 @@ var buildfire = {
 					css += '@import url(\'' + appTheme.fontUrl + '\');';
 				}
 			}
-
+			let lightBodyText = appTheme.colors.bodyText;
+			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors 
+				// create a new color, which is the bodyText's color with an opacity (33%)
+				lightBodyText = `${appTheme.colors.bodyText}54`;
+			}
 			css += ':root {'
                 + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
                 + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
@@ -1192,6 +1197,7 @@ var buildfire = {
                 + '--bf-theme-danger: ' + appTheme.colors.dangerTheme + ' !important;'
                 + '--bf-theme-background: ' + appTheme.colors.backgroundColor + ' !important;'
                 + '--bf-theme-body-text: ' + appTheme.colors.bodyText + ' !important;'
+				+ '--bf-theme-container-highlight: ' + lightBodyText + ' !important;'
                 + '--bf-theme-footer-background: ' + appTheme.colors.footerMenuBackgroundColor + ' !important;'
                 + '--bf-theme-footer-icon: ' + appTheme.colors.footerMenuIconColor + ' !important;'
                 + '--bf-theme-header-text: ' + appTheme.colors.headerText + ' !important;'
@@ -3837,6 +3843,20 @@ var buildfire = {
 			});
 		},
 		expressions: {
+			requestPluginCustomExpressions(options, callback) {
+				var p = new Packet(null, 'dynamic.expressions.triggerRequestCustomExpressions', options);
+				buildfire._sendPacket(p, callback);
+			},
+			onReceivedCustomExpressionsRequest(options, callback) {
+				if (buildfire.dynamic.expressions.getCustomExpressions) {
+					buildfire.dynamic.expressions.getCustomExpressions(null, (err, res) => {
+						if (err) return callback(err);
+						callback(null, res);
+					});
+				} else {
+					callback(null, null);
+				}
+			},
 			_prepareContext(options, callback) {
 				if (buildfire.getContext().type == 'control') {
 					// get the widget's context to evaluate expressions against it rather than the control's context
