@@ -3940,34 +3940,13 @@ var buildfire = {
 					options = {};
 				};
 				buildfire.getContext(function(err, context){
-					//get instanceId
 					if(context && context.instanceId) {
 						options.instanceId = context.instanceId;
 					}
-					
-					//check plugin custom expressions
-					buildfire.dynamic.expressions.requestPluginCustomExpressions(options, (err, res) => {
-						//get plugin context
-						if (res && res.expressions && buildfire.dynamic.expressions.getContext) {
-							buildfire.dynamic.expressions.getContext(null, (err, pluginContext) => {
-								if (pluginContext) {
-									options.pluginCustomExpressions = res.expressions;
-									options.pluginContext = pluginContext;
-								}
-								sendShowDialogPacket(options);
-							});
-						} else {
-							sendShowDialogPacket(options);
-						}
-						
-	
-					});
-					function sendShowDialogPacket(options) {
-						const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
-						buildfire._sendPacket(p, callback); 
-					};
+					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
+					buildfire._sendPacket(p, callback); 
 				});
-			},
+			}
 		},
 	},
 	wysiwyg: {

@@ -23,8 +23,12 @@
             </section>
         </div>
         <div ng-if="pluginCustomExpressions.length">
-            <hr class="margin-right-ten"/>
-            <h5 class="margin-bottom-twenty text-bold">Custom Expressions</h5>
+            <div class="flex">
+                <h5 class="text-bold margin-right-ten">Custom Expressions</h5>
+                <span class="tip btn-info-icon btn-primary transition-third tip-custom margin-top-five"
+                uib-tooltip="Depending on the privacy settings in custom registration, certain variables may not be visible."
+                tooltip-placement="right"></span>
+            </div>
             <section ng-repeat="customExpression in pluginCustomExpressions" class="padding-left-fifteen" ng-click="appendPresetExpression(customExpression.expression)">
                 <h6 class="cursor-pointer">{{customExpression.name}}</h6>
             </section>

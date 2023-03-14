@@ -17,7 +17,6 @@ ExpressionBuilderAPI.prototype.showDialog = function (data, callback) {
 };
 
 $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http', function ($scope, $data, $dialog, $http) {
-    let extendedContext = null;
 
     $scope.close = function () {
         $scope.$dialog.close(null);
@@ -43,8 +42,8 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         $scope.error = "";
         $scope.expression.evaluatedExpression = "";
         
-        if (!dynamicEngineService) {
-            $scope.error = "Expressions Service not defined!";
+        if (!dynamicEngine || !dynamicEngine.expressions || !dynamicEngine.expressions.evaluate) {
+            $scope.error = "Dynamic Expressions Service not defined!";
             window.toast($scope.error, 'danger');
             return;
         }
@@ -91,24 +90,40 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         const presetsExpressionJsonPath = "http://localhost:3005" + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
         $http.get(presetsExpressionJsonPath)
         .success((response)=>{
-            $scope.presetsExpressions = response;
-             //check if plugin has custom expressions.
-             if ($scope.expressionScope == 'app') {
-                if ($data.options.pluginCustomExpressions && $data.options.pluginContext) {
-                    $scope.pluginCustomExpressions = $data.options.pluginCustomExpressions;
-                    extendedContext = $data.options.pluginContext;
-                }
+            if ($scope.expressionScope == 'cp') {
+                $scope.isInitLoading = false;
+                $scope.presetsExpressions = response;
+            } else {
+                const options = {
+                    request: {
+                        instanceId: $data.options.instanceId
+                    }
+                };
+                //check if plugin has custom expressions.
+                Dynamic.expressions.triggerRequestCustomExpressions(options, (err, res) => {
+                    if (err) {
+                        setTimeout(() => {
+                            $scope.close();
+                            window.toast('Error getting Plugin Custom expressions', 'danger');
+                        }, 3000);
+                        return;
+                    }
+                    if (res && res.expressions) {
+                        $scope.pluginCustomExpressions = res.expressions;
+                    }
+                    $scope.presetsExpressions = response;
+                    $scope.isInitLoading = false;
+                    if (!$scope.$$phase) $scope.$digest();
+
+                });
             }
-        
-            $scope.isInitLoading = false;
-            if (!$scope.$$phase) $scope.$digest();
         })
         .error((err)=>{
             setTimeout(() => {
                 $scope.close();
                 console.error(err);
                 window.toast('Error fetching presets expressions Json', 'danger');
-            }, 1000);
+            }, 3000);
             $scope.isInitLoading = false;
         });
        
