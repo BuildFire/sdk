@@ -19,4 +19,9 @@ buildfire.services.health = {
 		var p = new Packet(null, 'health.queryAggregated', options);
 		buildfire._sendPacket(p, callback);
 	},
+	getAvailableDataTypes: function (options, callback) {
+		if (!callback) throw 'callback function is mandatory';
+		var p = new Packet(null, 'health.getAvailableDataTypes', options);
+		buildfire._sendPacket(p, callback);
+	},
 };
