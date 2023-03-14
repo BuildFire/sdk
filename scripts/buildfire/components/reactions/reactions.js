@@ -664,6 +664,11 @@ buildfire.components.reactions = (() => {
                     totalCountContainer.innerHTML = totalReactionCount;
                 }
             })
+            // show all count containers
+            let countContainers = document.querySelectorAll("[bf-reactions-total-count]");
+            countContainers.forEach(el=>{
+                el.style.visibility = 'visible';
+            })
         }
 
         static _showUserReactions(reactions) {
@@ -819,7 +824,7 @@ buildfire.components.reactions = (() => {
             this.container.innerHTML = `
                 <div class="reaction-main-button">
                     <div bf-reactions-btn class="reactions-main-icon-container" ><img class="reactions-main-icon" bf-reactions-default-src="${this.reactionType[0].nonReactedUrl}" src="${this.reactionType[0].nonReactedUrl}" /></div>
-                    <span class="reactions-total-count" bf-reactions-total-count="0">0</span>
+                    <span style="visibility:hidden;" class="reactions-total-count" bf-reactions-total-count="0">0</span>
                 </div>
                 <div class="reactions-icon-container reactions-hidden" bf-reaction-icon-container>${iconsContainer}</div>
             `;
