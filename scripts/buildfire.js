@@ -3835,7 +3835,9 @@ var buildfire = {
 				if (buildfire.getContext().type == 'control') {
 					// get the widget's context to evaluate expressions against it rather than the control's context
 					let options = {
-						instanceId: buildfire.getContext().instanceId
+						request: {
+							instanceId: buildfire.getContext().instanceId
+						}
 					};
 					buildfire.dynamic.requestWidgetContext(options, (err, context) => {
 						if (err) return callback(err);
