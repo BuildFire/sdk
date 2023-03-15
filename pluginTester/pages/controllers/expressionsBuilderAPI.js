@@ -123,7 +123,6 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
                 console.error(err);
                 window.toast('Error fetching presets expressions Json', 'danger');
             }, 3000);
-            $scope.isInitLoading = false;
         });
        
 
