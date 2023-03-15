@@ -859,7 +859,7 @@ var buildfire = {
 				var bfWidgetTheme = document.createElement('style');
 				bfWidgetTheme.id = 'bfWidgetTheme';
 				bfWidgetTheme.rel = 'stylesheet';
-				bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(theme);
+				bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(theme);
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 			});
@@ -1114,9 +1114,9 @@ var buildfire = {
 						if (err) console.error(err);
 						if (context) {
 							buildfire.appearance._setFontUrl(context, appTheme);
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						} else {
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						}
 					});
 				}
@@ -1172,7 +1172,7 @@ var buildfire = {
 				buildfire._sendPacket(p, callback);
 			},
 		},
-		_getAppThemeCssVariables: function(appTheme) {
+		_getCommonCss: function(appTheme) {
 			var css = '';
 			if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
             && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
@@ -3593,8 +3593,9 @@ var buildfire = {
 		triggerOnAppResumed: function (data) {
 			return buildfire.eventManager.trigger('deviceAppResumed', data);
 		},
-		isKeyboardVisible: function() {
-			return document.documentElement.classList.contains('keyboard-visible');
+		isKeyboardVisible: function(options, callback) {
+			const isVisible = document.documentElement.classList.contains('keyboard-visible');
+			if (callback) return callback(null, isVisible);
 		},
 		onKeyboardShow: function(callback, allowMultipleHandlers = true) {
 			buildfire.eventManager.add('keyboardWillShow', callback, allowMultipleHandlers);
@@ -3604,17 +3605,13 @@ var buildfire = {
 		},
 		triggerKeyboardWillShow: function(options) {
 			const root = document.documentElement;
-			const keyboardResizeMode = window.pluginJson?.keyboardResizeMode;
-
 			root.classList.add('keyboard-visible');
-			root.style.setProperty('--bf-keyboard-height', options.keyboardHeight);
-			if (keyboardResizeMode === 'grow') root.classList.add('keyboard-grow');
-			if (keyboardResizeMode === 'shrink') root.classList.add('keyboard-shrink');
-			buildfire.eventManager.trigger('keyboardWillShow');
+			root.style.setProperty('--bf-keyboard-height', `${options.keyboardHeight}px`);
+			buildfire.eventManager.trigger('keyboardWillShow', {keyboardHeight: options.keyboardHeight});
 		},
 		triggerKeyboardWillHide: function() {
 			const root = document.documentElement;
-			root.classList.remove('keyboard-visible', 'keyboard-shrink', 'keyboard-grow');
+			root.classList.remove('keyboard-visible');
 			buildfire.eventManager.trigger('keyboardWillHide');
 		},
 		contacts: {
@@ -4138,9 +4135,9 @@ var buildfire = {
 						buildfire.appearance.getWidgetTheme(function(err, theme) {
 							if (err) return console.error(err);
 							if (options.content_style) {
-								options.content_style += buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style += buildfire.appearance._getCommonCss(theme);
 							} else {
-								options.content_style = buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style = buildfire.appearance._getCommonCss(theme);
 							}
 						});
 						if (options.content_css) {

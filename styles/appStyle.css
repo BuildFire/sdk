@@ -1144,12 +1144,6 @@ html[buildfire] body.no-scroll .scrollable{
 	height:100% !important;
 	width:100% !important;
 }
-html.keyboard-visible.keyboard-grow {
-	margin-bottom: var(--bf-keyboard-height, 0);
-}
-html.keyboard-visible.keyboard-shrink {
-	height: calc(100% - var(--bf-keyboard-height, 0));
-}
 
 /* 767px Screen */
 @media(max-width: 767px){
