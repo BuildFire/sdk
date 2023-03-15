@@ -85,8 +85,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         if ($data && $data.options && $data.options.instanceId) {
             $scope.expressionScope = 'app';
         }
-        const appHost = "https://uat3-app.buildfire.com"; //to be changed on prod deployment.
-        // const appHost = window.siteConfig.endPoints.appHost;
+        const appHost = window.siteConfig.endPoints.appHost;
         const presetsExpressionJsonPath = appHost + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
         $http.get(presetsExpressionJsonPath)
         .success((response)=>{

@@ -2293,8 +2293,8 @@ html.translated-ltr body{
 }
 
 #expressionsBuilderTemplate .expression-result-field {
-    max-height: 200px;
-    height: 200px;
+    max-height: 30vh;
+    height: 20vh;
     overflow-y: auto;
     background-color: var(--c-gray1);
 }

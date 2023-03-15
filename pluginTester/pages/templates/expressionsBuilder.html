@@ -14,7 +14,7 @@
         <div ng-repeat="expression in presetsExpressions" ng-if="!expression.scope || expression.scope.includes(expressionScope)">
             <div class="flex">
                 <h5 class="text-bold margin-right-ten">{{expression.name}}</h5>
-                <span ng-if="expression.tooltip" class="tip btn-info-icon btn-primary transition-third tip-custom margin-top-five"
+                <span ng-if="expression.tooltip" class="tip btn-info-icon btn-primary transition-third margin-top-five"
                 uib-tooltip="{{expression.tooltip}}"
                 tooltip-placement="right"></span>
             </div>
@@ -25,8 +25,8 @@
         <div ng-if="pluginCustomExpressions.length">
             <div class="flex">
                 <h5 class="text-bold margin-right-ten">Custom Expressions</h5>
-                <span class="tip btn-info-icon btn-primary transition-third tip-custom margin-top-five"
-                uib-tooltip="Depending on the privacy settings in custom registration, certain variables may not be visible."
+                <span class="tip btn-info-icon btn-primary transition-third margin-top-five"
+                uib-tooltip="These are feature specific variables."
                 tooltip-placement="right"></span>
             </div>
             <section ng-repeat="customExpression in pluginCustomExpressions" class="padding-left-fifteen" ng-click="appendPresetExpression(customExpression.expression)">
@@ -37,7 +37,7 @@
     <div class="dialog-template-scrollable padded-md">
         <div>
             <h5>Expression</h5>
-            <textarea class="w-100 margin-bottom-five padded-sm textarea-resize-none" ng-model="expression.string" ng-change="onChangeExpression()" ng-trim="false" rows="3" cols="100"></textarea>
+            <textarea class="form-control w-100 margin-bottom-five padded-sm textarea-resize-none" ng-model="expression.string" style="min-height: 120px;" ng-change="onChangeExpression()" ng-trim="false" rows="3" cols="100"></textarea>
             <div class="flex flex-justify-end">
                 <button ng-disabled="!expression.string || isEvaluateLoading" class="btn margin-left-auto btn-outlined btn-primary" ng-click="evaluate()">Evaluate</button>
             </div>
@@ -47,7 +47,7 @@
 
         <div class="relative-position">
             <h5>Results</h5>
-            <div class="w-100 border-grey default-background expression-result-field padded-sm" ng-class="{'text-danger': error}">{{expression.evaluatedExpression ? expression.evaluatedExpression : error}}
+            <div class="w-100 border-grey default-background expression-result-field padded-sm border-radius-four" ng-class="{'text-danger': error}">{{expression.evaluatedExpression ? expression.evaluatedExpression : error}}
                 <!-- loading state for results -->
                 <div ng-show="isEvaluateLoading" class="flex flex-justify-center flex-align-center text-center h-100">
                     <div  class="loader"></div>
@@ -58,7 +58,7 @@
 
         <div class="bottom border-top-grey clearfix">
             <div class="pull-right text-center">
-                <a class="btn btn-primary" ng-disabled="!expression.evaluatedExpression || !expression.string" ng-click="useExpression()">Use Expression</a>
+                <a class="btn btn-success" ng-disabled="!expression.evaluatedExpression || !expression.string" ng-click="useExpression()">Use Expression</a>
             </div>
             <div class="pull-right text-center">
                 <a class="btn btn-secondary transition-third" ng-click="close()">Close</a>
