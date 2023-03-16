@@ -85,6 +85,10 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         if ($data && $data.options && $data.options.instanceId) {
             $scope.expressionScope = 'app';
         }
+         //check if there a string to be initialized
+         if ($scope.$dialog && $scope.$dialog.options && $scope.$dialog.options.data && $scope.$dialog.options.data.string) {
+            $scope.expression.string = $scope.$dialog.options.data.string;
+        }
         const appHost = window.siteConfig.endPoints.appHost;
         const presetsExpressionJsonPath = appHost + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
         $http.get(presetsExpressionJsonPath)

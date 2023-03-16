@@ -4528,6 +4528,34 @@ var buildfire = {
 		}
 		,
 		_handleNode: function (node) { //inject strings for [bfString] elements.
+			//check if the string has expression or not.
+			const checkExpression = (str) => {
+				let hasDollar = false;
+				let hasOpenBrace = false;
+				let hasCloseBrace = false;
+			  
+				for (let i = 0; i < str.length; i++) {
+				  if (str[i] === '$') {
+					hasDollar = true;
+				  } else if (str[i] === '{' && hasDollar) {
+					hasOpenBrace = true;
+				  } else if (str[i] === '}' && hasDollar && hasOpenBrace) {
+					hasCloseBrace = true;
+				  }
+				}
+			  
+				return hasDollar && hasOpenBrace && hasCloseBrace;
+			};
+			const injectString = (string, attributes, node) => {
+				if (attributes && attributes.length) {
+					attributes.forEach(attr => node.setAttribute(attr, string));
+				} else {
+					node.innerHTML = string;
+				}
+				//mark initialized elements.
+				node.setAttribute('bfString-initialized', '');
+			};
+
 			if (!node.tagName) {// not an element
 				return;
 			}
@@ -4546,16 +4574,25 @@ var buildfire = {
 			}
 			const stringKey = node.getAttribute('bfString');
 			buildfire.language.get({stringKey}, (err, string) => {
-				//inject the string into the element.
 				if (string) {
-					if (attributes && attributes.length) {
-						attributes.forEach(attr => node.setAttribute(attr, string));
+					const isStringHasExpression = checkExpression(string);
+					if (isStringHasExpression) {
+						const options = {
+							instanceId: buildfire.getContext().instanceId,
+							expression: string
+						};
+						//get evaluated expression
+						buildfire.dynamic.expressions.evaluate(options, (err, evaluatedExpression) => {
+							if (evaluatedExpression) {
+								injectString(evaluatedExpression, attributes, node);
+							}
+						});
 					} else {
-						node.innerHTML = string;
+						//inject the string into the element.
+						injectString(string, attributes, node);
 					}
-					//mark initialized elements.
-					node.setAttribute('bfString-initialized', '');
 				}
+
 			});
 		}
 		,

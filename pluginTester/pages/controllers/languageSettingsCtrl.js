@@ -173,6 +173,23 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
 
         };
 
+        $scope.openExpressionsBuilder = (string, sectionKey, labelKey) => {
+            const openDialogOptions = {
+                templateUrl: 'pages/templates/expressionsBuilder.html',
+                controller: 'expressionsBuilderCtrl',
+                size: 'lg',
+                data: {
+                    string: string,
+                }
+            };
+
+            window.openDialog(openDialogOptions, function (expression) {
+                if (expression && sectionKey && labelKey) {
+                    $scope.pluginLanguageJson.sections[sectionKey].labels[labelKey].defaultValue = expression;
+                }
+            });
+    
+        };
         const mergeStringValues = function (pluginLanguageJson, strings) {
             const sections = pluginLanguageJson.sections;
             // merge values from datastore into pluginLanguageJson
