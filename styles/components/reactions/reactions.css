@@ -1,11 +1,11 @@
 .reactions-main-container {
-    min-height: 40px !important;
+    min-height: 2.5rem !important;
     position: relative;
     display: inline-block;
 }
 
 .reaction-main-button {
-    padding: 4px 0 !important;
+    padding: 0.25rem 0rem !important;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -13,23 +13,33 @@
 }
 
 .reactions-main-icon {
-    width: 24px !important;
-    height: 24px !important;
-    padding: 4px !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    padding: 0.25rem !important;
     cursor: pointer;
 }
 
 .reactions-main-icon-container {
-    width: 32 !important;
-    height: 32 !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reactions-show-main-icon{
+    animation-name: reactions-show-main-icon-animation;
+    animation-duration: 0.3s;
 }
 
 .reactions-total-count {
-    width: 24px;
-    height: 24px;
-    padding: 4px;
-    text-align: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0.25rem;
+    text-align: left;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .reactions-icon-container {
@@ -40,15 +50,15 @@
     top: 0;
     left: 0;
     background: var(--bf-theme-background);
-    gap: 8px;
-    padding: 4px;
-    border: 1px solid rgba(150, 150, 150, 0.2);
-    border-radius: 43px;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    border: 0.063rem solid rgba(150, 150, 150, 0.2);
+    border-radius: 2.688rem;
     z-index: 150;
 }
 
 .reactions-icon-container .icon {
-    padding: 4px;
+    padding: 0.25rem;
     cursor: pointer;
 }
 
@@ -62,9 +72,9 @@
 }
 
 .reactions-clickable-image {
-    width: 24px;
-    height: 24px;
-    padding: 4px;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0.25rem;
 }
 
 .reaction-container-show .reactions-icon-animation {
@@ -73,7 +83,7 @@
 
 .reaction-container-hide .reactions-icon-animation {
     animation-name: reactions-hide-icons-animations;
-    transform: translateY(25px) scale(0.1)
+    transform: translateY(1.563rem) scale(0.1)
 }
 
 .reactions-hidden {
@@ -82,7 +92,7 @@
 
 @-webkit-keyframes reactions-icons-animation {
     0% {
-        transform: translateY(25px) scale(.3374)
+        transform: translateY(1.563rem) scale(.3374)
     }
 
     100% {
@@ -96,6 +106,16 @@
     }
 
     100% {
-        transform: translateY(25px) scale(.3374)
+        transform: translateY(1.563rem) scale(.3374)
+    }
+}
+
+@-webkit-keyframes reactions-show-main-icon-animation {
+    0% {
+        transform: scale(0.1)
+    }
+
+    100% {
+        transform: scale(1)
     }
 }
