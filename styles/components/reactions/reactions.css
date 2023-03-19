@@ -13,8 +13,8 @@
 }
 
 .reactions-main-icon {
-    width: 1.5rem !important;
-    height: 1.5rem !important;
+    width: 1.5rem;
+    height: 1.5rem;
     cursor: pointer;
     padding: 0.25rem;
 }
