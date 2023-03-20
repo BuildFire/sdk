@@ -79,6 +79,20 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
                 return _tinymce.getContent();
             }
         };
+        
+        //check if the string has expression or not.
+        const checkExpression = (str) => {
+            let hasExpression = false;
+            let firstIndex = -1; 
+            if (str) {
+                firstIndex = str.indexOf('${');
+                if (firstIndex > -1 && str.indexOf("}") > firstIndex) {
+                    hasExpression = true;
+                }
+            }
+
+            return hasExpression;
+        };
 
         const prepareDataObjectToSave = (pluginLanguageJson) => {
             const sections = pluginLanguageJson.sections;
@@ -105,6 +119,12 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
                         section[labelKey] = {
                             value : inputFieldValue ? inputFieldValue : ""
                         };
+                        section[labelKey]["hasExpression"] = checkExpression(section[labelKey].value);
+                    } else {
+                        if (!section[labelKey]) {
+                            section[labelKey] = {};
+                        }
+                        section[labelKey]["hasExpression"] = checkExpression(originalFieldValue);
                     }
                 }
             };
@@ -180,6 +200,7 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
                 size: 'lg',
                 data: {
                     string: string,
+                    instanceId: window.appContext.currentPlugin.instanceId
                 }
             };
 

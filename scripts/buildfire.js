@@ -4390,6 +4390,11 @@ var buildfire = {
 								defaultValue: defaultSection[labelKey].defaultValue
 							};
 						}
+
+						//check if we have `hasExpression` flag for each label.
+						if (dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
+							obj[sectionKey][labelKey].hasExpression = dbSection[labelKey].hasExpression;
+						}
 					}
 
 				}
@@ -4528,24 +4533,6 @@ var buildfire = {
 		}
 		,
 		_handleNode: function (node) { //inject strings for [bfString] elements.
-			//check if the string has expression or not.
-			const checkExpression = (str) => {
-				let hasDollar = false;
-				let hasOpenBrace = false;
-				let hasCloseBrace = false;
-			  
-				for (let i = 0; i < str.length; i++) {
-				  if (str[i] === '$') {
-					hasDollar = true;
-				  } else if (str[i] === '{' && hasDollar) {
-					hasOpenBrace = true;
-				  } else if (str[i] === '}' && hasDollar && hasOpenBrace) {
-					hasCloseBrace = true;
-				  }
-				}
-			  
-				return hasDollar && hasOpenBrace && hasCloseBrace;
-			};
 			const injectString = (string, attributes, node) => {
 				if (attributes && attributes.length) {
 					attributes.forEach(attr => node.setAttribute(attr, string));
@@ -4575,7 +4562,10 @@ var buildfire = {
 			const stringKey = node.getAttribute('bfString');
 			buildfire.language.get({stringKey}, (err, string) => {
 				if (string) {
-					const isStringHasExpression = checkExpression(string);
+					const strings = buildfire.language._strings;
+					const sectionKey = stringKey.split('.')[0];
+					const labelKey = stringKey.split('.')[1];
+					const isStringHasExpression = strings[sectionKey][labelKey].hasExpression;
 					if (isStringHasExpression) {
 						const options = {
 							instanceId: buildfire.getContext().instanceId,
