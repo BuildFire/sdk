@@ -180,10 +180,7 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
             });
         };
 
-        $scope.save = function (formUnTouched) {
-            if (formUnTouched) {
-                return;
-            }
+        $scope.save = function () {
             //prepare data structure to be saved in datastore
             const strings = prepareDataObjectToSave($scope.pluginLanguageJson);
             if (!strings) {

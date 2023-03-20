@@ -6,7 +6,7 @@
         </div>
     </div>
     <div ng-if="isLoadingDone" class="margin-bottom-fifteen"> 
-        <form name="frmLanguageSettings" ng-submit="save(frmLanguageSettings.$pristine)" novalidate>
+        <form name="frmLanguageSettings" ng-submit="save()" novalidate>
             <div class="cp-scroll-section">
                 <p class="info-note background-info margin-bottom-twenty" ng-if="pluginLanguageJson.mainInfo">{{pluginLanguageJson.mainInfo}}</p>
                 <div ng-repeat="(sectionKey, sectionObj) in pluginLanguageJson.sections">
