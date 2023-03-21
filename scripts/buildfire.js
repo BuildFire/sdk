@@ -3858,7 +3858,9 @@ var buildfire = {
 				if (buildfire.getContext().type == 'control') {
 					// get the widget's context to evaluate expressions against it rather than the control's context
 					let options = {
-						instanceId: buildfire.getContext().instanceId
+						request: {
+							instanceId: buildfire.getContext().instanceId
+						}
 					};
 					buildfire.dynamic.requestWidgetContext(options, (err, context) => {
 						if (err) return callback(err);
@@ -3958,6 +3960,18 @@ var buildfire = {
 					}
 				});
 			},
+			showDialog: function (options, callback) {
+				if (typeof options === 'undefined' || !options) {
+					options = {};
+				};
+				buildfire.getContext(function(err, context){
+					if(context && context.instanceId) {
+						options.instanceId = context.instanceId;
+					}
+					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
+					buildfire._sendPacket(p, callback); 
+				});
+			}
 		},
 	},
 	wysiwyg: {
@@ -4128,6 +4142,20 @@ var buildfire = {
 										return () => {};
 									}
 								});
+								editor.ui.registry.addMenuItem('bf_insertExpression', {
+									text: 'Insert expression',
+									onAction: function() {
+										buildfire.dynamic.expressions.showDialog(null, (err, res) => {
+											if (err) return console.error(err);
+											if (res) {
+												editor.insertContent(res);
+												if (!dynamicExpressionsActivated) {
+													editor.ui.registry.getAll().menuItems.bf_toggledynamicexpression.onAction();
+												}
+											}
+										});
+									}
+								});
 								originalSetup(editor);
 							};
 						}
@@ -4156,7 +4184,7 @@ var buildfire = {
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
+							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
 							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
