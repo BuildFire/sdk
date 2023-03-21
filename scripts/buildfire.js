@@ -246,7 +246,7 @@ var buildfire = {
 						if(err) console.error(err);
 						window.pluginJson = pluginJson;
 						buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
-	
+
 						if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
 							//handle language settings
 							function getPluginLanguageJson(callback) {
@@ -294,6 +294,8 @@ var buildfire = {
 		, 'auth.triggerOnLogout'
 		, 'auth.triggerOnUpdate'
 		, 'logger.attachRemoteLogger'
+		, 'device.triggerKeyboardWillShow'
+		, 'device.triggerKeyboardWillHide'
 		, 'appearance.triggerOnUpdate'
 		, '_cssInjection.triggerOnUpdate'
 		, 'language.triggerOnUpdate'
@@ -857,7 +859,7 @@ var buildfire = {
 				var bfWidgetTheme = document.createElement('style');
 				bfWidgetTheme.id = 'bfWidgetTheme';
 				bfWidgetTheme.rel = 'stylesheet';
-				bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(theme);
+				bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(theme);
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 			});
@@ -1112,9 +1114,9 @@ var buildfire = {
 						if (err) console.error(err);
 						if (context) {
 							buildfire.appearance._setFontUrl(context, appTheme);
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						} else {
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						}
 					});
 				}
@@ -1170,7 +1172,7 @@ var buildfire = {
 				buildfire._sendPacket(p, callback);
 			},
 		},
-		_getAppThemeCssVariables: function(appTheme) {
+		_getCommonCss: function(appTheme) {
 			var css = '';
 			if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
             && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
@@ -3591,6 +3593,27 @@ var buildfire = {
 		triggerOnAppResumed: function (data) {
 			return buildfire.eventManager.trigger('deviceAppResumed', data);
 		},
+		isKeyboardVisible: function(options, callback) {
+			const isVisible = document.documentElement.classList.contains('keyboard-visible');
+			if (callback) return callback(null, isVisible);
+		},
+		onKeyboardShow: function(callback, allowMultipleHandlers = true) {
+			buildfire.eventManager.add('keyboardWillShow', callback, allowMultipleHandlers);
+		},
+		onKeyboardHide: function(callback, allowMultipleHandlers = true) {
+			buildfire.eventManager.add('keyboardWillHide', callback, allowMultipleHandlers);
+		},
+		triggerKeyboardWillShow: function(options) {
+			const root = document.documentElement;
+			root.classList.add('keyboard-visible');
+			root.style.setProperty('--bf-keyboard-height', `${options.keyboardHeight}px`);
+			buildfire.eventManager.trigger('keyboardWillShow', {keyboardHeight: options.keyboardHeight});
+		},
+		triggerKeyboardWillHide: function() {
+			const root = document.documentElement;
+			root.classList.remove('keyboard-visible');
+			buildfire.eventManager.trigger('keyboardWillHide');
+		},
 		contacts: {
 			showDialog: function (options, callback) {
 				var p = new Packet(null, 'device.contacts.showDialog', options);
@@ -3772,7 +3795,7 @@ var buildfire = {
 	dynamicBlocks: {
 		// keep for backward compatability (old namespace)
 		// content will not be transformed but will be visible as is
-		execute: function(e){ 
+		execute: function(e){
 			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
 				e.classList.remove("bf-wysiwyg-hide-app");
 			});
@@ -3835,7 +3858,9 @@ var buildfire = {
 				if (buildfire.getContext().type == 'control') {
 					// get the widget's context to evaluate expressions against it rather than the control's context
 					let options = {
-						instanceId: buildfire.getContext().instanceId
+						request: {
+							instanceId: buildfire.getContext().instanceId
+						}
 					};
 					buildfire.dynamic.requestWidgetContext(options, (err, context) => {
 						if (err) return callback(err);
@@ -3935,6 +3960,18 @@ var buildfire = {
 					}
 				});
 			},
+			showDialog: function (options, callback) {
+				if (typeof options === 'undefined' || !options) {
+					options = {};
+				};
+				buildfire.getContext(function(err, context){
+					if(context && context.instanceId) {
+						options.instanceId = context.instanceId;
+					}
+					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
+					buildfire._sendPacket(p, callback); 
+				});
+			}
 		},
 	},
 	wysiwyg: {
@@ -4105,6 +4142,20 @@ var buildfire = {
 										return () => {};
 									}
 								});
+								editor.ui.registry.addMenuItem('bf_insertExpression', {
+									text: 'Insert expression',
+									onAction: function() {
+										buildfire.dynamic.expressions.showDialog(null, (err, res) => {
+											if (err) return console.error(err);
+											if (res) {
+												editor.insertContent(res);
+												if (!dynamicExpressionsActivated) {
+													editor.ui.registry.getAll().menuItems.bf_toggledynamicexpression.onAction();
+												}
+											}
+										});
+									}
+								});
 								originalSetup(editor);
 							};
 						}
@@ -4112,9 +4163,9 @@ var buildfire = {
 						buildfire.appearance.getWidgetTheme(function(err, theme) {
 							if (err) return console.error(err);
 							if (options.content_style) {
-								options.content_style += buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style += buildfire.appearance._getCommonCss(theme);
 							} else {
-								options.content_style = buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style = buildfire.appearance._getCommonCss(theme);
 							}
 						});
 						if (options.content_css) {
@@ -4133,7 +4184,7 @@ var buildfire = {
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
+							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
 							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
