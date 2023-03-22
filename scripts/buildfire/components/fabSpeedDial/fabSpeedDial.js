@@ -96,7 +96,14 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	 * @function
 	 * @public
 	 */
-	onButtonClick() {}
+    onButtonClick(callback) {
+        if (typeof callback === 'function') {
+            this._onButtonClickCallbacks.push(callback);
+        } else if (Array.isArray(callback)) {
+            this._onButtonClickCallbacks =
+                this._onButtonClickCallbacks.concat(callback);
+        }
+    }
 
 	/**
 	 * Handler to be used upon main button open
@@ -230,16 +237,22 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 			actionButton.style.animationDelay = `${(idx + 1) / 50}s`;
 			actionButton.style.webkitAnimationDelay = `${(idx + 1) / 50}s`;
 
-			actionContainer.onclick = (e) => {
-				if (element.onClick && typeof element.onClick === 'function') {
-					element.onClick();
-				}
-				e.stopPropagation();
-				this.onButtonClick(element);
-				this.close();
-			};
-		});
-	}
+            actionContainer.onclick = (e) => {
+                if (element.onClick && typeof element.onClick === 'function') {
+                    element.onClick();
+                }
+                e.stopPropagation();
+                if (this._onButtonClickCallbacks.length) {
+                    this._onButtonClickCallbacks.forEach(function (callback) {
+                        callback(element);
+                    });
+                } else {
+                    this.onButtonClick(element);
+                }
+                this.close();
+            };
+        });
+    }
 
     /**
      * Build overlay
@@ -265,7 +278,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
      * @function
      * @private
      */
-    _onOverlayClick(){
+    _onOverlayClick() {
         this.close();
     }
 
@@ -308,8 +321,8 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 			'http://www.w3.org/2000/svg',
 			'svg'
 		);
-		contentButtonSVG.setAttribute('width', '14');
-		contentButtonSVG.setAttribute('height', '14');
+		contentButtonSVG.setAttribute('width', '15');
+		contentButtonSVG.setAttribute('height', '15');
 		contentButtonSVG.setAttribute('viewBox', '0 0 14 14');
 		const contentButtonSVGPath = document.createElementNS(
 			'http://www.w3.org/2000/svg',

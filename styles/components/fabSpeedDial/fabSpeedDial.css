@@ -174,14 +174,16 @@ html[safe-area="true"] .speed-dial-container {
 		-webkit-transform var(--animation-speed) ease-in-out;
 	-webkit-transform: rotate(0deg);
 	transform: rotate(0deg);
+	color: var(--bf-theme-icons);
+	fill: var(--bf-theme-icons);
 }
 
-.expanded-fab-overlay.fade-in {
+.speed-dial-container .fade-in {
 	-webkit-animation: fade-in 0.3s cubic-bezier(0.39, 0.575, 0.565, 1) both;
 	animation: fade-in 0.3s cubic-bezier(0.39, 0.575, 0.565, 1) both;
 }
 
-.expanded-fab-overlay.fade-out {
+.speed-dial-container .fade-out {
 	display: block;
 	animation-direction: reverse;
 	-webkit-animation: fade-out-bck var(--animation-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
