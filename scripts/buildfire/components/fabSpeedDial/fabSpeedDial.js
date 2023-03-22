@@ -30,7 +30,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		if (typeof this.options.showOverlay !== 'boolean') {
 			throw new Error('showOverlay value must be of type boolean');
 		}
-
+		this._onButtonClickCallbacks = [];
 		this._state = new State();
         this._onMainBtnClick = this._onMainBtnClick.bind(this);
         this._onOverlayClick = this._onOverlayClick.bind(this);
