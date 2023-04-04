@@ -52,9 +52,9 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         const options = {
             expression: $scope.expression.string
         };
-        //check if dialog requested by CP or SDK
-        if ($data && $data.options && $data.options.instanceId ) {
-            options.instanceId = $data.options.instanceId;
+        //check instanceID
+        if ($scope.instanceId ) {
+            options.instanceId = $scope.instanceId;
         }
         dynamicEngineService.expressions.evaluate(options, (err, evaluatedExpression) => {
             $scope.isEvaluateLoading = false;
@@ -81,9 +81,19 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         $scope.presetsExpressions = [];
         $scope.pluginCustomExpressions = [];
         $scope.expressionScope = 'cp';
-        
+        $scope.instanceId = '';
+        //coming from SDK/plugin
         if ($data && $data.options && $data.options.instanceId) {
             $scope.expressionScope = 'app';
+            $scope.instanceId = $data.options.instanceId;
+        } else if ($data && $data.instanceId) {
+            //coming from plugin tester CP/plugin-Language settings.
+            $scope.expressionScope = 'app';
+            $scope.instanceId = $data.instanceId;
+        }
+        //check if there a string to be initialized
+        if ($data && $data.string) {
+            $scope.expression.string = $data.string;
         }
         const appHost = window.siteConfig.endPoints.appHost;
         const presetsExpressionJsonPath = appHost + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
@@ -94,13 +104,12 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
                 $scope.presetsExpressions = response;
             } else {
                 const options = {
-                    request: {
-                        instanceId: $data.options.instanceId
-                    }
+                    instanceId: $scope.instanceId
                 };
                 //check if plugin has custom expressions.
                 Dynamic.expressions.triggerRequestCustomExpressions(options, (err, res) => {
                     if (err) {
+                        console.error(err);
                         setTimeout(() => {
                             $scope.close();
                             window.toast('Error getting Plugin Custom expressions', 'danger');
@@ -118,6 +127,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
             }
         })
         .error((err)=>{
+            console.error(err);
             setTimeout(() => {
                 $scope.close();
                 console.error(err);

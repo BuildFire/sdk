@@ -4413,6 +4413,11 @@ var buildfire = {
 								defaultValue: defaultSection[labelKey].defaultValue
 							};
 						}
+
+						//check if we have `hasExpression` flag for each label.
+						if (dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
+							obj[sectionKey][labelKey].hasExpression = dbSection[labelKey].hasExpression;
+						}
 					}
 
 				}
@@ -4551,6 +4556,16 @@ var buildfire = {
 		}
 		,
 		_handleNode: function (node) { //inject strings for [bfString] elements.
+			const injectString = (string, attributes, node) => {
+				if (attributes && attributes.length) {
+					attributes.forEach(attr => node.setAttribute(attr, string));
+				} else {
+					node.innerHTML = string;
+				}
+				//mark initialized elements.
+				node.setAttribute('bfString-initialized', '');
+			};
+
 			if (!node.tagName) {// not an element
 				return;
 			}
@@ -4569,16 +4584,28 @@ var buildfire = {
 			}
 			const stringKey = node.getAttribute('bfString');
 			buildfire.language.get({stringKey}, (err, string) => {
-				//inject the string into the element.
 				if (string) {
-					if (attributes && attributes.length) {
-						attributes.forEach(attr => node.setAttribute(attr, string));
+					const strings = buildfire.language._strings;
+					const sectionKey = stringKey.split('.')[0];
+					const labelKey = stringKey.split('.')[1];
+					const isStringHasExpression = strings[sectionKey][labelKey].hasExpression;
+					if (isStringHasExpression) {
+						const options = {
+							instanceId: buildfire.getContext().instanceId,
+							expression: string
+						};
+						//get evaluated expression
+						buildfire.dynamic.expressions.evaluate(options, (err, evaluatedExpression) => {
+							if (evaluatedExpression) {
+								injectString(evaluatedExpression, attributes, node);
+							}
+						});
 					} else {
-						node.innerHTML = string;
+						//inject the string into the element.
+						injectString(string, attributes, node);
 					}
-					//mark initialized elements.
-					node.setAttribute('bfString-initialized', '');
 				}
+
 			});
 		}
 		,
