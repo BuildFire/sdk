@@ -3920,7 +3920,7 @@ var buildfire = {
 			evaluate(options, callback) {
 				this._getDynamicEngine((err, dynamicEngine) => {
 					if (err) return callback(err);
-					dynamicEngine.expressions.evaluate(options, callback);
+				    dynamicEngine.expressions.evaluate(options, callback);
 				});
 			},
 			/**
@@ -4376,13 +4376,20 @@ var buildfire = {
 				if (!strings || !Object.keys(strings).length) {
 					return;
 				}
-				document.querySelectorAll('*[bfString]').forEach(e => {
-					buildfire.language._handleNode(e);
-					//trigger on string injected to this element.
-					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
-					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
+				//get instanceId
+				buildfire.getContext((err, context) => { 
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					document.querySelectorAll('*[bfString]').forEach(e => {
+						buildfire.language._handleNode(e, instanceId);
+						//trigger on string injected to this element.
+						buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
+						buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
+					});
+					buildfire.language.watch(instanceId);
 				});
-				buildfire.language.watch();
 			};
 
 			//merge updated default strings into datastore strings.
@@ -4482,10 +4489,10 @@ var buildfire = {
 				callback(error, null);
 				return;
 			}
-			const section = stringKeys[0];
-			const label = stringKeys[1];
-
-			function onStringsReady() {
+			
+			function onStringsReady(instanceId) {
+				const section = stringKeys[0];
+				const label = stringKeys[1];
 				const strings = buildfire.language._strings;
 				if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty('value') && !strings[section][label].hasOwnProperty('defaultValue'))) {
 					error = 'String not found.';
@@ -4493,39 +4500,76 @@ var buildfire = {
 					return;
 				}
 
+				
+				function getStringValue(stringObj) {
+					if (stringObj.hasOwnProperty('value')) {
+						return stringObj.value;
+					} else if (stringObj.hasOwnProperty('defaultValue')) {
+						return stringObj.defaultValue;
+					}
+				};
+				
 				const valueObj = strings[section][label];
+				const stringHasExpression = valueObj.hasExpression;
 
-				if (valueObj.hasOwnProperty('value')) {
-					callback(null, valueObj.value);
-					return;
-				} else if (valueObj.hasOwnProperty('defaultValue')) {
-					callback(null, valueObj.defaultValue);
-					return;
+				if (stringHasExpression) {
+					const stringValue = getStringValue(valueObj);
+					const options = {
+						instanceId: instanceId,
+						expression: stringValue,
+						// don't pass "id" here. it must be unique id for each string. even if it's the same string, it must have a unique id.
+					};
+					//get evaluated expression
+					let request = buildfire.dynamic.expressions.evaluate(options, (err, evaluatedExpression) => {
+						if (err) {
+							callback(null, stringValue);
+						} else {
+							callback(null, evaluatedExpression);
+						}
+						
+					});
+					//stop listening for callbacks.
+					if (request && request.destroy && !params.executeCallbackOnUpdate) {
+						request.destroy();
+					}
+				} else {
+					const stringValue = getStringValue(valueObj);
+					callback(null, stringValue);
 				}
+			};
 
-				callback(null, null);
-				return;
-			}
-
-			if (!buildfire.language._strings) {
-				buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
-					onStringsReady();
-				}, true);
+			if (params.instanceId) {
+				checkStringsReady(params.instanceId);
 			} else {
-				onStringsReady();
+				buildfire.getContext((err, context) => {
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					checkStringsReady(instanceId);
+				});
 			}
+			function checkStringsReady (instanceId) {
+				if (!buildfire.language._strings) {
+					buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
+						onStringsReady(instanceId);
+					}, true);
+				} else {
+					onStringsReady(instanceId);
+				}
+			};
 		}
 		,
-		watch: function () {
+		watch: function (instanceId) {
 
 			// Callback function to execute when mutations are observed
 			const callback = (mutationList, observer) => {
 				for (const mutation of mutationList) {
 					if (mutation.type === 'childList' && mutation.target) {
-						buildfire.language._handleNode(mutation.target);
+						buildfire.language._handleNode(mutation.target, instanceId);
 						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
-							buildfire.language._handleNode(childList[i]);
+							buildfire.language._handleNode(childList[i], instanceId);
 						}
 					}
 				}
@@ -4555,8 +4599,11 @@ var buildfire = {
 			buildfire.eventManager.trigger('languageSettingsOnUpdate', obj);
 		}
 		,
-		_handleNode: function (node) { //inject strings for [bfString] elements.
+		_handleNode: function (node, instanceId) { //inject strings for [bfString] elements.
 			const injectString = (string, attributes, node) => {
+				if (!(node && node.parentNode)) {
+					return;
+				}
 				if (attributes && attributes.length) {
 					attributes.forEach(attr => node.setAttribute(attr, string));
 				} else {
@@ -4583,29 +4630,11 @@ var buildfire = {
 				attributes = injectAttributes.split(',');
 			}
 			const stringKey = node.getAttribute('bfString');
-			buildfire.language.get({stringKey}, (err, string) => {
+			buildfire.language.get({stringKey, instanceId, executeCallbackOnUpdate: true}, (err, string) => {
 				if (string) {
-					const strings = buildfire.language._strings;
-					const sectionKey = stringKey.split('.')[0];
-					const labelKey = stringKey.split('.')[1];
-					const isStringHasExpression = strings[sectionKey][labelKey].hasExpression;
-					if (isStringHasExpression) {
-						const options = {
-							instanceId: buildfire.getContext().instanceId,
-							expression: string
-						};
-						//get evaluated expression
-						buildfire.dynamic.expressions.evaluate(options, (err, evaluatedExpression) => {
-							if (evaluatedExpression) {
-								injectString(evaluatedExpression, attributes, node);
-							}
-						});
-					} else {
-						//inject the string into the element.
-						injectString(string, attributes, node);
-					}
+					//inject the string into the element.
+					injectString(string, attributes, node);
 				}
-
 			});
 		}
 		,
