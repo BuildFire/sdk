@@ -4466,6 +4466,15 @@ var buildfire = {
 			}, true);
 		}
 		,
+		/**
+		* get one language string.
+		* @param {Object} params - The needed elements to get the language string. 
+		* @param {string} params.stringKey - The Section key and the label key separated by a dot. (required)
+		* @param {string} params.instanceId - Instance Id of the plugin. (optional)
+		* @param {Boolean} params.executeCallbackOnUpdate - To keep executing the callback on language string value update or not. (optional) 
+		* @param {Function} callback - Returns the value of the language string or error if existed
+		* @public
+		*/
 		get: function (params, callback) {
 			let error;
 			if (!params) {
