@@ -104,7 +104,9 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
                 $scope.presetsExpressions = response;
             } else {
                 const options = {
-                    instanceId: $scope.instanceId
+                    request: {
+                        instanceId: $scope.instanceId
+                    }
                 };
                 //check if plugin has custom expressions.
                 Dynamic.expressions.triggerRequestCustomExpressions(options, (err, res) => {

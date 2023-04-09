@@ -4472,6 +4472,7 @@ var buildfire = {
 		* @param {string} params.stringKey - The Section key and the label key separated by a dot. (required)
 		* @param {string} params.instanceId - Instance Id of the plugin. (optional)
 		* @param {Boolean} params.executeCallbackOnUpdate - To keep executing the callback on language string value update or not. (optional) 
+		* @param {Object} params.node - DOM node element. (optional)
 		* @param {Function} callback - Returns the value of the language string or error if existed
 		* @public
 		*/
@@ -4537,6 +4538,10 @@ var buildfire = {
 						}
 						
 					});
+					if (params.node && typeof params.node === 'object' && request) {
+						params.node.request = request;
+					}
+
 					//stop listening for callbacks.
 					if (request && request.destroy && !params.executeCallbackOnUpdate) {
 						request.destroy();
@@ -4548,17 +4553,17 @@ var buildfire = {
 			};
 
 			if (params.instanceId) {
-				checkStringsReady(params.instanceId);
+				registerStringsReady(params.instanceId);
 			} else {
 				buildfire.getContext((err, context) => {
 					let instanceId = null;
 					if (context && context.instanceId) {
 						instanceId = context.instanceId;
 					}
-					checkStringsReady(instanceId);
+					registerStringsReady(instanceId);
 				});
 			}
-			function checkStringsReady (instanceId) {
+			function registerStringsReady (instanceId) {
 				if (!buildfire.language._strings) {
 					buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
 						onStringsReady(instanceId);
@@ -4571,11 +4576,42 @@ var buildfire = {
 		,
 		watch: function (instanceId) {
 
+			const destroyRemovedNodeExpressionsCallbacks = (node) => {
+				if (!node.tagName) {// not an element
+					return;
+				}
+				//remove bfString attribute
+				node.removeAttribute('bfString');
+				//destroy expressions callbacks
+				if (node && node.request && node.request.destroy) {
+					node.request.destroy(node.request.node);
+				}
+					
+			};
+
 			// Callback function to execute when mutations are observed
 			const callback = (mutationList, observer) => {
 				for (const mutation of mutationList) {
+
+					//detect removed nodes
+					if (mutation && mutation.removedNodes && mutation.removedNodes.length > 0) {
+						for (let i = 0; i < mutation.removedNodes.length; i++) {
+
+							const removedNode = mutation.removedNodes[i];
+							if (removedNode && removedNode.tagName) {
+								destroyRemovedNodeExpressionsCallbacks(removedNode);
+
+								//get all child elements of removed that has "bfString" attribute to destroy their expressions callbacks
+								let childList = removedNode.querySelectorAll('*[bfString]');
+								for (let i = 0; i < childList.length; i++) {
+									destroyRemovedNodeExpressionsCallbacks(childList[i]);
+								}
+							}
+						}
+					}
+
 					if (mutation.type === 'childList' && mutation.target) {
-						buildfire.language._handleNode(mutation.target, instanceId);
+							buildfire.language._handleNode(mutation.target, instanceId);
 						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
 							buildfire.language._handleNode(childList[i], instanceId);
@@ -4639,7 +4675,7 @@ var buildfire = {
 				attributes = injectAttributes.split(',');
 			}
 			const stringKey = node.getAttribute('bfString');
-			buildfire.language.get({stringKey, instanceId, executeCallbackOnUpdate: true}, (err, string) => {
+			buildfire.language.get({stringKey, instanceId, executeCallbackOnUpdate: true, node}, (err, string) => {
 				if (string) {
 					//inject the string into the element.
 					injectString(string, attributes, node);
