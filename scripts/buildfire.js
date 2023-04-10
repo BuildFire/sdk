@@ -4529,6 +4529,13 @@ var buildfire = {
 						expression: stringValue,
 						// don't pass "id" here. it must be unique id for each string. even if it's the same string, it must have a unique id.
 					};
+					
+					//clean up previous request if it's existed. (should not be existed)
+					if (params.node && params.node.request && params.node.request.destroy) {
+						params.node.request.destroy();
+						console.warn('node.request has a value: ', params.node, params.node.request);
+						params.node.request = null;
+					}
 					//get evaluated expression
 					let request = buildfire.dynamic.expressions.evaluate(options, (err, evaluatedExpression) => {
 						if (err) {
@@ -4538,6 +4545,7 @@ var buildfire = {
 						}
 						
 					});
+					//attach request to node object to be able to destroy it later.
 					if (params.node && typeof params.node === 'object' && request) {
 						params.node.request = request;
 					}
@@ -4577,14 +4585,12 @@ var buildfire = {
 		watch: function (instanceId) {
 
 			const destroyRemovedNodeExpressionsCallbacks = (node) => {
-				if (!node.tagName) {// not an element
-					return;
-				}
 				//remove bfString attribute
 				node.removeAttribute('bfString');
 				//destroy expressions callbacks
 				if (node && node.request && node.request.destroy) {
-					node.request.destroy(node.request.node);
+					node.request.destroy();
+					node.request = null;
 				}
 					
 			};
