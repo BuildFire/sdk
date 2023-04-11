@@ -15,6 +15,9 @@ const dynamicEngine = {
 			}
 		}
 	},
+	getGlobalSettings(options, callback) {
+		callback(null, {});
+	},
 	expressions: {
 		_evaluationRequests: {},
 		/**
@@ -70,6 +73,11 @@ const dynamicEngine = {
 						request.context = context;
 						const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request._context)();
 						expressions._evaluationRequests[id] = request;
+						const usedDatasources = request._context.data['__handler__']._usedProperties;
+						dynamicEngine.datasources._fetchNeededDatasources({usedDatasources, extendedDatasources: request.options.extendedDatasources}, (err, res) => {
+							if (err) return console.error('Error occurred while fetching data: ', err);
+							dynamicEngine.triggerContextChange({contextProperty: 'data', data: res});
+						});
 						request.callback(null, evaluatedExpression);
 					} catch (err) {
 						callback(err);
@@ -113,6 +121,7 @@ const dynamicEngine = {
 			dynamicEngine.expressions._getBaseContext(null, (err, baseContext) => {
 				dynamicEngine.expressions.getContext({request: options}, (err, context) => {
 					Object.assign(baseContext, context, options.extendedContext);
+					dynamicEngine.datasources._addDatasourcesData({baseContext});
 					callback(null, baseContext);
 				});
 			});
@@ -130,6 +139,86 @@ const dynamicEngine = {
 		*/
 		_nanoid(t=21) {
 			return crypto.getRandomValues(new Uint8Array(t)).reduce(((t,e)=>t+=(e&=63)<36?e.toString(36):e<62?(e-26).toString(36).toUpperCase():e>62?'-':'_'),'');
+		}
+	},
+	datasources: {
+		_datasourcesData: {},
+		_requestedDatasources: {},
+		_addDatasourcesData({baseContext}){
+			const handler = {
+				_usedProperties: {},
+				get(target, prop) {
+					if (prop === '__handler__') return this;
+					this._usedProperties[prop] = true;
+					return target[prop];
+				},
+			};
+			let data = this._datasourcesData;
+			baseContext.data = new Proxy(data, handler);
+		},
+		_fetchNeededDatasources({usedDatasources, extendedDatasources}, callback) {
+			if (usedDatasources && Object.keys(usedDatasources).length > 0) {
+				dynamicEngine.datasources._getDatasources(null, (err, datasources) => {
+					if (err) return console.error('Error occurred while fetching data: ', err);
+					if (datasources || extendedDatasources) {
+						datasources = datasources || [];
+						if (extendedDatasources) {
+							datasources = datasources.concat(extendedDatasources);
+						}
+						for (let usedDatasourceId in usedDatasources) {
+							if (!this._requestedDatasources[usedDatasourceId] || ((new Date() - this._requestedDatasources[usedDatasourceId].lastTimeFetched) > 5000)) {
+								const existedDatasource = datasources.find((datasource) => {
+									return datasource.id === usedDatasourceId;
+								});
+								if (existedDatasource) {
+									this._fetchDatasource({datasource: existedDatasource}, callback);
+								}
+							}
+						}
+					}
+				});
+			}
+		},
+		/**
+		* @desc Fetch the datasource's data
+		* @param {object} options.datasource - the needed configuration to fetch the datasource data
+		* @param {Function} callback - Returns the data of the fetched datasource
+		* @private
+		*/
+		_fetchDatasource({datasource}, callback) {
+			const options = {};
+			datasource.lastTimeFetched = new Date();
+			this._requestedDatasources[datasource.id] = datasource;
+			options.method = datasource.configurations.method;
+			if (datasource.configurations.headers) {
+				options.headers = datasource.configurations.headers;
+			}
+			if (datasource.configurations.body) {
+				options.body = datasource.configurations.body;
+			}
+			fetch(datasource.configurations.url, options)
+				.then((response) => response.json())
+				.then((data) => {
+					dynamicEngine.datasources._datasourcesData[datasource.id] = data;
+					callback(null, data);
+				})
+				.catch((error) => {
+					callback(error, null);
+				});
+		},
+		/**
+		* @desc Get all the datasources from the app global settings
+		* @param {Function} callback - Returns the datasources
+		* @private
+		*/
+		_getDatasources(options, callback) {
+			dynamicEngine.getGlobalSettings(null, (err, globalSettings) => {
+				if (err) return callback(err);
+				if (globalSettings?.appDatasources && globalSettings.appDatasources.length > 0) {
+					return callback(null, globalSettings.appDatasources);
+				}
+				callback(null, null);
+			});
 		}
 	}
 };

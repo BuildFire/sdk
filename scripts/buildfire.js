@@ -224,18 +224,18 @@ var buildfire = {
 		//attach plugin.js script that contains plugin.json content.
 		function attachPluginJsScript () {
 			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
-		};
+		}
 
 		function getPluginJson(callback) {
 			const url = `../plugin.json?v=${(new Date()).getTime()}`;
 			fetch(url)
-			.then(response => response.json())
-			.then(res => {
-				callback(null,res);
-			})
-			.catch(error => {
-				callback(error, null);
-			});
+				.then(response => response.json())
+				.then(res => {
+					callback(null,res);
+				})
+				.catch(error => {
+					callback(error, null);
+				});
 		}
 
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
@@ -252,13 +252,13 @@ var buildfire = {
 							function getPluginLanguageJson(callback) {
 								const url = `../${pluginJson.control.language.languageJsonPath}`;
 								fetch(url)
-								.then(response => response.json())
-								.then(res => {
-									callback(null, res);
-								})
-								.catch(error => {
-									callback(error, null);
-								});
+									.then(response => response.json())
+									.then(res => {
+										callback(null, res);
+									})
+									.catch(error => {
+										callback(error, null);
+									});
 							}
 							getPluginLanguageJson((err, pluginLanguageJson)=>{
 								if(err) console.error(err);
@@ -454,6 +454,20 @@ var buildfire = {
 			}
 		}
 		return buildfire._context;
+	}
+	, getGlobalSettings: function (options, callback) {
+		if (buildfire.globalSettings) {
+			if (callback) callback(null, buildfire.globalSettings);
+		} else {
+			if (!callback) throw 'globalSettings not ready. Use callback parameter instead of direct return';
+			const p = new Packet(null, 'getGlobalSettings');
+			buildfire._sendPacket(p, function (err, data) {
+				if (err) return callback(err);
+				buildfire.globalSettings = data;
+				callback(null, data);
+			});
+		}
+		return buildfire.globalSettings;
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
 	, navigation: {
@@ -3796,8 +3810,8 @@ var buildfire = {
 		// keep for backward compatability (old namespace)
 		// content will not be transformed but will be visible as is
 		execute: function(e){
-			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
-				e.classList.remove("bf-wysiwyg-hide-app");
+			document.querySelectorAll('.bf-wysiwyg-hide-app').forEach(function(e) {
+				e.classList.remove('bf-wysiwyg-hide-app');
 			});
 		},
 	},
@@ -3902,6 +3916,7 @@ var buildfire = {
 					const scriptId = 'dynamicEngine';
 					buildfire.loadScript({ url, scriptId }, () => {
 						dynamicEngine.expressions.getContext = this._prepareContext; // overwrite the getContext to be suitable for the sdk environment
+						dynamicEngine.getGlobalSettings = buildfire.getGlobalSettings; // overwrite the getGlobalSettings to be suitable for the sdk environment
 						_executeDynamicEngineQueue(dynamicEngine);
 					});
 				}
@@ -3934,7 +3949,11 @@ var buildfire = {
 					: e.parentElement;
 
 				if (!container) return;
-				e.remove();
+				if (!e.parentElement.innerText && e.parentElement.children.length === 1) {
+					e.parentElement.remove();
+				} else {
+					e.remove();
+				}
 				let id = e.getAttribute('data-id');
 				let expressionHtmlContainers = buildfire.dynamic.expressions._htmlContainers;
 				expressionHtmlContainers[id] = expressionHtmlContainers[id] || [];
@@ -3954,6 +3973,18 @@ var buildfire = {
 							container.classList.add('bf-expression-error');
 							container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
 						} else {
+							let tempElement = document.createElement('div');
+							tempElement.innerHTML = result;
+							const elements = tempElement.querySelectorAll('*');
+							elements.forEach(element => {
+								Array.from(element.attributes).forEach(({name}) => {
+									if (name.startsWith('data-exp-')){
+										let attributeName = name.slice(9);
+										element.setAttribute(attributeName, element.getAttribute(name));                                
+										element.removeAttribute(name);
+									}
+								});
+							});
 							container.innerHTML = result;
 							container.classList.remove('bf-expression-error');
 						}
@@ -3963,7 +3994,7 @@ var buildfire = {
 			showDialog: function (options, callback) {
 				if (typeof options === 'undefined' || !options) {
 					options = {};
-				};
+				}
 				buildfire.getContext(function(err, context){
 					if(context && context.instanceId) {
 						options.instanceId = context.instanceId;
@@ -4007,6 +4038,13 @@ var buildfire = {
 						if (originalSetup) {
 							options.setup = function (editor) {
 								let dynamicExpressionsActivated;
+								const originalSetContent = editor.setContent.bind(editor);
+								editor.setContent = (content, args) => {
+									originalSetContent(content, args);
+									if (content && typeof dynamicExpressionsActivated === 'undefined' && dynamicExpressionsEnabled) {
+										_syncExpressionButtonActivation();
+									}
+								};
 								const timestamp = new Date().getTime();
 								const EXPRESSION_HTML = `<img data-no-blob data-id="${timestamp}" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamic.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />`;
 								const _injectExpressionNode = () => {
@@ -4021,24 +4059,28 @@ var buildfire = {
 									Array.from(elements).forEach((e) => {
 										if (e.parentElement && !e.parentElement.innerText && e.parentElement.children.length === 1) {
 											e.parentElement.remove();
+										} else {
+											e.remove();
 										}
-										e.remove();
 									});
 									editor.setContent(div.innerHTML);
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.remove('bf-wysiwyg-hide-app'); });
 								};
-								const _syncExpressionNodes = () => {
+								const _syncExpressionButtonActivation = () => {
 									const div = document.createElement('div');
 									div.innerHTML = editor.getContent();
 									const expression = div.querySelector('[data-type="dynamic-expression"]');
 									if (typeof dynamicExpressionsActivated === 'undefined') {
 										dynamicExpressionsActivated = !!expression;
 									}
-									if (dynamicExpressionsActivated && !expression) {
-										_injectExpressionNode();
-									} else if (!dynamicExpressionsActivated && expression) {
-										_removeExpressionNode();
-									}
+								};
+								const _restoreCursorPosition = () => {
+									editor.execCommand('mceInsertContent', false, '<span id="temp-cursor-position"></span>');
+									setTimeout(() => {
+										const tempElement = editor.dom.select('#temp-cursor-position')[0];
+										editor.selection.select(tempElement);
+										editor.dom.remove(tempElement);
+									}, 0);
 								};
 
 								editor.on('init', function () {
@@ -4084,10 +4126,23 @@ var buildfire = {
 										}
 										ele.classList.add(...classes);
 									});
-
-									if (dynamicExpressionsEnabled) {
-										_syncExpressionNodes();
-									}
+								});
+								var keyupListenerDelay = null;
+								editor.on('keyup', function() {
+									if (keyupListenerDelay) clearTimeout(keyupListenerDelay);
+									keyupListenerDelay = setTimeout(() => {
+										if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
+											dynamicExpressionsActivated = true;
+											_restoreCursorPosition();
+											_injectExpressionNode();
+											editor.isNotDirty = false;
+											editor.fire('change');
+										} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
+											dynamicExpressionsActivated = false;
+											_restoreCursorPosition();
+											_removeExpressionNode();
+										}
+									}, 500);
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',
@@ -4127,16 +4182,7 @@ var buildfire = {
 								});
 								editor.ui.registry.addToggleMenuItem('bf_toggleDynamicExpression', {
 									text: 'Expressions',
-									onAction: () => {
-										dynamicExpressionsActivated = !dynamicExpressionsActivated;
-										if (dynamicExpressionsActivated) {
-											_injectExpressionNode();
-										} else {
-											_removeExpressionNode();
-										}
-										editor.isNotDirty = false;
-										editor.fire('change');
-									},
+									onAction: () => {},
 									onSetup: (api) => {
 										api.setActive(dynamicExpressionsActivated);
 										return () => {};
@@ -4149,9 +4195,6 @@ var buildfire = {
 											if (err) return console.error(err);
 											if (res) {
 												editor.insertContent(res);
-												if (!dynamicExpressionsActivated) {
-													editor.ui.registry.getAll().menuItems.bf_toggledynamicexpression.onAction();
-												}
 											}
 										});
 									}
@@ -4226,7 +4269,7 @@ var buildfire = {
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick]';
+						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-exp-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*]';
 						options.height = options.height || 265;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
