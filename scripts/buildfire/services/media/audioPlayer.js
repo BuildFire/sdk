@@ -109,7 +109,7 @@ buildfire.services.media.audioPlayer = {
 		if (typeof callback !== 'function') {
 			throw 'callback function is mandatory';
 		}
-		const packet = new Packet(null,'mediaAPI.audioPlayer.isTrackInPlaylist');
+		const packet = new Packet(null,'mediaAPI.audioPlayer.isTrackInPlaylist', track);
 		buildfire._sendPacket(packet, callback);
 	}
 
