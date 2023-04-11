@@ -648,9 +648,6 @@ html[buildfire] .btn-delete-icon::after{
 }
 
 .flex{
-	display: flex;
-}
-.flex-important{
 	display: flex !important;
 }
 

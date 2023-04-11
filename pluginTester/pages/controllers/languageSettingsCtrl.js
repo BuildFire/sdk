@@ -196,8 +196,10 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
                 controller: 'expressionsBuilderCtrl',
                 size: 'lg',
                 data: {
-                    string: string,
-                    instanceId: window.appContext.currentPlugin.instanceId
+                    options: {
+                        string: string,
+                        instanceId: window.appContext.currentPlugin.instanceId
+                    }
                 }
             };
 

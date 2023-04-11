@@ -82,18 +82,14 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         $scope.pluginCustomExpressions = [];
         $scope.expressionScope = 'cp';
         $scope.instanceId = '';
-        //coming from SDK/plugin
+        //coming from SDK/plugin or Language Settings CP
         if ($data && $data.options && $data.options.instanceId) {
             $scope.expressionScope = 'app';
             $scope.instanceId = $data.options.instanceId;
-        } else if ($data && $data.instanceId) {
-            //coming from plugin tester CP/plugin-Language settings.
-            $scope.expressionScope = 'app';
-            $scope.instanceId = $data.instanceId;
         }
         //check if there a string to be initialized
-        if ($data && $data.string) {
-            $scope.expression.string = $data.string;
+        if ($data && $data.options && $data.options.string) {
+            $scope.expression.string = $data.options.string;
         }
         const appHost = window.siteConfig.endPoints.appHost;
         const presetsExpressionJsonPath = appHost + `/scripts/expressions/presetsExpressions.json?v=${(new Date()).getTime()}`;
