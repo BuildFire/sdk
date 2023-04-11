@@ -2619,7 +2619,7 @@ var buildfire = {
 		, resizeImage: function (url, options, element, callback) {
 			if (!url) return null;
 			// return unsupported file types
-			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
+			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url))) {
 				var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
 				console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
 				return url;
@@ -2703,7 +2703,7 @@ var buildfire = {
 		, cropImage: function (url, options, element, callback) {
 			if (!url) return null;
 			// return unsupported file types
-			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
+			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url))) {
 				var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
 				console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
 				return url;
@@ -2842,7 +2842,7 @@ var buildfire = {
 			}
 
 			string = string.replace(/(http|https):\/\/\S{0,8}.cloudimg.io\//g, '');
-			var extension = string.match(/(png|jpg|jpeg)/g)[0] || '';
+			var extension = string.match(/(png|jpg|jpeg|gif|jfif|svg)/g)[0] || '';
 			extension = extension ? '.' + extension : '';
 
 			var hash = 0;
