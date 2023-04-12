@@ -132,6 +132,15 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		console.log('analytics mock track view [' + viewName + ']', metadata);
 	};
 
+	if (typeof Dynamic != 'undefined') {
+		if (!Dynamic.expressions) {
+			Dynamic.expressions = {};
+		}
+		Dynamic.expressions.showDialog = (options, callback) =>{
+			ExpressionBuilderAPI.prototype.showDialog(options, callback);
+		}
+	}
+
 
 	///override the authAPI.getCurrentUser to return auth
 	authAPI.secondaryUserLookup = function () {

@@ -39,7 +39,7 @@ html[view="app"] ::-webkit-scrollbar{
     display:none;
 }
 img,
-iframe, 
+iframe,
 object{
 	max-width:100%;
 	vertical-align:top;
@@ -1083,11 +1083,11 @@ html[ios="true"][view="app"] #pluginNav{
 html[ios="true"][view="app"] #pluginNav a.back-btn-icon{
 	top:32px !important;
 	padding-bottom:13px !important;
-} 
+}
 html[ios="true"][view="app"] #pluginNav a.menu-btn-icon{
 	top:27px !important;
 }
-html[ios="true"][view="app"] #pluginNav h4, 
+html[ios="true"][view="app"] #pluginNav h4,
 html[ios="true"][view="app"] #pluginNav h5{
 	padding-bottom:8px !important;
 }

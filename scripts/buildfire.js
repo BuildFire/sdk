@@ -14,6 +14,9 @@ var buildfire = {
 	isFileServer: function(url){
 		return (url.indexOf('s3.amazonaws.com') !== -1);
 	}
+	, isWidget: function() {
+		return window.location.href.indexOf('/widget/') > 0;
+	}
 	, isWeb: function(callback){
 		var isWebFromContext = function (context) {
 			if (context && context.device && context.device.platform) {
@@ -236,36 +239,38 @@ var buildfire = {
 		}
 
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
-			const context = buildfire.getContext();
-			if (context && context.scope === 'sdk') {
-				getPluginJson((err, pluginJson)=>{
-					if(err) console.error(err);
-					window.pluginJson = pluginJson;
-					buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+			buildfire.getContext((err, context) => {
+				if (err) return console.error(err);
+				if (context && context.scope === 'sdk') {
+					getPluginJson((err, pluginJson)=>{
+						if(err) console.error(err);
+						window.pluginJson = pluginJson;
+						buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
 
-					if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
-						//handle language settings
-						function getPluginLanguageJson(callback) {
-							const url = `../${pluginJson.control.language.languageJsonPath}`;
-							fetch(url)
-							.then(response => response.json())
-							.then(res => {
-								callback(null, res);
-							})
-							.catch(error => {
-								callback(error, null);
+						if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
+							//handle language settings
+							function getPluginLanguageJson(callback) {
+								const url = `../${pluginJson.control.language.languageJsonPath}`;
+								fetch(url)
+								.then(response => response.json())
+								.then(res => {
+									callback(null, res);
+								})
+								.catch(error => {
+									callback(error, null);
+								});
+							}
+							getPluginLanguageJson((err, pluginLanguageJson)=>{
+								if(err) console.error(err);
+								window.pluginLanguageJson = pluginLanguageJson;
+								buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
 							});
 						}
-						getPluginLanguageJson((err, pluginLanguageJson)=>{
-							if(err) console.error(err);
-							window.pluginLanguageJson = pluginLanguageJson;
-							buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
-						});
-					}
-				});
-			}else{
-				attachPluginJsScript();
-			}
+					});
+				} else {
+					attachPluginJsScript();
+				}
+			});
 		}
 
 
@@ -281,6 +286,7 @@ var buildfire = {
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
 		, 'dynamic.onReceivedWidgetContextRequest'
+		, 'dynamic.expressions.onReceivedCustomExpressionsRequest'
 		, 'history.triggerOnPop'
 		, 'navigation.onBackButtonClick'
 		, 'services.media.audioPlayer.triggerOnEvent'
@@ -288,6 +294,8 @@ var buildfire = {
 		, 'auth.triggerOnLogout'
 		, 'auth.triggerOnUpdate'
 		, 'logger.attachRemoteLogger'
+		, 'device.triggerKeyboardWillShow'
+		, 'device.triggerKeyboardWillHide'
 		, 'appearance.triggerOnUpdate'
 		, '_cssInjection.triggerOnUpdate'
 		, 'language.triggerOnUpdate'
@@ -356,11 +364,10 @@ var buildfire = {
 			callback = function (err, result) {
 				//console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
 			};
-
-		if (buildfire.getContext().type == 'control') {
-			packet.source = 'control';
-		} else {
+		if (buildfire.isWidget()) {
 			packet.source = 'widget';
+		} else {
+			packet.source = 'control';
 		}
 
 		var retryInterval = 3000,
@@ -852,7 +859,7 @@ var buildfire = {
 				var bfWidgetTheme = document.createElement('style');
 				bfWidgetTheme.id = 'bfWidgetTheme';
 				bfWidgetTheme.rel = 'stylesheet';
-				bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(theme);
+				bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(theme);
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 			});
@@ -1107,9 +1114,9 @@ var buildfire = {
 						if (err) console.error(err);
 						if (context) {
 							buildfire.appearance._setFontUrl(context, appTheme);
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						} else {
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						}
 					});
 				}
@@ -1165,7 +1172,7 @@ var buildfire = {
 				buildfire._sendPacket(p, callback);
 			},
 		},
-		_getAppThemeCssVariables: function(appTheme) {
+		_getCommonCss: function(appTheme) {
 			var css = '';
 			if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
             && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
@@ -1176,7 +1183,11 @@ var buildfire = {
 					css += '@import url(\'' + appTheme.fontUrl + '\');';
 				}
 			}
-
+			let lightBodyText = appTheme.colors.bodyText;
+			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors 
+				// create a new color, which is the bodyText's color with an opacity (33%)
+				lightBodyText = `${appTheme.colors.bodyText}54`;
+			}
 			css += ':root {'
                 + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
                 + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
@@ -1186,6 +1197,7 @@ var buildfire = {
                 + '--bf-theme-danger: ' + appTheme.colors.dangerTheme + ' !important;'
                 + '--bf-theme-background: ' + appTheme.colors.backgroundColor + ' !important;'
                 + '--bf-theme-body-text: ' + appTheme.colors.bodyText + ' !important;'
+				+ '--bf-theme-container-highlight: ' + lightBodyText + ' !important;'
                 + '--bf-theme-footer-background: ' + appTheme.colors.footerMenuBackgroundColor + ' !important;'
                 + '--bf-theme-footer-icon: ' + appTheme.colors.footerMenuIconColor + ' !important;'
                 + '--bf-theme-header-text: ' + appTheme.colors.headerText + ' !important;'
@@ -3581,6 +3593,27 @@ var buildfire = {
 		triggerOnAppResumed: function (data) {
 			return buildfire.eventManager.trigger('deviceAppResumed', data);
 		},
+		isKeyboardVisible: function(options, callback) {
+			const isVisible = document.documentElement.classList.contains('keyboard-visible');
+			if (callback) return callback(null, isVisible);
+		},
+		onKeyboardShow: function(callback, allowMultipleHandlers = true) {
+			buildfire.eventManager.add('keyboardWillShow', callback, allowMultipleHandlers);
+		},
+		onKeyboardHide: function(callback, allowMultipleHandlers = true) {
+			buildfire.eventManager.add('keyboardWillHide', callback, allowMultipleHandlers);
+		},
+		triggerKeyboardWillShow: function(options) {
+			const root = document.documentElement;
+			root.classList.add('keyboard-visible');
+			root.style.setProperty('--bf-keyboard-height', `${options.keyboardHeight}px`);
+			buildfire.eventManager.trigger('keyboardWillShow', {keyboardHeight: options.keyboardHeight});
+		},
+		triggerKeyboardWillHide: function() {
+			const root = document.documentElement;
+			root.classList.remove('keyboard-visible');
+			buildfire.eventManager.trigger('keyboardWillHide');
+		},
 		contacts: {
 			showDialog: function (options, callback) {
 				var p = new Packet(null, 'device.contacts.showDialog', options);
@@ -3762,7 +3795,7 @@ var buildfire = {
 	dynamicBlocks: {
 		// keep for backward compatability (old namespace)
 		// content will not be transformed but will be visible as is
-		execute: function(e){ 
+		execute: function(e){
 			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
 				e.classList.remove("bf-wysiwyg-hide-app");
 			});
@@ -3807,11 +3840,27 @@ var buildfire = {
 			});
 		},
 		expressions: {
+			requestPluginCustomExpressions(options, callback) {
+				var p = new Packet(null, 'dynamic.expressions.triggerRequestCustomExpressions', options);
+				buildfire._sendPacket(p, callback);
+			},
+			onReceivedCustomExpressionsRequest(options, callback) {
+				if (buildfire.dynamic.expressions.getCustomExpressions) {
+					buildfire.dynamic.expressions.getCustomExpressions(null, (err, res) => {
+						if (err) return callback(err);
+						callback(null, res);
+					});
+				} else {
+					callback(null, null);
+				}
+			},
 			_prepareContext(options, callback) {
 				if (buildfire.getContext().type == 'control') {
 					// get the widget's context to evaluate expressions against it rather than the control's context
 					let options = {
-						instanceId: buildfire.getContext().instanceId
+						request: {
+							instanceId: buildfire.getContext().instanceId
+						}
 					};
 					buildfire.dynamic.requestWidgetContext(options, (err, context) => {
 						if (err) return callback(err);
@@ -3911,6 +3960,18 @@ var buildfire = {
 					}
 				});
 			},
+			showDialog: function (options, callback) {
+				if (typeof options === 'undefined' || !options) {
+					options = {};
+				};
+				buildfire.getContext(function(err, context){
+					if(context && context.instanceId) {
+						options.instanceId = context.instanceId;
+					}
+					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
+					buildfire._sendPacket(p, callback); 
+				});
+			}
 		},
 	},
 	wysiwyg: {
@@ -4081,6 +4142,20 @@ var buildfire = {
 										return () => {};
 									}
 								});
+								editor.ui.registry.addMenuItem('bf_insertExpression', {
+									text: 'Insert expression',
+									onAction: function() {
+										buildfire.dynamic.expressions.showDialog(null, (err, res) => {
+											if (err) return console.error(err);
+											if (res) {
+												editor.insertContent(res);
+												if (!dynamicExpressionsActivated) {
+													editor.ui.registry.getAll().menuItems.bf_toggledynamicexpression.onAction();
+												}
+											}
+										});
+									}
+								});
 								originalSetup(editor);
 							};
 						}
@@ -4088,9 +4163,9 @@ var buildfire = {
 						buildfire.appearance.getWidgetTheme(function(err, theme) {
 							if (err) return console.error(err);
 							if (options.content_style) {
-								options.content_style += buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style += buildfire.appearance._getCommonCss(theme);
 							} else {
-								options.content_style = buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style = buildfire.appearance._getCommonCss(theme);
 							}
 						});
 						if (options.content_css) {
@@ -4109,7 +4184,7 @@ var buildfire = {
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
+							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
 							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},

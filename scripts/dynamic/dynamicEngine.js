@@ -25,13 +25,13 @@ const dynamicEngine = {
 		* @param {Function} callback - Returns the evaluated expression or error if existed
 		* @public
 		*/
-		evaluate({id, expression, extendedContext}, callback) {
+		evaluate(options, callback) {
+			const { id } = options; 
 			const evaluationRequest = {
 				callback,
-				expression,
-				extendedContext,
+				options,
 				id: id || dynamicEngine.expressions._nanoid(),
-				destroy: function() {
+				destroy() {
 					dynamicEngine.expressions._destroyRequest(this.id);
 				}
 			};
@@ -42,12 +42,13 @@ const dynamicEngine = {
 			dynamicEngine.expressions._evaluate(evaluationRequest);
 			return evaluationRequest;
 		},
-		_evaluate: function(request) {
+		_evaluate(request) {
 			const { expressions } = dynamicEngine;
-			const { id, extendedContext, expression, callback } = request;
+			const { id, callback }  = request;
+			const { expression } = request.options;
 
 			expressions._prepareContext(
-				{ extendedContext },
+				request.options,
 				(err, context) => {
 					try {
 						const handler = {
@@ -80,7 +81,7 @@ const dynamicEngine = {
 		* @param {string} id - The unique id of the request that should be deleted
 		* @private
 		*/
-		_destroyRequest: function(id) {
+		_destroyRequest(id) {
 			delete dynamicEngine.expressions._evaluationRequests[id];
 		},
 		/**
@@ -108,10 +109,10 @@ const dynamicEngine = {
 		* @param {Function} callback - Returns the final version of the context to be used in the evaluation
 		* @private
 		*/
-		_prepareContext({extendedContext}, callback) {
+		_prepareContext(options, callback) {
 			dynamicEngine.expressions._getBaseContext(null, (err, baseContext) => {
-				dynamicEngine.expressions.getContext(null, (err, context) => {
-					Object.assign(baseContext, context, extendedContext);
+				dynamicEngine.expressions.getContext({request: options}, (err, context) => {
+					Object.assign(baseContext, context, options.extendedContext);
 					callback(null, baseContext);
 				});
 			});
