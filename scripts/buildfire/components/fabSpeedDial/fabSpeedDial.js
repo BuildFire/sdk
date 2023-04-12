@@ -23,7 +23,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 			buttons: [],
 		}, options);
 
-		if (this.options.buttons.length <= 1|| this.options.buttons.length > 6) {
+		if (this.options.buttons.length <= 1 || this.options.buttons.length > 6) {
 			this.options.buttons = [];
 			console.error('The number of buttons should be between 2 to 6');
 		}
