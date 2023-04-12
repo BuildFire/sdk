@@ -23,8 +23,9 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 			buttons: [],
 		}, options);
 
-		if (this.options.buttons.length < 2 || this.options.buttons.length > 6) {
-			throw new Error('The number of buttons should be between 2 to 6');
+		if (this.options.buttons.length <= 1|| this.options.buttons.length > 6) {
+			this.options.buttons = [];
+			console.error('The number of buttons should be between 2 to 6');
 		}
 
 		if (typeof this.options.showOverlay !== 'boolean') {
@@ -90,6 +91,13 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		this._state.overlayElement.classList.add('fade-in');
 		this._state.isOpen = true;
 	}
+
+	/**
+	 * Handler to be used upon speed dial main speed dial button click
+	 * @function
+	 * @public
+	 */
+	onMainButtonClick(event){}
 
 	/**
 	 * Handler to be used upon speed dial buttons click
@@ -178,12 +186,16 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
      * @private
      */
 	_onMainBtnClick() {
-		if (!this._state.isOpen) {
-			this.open();
-			this.onOpen();
-		} else {
-			this.close();
-			this.onClose();
+		if(this.options.buttons.length){
+			if (!this._state.isOpen) {
+				this.open();
+				this.onOpen();
+			} else {
+				this.close();
+				this.onClose();
+			}
+		}else{
+			this.onMainButtonClick(this.options.mainButton);
 		}
 	}
 
