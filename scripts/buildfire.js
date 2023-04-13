@@ -4382,12 +4382,14 @@ var buildfire = {
 					if (context && context.instanceId) {
 						instanceId = context.instanceId;
 					}
-					document.querySelectorAll('*[bfString]').forEach(e => {
+					const bfElements = document.querySelectorAll('*[bfString]');
+					bfElements.forEach(e => {
 						buildfire.language._handleNode(e, instanceId);
-						//trigger on string injected to this element.
-						buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
-						buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
 					});
+					//trigger on strings injected and ready.
+					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', null);
+					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', null);
+
 					buildfire.language.watch(instanceId);
 				});
 			};
