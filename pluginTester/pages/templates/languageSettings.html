@@ -31,7 +31,7 @@
                                 <div class="col-md-9 pull-left" ng-class="{'has-error': (frmLanguageSettings.$submitted && (!labelObj.defaultValue || labelObj.wysiwygRequiredEmpty) && labelObj.required), 'margin-bottom-fifteen': (labelObj.inputType === 'textarea' || labelObj.inputType === 'wysiwyg')}">
     
                                     <!-- text input type -->
-                                    <div class="flex-important flex-align-center input-group"  ng-if="!labelObj.inputType || labelObj.inputType === 'text'">
+                                    <div class="flex flex-align-center input-group"  ng-if="!labelObj.inputType || labelObj.inputType === 'text'">
                                         <input type="text" class="form-control" ng-value="labelObj.defaultValue" placeholder="{{labelObj.placeholder}}" maxLength="{{labelObj.hasOwnProperty('maxLength') && labelObj.maxLength <= 200 ? labelObj.maxLength : 200}}" ng-model="labelObj.defaultValue" ng-model-options="{ allowInvalid: true }" required="labelObj.required" ng-change="inputOnChange(labelObj.defaultValue, labelObj.required)"/>
                                         <div class="btn btn-primary btn-outlined form-control w-fit-content puzzle-box" uib-tooltip="Expression Builder" tooltip-placement="left" ng-click="openExpressionsBuilder(labelObj.defaultValue, sectionKey, labelKey)">
                                             <span class="icon icon-puzzle"></span>
@@ -40,7 +40,7 @@
     
                                     
                                     <!-- text area input type -->
-                                    <div class="flex-important flex-align-center input-group" ng-if="labelObj.inputType === 'textarea'" >
+                                    <div class="flex flex-align-center input-group" ng-if="labelObj.inputType === 'textarea'" >
                                         <textarea type="textarea" class="form-control textarea-resize-none" ng-value="labelObj.defaultValue" placeholder="{{labelObj.placeholder}}" maxLength="{{labelObj.hasOwnProperty('maxLength') && labelObj.maxLength <= 1000 ? labelObj.maxLength : 1000}}" ng-model="labelObj.defaultValue" ng-model-options="{ allowInvalid: true }" required="labelObj.required" ng-change="inputOnChange(labelObj.defaultValue, labelObj.required)">
                                         </textarea>
                                         <div class="btn btn-primary btn-outlined form-control w-fit-content puzzle-box textarea" uib-tooltip="Expression Builder" tooltip-placement="left" ng-click="openExpressionsBuilder(labelObj.defaultValue, sectionKey, labelKey)">
@@ -50,7 +50,7 @@
     
                                     <!-- wysiwyg input type -->
                                     <textarea ng-if="labelObj.inputType === 'wysiwyg'" class="form-control" ng-value="labelObj.defaultValue" placeholder="{{labelObj.placeholder}}" ng-model="labelObj.defaultValue" required="labelObj.required" ui-tinymce="WYSIWYGOptions" name="{{sectionKey+'&'+labelKey}}" cols="45" rows="3"></textarea>
-                                    <div class="flex-important flex-align-center space-between">
+                                    <div class="flex flex-align-center space-between">
                                         <!-- required danger -->
                                         <div class="alert text-danger alert-sm text-left" ng-show="frmLanguageSettings.$submitted && (!labelObj.defaultValue || labelObj.wysiwygRequiredEmpty) && labelObj.required">
                                             Required
