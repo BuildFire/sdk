@@ -9,6 +9,7 @@ function State() {
 	this.bodyTextColor = '#000000';
 }
 
+
 buildfire.components.fabSpeedDial = class FabSpeedDial {
 	constructor(selector, options = {}) {
 		if (!document.querySelector(selector)) throw new Error('Element not found!');
@@ -23,6 +24,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 			buttons: [],
 		}, options);
 
+
 		if (this.options.buttons.length <= 1 || this.options.buttons.length > 6) {
 			this.options.buttons = [];
 			console.error('The number of buttons should be between 2 to 6');
@@ -31,10 +33,12 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		if (typeof this.options.showOverlay !== 'boolean') {
 			throw new Error('showOverlay value must be of type boolean');
 		}
+
 		this._onButtonClickCallbacks = [];
 		this._state = new State();
-        this._onMainBtnClick = this._onMainBtnClick.bind(this);
-        this._onOverlayClick = this._onOverlayClick.bind(this);
+    this._onMainBtnClick = this._onMainBtnClick.bind(this);
+    this._onOverlayClick = this._onOverlayClick.bind(this);
+
 		this._init();
 	}
 
@@ -49,7 +53,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		this._state.bodyTextColor = getComputedStyle(document.documentElement)
 			.getPropertyValue('--bf-theme-body-text')
 			.trim();
-        this._buildOverlay();
+    this._buildOverlay();
 		this._buildMainButton();
 		this._buildButtons();
 	}
@@ -82,8 +86,9 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	 * @function
 	 * @public
 	 */
+
 	open(e) {
-        if (!this.selector) return;
+    if (!this.selector) return;
 		this.selector.classList.add(FabSpeedDial.ACTIVE_CLASS_NAME);
 		document.querySelectorAll('.fab-button-container').forEach((el) => el.classList.remove('hidden'));
 
@@ -147,14 +152,14 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	destroy() {
 		if (!this.selector) throw 'speedDial instance destroyed';
 
-        this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick);
+    this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick);
 		this._state.overlayElement.removeEventListener('click', this._onOverlayClick);
 		this._state.overlayElement.remove();
-        this.selector.innerHTML = '';
-        delete this.options;
-        delete this._state;
-        delete this.selector;
-        delete this.onButtonClick;
+    this.selector.innerHTML = '';
+    delete this.options;
+    delete this._state;
+    delete this.selector;
+    delete this.onButtonClick;
     }
 
     /**
@@ -180,11 +185,11 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		this._state.mainFabBtnElement.addEventListener('click', this._onMainBtnClick);
 	}
 
-    /**
-     * Toggle the speed dial opened or closed
-     * @function
-     * @private
-     */
+  /**
+   * Toggle the speed dial opened or closed
+   * @function
+   * @private
+   */
 	_onMainBtnClick() {
 		if(this.options.buttons.length){
 			if (!this._state.isOpen) {
@@ -199,11 +204,11 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		}
 	}
 
-    /**
-     * Build speed dial buttons
-     * @function
-     * @private
-     */
+  /**
+  * Build speed dial buttons
+  * @function
+  * @private
+  */
 	_buildButtons() {
 		const buttonsContainer = this._createUIElement('div', this.selector, '', [
 			'fab-button-container',

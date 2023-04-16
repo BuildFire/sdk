@@ -1,0 +1,451 @@
+:root {
+	/* style */
+	--main-fab-max-width: 56px;
+	--main-fab-max-height: 56px;
+	--main-fab-min-width: 56px;
+	--main-fab-min-height: 56px;
+	--extended-fab-max-width: 45px;
+	--extended-fab-max-height: 45px;
+	--extended-fab-min-width: 45px;
+	--extended-fab-min-height: 45px;
+	--max-label-width: 10rem;
+	--overlay-opacity: 0.9;
+	/* fonts */
+	--fab-font-size: 24px;
+	--label-font-size: 14px;
+	--lable-font-weight: 400;
+	/* animations */
+	--animation-speed: 0.2s;
+}
+
+.speed-dial-container {
+	position: fixed;
+	bottom: 2rem;
+	right: 1rem;
+	z-index: 100 !important;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+html[safe-area="true"] .speed-dial-container {
+	bottom: calc(16px + constant(safe-area-inset-bottom)) !important;
+	bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+}
+
+.speed-dial-container .fab-button {
+	position: relative;
+	overflow: hidden;
+	outline: none;
+	cursor: pointer;
+	text-align: center;
+	border: none;
+	border-radius: 50%;
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12),
+		0px 2px 4px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14), 0px 1px 10px rgba(0, 0, 0, 0.12),
+		0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.speed-dial-container .main-fab-button {
+	min-width: var(--main-fab-min-width);
+	max-width: var(--main-fab-max-width);
+	max-height: var(--main-fab-max-height);
+	min-height: var(--main-fab-min-height);
+	font-size: var(--fab-font-size);
+	-webkit-tap-highlight-color: transparent;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	overflow: hidden;
+}
+
+.speed-dial-container .main-fab-button:active::before {
+	content: "";
+	position: absolute;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.3);
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	-webkit-transform: translate(-50%, -50%) scale(3.5);
+	transform: translate(-50%, -50%) scale(3.5);
+	-webkit-transition: -webkit-transform 0.3s ease-out;
+	transition: -webkit-transform 0.3s ease-out;
+	-o-transition: transform 0.3s ease-out;
+	transition: transform 0.3s ease-out;
+}
+
+.speed-dial-container .fab-button-container {
+	position: absolute;
+	bottom: 100%;
+	padding-bottom: 1.5rem;
+	right: 0rem;
+	overflow: hidden;
+	padding-right: 5px;
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: reverse;
+	flex-direction: column-reverse;
+	gap: 1rem;
+}
+
+.speed-dial-container .action-container {
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	flex-direction: row;
+	-webkit-box-pack: end;
+	justify-content: flex-end;
+	-webkit-box-align: center;
+	align-items: center;
+	gap: 1rem;
+	cursor: pointer;
+	width: -webkit-max-content;
+	width: -moz-max-content;
+	width: max-content;
+	align-self: flex-end;
+}
+
+.speed-dial-container .extended-button {
+	display: -webkit-box !important;
+	display: flex !important;
+	-webkit-box-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	align-items: center;
+	min-width: var(--extended-fab-min-width);
+	max-width: var(--extended-fab-max-width);
+	min-height: var(--extended-fab-max-height);
+	max-height: var(--extended-fab-min-height);
+	-webkit-animation: fade-out-bck var(--animation-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+	animation: fade-out-bck var(--animation-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.speed-dial-container .action-container > .extended-button-label {
+	max-width: var(--max-label-width);
+	color: var(--bf-theme-body-text);
+	font-style: normal;
+	font-weight: var(--lable-font-weight);
+	font-size: var(--label-font-size);
+	line-height: 20px;
+	overflow: hidden;
+	display: block;
+	-o-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: right;
+	cursor: pointer;
+	-webkit-animation: fade-out-bck var(--animation-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+	animation: fade-out-bck var(--animation-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.speed-dial-container .fab-button-container.hidden,
+.speed-dial-container .expanded-fab-overlay.hidden {
+	display: none !important;
+}
+
+.expanded-fab-overlay {
+	background-color: var(--bf-theme-background);
+	opacity: var(--overlay-opacity);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 90 !important;
+}
+
+.speed-dial-container > .main-fab-button i {
+	-webkit-transition: -webkit-transform var(--animation-speed) ease-in-out;
+	transition: -webkit-transform var(--animation-speed) ease-in-out;
+	-o-transition: transform var(--animation-speed) ease-in-out;
+	transition: transform var(--animation-speed) ease-in-out,
+		-webkit-transform var(--animation-speed) ease-in-out;
+	-webkit-transform: rotate(0deg);
+	transform: rotate(0deg);
+}
+
+.speed-dial-container .fade-in {
+	-webkit-animation: fade-in 0.3s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+	animation: fade-in 0.3s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+
+.speed-dial-container .fade-out {
+	display: block;
+	animation-direction: reverse;
+	-webkit-animation: fade-out-bck var(--animation-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+	animation: fade-out-bck var(--animation-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+
+
+/*! ------------------------------- if have active --------------------------------------------- */
+
+.speed-dial-container.active > .main-fab-button .icon {
+	-webkit-transition: -webkit-transform var(--animation-speed) ease-in-out;
+	transition: -webkit-transform var(--animation-speed) ease-in-out;
+	-o-transition: transform var(--animation-speed) ease-in-out;
+	transition: transform var(--animation-speed) ease-in-out;
+	-webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+
+.speed-dial-container.active .fab-button-container {
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: reverse;
+	flex-direction: column-reverse;
+	gap: 1rem;
+}
+
+.speed-dial-container.active .fab-button-container .extended-button {
+	display: block;
+	-webkit-animation-name: enter;
+	animation-name: enter;
+	-webkit-animation-fill-mode: backwards;
+	animation-fill-mode: backwards;
+	-webkit-animation-duration: var(--animation-speed);
+	animation-duration: var(--animation-speed);
+	-webkit-transform-origin: center;
+	transform-origin: center;
+}
+
+.speed-dial-container.active .fab-button-container .extended-button:active::before {
+	content: "";
+	position: absolute;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.3);
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	-webkit-transform: translate(-50%, -50%) scale(3.5);
+	transform: translate(-50%, -50%) scale(3.5);
+	-webkit-transition: -webkit-transform 0.3s ease-out;
+	transition: -webkit-transform 0.3s ease-out;
+	-o-transition: transform 0.3s ease-out;
+	transition: transform 0.3s ease-out;
+	transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
+}
+
+.speed-dial-container.active .fab-button-container .extended-button-label {
+	display: block;
+	-webkit-animation-name: label-enter;
+	animation-name: label-enter;
+	-webkit-animation-fill-mode: backwards;
+	animation-fill-mode: backwards;
+	-webkit-animation-duration: var(--animation-speed);
+	animation-duration: var(--animation-speed);
+	-webkit-transform-origin: bottom center;
+	transform-origin: bottom center;
+}
+
+/*! --------------------------- animations ---------------------------------------- */
+@-webkit-keyframes enter {
+	from {
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	}
+
+	to {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+}
+
+@keyframes enter {
+	from {
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	}
+
+	to {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+}
+
+@keyframes label-enter {
+	from {
+		-webkit-transform: scaleY(0);
+		transform: scaleY(0);
+	}
+
+	to {
+		-webkit-transform: scaleY(1);
+		transform: scaleY(1);
+	}
+}
+
+@-webkit-keyframes label-enter {
+	from {
+		-webkit-transform: scaleY(0);
+		transform: scaleY(0);
+	}
+
+	to {
+		-webkit-transform: scaleY(1);
+		transform: scaleY(1);
+	}
+}
+
+@-webkit-keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 0.9;
+	}
+}
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 0.9;
+	}
+}
+
+@-webkit-keyframes fade-out {
+	from {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+
+	to {
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	}
+}
+
+@keyframes fade-out {
+	from {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+
+	to {
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	}
+}
+
+@-webkit-keyframes ripple {
+	from {
+		opacity: 1;
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	}
+
+	to {
+		opacity: 0;
+		-webkit-transform: scale(10);
+		transform: scale(10);
+	}
+}
+
+
+@-webkit-keyframes fade-out-bck {
+	0% {
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
+		opacity: 1;
+	}
+
+	100% {
+		-webkit-transform: translateZ(-80px);
+		transform: translateZ(-80px);
+		opacity: 0;
+		display: none !important;
+	}
+}
+
+@keyframes fade-out-bck {
+	0% {
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
+		opacity: 1;
+	}
+
+	100% {
+		-webkit-transform: translateZ(-80px);
+		transform: translateZ(-80px);
+		opacity: 0;
+	}
+}
+
+/*! ----------------------------colors--------------------------------  */
+
+.speed-dial-container .default {
+	color: var(--bf-theme-icons);
+	fill: var(--bf-theme-icons);
+}
+
+.speed-dial-container .danger {
+	color: var(--bf-theme-danger);
+	fill: var(--bf-theme-danger);
+}
+
+.speed-dial-container .primary {
+	color: var(--bf-theme-primary);
+	fill: var(--bf-theme-primary);
+}
+
+.speed-dial-container .warning {
+	color: var(--bf-theme-warning);
+	fill: var(--bf-theme-warning);
+}
+
+.speed-dial-container .info {
+	color: var(--bf-theme-info);
+	fill: var(--bf-theme-info);
+}
+
+.speed-dial-container .success {
+	color: var(--bf-theme-success);
+	fill: var(--bf-theme-success);
+}
+
+/* ----------------------------------------- */
+.speed-dial-container .bg {
+	background-color: var(--bf-theme-background);
+}
+
+.speed-dial-container .default-bg {
+	background-color: var(--bf-theme-default);
+}
+
+.speed-dial-container .danger-bg {
+	background-color: var(--bf-theme-danger);
+}
+
+.speed-dial-container .primary-bg {
+	background-color: var(--bf-theme-primary);
+}
+
+.speed-dial-container .warning-bg {
+	background-color: var(--bf-theme-warning);
+}
+
+.speed-dial-container .info-bg {
+	background-color: var(--bf-theme-info);
+}
+
+.speed-dial-container .success-bg {
+	background-color: var(--bf-theme-success);
+}
