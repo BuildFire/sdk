@@ -102,6 +102,16 @@ buildfire.services.media.audioPlayer = {
 			clear:function () {document.removeEventListener('audioPlayer.onEvent', handler, false); }
 		};
 	}
+	, isTrackInPlaylist: function(track, callback) {
+		if (!track || !track.url) {
+			throw 'track, track.url are required';
+		}
+		if (typeof callback !== 'function') {
+			throw 'callback function is mandatory';
+		}
+		const packet = new Packet(null,'mediaAPI.audioPlayer.isTrackInPlaylist', track);
+		buildfire._sendPacket(packet, callback);
+	}
 
 };
 /*
