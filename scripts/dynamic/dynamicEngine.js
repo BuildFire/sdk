@@ -18,6 +18,13 @@ const dynamicEngine = {
 	getGlobalSettings(options, callback) {
 		callback(null, {});
 	},
+	/**
+	* @desc This function returns weather this file is loaded from a client or a server side
+	* @private
+	*/
+	_isServer() {
+		return !(typeof window !== 'undefined' && window.document);
+	},
 	expressions: {
 		_evaluationRequests: {},
 		/**
@@ -29,6 +36,7 @@ const dynamicEngine = {
 		* @public
 		*/
 		evaluate(options, callback) {
+			options = options || {};
 			const { id } = options; 
 			const evaluationRequest = {
 				callback,
@@ -48,7 +56,7 @@ const dynamicEngine = {
 		_evaluate(request) {
 			const { expressions } = dynamicEngine;
 			const { id, callback }  = request;
-			const { expression } = request.options;
+			const expression = request.options?.expression || '';
 
 			expressions._prepareContext(
 				request.options,
@@ -127,13 +135,6 @@ const dynamicEngine = {
 			});
 		},
 		/**
-		* @desc This function returns weather this file is loaded from a client or a server side
-		* @private
-		*/
-		_isServer() {
-			return !(typeof window !== 'undefined' && window.document);
-		},
-		/**
 		* Get unique id each time
 		* @private
 		*/
@@ -142,8 +143,8 @@ const dynamicEngine = {
 		}
 	},
 	datasources: {
-		_datasourcesData: {},
-		_requestedDatasources: {},
+		datasourcesData: {},
+		requestedDatasources: {},
 		_addDatasourcesData({baseContext}){
 			const handler = {
 				_usedProperties: {},
@@ -153,7 +154,7 @@ const dynamicEngine = {
 					return target[prop];
 				},
 			};
-			let data = this._datasourcesData;
+			let data = this.datasourcesData;
 			baseContext.data = new Proxy(data, handler);
 		},
 		_fetchNeededDatasources({usedDatasources, extendedDatasources}, callback) {
@@ -166,12 +167,12 @@ const dynamicEngine = {
 							datasources = datasources.concat(extendedDatasources);
 						}
 						for (let usedDatasourceId in usedDatasources) {
-							if (!this._requestedDatasources[usedDatasourceId] || ((new Date() - this._requestedDatasources[usedDatasourceId].lastTimeFetched) > 5000)) {
-								const existedDatasource = datasources.find((datasource) => {
+							if (!this.requestedDatasources[usedDatasourceId] || ((new Date() - this.requestedDatasources[usedDatasourceId].lastTimeFetched) > 5000)) {
+								const existingDatasource = datasources.find((datasource) => {
 									return datasource.id === usedDatasourceId;
 								});
-								if (existedDatasource) {
-									this._fetchDatasource({datasource: existedDatasource}, callback);
+								if (existingDatasource) {
+									this.fetchDatasource({datasource: existingDatasource}, callback);
 								}
 							}
 						}
@@ -185,26 +186,61 @@ const dynamicEngine = {
 		* @param {Function} callback - Returns the data of the fetched datasource
 		* @private
 		*/
-		_fetchDatasource({datasource}, callback) {
-			const options = {};
+		fetchDatasource({ datasource }, callback) {
 			datasource.lastTimeFetched = new Date();
-			this._requestedDatasources[datasource.id] = datasource;
-			options.method = datasource.configurations.method;
-			if (datasource.configurations.headers) {
-				options.headers = datasource.configurations.headers;
+			this.requestedDatasources[datasource.id] = datasource;
+		
+			switch (datasource.type) {
+			case 'api': 
+				dynamicEngine.datasources._fetchApi({ datasource }, callback);
+				break;
 			}
-			if (datasource.configurations.body) {
-				options.body = datasource.configurations.body;
-			}
-			fetch(datasource.configurations.url, options)
-				.then((response) => response.json())
-				.then((data) => {
-					dynamicEngine.datasources._datasourcesData[datasource.id] = data;
-					callback(null, data);
+		},
+		_fetchApi({ datasource }, callback) {
+			const promises = dynamicEngine.datasources._evaluateDatasourceConfiguration([
+				datasource.configuration?.url,
+				datasource.configuration?.method,
+				datasource.configuration?.headers,
+				datasource.configuration?.body,
+			]);
+		
+			Promise.all(promises)
+				.then(([url, method, headers, body]) => {
+					const options = {};
+					if (headers) options.headers = headers;
+					if (body) options.body = body;
+					fetch(url, options)
+						.then((response) => response.json())
+						.then((data) => {
+							dynamicEngine.datasources.datasourcesData[datasource.id] = data;
+							callback(null, data);
+						})
+						.catch((error) => {
+							callback(error, null);
+						});	
 				})
 				.catch((error) => {
 					callback(error, null);
 				});
+		},
+		_evaluateDatasourceConfiguration(values) {
+			const promises = [];
+			for (const value of values) {
+				if (!value) {
+					promises.push(Promise.resolve(''));
+					continue;
+				}
+				promises.push(new Promise((resolve, reject) => {
+					dynamicEngine.expressions.evaluate({ expression: value }, (error, result) => {
+						if (error) {
+							reject(error);
+						} else {
+							resolve(result);
+						}
+					});
+				}));
+			}
+			return promises;
 		},
 		/**
 		* @desc Get all the datasources from the app global settings

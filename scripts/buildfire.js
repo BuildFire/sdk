@@ -456,18 +456,11 @@ var buildfire = {
 		return buildfire._context;
 	}
 	, getGlobalSettings: function (options, callback) {
-		if (buildfire.globalSettings) {
-			if (callback) callback(null, buildfire.globalSettings);
-		} else {
-			if (!callback) throw 'globalSettings not ready. Use callback parameter instead of direct return';
-			const p = new Packet(null, 'getGlobalSettings');
-			buildfire._sendPacket(p, function (err, data) {
-				if (err) return callback(err);
-				buildfire.globalSettings = data;
-				callback(null, data);
-			});
-		}
-		return buildfire.globalSettings;
+		const p = new Packet(null, 'getGlobalSettings');
+		buildfire._sendPacket(p, function (err, data) {
+			if (err) return callback(err);
+			callback(null, data);
+		});
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
 	, navigation: {
@@ -3978,14 +3971,17 @@ var buildfire = {
 							const elements = tempElement.querySelectorAll('*');
 							elements.forEach(element => {
 								Array.from(element.attributes).forEach(({name}) => {
-									if (name.startsWith('data-exp-')){
-										let attributeName = name.slice(9);
-										element.setAttribute(attributeName, element.getAttribute(name));                                
-										element.removeAttribute(name);
+									if (name.startsWith('expr-') || name.startsWith('data-expr-')){
+										const cleanedName = name.replace('data-', '');
+										const attributeName = cleanedName.slice(5);
+										if (element.getAttribute(name) && !element.getAttribute(name).includes('undefined')) {
+											element.setAttribute(attributeName, element.getAttribute(name));                                
+											element.removeAttribute(name);
+										}
 									}
 								});
 							});
-							container.innerHTML = result;
+							container.innerHTML = tempElement.innerHTML;
 							container.classList.remove('bf-expression-error');
 						}
 					}
@@ -4074,7 +4070,7 @@ var buildfire = {
 										dynamicExpressionsActivated = !!expression;
 									}
 								};
-								const _restoreCursorPosition = () => {
+								const _restoreCursorPosition = () => { // This function works with sync functionality
 									editor.execCommand('mceInsertContent', false, '<span id="temp-cursor-position"></span>');
 									setTimeout(() => {
 										const tempElement = editor.dom.select('#temp-cursor-position')[0];
@@ -4133,13 +4129,13 @@ var buildfire = {
 									keyupListenerDelay = setTimeout(() => {
 										if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
 											dynamicExpressionsActivated = true;
-											_restoreCursorPosition();
+											_restoreCursorPosition(); // This function works with sync functionality
 											_injectExpressionNode();
 											editor.isNotDirty = false;
 											editor.fire('change');
 										} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
 											dynamicExpressionsActivated = false;
-											_restoreCursorPosition();
+											_restoreCursorPosition(); // This function works with sync functionality
 											_removeExpressionNode();
 										}
 									}, 500);
@@ -4269,7 +4265,7 @@ var buildfire = {
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-exp-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*]';
+						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-expr-src|expr-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*],div[*],span[*]';
 						options.height = options.height || 265;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
