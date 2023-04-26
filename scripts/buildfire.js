@@ -3920,7 +3920,7 @@ var buildfire = {
 			evaluate(options, callback) {
 				this._getDynamicEngine((err, dynamicEngine) => {
 					if (err) return callback(err);
-					dynamicEngine.expressions.evaluate(options, callback);
+				    dynamicEngine.expressions.evaluate(options, callback);
 				});
 			},
 			/**
@@ -4376,13 +4376,22 @@ var buildfire = {
 				if (!strings || !Object.keys(strings).length) {
 					return;
 				}
-				document.querySelectorAll('*[bfString]').forEach(e => {
-					buildfire.language._handleNode(e);
-					//trigger on string injected to this element.
-					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
-					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
+				//get instanceId
+				buildfire.getContext((err, context) => { 
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					const bfElements = document.querySelectorAll('*[bfString]');
+					bfElements.forEach(e => {
+						buildfire.language._handleNode(e, instanceId);
+					});
+					//trigger on strings injected and ready.
+					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', null);
+					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', null);
+
+					buildfire.language.watch(instanceId);
 				});
-				buildfire.language.watch();
 			};
 
 			//merge updated default strings into datastore strings.
@@ -4412,6 +4421,11 @@ var buildfire = {
 							obj[sectionKey][labelKey] = {
 								defaultValue: defaultSection[labelKey].defaultValue
 							};
+						}
+
+						//check if we have `hasExpression` flag for each label.
+						if (dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
+							obj[sectionKey][labelKey].hasExpression = dbSection[labelKey].hasExpression;
 						}
 					}
 
@@ -4454,6 +4468,16 @@ var buildfire = {
 			}, true);
 		}
 		,
+		/**
+		* get one language string.
+		* @param {Object} params - The needed elements to get the language string. 
+		* @param {string} params.stringKey - The Section key and the label key separated by a dot. (required)
+		* @param {string} params.instanceId - Instance Id of the plugin. (optional)
+		* @param {Boolean} params.executeCallbackOnUpdate - To keep executing the callback on language string value update or not. (optional) 
+		* @param {Object} params.node - DOM node element. (optional)
+		* @param {Function} callback - Returns the value of the language string or error if existed
+		* @public
+		*/
 		get: function (params, callback) {
 			let error;
 			if (!params) {
@@ -4477,10 +4501,10 @@ var buildfire = {
 				callback(error, null);
 				return;
 			}
-			const section = stringKeys[0];
-			const label = stringKeys[1];
-
-			function onStringsReady() {
+			
+			function onStringsReady(instanceId) {
+				const section = stringKeys[0];
+				const label = stringKeys[1];
 				const strings = buildfire.language._strings;
 				if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty('value') && !strings[section][label].hasOwnProperty('defaultValue'))) {
 					error = 'String not found.';
@@ -4488,39 +4512,117 @@ var buildfire = {
 					return;
 				}
 
+				
+				function getStringValue(stringObj) {
+					if (stringObj.hasOwnProperty('value')) {
+						return stringObj.value;
+					} else if (stringObj.hasOwnProperty('defaultValue')) {
+						return stringObj.defaultValue;
+					}
+				};
+				
 				const valueObj = strings[section][label];
+				const stringHasExpression = valueObj.hasExpression;
 
-				if (valueObj.hasOwnProperty('value')) {
-					callback(null, valueObj.value);
-					return;
-				} else if (valueObj.hasOwnProperty('defaultValue')) {
-					callback(null, valueObj.defaultValue);
-					return;
+				if (stringHasExpression) {
+					const stringValue = getStringValue(valueObj);
+					const options = {
+						instanceId: instanceId,
+						expression: stringValue,
+						// don't pass "id" here. it must be unique id for each string. even if it's the same string, it must have a unique id.
+					};
+					
+					//clean up previous request if it's existed. (should not be existed)
+					if (params.node && params.node.request && params.node.request.destroy) {
+						params.node.request.destroy();
+						console.warn('node.request has a value: ', params.node, params.node.request);
+						params.node.request = null;
+					}
+					//get evaluated expression
+					let request = buildfire.dynamic.expressions.evaluate(options, (err, evaluatedExpression) => {
+						if (err) {
+							callback(null, stringValue);
+						} else {
+							callback(null, evaluatedExpression);
+						}
+						
+					});
+					//attach request to node object to be able to destroy it later.
+					if (params.node && typeof params.node === 'object' && request) {
+						params.node.request = request;
+					}
+
+					//stop listening for callbacks.
+					if (request && request.destroy && !params.executeCallbackOnUpdate) {
+						request.destroy();
+					}
+				} else {
+					const stringValue = getStringValue(valueObj);
+					callback(null, stringValue);
 				}
+			};
 
-				callback(null, null);
-				return;
-			}
-
-			if (!buildfire.language._strings) {
-				buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
-					onStringsReady();
-				}, true);
+			if (params.instanceId) {
+				registerStringsReady(params.instanceId);
 			} else {
-				onStringsReady();
+				buildfire.getContext((err, context) => {
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					registerStringsReady(instanceId);
+				});
 			}
+			function registerStringsReady (instanceId) {
+				if (!buildfire.language._strings) {
+					buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
+						onStringsReady(instanceId);
+					}, true);
+				} else {
+					onStringsReady(instanceId);
+				}
+			};
 		}
 		,
-		watch: function () {
+		watch: function (instanceId) {
+
+			const destroyRemovedNodeExpressionsCallbacks = (node) => {
+				//remove bfString attribute
+				node.removeAttribute('bfString');
+				//destroy expressions callbacks
+				if (node && node.request && node.request.destroy) {
+					node.request.destroy();
+					node.request = null;
+				}
+					
+			};
 
 			// Callback function to execute when mutations are observed
 			const callback = (mutationList, observer) => {
 				for (const mutation of mutationList) {
+
+					//detect removed nodes
+					if (mutation && mutation.removedNodes && mutation.removedNodes.length > 0) {
+						for (let i = 0; i < mutation.removedNodes.length; i++) {
+
+							const removedNode = mutation.removedNodes[i];
+							if (removedNode && removedNode.tagName) {
+								destroyRemovedNodeExpressionsCallbacks(removedNode);
+
+								//get all child elements of removed that has "bfString" attribute to destroy their expressions callbacks
+								let childList = removedNode.querySelectorAll('*[bfString]');
+								for (let i = 0; i < childList.length; i++) {
+									destroyRemovedNodeExpressionsCallbacks(childList[i]);
+								}
+							}
+						}
+					}
+
 					if (mutation.type === 'childList' && mutation.target) {
-						buildfire.language._handleNode(mutation.target);
+							buildfire.language._handleNode(mutation.target, instanceId);
 						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
-							buildfire.language._handleNode(childList[i]);
+							buildfire.language._handleNode(childList[i], instanceId);
 						}
 					}
 				}
@@ -4550,7 +4652,20 @@ var buildfire = {
 			buildfire.eventManager.trigger('languageSettingsOnUpdate', obj);
 		}
 		,
-		_handleNode: function (node) { //inject strings for [bfString] elements.
+		_handleNode: function (node, instanceId) { //inject strings for [bfString] elements.
+			const injectString = (string, attributes, node) => {
+				if (!(node && node.parentNode)) {
+					return;
+				}
+				if (attributes && attributes.length) {
+					attributes.forEach(attr => node.setAttribute(attr, string));
+				} else {
+					node.innerHTML = string;
+				}
+				//mark initialized elements.
+				node.setAttribute('bfString-initialized', '');
+			};
+
 			if (!node.tagName) {// not an element
 				return;
 			}
@@ -4568,16 +4683,10 @@ var buildfire = {
 				attributes = injectAttributes.split(',');
 			}
 			const stringKey = node.getAttribute('bfString');
-			buildfire.language.get({stringKey}, (err, string) => {
-				//inject the string into the element.
+			buildfire.language.get({stringKey, instanceId, executeCallbackOnUpdate: true, node}, (err, string) => {
 				if (string) {
-					if (attributes && attributes.length) {
-						attributes.forEach(attr => node.setAttribute(attr, string));
-					} else {
-						node.innerHTML = string;
-					}
-					//mark initialized elements.
-					node.setAttribute('bfString-initialized', '');
+					//inject the string into the element.
+					injectString(string, attributes, node);
 				}
 			});
 		}

@@ -2660,4 +2660,14 @@ html.translated-ltr body{
 	height: calc(100vh - 290px - 80px);
 	overflow: auto;
 }
+
+.language-settings-container .puzzle-box.textarea {
+    display: flex !important;
+    align-items: center;
+    height: 80px;
+}
+
+.language-settings-container textarea.form-control {
+    min-width: unset !important;
+}
 /* Language Settings styles ends */
