@@ -86,7 +86,7 @@ const dynamicEngine = {
 							if (err) return console.error('Error occurred while fetching data: ', err);
 							dynamicEngine.triggerContextChange({contextProperty: 'data', data: res});
 						});
-						request.callback(null, evaluatedExpression);
+						callback(null, {evaluatedExpression, evaluationRequest: request});
 					} catch (err) {
 						callback(err);
 					}
@@ -163,12 +163,23 @@ const dynamicEngine = {
 					if (err) return console.error('Error occurred while fetching data: ', err);
 					if (datasources || extendedDatasources) {
 						datasources = datasources || [];
+						let allDatasources = JSON.parse(JSON.stringify(datasources));
 						if (extendedDatasources) {
-							datasources = datasources.concat(extendedDatasources);
+							let filteredDatasources = []; // contain datasources from globalSettings without duplicates
+							datasources.forEach(datasource => {
+								let duplicateDatasource = extendedDatasources.find((extendedDatasource) => {
+									return extendedDatasource.id === datasource.id;
+								});
+								// don't push a datasource from globalSettings if it has the same id as a datasource in extendedDatasources
+								if (!duplicateDatasource) {
+									filteredDatasources.push(datasource);
+								}
+							});
+							allDatasources = [...filteredDatasources, ...extendedDatasources];
 						}
 						for (let usedDatasourceId in usedDatasources) {
 							if (!this.requestedDatasources[usedDatasourceId] || ((new Date() - this.requestedDatasources[usedDatasourceId].lastTimeFetched) > 5000)) {
-								const existingDatasource = datasources.find((datasource) => {
+								const existingDatasource = allDatasources.find((datasource) => {
 									return datasource.id === usedDatasourceId;
 								});
 								if (existingDatasource) {
@@ -235,7 +246,8 @@ const dynamicEngine = {
 						if (error) {
 							reject(error);
 						} else {
-							resolve(result);
+							result.evaluationRequest.destroy();
+							resolve(result.evaluatedExpression);
 						}
 					});
 				}));

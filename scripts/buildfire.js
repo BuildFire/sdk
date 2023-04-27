@@ -3928,7 +3928,7 @@ var buildfire = {
 			evaluate(options, callback) {
 				this._getDynamicEngine((err, dynamicEngine) => {
 					if (err) return callback(err);
-				    dynamicEngine.expressions.evaluate(options, callback);
+					dynamicEngine.expressions.evaluate(options, callback);
 				});
 			},
 			/**
@@ -3954,7 +3954,7 @@ var buildfire = {
 
 				const content = container.innerHTML.replace(/bf-wysiwyg-hide-app/g, '');
 
-				this.evaluate({id: id, expression: content}, (err, result) => {
+				this.evaluate({id: id, expression: content}, (err, res) => {
 
 					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null );
 					if (!container) {
@@ -3967,7 +3967,7 @@ var buildfire = {
 							container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
 						} else {
 							let tempElement = document.createElement('div');
-							tempElement.innerHTML = result;
+							tempElement.innerHTML = res.evaluatedExpression;
 							const elements = tempElement.querySelectorAll('*');
 							elements.forEach(element => {
 								Array.from(element.attributes).forEach(({name}) => {
@@ -4578,23 +4578,21 @@ var buildfire = {
 						params.node.request = null;
 					}
 					//get evaluated expression
-					let request = buildfire.dynamic.expressions.evaluate(options, (err, evaluatedExpression) => {
+					buildfire.dynamic.expressions.evaluate(options, (err, {evaluatedExpression, evaluationRequest}) => {
 						if (err) {
 							callback(null, stringValue);
 						} else {
 							callback(null, evaluatedExpression);
 						}
-						
+						//attach the evaluationRequest to node object to be able to destroy it later.
+						if (params.node && typeof params.node === 'object' && evaluationRequest) {
+							params.node.request = evaluationRequest;
+						}
+						//stop listening for callbacks.
+						if (evaluationRequest && evaluationRequest.destroy && !params.executeCallbackOnUpdate) {
+							evaluationRequest.destroy();
+						}
 					});
-					//attach request to node object to be able to destroy it later.
-					if (params.node && typeof params.node === 'object' && request) {
-						params.node.request = request;
-					}
-
-					//stop listening for callbacks.
-					if (request && request.destroy && !params.executeCallbackOnUpdate) {
-						request.destroy();
-					}
 				} else {
 					const stringValue = getStringValue(valueObj);
 					callback(null, stringValue);
