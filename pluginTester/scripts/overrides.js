@@ -51,12 +51,12 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 			postMaster.servicePluginAPIs.service.sendMessage(null, packet);
 	};
 	postMaster.controlPluginAPI.datastore.onUpdate = onUpdate;
-    
+
 	postMaster.controlPluginAPI.userData.onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
-    
+
 	postMaster.widgetPluginAPI.userData.onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
 		postMaster.controlPluginAPI.sendMessage(null, packet);
@@ -71,7 +71,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
 		postMaster.controlPluginAPI.sendMessage(null, packet);
 	};
-	
+
 	postMaster.controlPluginAPI.appData.onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
@@ -101,7 +101,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 			if (callback) callback('no service available for the current widget');
 		}
 	};
-	
+
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
 		console.warn('supress navigation in shell');
 		alert('supress navigation in shell');
@@ -120,8 +120,8 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		iframeControl.style.height = height + 'px';
 	};
 
-	postMaster.widgetPluginAPI.appearance.navbar.isVisible = function(){ 
-		return false; 
+	postMaster.widgetPluginAPI.appearance.navbar.isVisible = function(){
+		return false;
 	};
 
 	postMaster.controlPluginAPI.analytics.trackAction = postMaster.widgetPluginAPI.analytics.trackAction = function (actionName, metadata) {
@@ -132,13 +132,19 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		console.log('analytics mock track view [' + viewName + ']', metadata);
 	};
 
+	postMaster.controlPluginAPI.ai.showGenerateTextDialog = (options, callback) =>{
+		const error = 'This feature not supported on plugin tester';
+		window.toast(error, 'warning');
+		callback(error);
+	};
+
 	if (typeof Dynamic != 'undefined') {
 		if (!Dynamic.expressions) {
 			Dynamic.expressions = {};
 		}
 		Dynamic.expressions.showDialog = (options, callback) =>{
 			ExpressionBuilderAPI.prototype.showDialog(options, callback);
-		}
+		};
 	}
 
 
