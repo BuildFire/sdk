@@ -1191,7 +1191,7 @@ var buildfire = {
 				}
 			}
 			let lightBodyText = appTheme.colors.bodyText;
-			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors 
+			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors
 				// create a new color, which is the bodyText's color with an opacity (33%)
 				lightBodyText = `${appTheme.colors.bodyText}54`;
 			}
@@ -3996,7 +3996,7 @@ var buildfire = {
 						options.instanceId = context.instanceId;
 					}
 					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
-					buildfire._sendPacket(p, callback); 
+					buildfire._sendPacket(p, callback);
 				});
 			}
 		},
@@ -4219,7 +4219,7 @@ var buildfire = {
 							options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
 						}
 
-						options.menubar = options.menubar || 'edit insert view format tools';
+						options.menubar = options.menubar || 'edit insert view format tools ai';
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
@@ -4227,13 +4227,14 @@ var buildfire = {
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
 							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
+							ai: {title: 'AI Content (Beta)', items: 'bf_aiTextGenerator'},
 						};
 						if (userMenu) {
 							for (let item in userMenu) {
 								options.menu[item] = userMenu[item];
 							}
 						}
-						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
+						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts', 'bf_ai'];
 						if (options.plugins) {
 							if (options.plugins instanceof Array) {
 								options.plugins = defaultPlugins.concat(options.plugins);
@@ -4244,7 +4245,7 @@ var buildfire = {
 						} else {
 							options.plugins = defaultPlugins;
 						}
-						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
+						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen | bf_ai';
 						if (options.toolbar) {
 							if (options.toolbar instanceof Array) {
 								if (!(options.toolbar[0] instanceof Object)) {
@@ -4733,6 +4734,14 @@ var buildfire = {
 		}
 		,
 		_strings: null
+	},
+	ai: {
+		content: {
+			showDialog: function(options ={}, callback) {
+				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
+				buildfire._sendPacket(p, callback);
+			}
+		}
 	},
 	onPluginJsonLoaded: function (pluginJson) {
 		//attach pluginLanguage.js script that contains languages.json content.
