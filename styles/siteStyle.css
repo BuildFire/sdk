@@ -19,7 +19,7 @@
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	
+
 }
 html{
     text-rendering:optimizeLegibility !important;
@@ -1283,6 +1283,9 @@ table.table span.sort-icon{
 	position:relative;
 	top:4px;
 }
+.modal-dialog .modal-content > .holder {
+	padding: inherit;
+}
 
 /* Device Screens/Icons */
 .screens{
@@ -1812,12 +1815,12 @@ html[buildfire='control'] body{
 	flex-direction: column;
 	flex: auto;
 	height: 100%;
-} 
+}
 .sdk-main-container .secondary-container {
 	display: flex;
 	flex-direction: column;
 	flex: auto;
-}  
+}
 
 /* Plugin Control Header */
 #pluginControlHeader .screens .screen{
@@ -2411,7 +2414,7 @@ html.translated-ltr body{
     width: 109px !important;
     text-align: center;
     word-break: break-word !important;
-}  
+}
 
 .features-grid-list .feature-item .text-holder .sub-title {
     font-size: 12px;
@@ -2463,7 +2466,7 @@ html.translated-ltr body{
     #actionBuilderTemplate .features-grid-list .loading-holder {
         grid-column-end: span 3;
     }
-    
+
 }
 
 
@@ -2475,7 +2478,7 @@ html.translated-ltr body{
     #actionBuilderTemplate .features-grid-list .loading-holder {
         grid-column-end: span 4;
     }
-    
+
 }
 
 @media (max-width: 1400px) {
