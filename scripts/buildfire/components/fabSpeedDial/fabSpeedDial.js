@@ -36,8 +36,8 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 
 		this._onButtonClickCallbacks = [];
 		this._state = new State();
-    this._onMainBtnClick = this._onMainBtnClick.bind(this);
-    this._onOverlayClick = this._onOverlayClick.bind(this);
+    	this._onMainBtnClick = this._onMainBtnClick.bind(this);
+    	this._onOverlayClick = this._onOverlayClick.bind(this);
 
 		this._init();
 	}
@@ -53,7 +53,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		this._state.bodyTextColor = getComputedStyle(document.documentElement)
 			.getPropertyValue('--bf-theme-body-text')
 			.trim();
-    this._buildOverlay();
+    	this._buildOverlay();
 		this._buildMainButton();
 		this._buildButtons();
 	}
@@ -86,7 +86,6 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	 * @function
 	 * @public
 	 */
-
 	open(e) {
     if (!this.selector) return;
 		this.selector.classList.add(FabSpeedDial.ACTIVE_CLASS_NAME);
@@ -152,14 +151,14 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	destroy() {
 		if (!this.selector) throw 'speedDial instance destroyed';
 
-    this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick);
+    	this._state.mainFabBtnElement.removeEventListener('click', this._onMainBtnClick);
 		this._state.overlayElement.removeEventListener('click', this._onOverlayClick);
 		this._state.overlayElement.remove();
-    this.selector.innerHTML = '';
-    delete this.options;
-    delete this._state;
-    delete this.selector;
-    delete this.onButtonClick;
+		this.selector.innerHTML = '';
+		delete this.options;
+		delete this._state;
+		delete this.selector;
+		delete this.onButtonClick;
     }
 
     /**
@@ -177,9 +176,9 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 			['fab-button', 'main-fab-button', this.options.mainButton.type + '-bg']
 		);
 		this._state.mainFabBtnElement.style.boxShadow = `0px 4px 5px rgba(${this._colorToRGBA(
-			this._state.bodyTextColor,
-			0.1
-		)}),0px 1px 10px rgba(${this._colorToRGBA(this._state.bodyTextColor, 0.1)})
+				this._state.bodyTextColor,
+				0.1
+			)}),0px 1px 10px rgba(${this._colorToRGBA(this._state.bodyTextColor, 0.1)})
 		  `;
 
 		this._state.mainFabBtnElement.addEventListener('click', this._onMainBtnClick);
