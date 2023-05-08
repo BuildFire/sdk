@@ -56,7 +56,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
         if ($scope.instanceId ) {
             options.instanceId = $scope.instanceId;
         }
-        dynamicEngineService.expressions.evaluate(options, (err, evaluatedExpression) => {
+        dynamicEngineService.expressions.evaluate(options, (err, res) => {
             $scope.isEvaluateLoading = false;
             if (err) {
                 $scope.error = "Error: " + err.message;
@@ -64,7 +64,7 @@ $app.controller('expressionsBuilderCtrl', ['$scope', '$data', '$dialog', '$http'
                 if (!$scope.$$phase) $scope.$digest();
                 return;
             }
-            $scope.expression.evaluatedExpression = evaluatedExpression;
+            $scope.expression.evaluatedExpression = res.evaluatedExpression;
             if (!$scope.$$phase) $scope.$digest();
         });
     };
