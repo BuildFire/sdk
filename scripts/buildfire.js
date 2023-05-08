@@ -224,18 +224,18 @@ var buildfire = {
 		//attach plugin.js script that contains plugin.json content.
 		function attachPluginJsScript () {
 			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
-		};
+		}
 
 		function getPluginJson(callback) {
 			const url = `../plugin.json?v=${(new Date()).getTime()}`;
 			fetch(url)
-			.then(response => response.json())
-			.then(res => {
-				callback(null,res);
-			})
-			.catch(error => {
-				callback(error, null);
-			});
+				.then(response => response.json())
+				.then(res => {
+					callback(null,res);
+				})
+				.catch(error => {
+					callback(error, null);
+				});
 		}
 
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
@@ -252,13 +252,13 @@ var buildfire = {
 							function getPluginLanguageJson(callback) {
 								const url = `../${pluginJson.control.language.languageJsonPath}`;
 								fetch(url)
-								.then(response => response.json())
-								.then(res => {
-									callback(null, res);
-								})
-								.catch(error => {
-									callback(error, null);
-								});
+									.then(response => response.json())
+									.then(res => {
+										callback(null, res);
+									})
+									.catch(error => {
+										callback(error, null);
+									});
 							}
 							getPluginLanguageJson((err, pluginLanguageJson)=>{
 								if(err) console.error(err);
@@ -454,6 +454,13 @@ var buildfire = {
 			}
 		}
 		return buildfire._context;
+	}
+	, getGlobalSettings: function (options, callback) {
+		const p = new Packet(null, 'getGlobalSettings');
+		buildfire._sendPacket(p, function (err, data) {
+			if (err) return callback(err);
+			callback(null, data);
+		});
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
 	, navigation: {
@@ -1184,7 +1191,7 @@ var buildfire = {
 				}
 			}
 			let lightBodyText = appTheme.colors.bodyText;
-			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors 
+			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors
 				// create a new color, which is the bodyText's color with an opacity (33%)
 				lightBodyText = `${appTheme.colors.bodyText}54`;
 			}
@@ -3796,8 +3803,8 @@ var buildfire = {
 		// keep for backward compatability (old namespace)
 		// content will not be transformed but will be visible as is
 		execute: function(e){
-			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
-				e.classList.remove("bf-wysiwyg-hide-app");
+			document.querySelectorAll('.bf-wysiwyg-hide-app').forEach(function(e) {
+				e.classList.remove('bf-wysiwyg-hide-app');
 			});
 		},
 	},
@@ -3902,6 +3909,7 @@ var buildfire = {
 					const scriptId = 'dynamicEngine';
 					buildfire.loadScript({ url, scriptId }, () => {
 						dynamicEngine.expressions.getContext = this._prepareContext; // overwrite the getContext to be suitable for the sdk environment
+						dynamicEngine.getGlobalSettings = buildfire.getGlobalSettings; // overwrite the getGlobalSettings to be suitable for the sdk environment
 						_executeDynamicEngineQueue(dynamicEngine);
 					});
 				}
@@ -3934,7 +3942,11 @@ var buildfire = {
 					: e.parentElement;
 
 				if (!container) return;
-				e.remove();
+				if (!e.parentElement.innerText && e.parentElement.children.length === 1) {
+					e.parentElement.remove();
+				} else {
+					e.remove();
+				}
 				let id = e.getAttribute('data-id');
 				let expressionHtmlContainers = buildfire.dynamic.expressions._htmlContainers;
 				expressionHtmlContainers[id] = expressionHtmlContainers[id] || [];
@@ -3942,7 +3954,7 @@ var buildfire = {
 
 				const content = container.innerHTML.replace(/bf-wysiwyg-hide-app/g, '');
 
-				this.evaluate({id: id, expression: content}, (err, result) => {
+				this.evaluate({id: id, expression: content}, (err, res) => {
 
 					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null );
 					if (!container) {
@@ -3954,7 +3966,22 @@ var buildfire = {
 							container.classList.add('bf-expression-error');
 							container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
 						} else {
-							container.innerHTML = result;
+							let tempElement = document.createElement('div');
+							tempElement.innerHTML = res.evaluatedExpression;
+							const elements = tempElement.querySelectorAll('*');
+							elements.forEach(element => {
+								Array.from(element.attributes).forEach(({name}) => {
+									if (name.startsWith('expr-') || name.startsWith('data-expr-')){
+										const cleanedName = name.replace('data-', '');
+										const attributeName = cleanedName.slice(5);
+										if (element.getAttribute(name) && !element.getAttribute(name).includes('undefined')) {
+											element.setAttribute(attributeName, element.getAttribute(name));                                
+											element.removeAttribute(name);
+										}
+									}
+								});
+							});
+							container.innerHTML = tempElement.innerHTML;
 							container.classList.remove('bf-expression-error');
 						}
 					}
@@ -3963,13 +3990,13 @@ var buildfire = {
 			showDialog: function (options, callback) {
 				if (typeof options === 'undefined' || !options) {
 					options = {};
-				};
+				}
 				buildfire.getContext(function(err, context){
 					if(context && context.instanceId) {
 						options.instanceId = context.instanceId;
 					}
 					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
-					buildfire._sendPacket(p, callback); 
+					buildfire._sendPacket(p, callback);
 				});
 			}
 		},
@@ -4007,6 +4034,13 @@ var buildfire = {
 						if (originalSetup) {
 							options.setup = function (editor) {
 								let dynamicExpressionsActivated;
+								const originalSetContent = editor.setContent.bind(editor);
+								editor.setContent = (content, args) => {
+									originalSetContent(content, args);
+									if (content && typeof dynamicExpressionsActivated === 'undefined' && dynamicExpressionsEnabled) {
+										_syncExpressionButtonActivation();
+									}
+								};
 								const timestamp = new Date().getTime();
 								const EXPRESSION_HTML = `<img data-no-blob data-id="${timestamp}" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamic.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />`;
 								const _injectExpressionNode = () => {
@@ -4021,24 +4055,28 @@ var buildfire = {
 									Array.from(elements).forEach((e) => {
 										if (e.parentElement && !e.parentElement.innerText && e.parentElement.children.length === 1) {
 											e.parentElement.remove();
+										} else {
+											e.remove();
 										}
-										e.remove();
 									});
 									editor.setContent(div.innerHTML);
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.remove('bf-wysiwyg-hide-app'); });
 								};
-								const _syncExpressionNodes = () => {
+								const _syncExpressionButtonActivation = () => {
 									const div = document.createElement('div');
 									div.innerHTML = editor.getContent();
 									const expression = div.querySelector('[data-type="dynamic-expression"]');
 									if (typeof dynamicExpressionsActivated === 'undefined') {
 										dynamicExpressionsActivated = !!expression;
 									}
-									if (dynamicExpressionsActivated && !expression) {
-										_injectExpressionNode();
-									} else if (!dynamicExpressionsActivated && expression) {
-										_removeExpressionNode();
-									}
+								};
+								const _restoreCursorPosition = () => { // This function works with sync functionality
+									editor.execCommand('mceInsertContent', false, '<span id="temp-cursor-position"></span>');
+									setTimeout(() => {
+										const tempElement = editor.dom.select('#temp-cursor-position')[0];
+										editor.selection.select(tempElement);
+										editor.dom.remove(tempElement);
+									}, 0);
 								};
 
 								editor.on('init', function () {
@@ -4084,10 +4122,23 @@ var buildfire = {
 										}
 										ele.classList.add(...classes);
 									});
-
-									if (dynamicExpressionsEnabled) {
-										_syncExpressionNodes();
-									}
+								});
+								var keyupListenerDelay = null;
+								editor.on('keyup', function() {
+									if (keyupListenerDelay) clearTimeout(keyupListenerDelay);
+									keyupListenerDelay = setTimeout(() => {
+										if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
+											dynamicExpressionsActivated = true;
+											_restoreCursorPosition(); // This function works with sync functionality
+											_injectExpressionNode();
+											editor.isNotDirty = false;
+											editor.fire('change');
+										} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
+											dynamicExpressionsActivated = false;
+											_restoreCursorPosition(); // This function works with sync functionality
+											_removeExpressionNode();
+										}
+									}, 500);
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',
@@ -4127,16 +4178,7 @@ var buildfire = {
 								});
 								editor.ui.registry.addToggleMenuItem('bf_toggleDynamicExpression', {
 									text: 'Expressions',
-									onAction: () => {
-										dynamicExpressionsActivated = !dynamicExpressionsActivated;
-										if (dynamicExpressionsActivated) {
-											_injectExpressionNode();
-										} else {
-											_removeExpressionNode();
-										}
-										editor.isNotDirty = false;
-										editor.fire('change');
-									},
+									onAction: () => {},
 									onSetup: (api) => {
 										api.setActive(dynamicExpressionsActivated);
 										return () => {};
@@ -4149,9 +4191,6 @@ var buildfire = {
 											if (err) return console.error(err);
 											if (res) {
 												editor.insertContent(res);
-												if (!dynamicExpressionsActivated) {
-													editor.ui.registry.getAll().menuItems.bf_toggledynamicexpression.onAction();
-												}
 											}
 										});
 									}
@@ -4180,7 +4219,7 @@ var buildfire = {
 							options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
 						}
 
-						options.menubar = options.menubar || 'edit insert view format tools';
+						options.menubar = options.menubar || 'edit insert view format tools ai';
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
@@ -4188,13 +4227,14 @@ var buildfire = {
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
 							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
+							ai: {title: 'AI Content (Beta)', items: 'bf_aiTextGenerator'},
 						};
 						if (userMenu) {
 							for (let item in userMenu) {
 								options.menu[item] = userMenu[item];
 							}
 						}
-						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
+						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts', 'bf_ai'];
 						if (options.plugins) {
 							if (options.plugins instanceof Array) {
 								options.plugins = defaultPlugins.concat(options.plugins);
@@ -4205,7 +4245,7 @@ var buildfire = {
 						} else {
 							options.plugins = defaultPlugins;
 						}
-						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
+						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen | bf_ai';
 						if (options.toolbar) {
 							if (options.toolbar instanceof Array) {
 								if (!(options.toolbar[0] instanceof Object)) {
@@ -4226,7 +4266,7 @@ var buildfire = {
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick]';
+						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-expr-src|expr-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*],div[*],span[*]';
 						options.height = options.height || 265;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
@@ -4376,13 +4416,22 @@ var buildfire = {
 				if (!strings || !Object.keys(strings).length) {
 					return;
 				}
-				document.querySelectorAll('*[bfString]').forEach(e => {
-					buildfire.language._handleNode(e);
-					//trigger on string injected to this element.
-					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
-					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
+				//get instanceId
+				buildfire.getContext((err, context) => { 
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					const bfElements = document.querySelectorAll('*[bfString]');
+					bfElements.forEach(e => {
+						buildfire.language._handleNode(e, instanceId);
+					});
+					//trigger on strings injected and ready.
+					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', null);
+					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', null);
+
+					buildfire.language.watch(instanceId);
 				});
-				buildfire.language.watch();
 			};
 
 			//merge updated default strings into datastore strings.
@@ -4412,6 +4461,11 @@ var buildfire = {
 							obj[sectionKey][labelKey] = {
 								defaultValue: defaultSection[labelKey].defaultValue
 							};
+						}
+
+						//check if we have `hasExpression` flag for each label.
+						if (dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
+							obj[sectionKey][labelKey].hasExpression = dbSection[labelKey].hasExpression;
 						}
 					}
 
@@ -4454,6 +4508,16 @@ var buildfire = {
 			}, true);
 		}
 		,
+		/**
+		* get one language string.
+		* @param {Object} params - The needed elements to get the language string. 
+		* @param {string} params.stringKey - The Section key and the label key separated by a dot. (required)
+		* @param {string} params.instanceId - Instance Id of the plugin. (optional)
+		* @param {Boolean} params.executeCallbackOnUpdate - To keep executing the callback on language string value update or not. (optional) 
+		* @param {Object} params.node - DOM node element. (optional)
+		* @param {Function} callback - Returns the value of the language string or error if existed
+		* @public
+		*/
 		get: function (params, callback) {
 			let error;
 			if (!params) {
@@ -4477,10 +4541,10 @@ var buildfire = {
 				callback(error, null);
 				return;
 			}
-			const section = stringKeys[0];
-			const label = stringKeys[1];
-
-			function onStringsReady() {
+			
+			function onStringsReady(instanceId) {
+				const section = stringKeys[0];
+				const label = stringKeys[1];
 				const strings = buildfire.language._strings;
 				if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty('value') && !strings[section][label].hasOwnProperty('defaultValue'))) {
 					error = 'String not found.';
@@ -4488,39 +4552,115 @@ var buildfire = {
 					return;
 				}
 
+				
+				function getStringValue(stringObj) {
+					if (stringObj.hasOwnProperty('value')) {
+						return stringObj.value;
+					} else if (stringObj.hasOwnProperty('defaultValue')) {
+						return stringObj.defaultValue;
+					}
+				};
+				
 				const valueObj = strings[section][label];
+				const stringHasExpression = valueObj.hasExpression;
 
-				if (valueObj.hasOwnProperty('value')) {
-					callback(null, valueObj.value);
-					return;
-				} else if (valueObj.hasOwnProperty('defaultValue')) {
-					callback(null, valueObj.defaultValue);
-					return;
+				if (stringHasExpression) {
+					const stringValue = getStringValue(valueObj);
+					const options = {
+						instanceId: instanceId,
+						expression: stringValue,
+						// don't pass "id" here. it must be unique id for each string. even if it's the same string, it must have a unique id.
+					};
+					
+					//clean up previous request if it's existed. (should not be existed)
+					if (params.node && params.node.request && params.node.request.destroy) {
+						params.node.request.destroy();
+						console.warn('node.request has a value: ', params.node, params.node.request);
+						params.node.request = null;
+					}
+					//get evaluated expression
+					buildfire.dynamic.expressions.evaluate(options, (err, {evaluatedExpression, evaluationRequest}) => {
+						if (err) {
+							callback(null, stringValue);
+						} else {
+							callback(null, evaluatedExpression);
+						}
+						//attach the evaluationRequest to node object to be able to destroy it later.
+						if (params.node && typeof params.node === 'object' && evaluationRequest) {
+							params.node.request = evaluationRequest;
+						}
+						//stop listening for callbacks.
+						if (evaluationRequest && evaluationRequest.destroy && !params.executeCallbackOnUpdate) {
+							evaluationRequest.destroy();
+						}
+					});
+				} else {
+					const stringValue = getStringValue(valueObj);
+					callback(null, stringValue);
 				}
+			};
 
-				callback(null, null);
-				return;
-			}
-
-			if (!buildfire.language._strings) {
-				buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
-					onStringsReady();
-				}, true);
+			if (params.instanceId) {
+				registerStringsReady(params.instanceId);
 			} else {
-				onStringsReady();
+				buildfire.getContext((err, context) => {
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					registerStringsReady(instanceId);
+				});
 			}
+			function registerStringsReady (instanceId) {
+				if (!buildfire.language._strings) {
+					buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
+						onStringsReady(instanceId);
+					}, true);
+				} else {
+					onStringsReady(instanceId);
+				}
+			};
 		}
 		,
-		watch: function () {
+		watch: function (instanceId) {
+
+			const destroyRemovedNodeExpressionsCallbacks = (node) => {
+				//remove bfString attribute
+				node.removeAttribute('bfString');
+				//destroy expressions callbacks
+				if (node && node.request && node.request.destroy) {
+					node.request.destroy();
+					node.request = null;
+				}
+					
+			};
 
 			// Callback function to execute when mutations are observed
 			const callback = (mutationList, observer) => {
 				for (const mutation of mutationList) {
+
+					//detect removed nodes
+					if (mutation && mutation.removedNodes && mutation.removedNodes.length > 0) {
+						for (let i = 0; i < mutation.removedNodes.length; i++) {
+
+							const removedNode = mutation.removedNodes[i];
+							if (removedNode && removedNode.tagName) {
+								destroyRemovedNodeExpressionsCallbacks(removedNode);
+
+								//get all child elements of removed that has "bfString" attribute to destroy their expressions callbacks
+								let childList = removedNode.querySelectorAll('*[bfString]');
+								for (let i = 0; i < childList.length; i++) {
+									destroyRemovedNodeExpressionsCallbacks(childList[i]);
+								}
+							}
+						}
+					}
+
 					if (mutation.type === 'childList' && mutation.target) {
-						buildfire.language._handleNode(mutation.target);
+							buildfire.language._handleNode(mutation.target, instanceId);
 						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
-							buildfire.language._handleNode(childList[i]);
+							buildfire.language._handleNode(childList[i], instanceId);
 						}
 					}
 				}
@@ -4550,7 +4690,20 @@ var buildfire = {
 			buildfire.eventManager.trigger('languageSettingsOnUpdate', obj);
 		}
 		,
-		_handleNode: function (node) { //inject strings for [bfString] elements.
+		_handleNode: function (node, instanceId) { //inject strings for [bfString] elements.
+			const injectString = (string, attributes, node) => {
+				if (!(node && node.parentNode)) {
+					return;
+				}
+				if (attributes && attributes.length) {
+					attributes.forEach(attr => node.setAttribute(attr, string));
+				} else {
+					node.innerHTML = string;
+				}
+				//mark initialized elements.
+				node.setAttribute('bfString-initialized', '');
+			};
+
 			if (!node.tagName) {// not an element
 				return;
 			}
@@ -4568,16 +4721,10 @@ var buildfire = {
 				attributes = injectAttributes.split(',');
 			}
 			const stringKey = node.getAttribute('bfString');
-			buildfire.language.get({stringKey}, (err, string) => {
-				//inject the string into the element.
+			buildfire.language.get({stringKey, instanceId, executeCallbackOnUpdate: true, node}, (err, string) => {
 				if (string) {
-					if (attributes && attributes.length) {
-						attributes.forEach(attr => node.setAttribute(attr, string));
-					} else {
-						node.innerHTML = string;
-					}
-					//mark initialized elements.
-					node.setAttribute('bfString-initialized', '');
+					//inject the string into the element.
+					injectString(string, attributes, node);
 				}
 			});
 		}
@@ -4587,6 +4734,14 @@ var buildfire = {
 		}
 		,
 		_strings: null
+	},
+	ai: {
+		content: {
+			showDialog: function(options ={}, callback) {
+				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
+				buildfire._sendPacket(p, callback);
+			}
+		}
 	},
 	onPluginJsonLoaded: function (pluginJson) {
 		//attach pluginLanguage.js script that contains languages.json content.

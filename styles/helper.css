@@ -194,7 +194,9 @@ and targeted by Bootstrap like classes */
 .margin-right-thirty{
 	margin-right:30px !important;
 }
-
+.margin-left-auto{
+	margin-left: auto !important;
+}
 
 /***** Ellipsis *****/
 .ellipsis{
@@ -646,7 +648,7 @@ html[buildfire] .btn-delete-icon::after{
 }
 
 .flex{
-	display: flex;
+	display: flex !important;
 }
 
 .flex-auto {
@@ -794,4 +796,7 @@ justify-content: center;
 }
 .textarea-resize-none {
 	resize: none;
+}
+.w-fit-content {
+	width: fit-content !important;
 }
