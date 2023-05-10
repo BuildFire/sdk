@@ -2657,7 +2657,7 @@ var buildfire = {
 			let baseImgUrl;
 			let forceImgix = buildfire.getContext()?.forceImgix;
 			if (forceImgix) {
-				baseImgUrl = buildfire.imageLib._prepareImgixUrl(url);
+				baseImgUrl = buildfire.imageLib.imgix._transformToImgix(url);
 				if (!baseImgUrl) {
 					return url;
 				}
@@ -2772,7 +2772,7 @@ var buildfire = {
 			let baseImgUrl;
 			let forceImgix = buildfire.getContext()?.forceImgix;
 			if (forceImgix) {
-				baseImgUrl = buildfire.imageLib._prepareImgixUrl(url);
+				baseImgUrl = buildfire.imageLib.imgix._transformToImgix(url);
 				if (!baseImgUrl) {
 					return url;
 				}
@@ -3021,23 +3021,25 @@ var buildfire = {
 				}
 			}
 		},
-		_prepareImgixUrl: function (url) {
-			let baseImgUrl;
-			url = url.replace(/^https:\/\//i, 'http://');
-			if (url.indexOf('http://imageserver.prod.s3.amazonaws.com') == 0) {
-				baseImgUrl = 'https://buildfire.imgix.net' + url.split('imageserver.prod.s3.amazonaws.com')[1]; // length of root host
-			} else if (url.indexOf('http://s3-us-west-2.amazonaws.com/imageserver.prod') == 0) {
-				baseImgUrl = 'https://buildfire.imgix.net' + url.split('imageserver.prod')[1]; // length of root host
-			} else if (url.indexOf('http://pluginserver.buildfire.com') == 0) {
-				baseImgUrl = 'https://bfplugins.imgix.net' + url.split('pluginserver.buildfire.com')[1]; // length of root host
-			} else if (url.indexOf('Kaleo.DevBucket/') > 0) {
-				baseImgUrl = 'https://bflegacy.imgix.net' + url.split('Kaleo.DevBucket')[1];
-			} else if (url.indexOf('http://s3-us-west-2.amazonaws.com/imagelibserver') == 0) {
-				baseImgUrl = 'https://buildfire-uat.imgix.net' + url.split('imagelibserver')[1];
-			} else if (url.indexOf('http://s3-us-west-2.amazonaws.com/pluginserver.uat') == 0) {
-				baseImgUrl = 'https://bfplugins-uat.imgix.net' + url.split('pluginserver.uat')[1];
+		imgix: {
+			// consists of whitelisted AWS urls in imgix as keys and the corresponding imgix urls as values
+			imgixWhitelistedUrls: {
+				'http://imageserver.prod.s3.amazonaws.com': 'https://buildfire.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
+				'http://pluginserver.buildfire.com': 'https://bfplugins.imgix.net',
+				'http://s3.amazonaws.com/Kaleo.DevBucket': 'https://bflegacy.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/imagelibserver': 'https://buildfire-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net'
+			},
+			_transformToImgix: function(url) {
+				url = url.replace(/^https:\/\//i, 'http://');
+				for (let whitelistedUrl in this.imgixWhitelistedUrls) {
+					if (url.indexOf(whitelistedUrl) === 0) {
+						return this.imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
+					}
+				}
+				return;
 			}
-			return baseImgUrl;
 		},
 	}
 	, colorLib: {
