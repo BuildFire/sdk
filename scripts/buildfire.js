@@ -2654,57 +2654,62 @@ var buildfire = {
 			if (options.width == 'full') options.width = window.innerWidth;
 			if (options.height == 'full') options.height = window.innerHeight;
 
-			var root;
-
-			{
-				//var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-				var root = 'https://alnnibitpo.cloudimg.io/v7';
-
-				// Check if there is query string
-				var hasQueryString = url.indexOf('?') !== -1;
-				var result = root + '/' + url + (hasQueryString ? '&' : '?') + 'func=bound';
-
-				var isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-				if (isDevMode) {
-					result += '&ci_info=1';
+			let baseImgUrl;
+			let forceImgix = buildfire.getContext()?.forceImgix;
+			if (forceImgix) {
+				baseImgUrl = buildfire.imageLib._prepareImgixUrl(url);
+				if (!baseImgUrl) {
+					return url;
 				}
-
-				if (options.size && options.aspect) {
-					if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
-						var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
-						console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
-						return url;
-					}
-					if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
-						var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
-						console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
-						return url;
-					}
-					//math.round
-					options.width = this.ENUMS.SIZES[options.size];
-					options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
-				}
-				// check for missing size or aspect
-				if (options.width && !options.height) {
-					var width = Math.floor(options.width * ratio);
-					result += '&width=' + width;
-				}
-				else if (!options.width && options.height) {
-					var height = Math.floor(options.height * ratio);
-					result += '&height=' + height;
-				}
-				else if (options.width && options.height) {
-					var width = Math.floor(options.width * ratio);
-					var height = Math.floor(options.height * ratio);
-					result += '&width=' + width + '&height=' + height;
-				} else {
-					result = url;
-				}
-
-				this._handleElement(element, result, callback);
-
-				return result;
+			} else {
+				baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
 			}
+			
+
+			// Check if there is query string
+			var hasQueryString = url.indexOf('?') !== -1;
+			let result = baseImgUrl + (hasQueryString ? '&' : '?') + (!forceImgix ? 'func=bound' : '');
+
+			var isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
+			if (isDevMode) {
+				result += '&ci_info=1';
+			}
+
+			if (options.size && options.aspect) {
+				if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
+					var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
+					console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+					return url;
+				}
+				if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
+					var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
+					console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+					return url;
+				}
+				//math.round
+				options.width = this.ENUMS.SIZES[options.size];
+				options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
+			}
+			// check for missing size or aspect
+			if (options.width && !options.height) {
+				let width = Math.floor(options.width * ratio);
+				result += '&width=' + width;
+			}
+			else if (!options.width && options.height) {
+				let height = Math.floor(options.height * ratio);
+				result += '&height=' + height;
+			}
+			else if (options.width && options.height) {
+				let width = Math.floor(options.width * ratio);
+				let height = Math.floor(options.height * ratio);
+				result += '&width=' + width + '&height=' + height;
+			} else {
+				result = url;
+			}
+
+			this._handleElement(element, result, callback);
+
+			return result;
 		}
 
 		, cropImage: function (url, options, element, callback) {
@@ -2716,9 +2721,6 @@ var buildfire = {
 				return url;
 			}
 
-			/*if (imageTools.isProdImageServer(url)) {
-                url = url.replace(/^https:\/\//i, 'http://');
-            }*/
 			if (!options) {
 				options = {};
 			}
@@ -2767,10 +2769,18 @@ var buildfire = {
 
 			//var protocol = window.location.protocol == "https:" ? "https:" : "http:";
 
-			var root = 'https://alnnibitpo.cloudimg.io/v7';
-
+			let baseImgUrl;
+			let forceImgix = buildfire.getContext()?.forceImgix;
+			if (forceImgix) {
+				baseImgUrl = buildfire.imageLib._prepareImgixUrl(url);
+				if (!baseImgUrl) {
+					return url;
+				}
+			} else {
+				baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
+			}
 			var hasQueryString = url.indexOf('?') !== -1;
-			var result = root + '/' + url + (hasQueryString ? '&' : '?')  + 'func=crop';
+			let result = baseImgUrl + (hasQueryString ? '&' : '?') + (!forceImgix ? 'func=crop' : 'fit=crop');
 
 			var isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
 			if (isDevMode) {
@@ -3010,7 +3020,25 @@ var buildfire = {
 					callback(null, buildfire.imageLib.cropImage(url, options));
 				}
 			}
-		}
+		},
+		_prepareImgixUrl: function (url) {
+			let baseImgUrl;
+			url = url.replace(/^https:\/\//i, 'http://');
+			if (url.indexOf('http://imageserver.prod.s3.amazonaws.com') == 0) {
+				baseImgUrl = 'https://buildfire.imgix.net' + url.split('imageserver.prod.s3.amazonaws.com')[1]; // length of root host
+			} else if (url.indexOf('http://s3-us-west-2.amazonaws.com/imageserver.prod') == 0) {
+				baseImgUrl = 'https://buildfire.imgix.net' + url.split('imageserver.prod')[1]; // length of root host
+			} else if (url.indexOf('http://pluginserver.buildfire.com') == 0) {
+				baseImgUrl = 'https://bfplugins.imgix.net' + url.split('pluginserver.buildfire.com')[1]; // length of root host
+			} else if (url.indexOf('Kaleo.DevBucket/') > 0) {
+				baseImgUrl = 'https://bflegacy.imgix.net' + url.split('Kaleo.DevBucket')[1];
+			} else if (url.indexOf('http://s3-us-west-2.amazonaws.com/imagelibserver') == 0) {
+				baseImgUrl = 'https://buildfire-uat.imgix.net' + url.split('imagelibserver')[1];
+			} else if (url.indexOf('http://s3-us-west-2.amazonaws.com/pluginserver.uat') == 0) {
+				baseImgUrl = 'https://bfplugins-uat.imgix.net' + url.split('pluginserver.uat')[1];
+			}
+			return baseImgUrl;
+		},
 	}
 	, colorLib: {
 		showDialog: function (data, options, onchange, callback) {
