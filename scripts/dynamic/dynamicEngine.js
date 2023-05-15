@@ -56,7 +56,7 @@ const dynamicEngine = {
 		_evaluate(request) {
 			const { expressions } = dynamicEngine;
 			const { id, callback }  = request;
-			const expression = request.options?.expression || '';
+			let expression = request.options?.expression || '';
 
 			expressions._prepareContext(
 				request.options,
@@ -76,6 +76,9 @@ const dynamicEngine = {
 								throw 'not_allowed';
 							}
 						};
+						if (expression.includes('buildfire-repeat')) {
+							expression = dynamicEngine.expressions.handleRepeaters({expression, context});
+						}
 						const preparedExpression = '`' + expression + '`';
 						request._context = new Proxy(context, handler);
 						request.context = context;
@@ -129,10 +132,94 @@ const dynamicEngine = {
 			dynamicEngine.expressions._getBaseContext(null, (err, baseContext) => {
 				dynamicEngine.expressions.getContext({request: options}, (err, context) => {
 					Object.assign(baseContext, context, options.extendedContext);
-					dynamicEngine.datasources._addDatasourcesData({baseContext});
+					dynamicEngine.datasources._addDatasourcesData({context: baseContext});
 					callback(null, baseContext);
 				});
 			});
+		},
+		/**
+		* @desc Handle all the repeaters functionality; so the content of the repeaters could be evaluated
+		* @param {Object} options.expression - The expression to be evaluated
+		* @param {Object} options.context - The context that is being used in the evaluation process
+		* @public
+		*/
+		handleRepeaters({expression, context}) {
+			let container = document.createElement('div');
+			container.innerHTML = expression;
+			dynamicEngine.expressions._checkNestedRepeaters({element: container, context, scope: {}});
+			return container.innerHTML;
+		},
+		/**
+		* @desc Handle all the repeaters functionality; so the content of the repeaters could be evaluated
+		* @param {Object} options.element - The container element to check if it contains any repeater element
+		* @param {Object} options.context - The context that is being used in the evaluation process
+		* @param {Object} options.scope - Contains all the paths for the repeaters' scoped variables
+		* @private
+		*/
+		_handleRepeaters({element, context, scope}) {
+			// remove the reference of the scope property
+			scope = JSON.parse(JSON.stringify(scope));
+		
+			const repeatAttr = element.getAttribute('buildfire-repeat');
+			
+			element.removeAttribute('buildfire-repeat');
+		
+			// Extract the loop variable and array name from the (buildfire-repeat) attribute
+			let [loopVar, arrayName] = repeatAttr.split(' in ');
+			
+			// handle arrays that are not starting with (context); so they can be evaluated
+			// For example, (order.items) will be converted to something like (context.data.orders[0].items); so it can be evaluated
+			arrayName = arrayName.replace(/(^(?! *context\.).*)/, (match, expr) => {
+				// Get the first part of the arrayName
+				// For example, if the arrayName is (order.items), propertyName will be (order)
+				const propertyName = arrayName.split('.')[0];
+				// check if the path to the array (order) is existing
+				if (scope[propertyName]) return expr.replace(propertyName, scope[propertyName]);
+			});
+		
+			try {
+				// Get the array to loop over
+				const array = eval(`${arrayName}`);
+				// Loop over the array
+				array?.forEach((item, index) => {
+					scope[loopVar] = `${arrayName}[${index}]`;
+			
+					// Create a new element based on the container
+					const newItem = element.cloneNode(true);
+					
+					// check for any elements that contains the (buildfire-repeat) attribute and handle them
+					dynamicEngine.expressions._checkNestedRepeaters({element: newItem, context, scope});
+			
+					// select all template literals that is not starting with (context) and handle them
+					newItem.innerHTML = newItem.innerHTML.replace(/\${((?! *context\.)[^{}]*)}/g, (match, expr) => {
+						// Evaluate the expression in the loop scope
+						return '${' + expr.replace(loopVar, scope[loopVar]) + '}';
+					});
+				
+					// Append the new element to the container's parent
+					element.parentNode.appendChild(newItem);
+				});
+				element.remove();
+			} catch (err) {
+				element.remove();
+				console.error(err);
+			}
+		},
+		/**
+		* @desc Check if there is any nested elements that has (buildfire-repeat) attribute in the given element
+		* @param {Object} options.element - The container element to check if it contains any repeater element
+		* @param {Object} options.context - The context that is being used in the evaluation process
+		* @param {Object} options.scope - Contains all the paths for the repeaters' scoped variables
+		* @private
+		*/
+		_checkNestedRepeaters({element, context, scope}) {
+			const nestedRepeaters = element.querySelector('[buildfire-repeat]');
+			if (nestedRepeaters) {
+				dynamicEngine.expressions._handleRepeaters({element: nestedRepeaters, context, scope});
+			}
+			if (element.querySelector('[buildfire-repeat]')) { // check if there still nested repeaters
+				dynamicEngine.expressions._checkNestedRepeaters({element, context, scope});
+			}
 		},
 		/**
 		* Get unique id each time
@@ -145,7 +232,12 @@ const dynamicEngine = {
 	datasources: {
 		datasourcesData: {},
 		requestedDatasources: {},
-		_addDatasourcesData({baseContext}){
+		/**
+		* @desc Add all of the datasources' data to the context to be used in the evaluation process
+		* @param {Object} options.context - The context that is being used in the evaluation process
+		* @private
+		*/
+		_addDatasourcesData({context}){
 			const handler = {
 				_usedProperties: {},
 				get(target, prop) {
@@ -155,8 +247,16 @@ const dynamicEngine = {
 				},
 			};
 			let data = this.datasourcesData;
-			baseContext.data = new Proxy(data, handler);
+			context.data = new Proxy(data, handler);
 		},
+		/**
+		* @desc Check for just the needed datasources and fetch them
+		* @param {Object} options - Datasources's configuration that is used to fetch the datasource's data
+		* @param {Object} options.usedDatasources - Datasources that is being used in the evaluated expression
+		* @param {string} options.extendedDatasources - The extended datasources, which have been sent with the evaluation request
+		* @param {Function} callback - Returns the data of the fetched datasource
+		* @private
+		*/
 		_fetchNeededDatasources({usedDatasources, extendedDatasources}, callback) {
 			if (usedDatasources && Object.keys(usedDatasources).length > 0) {
 				dynamicEngine.datasources._getDatasources(null, (err, datasources) => {
@@ -193,9 +293,9 @@ const dynamicEngine = {
 		},
 		/**
 		* @desc Fetch the datasource's data
-		* @param {object} options.datasource - the needed configuration to fetch the datasource data
+		* @param {object} options.datasource - The needed configuration to fetch the datasource data
 		* @param {Function} callback - Returns the data of the fetched datasource
-		* @private
+		* @public
 		*/
 		fetchDatasource({ datasource }, callback) {
 			datasource.lastTimeFetched = new Date();
@@ -207,6 +307,12 @@ const dynamicEngine = {
 				break;
 			}
 		},
+		/**
+		* @desc Fetch the datasource's data
+		* @param {Object} options - Datasources's configuration that is used to fetch the datasource's data
+		* @param {Function} callback - Contains the datasource's data
+		* @private
+		*/
 		_fetchApi({ datasource }, callback) {
 			const promises = dynamicEngine.datasources._evaluateDatasourceConfiguration([
 				datasource.configuration?.url,
@@ -234,6 +340,11 @@ const dynamicEngine = {
 					callback(error, null);
 				});
 		},
+		/**
+		* @desc Evaluate the datasource configuration. For example, the url to fetch the datasource would contain expressions
+		* @param {Array} values - Contains the datasource's configurations that should be evaluated
+		* @private
+		*/
 		_evaluateDatasourceConfiguration(values) {
 			const promises = [];
 			for (const value of values) {
