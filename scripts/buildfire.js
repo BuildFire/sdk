@@ -2625,10 +2625,10 @@ var buildfire = {
 		// }
 		, resizeImage: function (url, options, element, callback) {
 			if (!url) return null;
-			// return unsupported file types
-			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url))) {
-				var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-				console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
+			const forceImgix = buildfire.getContext()?.forceImgix;
+			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
+			if (!imageCdnHandler.isSupportedUrl(url)){
+				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
 				return url;
 			}
 
@@ -2654,58 +2654,36 @@ var buildfire = {
 			if (options.width == 'full') options.width = window.innerWidth;
 			if (options.height == 'full') options.height = window.innerHeight;
 
-			let baseImgUrl;
-			let forceImgix = buildfire.getContext()?.forceImgix;
-			if (forceImgix) {
-				baseImgUrl = buildfire.imageLib.imgix._transformToImgix(url);
-				if (!baseImgUrl) {
-					return url;
-				}
-			} else {
-				baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
-			}
-			
-
-			// Check if there is query string
-			var hasQueryString = url.indexOf('?') !== -1;
-			let result = baseImgUrl + (hasQueryString ? '&' : '?') + (!forceImgix ? 'func=bound' : '');
-
-			var isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-			if (isDevMode) {
-				result += '&ci_info=1';
-			}
-
 			if (options.size && options.aspect) {
 				if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
 					var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
-					console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+					console.warn('Invalid size. Available options are ' + sizes + '. Returning original url');
 					return url;
 				}
 				if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
 					var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
-					console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+					console.warn('Invalid aspect ratio. Available options are ' + ratios + '. Returning original url');
 					return url;
 				}
 				//math.round
 				options.width = this.ENUMS.SIZES[options.size];
 				options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
 			}
+			let width;
+			let height;
 			// check for missing size or aspect
 			if (options.width && !options.height) {
-				let width = Math.floor(options.width * ratio);
-				result += '&width=' + width;
+				width = Math.floor(options.width * ratio);
 			}
 			else if (!options.width && options.height) {
-				let height = Math.floor(options.height * ratio);
-				result += '&height=' + height;
+				height = Math.floor(options.height * ratio);
 			}
 			else if (options.width && options.height) {
-				let width = Math.floor(options.width * ratio);
-				let height = Math.floor(options.height * ratio);
-				result += '&width=' + width + '&height=' + height;
-			} else {
-				result = url;
+				width = Math.floor(options.width * ratio);
+				height = Math.floor(options.height * ratio);
 			}
+
+			let result = imageCdnHandler.constructUrl({width, height, url, method: 'resize'});
 
 			this._handleElement(element, result, callback);
 
@@ -2714,10 +2692,10 @@ var buildfire = {
 
 		, cropImage: function (url, options, element, callback) {
 			if (!url) return null;
-			// return unsupported file types
-			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url))) {
-				var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-				console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
+			const forceImgix = buildfire.getContext()?.forceImgix;
+			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
+			if (!imageCdnHandler.isSupportedUrl(url)){
+				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
 				return url;
 			}
 
@@ -2736,12 +2714,12 @@ var buildfire = {
 			if (options.size && options.aspect) {
 				if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
 					var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
-					console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+					console.warn('Invalid size. Available options are ' + sizes + '. Returning original url');
 					return url;
 				}
 				if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
 					var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
-					console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+					console.warn('Invalid aspect ratio. Available options are ' + ratios + '. Returning original url');
 					return url;
 				}
 
@@ -2758,8 +2736,8 @@ var buildfire = {
 				options.height = window.innerHeight;
 			}
 			if (!options.width || !options.height) {
-				console.warn('cropImage doenst have width or height please fix. returning original url');
-				return url + '?h=' + options.height + '&w=' + options.width;
+				console.warn('cropImage does not have width or height please fix. returning original url');
+				return url;
 			}
 
 			var ratio = window.devicePixelRatio;
@@ -2767,31 +2745,10 @@ var buildfire = {
 				ratio = options.disablePixelRatio;
 			}
 
-			//var protocol = window.location.protocol == "https:" ? "https:" : "http:";
+			let width = Math.floor(options.width * ratio);
+			let height = Math.floor(options.height * ratio);
 
-			let baseImgUrl;
-			let forceImgix = buildfire.getContext()?.forceImgix;
-			if (forceImgix) {
-				baseImgUrl = buildfire.imageLib.imgix._transformToImgix(url);
-				if (!baseImgUrl) {
-					return url;
-				}
-			} else {
-				baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
-			}
-			var hasQueryString = url.indexOf('?') !== -1;
-			let result = baseImgUrl + (hasQueryString ? '&' : '?') + (!forceImgix ? 'func=crop' : 'fit=crop');
-
-			var isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-			if (isDevMode) {
-				result += '&ci_info=1';
-			}
-
-			var width = Math.floor(options.width * ratio);
-			var height = Math.floor(options.height * ratio);
-
-			result += '&width=' + width + '&height=' + height;
-
+			let result = imageCdnHandler.constructUrl({width, height, url, method: 'crop'});
 
 			this._handleElement(element, result, callback);
 
@@ -3021,9 +2978,22 @@ var buildfire = {
 				}
 			}
 		},
-		imgix: {
+		_imgix: {
+			isSupportedUrl: function(url) {
+				const isSupportedExtension =  !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
+				if (!isSupportedExtension) return false;
+				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
+			},
+			constructUrl: function({width, height, url, method}) {
+				const baseImgUrl = this._transformToImgix(url);
+				const hasQueryString = url.indexOf('?') !== -1;
+				if (width || height) {
+					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop' : '' ) + '&width=' + width + '&height=' + height;
+				} 
+				return url;
+			},
 			// consists of whitelisted AWS urls in imgix as keys and the corresponding imgix urls as values
-			imgixWhitelistedUrls: {
+			_imgixWhitelistedUrls: {
 				'http://imageserver.prod.s3.amazonaws.com': 'https://buildfire.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
 				'http://pluginserver.buildfire.com': 'https://bfplugins.imgix.net',
@@ -3033,14 +3003,28 @@ var buildfire = {
 			},
 			_transformToImgix: function(url) {
 				url = url.replace(/^https:\/\//i, 'http://');
-				for (let whitelistedUrl in this.imgixWhitelistedUrls) {
+				for (let whitelistedUrl in this._imgixWhitelistedUrls) {
 					if (url.indexOf(whitelistedUrl) === 0) {
-						return this.imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
+						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
 					}
 				}
-				return;
+				return null; // return nothing if the url wasn't supported in imgix
 			}
 		},
+		_cloudImg: {
+			isSupportedUrl: function(url) {
+				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
+			},
+			constructUrl: function({width, height, url, method}) {
+				const baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
+				const hasQueryString = url.indexOf('?') !== -1;
+				if (width || height) {
+					const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
+					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'func=crop': 'func=bound') + '&width=' + width + '&height=' + height + (isDevMode ? '&ci_info=1' : '');
+				}
+				return url;
+			},
+		}
 	}
 	, colorLib: {
 		showDialog: function (data, options, onchange, callback) {
