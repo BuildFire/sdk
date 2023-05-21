@@ -56,7 +56,7 @@ const dynamicEngine = {
 		_evaluate(request) {
 			const { expressions } = dynamicEngine;
 			const { id, callback }  = request;
-			let expression = request.options?.expression || '';
+			let expression = request.options.expression || '';
 
 			expressions._prepareContext(
 				request.options,
@@ -76,20 +76,29 @@ const dynamicEngine = {
 								throw 'not_allowed';
 							}
 						};
+						const evaluateExpression = () => {
+							const preparedExpression = '`' + expression + '`';
+							request._context = new Proxy(context, handler);
+							request.context = context;
+							const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request._context)();
+							expressions._evaluationRequests[id] = request;
+							const usedDatasources = request._context.data['__handler__']._usedProperties;
+							dynamicEngine.datasources._fetchNeededDatasources({usedDatasources, extendedDatasources: request.options.extendedDatasources}, (err, res) => {
+								if (err) return console.error('Error occurred while fetching data: ', err);
+								dynamicEngine.triggerContextChange({contextProperty: 'data', data: res});
+							});
+							callback(null, {evaluatedExpression, evaluationRequest: request});
+						};
+
 						if (expression.includes('buildfire-repeat')) {
-							expression = dynamicEngine.expressions.handleRepeaters({expression, context});
+							dynamicEngine.expressions.repeater._replaceRepeaters({expression, context}, (err, result) => {
+								if (err) return callback(err);
+								expression = result;
+								evaluateExpression();
+							});
+						} else {
+							evaluateExpression();
 						}
-						const preparedExpression = '`' + expression + '`';
-						request._context = new Proxy(context, handler);
-						request.context = context;
-						const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request._context)();
-						expressions._evaluationRequests[id] = request;
-						const usedDatasources = request._context.data['__handler__']._usedProperties;
-						dynamicEngine.datasources._fetchNeededDatasources({usedDatasources, extendedDatasources: request.options.extendedDatasources}, (err, res) => {
-							if (err) return console.error('Error occurred while fetching data: ', err);
-							dynamicEngine.triggerContextChange({contextProperty: 'data', data: res});
-						});
-						callback(null, {evaluatedExpression, evaluationRequest: request});
 					} catch (err) {
 						callback(err);
 					}
@@ -137,89 +146,95 @@ const dynamicEngine = {
 				});
 			});
 		},
-		/**
-		* @desc Handle all the repeaters functionality; so the content of the repeaters could be evaluated
-		* @param {Object} options.expression - The expression to be evaluated
-		* @param {Object} options.context - The context that is being used in the evaluation process
-		* @public
-		*/
-		handleRepeaters({expression, context}) {
-			let container = document.createElement('div');
-			container.innerHTML = expression;
-			dynamicEngine.expressions._checkNestedRepeaters({element: container, context, scope: {}});
-			return container.innerHTML;
-		},
-		/**
-		* @desc Handle all the repeaters functionality; so the content of the repeaters could be evaluated
-		* @param {Object} options.element - The container element to check if it contains any repeater element
-		* @param {Object} options.context - The context that is being used in the evaluation process
-		* @param {Object} options.scope - Contains all the paths for the repeaters' scoped variables
-		* @private
-		*/
-		_handleRepeaters({element, context, scope}) {
-			// remove the reference of the scope property
-			scope = JSON.parse(JSON.stringify(scope));
-		
-			const repeatAttr = element.getAttribute('buildfire-repeat');
+		repeater: {
+			_exposeRepeaterStructure: false, // change it to false to show the repeater structure for development purposes 
+			/**
+			* @desc Handle all the repeaters functionality; so the content of the repeaters could be evaluated
+			* @param {Object} options.expression - The expression to be evaluated
+			* @param {Object} options.context - The context that is being used in the evaluation process
+			* @public
+			*/
+			_replaceRepeaters({expression, context}, callback) {
+				try {
+					let container = document.createElement('div');
+					container.innerHTML = expression;
+					dynamicEngine.expressions.repeater._replaceRepeaterTree({container, context, scope: {}});
+					if (dynamicEngine.expressions.repeater._exposeRepeaterStructure) console.log('Repeater Structure', container.innerHTML);
+					callback(null, container.innerHTML);
+				} catch (err) {
+					callback(err);
+				}
+			},
+			/**
+			* @desc Handle all the repeaters functionality; so the content of the repeaters could be evaluated
+			* @param {Object} options.element - The container element to check if it contains any repeater element
+			* @param {Object} options.context - The context that is being used in the evaluation process
+			* @param {Object} options.scope - Contains all the paths for the repeaters' scoped variables
+			* @private
+			*/
+			_replaceRepeaterTree({container, context, scope}) {
+				const repeatElement = container.querySelector('[buildfire-repeat]');
+				if (repeatElement) {
+					// remove the reference of the scope property
+					scope = JSON.parse(JSON.stringify(scope));
 			
-			element.removeAttribute('buildfire-repeat');
-		
-			// Extract the loop variable and array name from the (buildfire-repeat) attribute
-			let [loopVar, arrayName] = repeatAttr.split(' in ');
-			
-			// handle arrays that are not starting with (context); so they can be evaluated
-			// For example, (order.items) will be converted to something like (context.data.orders[0].items); so it can be evaluated
-			arrayName = arrayName.replace(/(^(?! *context\.).*)/, (match, expr) => {
-				// Get the first part of the arrayName
-				// For example, if the arrayName is (order.items), propertyName will be (order)
-				const propertyName = arrayName.split('.')[0];
-				// check if the path to the array (order) is existing
-				if (scope[propertyName]) return expr.replace(propertyName, scope[propertyName]);
-			});
-		
-			try {
-				// Get the array to loop over
-				const array = eval(`${arrayName}`);
-				// Loop over the array
-				array?.forEach((item, index) => {
-					scope[loopVar] = `${arrayName}[${index}]`;
-			
-					// Create a new element based on the container
-					const newItem = element.cloneNode(true);
+					const repeatAttr = repeatElement.getAttribute('buildfire-repeat');
 					
-					// check for any elements that contains the (buildfire-repeat) attribute and handle them
-					dynamicEngine.expressions._checkNestedRepeaters({element: newItem, context, scope});
-			
-					// select all template literals that is not starting with (context) and handle them
-					newItem.innerHTML = newItem.innerHTML.replace(/\${((?! *context\.)[^{}]*)}/g, (match, expr) => {
-						// Evaluate the expression in the loop scope
-						return '${' + expr.replace(loopVar, scope[loopVar]) + '}';
+					repeatElement.removeAttribute('buildfire-repeat');
+				
+					// Extract the loop variable and array name from the (buildfire-repeat) attribute
+					let [scopeVariableName, qualifiedArrayPath] = repeatAttr.split(' in ').map(item => item.trim());
+				
+					// handle arrays that are not starting with (context); so they can be evaluated
+					// For example, (order.items) will be converted to something like (context.data.orders[0].items); so it can be evaluated
+					qualifiedArrayPath = qualifiedArrayPath.replace(/(^(?! *context\.).*)/, (match, expr) => {
+						// Get the first part of the qualifiedArrayPath
+						// For example, if the qualifiedArrayPath is (order.items), propertyName will be (order)
+						const propertyName = qualifiedArrayPath.split('.')[0];
+						// check if the path to the array (order) is existing
+						return expr.replace(propertyName, scope[propertyName]);
 					});
 				
-					// Append the new element to the container's parent
-					element.parentNode.appendChild(newItem);
-				});
-				element.remove();
-			} catch (err) {
-				element.remove();
-				console.error(err);
-			}
-		},
-		/**
-		* @desc Check if there is any nested elements that has (buildfire-repeat) attribute in the given element
-		* @param {Object} options.element - The container element to check if it contains any repeater element
-		* @param {Object} options.context - The context that is being used in the evaluation process
-		* @param {Object} options.scope - Contains all the paths for the repeaters' scoped variables
-		* @private
-		*/
-		_checkNestedRepeaters({element, context, scope}) {
-			const nestedRepeaters = element.querySelector('[buildfire-repeat]');
-			if (nestedRepeaters) {
-				dynamicEngine.expressions._handleRepeaters({element: nestedRepeaters, context, scope});
-			}
-			if (element.querySelector('[buildfire-repeat]')) { // check if there still nested repeaters
-				dynamicEngine.expressions._checkNestedRepeaters({element, context, scope});
-			}
+					try {
+						// Get the array to loop over
+						const array = Function(`"use strict"; const context = this;return (${qualifiedArrayPath})`).bind(context)();
+						// Loop over the array
+						if (array) {
+							array.forEach((item, index) => {
+								scope[scopeVariableName] = `${qualifiedArrayPath}[${index}]`;
+						
+								// Create a new element based on the container
+								const newItem = repeatElement.cloneNode(true);
+								
+								// check for any elements that contains the (buildfire-repeat) attribute and handle them
+								dynamicEngine.expressions.repeater._replaceRepeaterTree({container: newItem, context, scope});
+						
+								// select all template literals that is not starting with (context) and handle them
+								newItem.innerHTML = newItem.innerHTML.replace(/\${((?! *context\.)[^{}]*)}/g, (match, expr) => {
+									// Evaluate the expression in the loop scope
+									const updatedExpr = expr.replace(scopeVariableName, scope[scopeVariableName]);
+									if (dynamicEngine.expressions.repeater._exposeRepeaterStructure) {
+										return '${' + updatedExpr + '}' + '<span style="display:none">' + updatedExpr + '</span>';
+									}
+									return '${' + updatedExpr + '}';
+								});
+							
+								// Append the new element to the container's parent
+								repeatElement.parentNode.insertBefore(newItem, repeatElement);
+							});	
+						}
+						repeatElement.remove();
+					} catch (err) {
+						repeatElement.remove();
+						if (!err.message || !(err.message.includes('undefined') || err.message.includes('null'))) {
+							throw err;
+						}
+					}
+				}
+				if (container.querySelector('[buildfire-repeat]')) { // check if there still nested repeaters
+					dynamicEngine.expressions.repeater._replaceRepeaterTree({container, context, scope});
+				}
+			},
 		},
 		/**
 		* Get unique id each time
