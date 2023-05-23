@@ -28,23 +28,16 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 
 		this._onButtonClickCallbacks = [];
 		// initialize the state
-		this._state = this.getDefaultState;
-    	this._onMainBtnClick = this._onMainBtnClick.bind(this);
-    	this._onOverlayClick = this._onOverlayClick.bind(this);
-
-		this._init();
-	}
-
-	/**
-	 * Get state default values
-	 */
-	get getDefaultState() {
-		return {
+		this._state = {
 			mainFabBtnElement: null,
 			isOpen: false,
 			overlayElement: null,
 			bodyTextColor: '#000000',
 		};
+    	this._onMainBtnClick = this._onMainBtnClick.bind(this);
+    	this._onOverlayClick = this._onOverlayClick.bind(this);
+
+		this._init();
 	}
 
 	static ACTIVE_CLASS_NAME = 'active';
