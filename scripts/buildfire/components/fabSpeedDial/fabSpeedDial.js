@@ -28,7 +28,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 
 		this._onButtonClickCallbacks = [];
 		// initialize the state
-		this._state = this.getDefaultState();
+		this._state = this.getDefaultState;
     	this._onMainBtnClick = this._onMainBtnClick.bind(this);
     	this._onOverlayClick = this._onOverlayClick.bind(this);
 
@@ -38,7 +38,7 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 	/**
 	 * Get state default values
 	 */
-	getDefaultState() {
+	get getDefaultState() {
 		return {
 			mainFabBtnElement: null,
 			isOpen: false,
