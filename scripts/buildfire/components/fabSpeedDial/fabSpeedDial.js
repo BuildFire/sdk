@@ -2,14 +2,6 @@ if (typeof buildfire == 'undefined')
 	throw 'please add buildfire.js first to use buildfire components';
 if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
-function State() {
-	this.mainFabBtnElement = null;
-	this.isOpen = false;
-	this.overlayElement = null;
-	this.bodyTextColor = '#000000';
-}
-
-
 buildfire.components.fabSpeedDial = class FabSpeedDial {
 	constructor(selector, options = {}) {
 		if (!document.querySelector(selector)) throw new Error('Element not found!');
@@ -35,7 +27,13 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 		}
 
 		this._onButtonClickCallbacks = [];
-		this._state = new State();
+		// initialize the state
+		this._state = {
+			mainFabBtnElement: null,
+			isOpen: false,
+			overlayElement: null,
+			bodyTextColor: '#000000',
+		};
     	this._onMainBtnClick = this._onMainBtnClick.bind(this);
     	this._onOverlayClick = this._onOverlayClick.bind(this);
 
