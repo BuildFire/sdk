@@ -3,8 +3,29 @@ if (typeof buildfire == 'undefined')
 if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
 buildfire.components.fabSpeedDial = class FabSpeedDial {
-	constructor(selector, options = {}) {
-		if (!document.querySelector(selector)) throw new Error('Element not found!');
+	constructor(selector, options) {
+		if (!document.querySelector(selector)) throw new Error('Element not found');
+
+		if (!options || typeof options !== 'object') {
+			throw new Error('options not provided');
+		}
+
+		if (options.showOverlay && typeof options.showOverlay !== 'boolean') {
+			throw new Error('showOverlay value must be of type boolean');
+		}
+
+		if (!options.buttons && !options.mainButton) {
+			throw new Error('must provide either mainButton or buttons');
+		}
+
+		if (options.mainButton && options.buttons && options.buttons.length === 1) {
+			throw new Error('single button can only be used with mainButton');
+		}
+
+		if (options.buttons && options.buttons.length > 6) {
+			console.error("cannot exceed 6 buttons, showing first 6 buttons");
+			options.buttons = options.buttons.slice(0, 6);
+		}
 
 		this.selector = document.querySelector(selector);
 		this.options = Object.assign({
@@ -16,15 +37,6 @@ buildfire.components.fabSpeedDial = class FabSpeedDial {
 			buttons: [],
 		}, options);
 
-
-		if (this.options.buttons.length <= 1 || this.options.buttons.length > 6) {
-			this.options.buttons = [];
-			console.error('The number of buttons should be between 2 to 6');
-		}
-
-		if (typeof this.options.showOverlay !== 'boolean') {
-			throw new Error('showOverlay value must be of type boolean');
-		}
 
 		this._onButtonClickCallbacks = [];
 		// initialize the state
