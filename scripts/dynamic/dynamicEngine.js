@@ -25,6 +25,9 @@ const dynamicEngine = {
 	_isServer() {
 		return !(typeof window !== 'undefined' && window.document);
 	},
+	_decode({encodedString}) {
+		return atob(encodedString); // control side is using (btoa) to encode
+	},
 	expressions: {
 		_evaluationRequests: {},
 		/**
@@ -329,18 +332,20 @@ const dynamicEngine = {
 		* @private
 		*/
 		_fetchApi({ datasource }, callback) {
+			let datasourceConfiguration = JSON.parse(dynamicEngine._decode({encodedString: datasource.configuration}));
 			const promises = dynamicEngine.datasources._evaluateDatasourceConfiguration([
-				datasource.configuration?.url,
-				datasource.configuration?.method,
-				datasource.configuration?.headers,
-				datasource.configuration?.body,
+				datasourceConfiguration?.url,
+				datasourceConfiguration?.method,
+				datasourceConfiguration?.headers,
+				datasourceConfiguration?.body,
 			]);
 		
 			Promise.all(promises)
 				.then(([url, method, headers, body]) => {
 					const options = {};
-					if (headers) options.headers = headers;
-					if (body) options.body = body;
+					if (method) options.method = method;
+					if (headers) options.headers = JSON.parse(headers);
+					if (body) options.body = JSON.parse(body);
 					fetch(url, options)
 						.then((response) => response.json())
 						.then((data) => {
