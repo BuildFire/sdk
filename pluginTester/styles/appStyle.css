@@ -1156,7 +1156,7 @@ html[ios="true"][view="app"] nav.menu .menu-close-container{
 screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-device-height: 852px) and (-webkit-device-pixel-ratio: 3) {
 	:root {
-		--extra-padding: 12px;
+		--extra-padding: 11px;
 	}
 }
 
@@ -4945,7 +4945,6 @@ button.list-group-item {
 }
 .disabled-drawer-button {
 	opacity: 1 !important;
-	pointer-events: visible !important;
 	filter: grayscale(50%) !important;
 }
 .show-drawer-search {

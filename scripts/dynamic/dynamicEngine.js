@@ -15,6 +15,16 @@ const dynamicEngine = {
 			}
 		}
 	},
+	getGlobalSettings(options, callback) {
+		callback(null, {});
+	},
+	/**
+	* @desc This function returns weather this file is loaded from a client or a server side
+	* @private
+	*/
+	_isServer() {
+		return !(typeof window !== 'undefined' && window.document);
+	},
 	expressions: {
 		_evaluationRequests: {},
 		/**
@@ -25,13 +35,14 @@ const dynamicEngine = {
 		* @param {Function} callback - Returns the evaluated expression or error if existed
 		* @public
 		*/
-		evaluate({id, expression, extendedContext}, callback) {
+		evaluate(options, callback) {
+			options = options || {};
+			const { id } = options; 
 			const evaluationRequest = {
 				callback,
-				expression,
-				extendedContext,
+				options,
 				id: id || dynamicEngine.expressions._nanoid(),
-				destroy: function() {
+				destroy() {
 					dynamicEngine.expressions._destroyRequest(this.id);
 				}
 			};
@@ -42,12 +53,13 @@ const dynamicEngine = {
 			dynamicEngine.expressions._evaluate(evaluationRequest);
 			return evaluationRequest;
 		},
-		_evaluate: function(request) {
+		_evaluate(request) {
 			const { expressions } = dynamicEngine;
-			const { id, extendedContext, expression, callback } = request;
+			const { id, callback }  = request;
+			const expression = request.options?.expression || '';
 
 			expressions._prepareContext(
-				{ extendedContext },
+				request.options,
 				(err, context) => {
 					try {
 						const handler = {
@@ -69,7 +81,12 @@ const dynamicEngine = {
 						request.context = context;
 						const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request._context)();
 						expressions._evaluationRequests[id] = request;
-						request.callback(null, evaluatedExpression);
+						const usedDatasources = request._context.data['__handler__']._usedProperties;
+						dynamicEngine.datasources._fetchNeededDatasources({usedDatasources, extendedDatasources: request.options.extendedDatasources}, (err, res) => {
+							if (err) return console.error('Error occurred while fetching data: ', err);
+							dynamicEngine.triggerContextChange({contextProperty: 'data', data: res});
+						});
+						callback(null, {evaluatedExpression, evaluationRequest: request});
 					} catch (err) {
 						callback(err);
 					}
@@ -80,7 +97,7 @@ const dynamicEngine = {
 		* @param {string} id - The unique id of the request that should be deleted
 		* @private
 		*/
-		_destroyRequest: function(id) {
+		_destroyRequest(id) {
 			delete dynamicEngine.expressions._evaluationRequests[id];
 		},
 		/**
@@ -108,20 +125,14 @@ const dynamicEngine = {
 		* @param {Function} callback - Returns the final version of the context to be used in the evaluation
 		* @private
 		*/
-		_prepareContext({extendedContext}, callback) {
+		_prepareContext(options, callback) {
 			dynamicEngine.expressions._getBaseContext(null, (err, baseContext) => {
-				dynamicEngine.expressions.getContext(null, (err, context) => {
-					Object.assign(baseContext, context, extendedContext);
+				dynamicEngine.expressions.getContext({request: options}, (err, context) => {
+					Object.assign(baseContext, context, options.extendedContext);
+					dynamicEngine.datasources._addDatasourcesData({baseContext});
 					callback(null, baseContext);
 				});
 			});
-		},
-		/**
-		* @desc This function returns weather this file is loaded from a client or a server side
-		* @private
-		*/
-		_isServer() {
-			return !(typeof window !== 'undefined' && window.document);
 		},
 		/**
 		* Get unique id each time
@@ -129,6 +140,133 @@ const dynamicEngine = {
 		*/
 		_nanoid(t=21) {
 			return crypto.getRandomValues(new Uint8Array(t)).reduce(((t,e)=>t+=(e&=63)<36?e.toString(36):e<62?(e-26).toString(36).toUpperCase():e>62?'-':'_'),'');
+		}
+	},
+	datasources: {
+		datasourcesData: {},
+		requestedDatasources: {},
+		_addDatasourcesData({baseContext}){
+			const handler = {
+				_usedProperties: {},
+				get(target, prop) {
+					if (prop === '__handler__') return this;
+					this._usedProperties[prop] = true;
+					return target[prop];
+				},
+			};
+			let data = this.datasourcesData;
+			baseContext.data = new Proxy(data, handler);
+		},
+		_fetchNeededDatasources({usedDatasources, extendedDatasources}, callback) {
+			if (usedDatasources && Object.keys(usedDatasources).length > 0) {
+				dynamicEngine.datasources._getDatasources(null, (err, datasources) => {
+					if (err) return console.error('Error occurred while fetching data: ', err);
+					if (datasources || extendedDatasources) {
+						datasources = datasources || [];
+						let allDatasources = JSON.parse(JSON.stringify(datasources));
+						if (extendedDatasources) {
+							let filteredDatasources = []; // contain datasources from globalSettings without duplicates
+							datasources.forEach(datasource => {
+								let duplicateDatasource = extendedDatasources.find((extendedDatasource) => {
+									return extendedDatasource.id === datasource.id;
+								});
+								// don't push a datasource from globalSettings if it has the same id as a datasource in extendedDatasources
+								if (!duplicateDatasource) {
+									filteredDatasources.push(datasource);
+								}
+							});
+							allDatasources = [...filteredDatasources, ...extendedDatasources];
+						}
+						for (let usedDatasourceId in usedDatasources) {
+							if (!this.requestedDatasources[usedDatasourceId] || ((new Date() - this.requestedDatasources[usedDatasourceId].lastTimeFetched) > 5000)) {
+								const existingDatasource = allDatasources.find((datasource) => {
+									return datasource.id === usedDatasourceId;
+								});
+								if (existingDatasource) {
+									this.fetchDatasource({datasource: existingDatasource}, callback);
+								}
+							}
+						}
+					}
+				});
+			}
+		},
+		/**
+		* @desc Fetch the datasource's data
+		* @param {object} options.datasource - the needed configuration to fetch the datasource data
+		* @param {Function} callback - Returns the data of the fetched datasource
+		* @private
+		*/
+		fetchDatasource({ datasource }, callback) {
+			datasource.lastTimeFetched = new Date();
+			this.requestedDatasources[datasource.id] = datasource;
+		
+			switch (datasource.type) {
+			case 'api': 
+				dynamicEngine.datasources._fetchApi({ datasource }, callback);
+				break;
+			}
+		},
+		_fetchApi({ datasource }, callback) {
+			const promises = dynamicEngine.datasources._evaluateDatasourceConfiguration([
+				datasource.configuration?.url,
+				datasource.configuration?.method,
+				datasource.configuration?.headers,
+				datasource.configuration?.body,
+			]);
+		
+			Promise.all(promises)
+				.then(([url, method, headers, body]) => {
+					const options = {};
+					if (headers) options.headers = headers;
+					if (body) options.body = body;
+					fetch(url, options)
+						.then((response) => response.json())
+						.then((data) => {
+							dynamicEngine.datasources.datasourcesData[datasource.id] = data;
+							callback(null, data);
+						})
+						.catch((error) => {
+							callback(error, null);
+						});	
+				})
+				.catch((error) => {
+					callback(error, null);
+				});
+		},
+		_evaluateDatasourceConfiguration(values) {
+			const promises = [];
+			for (const value of values) {
+				if (!value) {
+					promises.push(Promise.resolve(''));
+					continue;
+				}
+				promises.push(new Promise((resolve, reject) => {
+					dynamicEngine.expressions.evaluate({ expression: value }, (error, result) => {
+						if (error) {
+							reject(error);
+						} else {
+							result.evaluationRequest.destroy();
+							resolve(result.evaluatedExpression);
+						}
+					});
+				}));
+			}
+			return promises;
+		},
+		/**
+		* @desc Get all the datasources from the app global settings
+		* @param {Function} callback - Returns the datasources
+		* @private
+		*/
+		_getDatasources(options, callback) {
+			dynamicEngine.getGlobalSettings(null, (err, globalSettings) => {
+				if (err) return callback(err);
+				if (globalSettings?.appDatasources && globalSettings.appDatasources.length > 0) {
+					return callback(null, globalSettings.appDatasources);
+				}
+				callback(null, null);
+			});
 		}
 	}
 };
