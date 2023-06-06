@@ -12,19 +12,26 @@
     align-items: center;
 }
 
-.reactions-main-icon {
+.reactions-main-icon,
+.reactions-secondary-icon {
     width: 1.5rem;
     height: 1.5rem;
     cursor: pointer;
-    padding: 0.25rem;
+    margin-top: 0.25rem;
+    position: inherit;
+    z-index: 10;
+}
+
+.reactions-secondary-icon{
+    margin-left: -1.1rem;
 }
 
 .reactions-main-icon-container {
-    width: 2rem !important;
+    padding-left: 0.25rem;
+    min-width: 2rem;
+    width: max-content;
     height: 2rem !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
 }
 
 .reactions-show-main-icon{
@@ -33,13 +40,14 @@
 }
 
 .reactions-total-count {
+    font-size: 0.875rem;
     width: 1.5rem;
     height: 2rem;
     text-align: center;
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     color: var(--bf-theme-body-text);
 }
 
@@ -77,7 +85,6 @@
 .reactions-clickable-image {
     width: 1.5rem;
     height: 1.5rem;
-    padding: 0.25rem;
 }
 
 .reaction-container-show .reactions-icon-animation {
@@ -91,6 +98,16 @@
 
 .reactions-hidden {
     display: none !important;
+}
+
+/* disable iOS default download images */
+.disable-user-select {
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
 }
 
 @-webkit-keyframes reactions-icons-animation {
