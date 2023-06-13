@@ -285,6 +285,7 @@ var buildfire = {
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
+		, 'dynamic.triggerContextChange'
 		, 'dynamic.onReceivedWidgetContextRequest'
 		, 'dynamic.expressions.onReceivedCustomExpressionsRequest'
 		, 'history.triggerOnPop'
@@ -4092,6 +4093,19 @@ var buildfire = {
 										editor.dom.remove(tempElement);
 									}, 0);
 								};
+								const checkExpressionStatus = () => {
+									if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
+										dynamicExpressionsActivated = true;
+										_restoreCursorPosition(); // This function works with sync functionality
+										_injectExpressionNode();
+										editor.isNotDirty = false;
+										editor.fire('change');
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
+										dynamicExpressionsActivated = false;
+										_restoreCursorPosition(); // This function works with sync functionality
+										_removeExpressionNode();
+									}
+								};
 
 								editor.on('init', function () {
 									// add a mimic of buildfire object to prevent errors in tinymce
@@ -4136,22 +4150,35 @@ var buildfire = {
 										}
 										ele.classList.add(...classes);
 									});
+									if (dynamicExpressionsEnabled) {
+										// check if the expressions evaluation should be turned on or off
+										checkExpressionStatus();
+										// Get the image that triggers the evaluation process
+										let expressionImage = editor.dom.doc.body.querySelectorAll('[data-type="dynamic-expression"]');
+										// check if there is any duplicate of the image that trigger the evaluation process and delete duplicates if exist
+										expressionImage.forEach((element, index) => {
+											if (index === 0) {
+												if (element.parentElement.className.indexOf('bf-wysiwyg-top') == -1) {
+													// add the expressionImage to an element at the body root if it wasn't
+													editor.dom.doc.body.children[0].prepend(element);
+												}
+											} else {
+												// if there multiple expressionImage, then delete the duplicates
+												if (element.parentElement && !element.parentElement.innerText && element.parentElement.children.length === 1) {
+													element.parentElement.remove();
+												} else {
+													element.remove();
+												}
+											}
+										});
+									}
 								});
-								var keyupListenerDelay = null;
+								let keyupListenerDelay = null;
 								editor.on('keyup', function() {
 									if (keyupListenerDelay) clearTimeout(keyupListenerDelay);
 									keyupListenerDelay = setTimeout(() => {
-										if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
-											dynamicExpressionsActivated = true;
-											_restoreCursorPosition(); // This function works with sync functionality
-											_injectExpressionNode();
-											editor.isNotDirty = false;
-											editor.fire('change');
-										} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
-											dynamicExpressionsActivated = false;
-											_restoreCursorPosition(); // This function works with sync functionality
-											_removeExpressionNode();
-										}
+										// check if the expressions evaluation should be turned on or off
+										checkExpressionStatus();
 									}, 500);
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
