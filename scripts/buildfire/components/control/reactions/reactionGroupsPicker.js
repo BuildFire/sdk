@@ -9,7 +9,7 @@ if (typeof buildfire.components.control.tagsInput == 'undefined') {
 buildfire.components.control.reactionGroupPicker = (()=>{
     class ReactionGroups extends buildfire.components.reactions {
         constructor(selector, data={}){
-            super(data);
+            super(selector, data);
             
             this.selector = selector || null;
             this.placeholder = data.placeholder || 'Select Reaction Group';
