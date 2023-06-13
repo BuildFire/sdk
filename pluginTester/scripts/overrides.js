@@ -138,6 +138,10 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		callback(error);
 	};
 
+	postMaster.controlPluginAPI.appDatasources.showDialog = (options, callback) =>{
+		AppDatasourcesAPI.prototype.showDialog(options, callback);
+	};
+
 	if (typeof Dynamic != 'undefined') {
 		if (!Dynamic.expressions) {
 			Dynamic.expressions = {};
