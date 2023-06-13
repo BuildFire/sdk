@@ -498,6 +498,17 @@ var buildfire = {
 					options.queryString = 'wid=' + wid;
 				}
 			}
+			if(options.headerContentHtml) {
+				var encodedHeaderContent = encodeURIComponent(options.headerContentHtml);
+				if(encodedHeaderContent.length < 4000) {
+					if(options.queryString) {
+						options.queryString += `&headerContentHtml=${encodedHeaderContent}`;
+					} else {
+						options.queryString = `headerContentHtml=${encodedHeaderContent}`;
+					}
+				}
+				delete options.headerContentHtml;
+			}
 			var predefinedPluginIds = {
 				'community': 'b15c62f2-7a99-48dc-a37a-e42d46bd3289',
 				'premium_social': '697f1612-8208-4870-93f9-555c65103578',
