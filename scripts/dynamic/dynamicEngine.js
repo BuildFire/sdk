@@ -85,10 +85,10 @@ const dynamicEngine = {
 							request.context = context;
 							const evaluatedExpression =  Function(`"use strict"; const context = this;return (${preparedExpression})`).bind(request._context)();
 							expressions._evaluationRequests[id] = request;
-							const usedDatasources = request._context.data['__handler__']._usedProperties;
+							const usedDatasources = request._context.datasource['__handler__']._usedProperties;
 							dynamicEngine.datasources._fetchNeededDatasources({usedDatasources, extendedDatasources: request.options.extendedDatasources}, (err, res) => {
 								if (err) return console.error('Error occurred while fetching data: ', err);
-								dynamicEngine.triggerContextChange({contextProperty: 'data', data: res});
+								dynamicEngine.triggerContextChange({contextProperty: 'datasource', data: res});
 							});
 							callback(null, {evaluatedExpression, evaluationRequest: request});
 						};
@@ -189,7 +189,7 @@ const dynamicEngine = {
 					let [scopeVariableName, qualifiedArrayPath] = repeatAttr.split(' in ').map(item => item.trim());
 				
 					// handle arrays that are not starting with (context); so they can be evaluated
-					// For example, (order.items) will be converted to something like (context.data.orders[0].items); so it can be evaluated
+					// For example, (order.items) will be converted to something like (context.datasource.orders[0].items); so it can be evaluated
 					qualifiedArrayPath = qualifiedArrayPath.replace(/(^(?! *context\.).*)/, (match, expr) => {
 						// Get the first part of the qualifiedArrayPath
 						// For example, if the qualifiedArrayPath is (order.items), propertyName will be (order)
@@ -264,8 +264,7 @@ const dynamicEngine = {
 					return target[prop];
 				},
 			};
-			let data = this.datasourcesData;
-			context.data = new Proxy(data, handler);
+			context.datasource = new Proxy(this.datasourcesData, handler);
 		},
 		/**
 		* @desc Check for just the needed datasources and fetch them
@@ -338,22 +337,46 @@ const dynamicEngine = {
 				datasourceConfiguration?.method,
 				datasourceConfiguration?.headers,
 				datasourceConfiguration?.body,
+				datasourceConfiguration?.params,
 			]);
 		
 			Promise.all(promises)
-				.then(([url, method, headers, body]) => {
+				.then(([url, method, headers, body, params]) => {
 					const options = {};
+					url = new URL(url);
 					if (method) options.method = method;
 					if (headers) options.headers = JSON.parse(headers);
 					if (body) options.body = JSON.parse(body);
+					if (params) {
+						params = JSON.parse(params);
+						Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+					}
 					fetch(url, options)
-						.then((response) => response.json())
+						.then((response) => {
+							if (response.ok) {
+								return response.json()
+									.then((response) => {
+										return response;
+									})
+									.catch(() => {
+										throw new Error('Error Handling', {cause: {message: 'response is not JSON'}});
+									});
+							} else {
+								return response.json()
+									.then((errJson) => {
+										throw new Error('Error Handling', {cause: {data: errJson, status: response.status, statusText: response.statusText}});
+									})
+									.catch((err) => {
+										throw new Error('Error Handling', {cause: {data: err.cause?.data, status: response.status, statusText: response.statusText}});
+									});
+							}
+						})
 						.then((data) => {
 							dynamicEngine.datasources.datasourcesData[datasource.id] = data;
 							callback(null, data);
 						})
-						.catch((error) => {
-							callback(error, null);
+						.catch((err) => {
+							callback({message: 'Failed to fetch \'' + datasource.id + '\'', details: err.cause}, null);
 						});	
 				})
 				.catch((error) => {

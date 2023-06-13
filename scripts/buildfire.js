@@ -285,6 +285,7 @@ var buildfire = {
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
+		, 'dynamic.triggerContextChange'
 		, 'dynamic.onReceivedWidgetContextRequest'
 		, 'dynamic.expressions.onReceivedCustomExpressionsRequest'
 		, 'history.triggerOnPop'
