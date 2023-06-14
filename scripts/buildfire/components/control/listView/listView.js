@@ -1,0 +1,664 @@
+if (typeof buildfire == "undefined")
+    throw "please add buildfire.js first to use buildfire components";
+
+if (typeof buildfire.components == "undefined") buildfire.components = {};
+if (typeof buildfire.components.control == "undefined") buildfire.components.control = {};
+
+class ControlListViewStateManager {
+    constructor() {
+        this.selector = null;
+        this.items = [];
+        this.headerContainer = null;
+        this.searchBarContainer = null;
+        this.actionsContainer = null;
+        this.itemsContainer = null;
+        this.currentSortOption = null;
+        this.searchValue = null;
+        this.itemActionsPresets = [
+            { actionId: "toggle" },
+            { actionId: "custom" },
+            { actionId: "edit", icon: "icon-pencil", theme: "primary" },
+            { actionId: "delete", icon: "icon-cross2", theme: "danger" },
+        ];
+        this.sortOptionsPresets = [
+            { title: "Title A-Z" },
+            { title: "Title Z-A" },
+            { title: "Newest" },
+            { title: "Oldest" },
+        ];
+        this.iconPresets = {
+            bubble: "icon-bubble",
+            graph: "icon-graph",
+            calendar: "icon-calendar-full",
+            copy: "icon-copy",
+            download: "icon-download2",
+            upload: "icon-upload2",
+            link: "icon-link2",
+            user: "icon-user",
+            star: "icon-star",
+            mapMarker: "icon-map-marker",
+            edit: "icon-pencil",
+            delete: "icon-cross2"
+        };
+        this.contentMappingDefault = {
+            idKey: "id",
+            columns: []
+        };
+        this.showDragAndDrop = true;
+    }
+}
+
+buildfire.components.control.listView = class SortableList {
+    #state;
+
+    constructor(selector, options = {}) {
+        if (!document.querySelector(selector)) throw new Error("Element not found!");
+
+        if (!this.#state) {
+            this.#state = new ControlListViewStateManager();
+        }
+        this.#state.selector = selector;
+        this.selector = document.querySelector(selector);
+
+        this.options = {
+            appearance: {
+                title: null,
+                info: null,
+                addButtonText: "Add Item",
+                addButtonStyle: "filled",
+                itemImageStyle: "square",
+                itemImageEditable: true
+            },
+            settings: {
+                showSearchBar: false,
+                showSortOptions: false,
+                showAddButton: false,
+                allowDragAndDrop: true,
+                showEditButton: true,
+                showDeleteButton: true
+            },
+            contentMapping: {
+                idKey: "id",
+                columns: []
+            },
+            addButtonOptions: [],
+            sortOptions: options.sortOptions ? options.sortOptions : this.#state.sortOptionsPresets,
+        }
+
+        this.options.appearance = options.appearance ?
+            Object.assign(this.options.appearance, options.appearance) : this.options.appearance;
+        this.options.settings = options.settings ?
+            Object.assign(this.options.settings, options.settings) : this.options.settings;
+        this.options.settings.contentMapping = options.settings && options.settings.contentMapping ?
+            Object.assign(this.#state.contentMappingDefault, options.settings.contentMapping) : this.#state.contentMappingDefault;
+        this.options.addButtonOptions = options.addButtonOptions ?
+            Object.assign(this.options.addButtonOptions, options.addButtonOptions) : this.options.addButtonOptions;
+
+        this.items = [];
+        this.init();
+    }
+
+    init() {
+        this.selector.className = "sortable-list";
+
+        this._initializeHeader();
+        this._initializeSearchBar();
+        this._initializeActions();
+
+        this.#state.itemsContainer = this._createUIElement("div", "sortable-list-container");
+        this.selector.appendChild(this.#state.itemsContainer);
+
+        setTimeout(() => {
+            if (this.onDataRequest) {
+                this._triggerOnDataRequested();
+            }
+        }, 0);
+    }
+    //=======================================================================================
+    _triggerOnDataRequested() {
+        let callbackOptions = {};
+
+        if (this.options.settings.showSearchBar)
+            callbackOptions.searchValue = this.#state.searchValue;
+
+        if (this.options.settings.showSortOptions)
+            callbackOptions.sort = this.#state.currentSortOption;
+
+        this.onDataRequest(callbackOptions, (items) => {
+            this.#state.itemsContainer.innerHTML = "";
+            this.items = items;
+            items.forEach((item, index) => {
+                this._renderItem(item, index);
+            });
+
+            if (!this.#state.sortableList && this.options.settings.allowDragAndDrop) {
+                this._initSortableList();
+                this._toggleSortableList();
+            }
+        });
+    }
+
+    _initSortableList() {
+        let oldIndex = 0;
+        this.#state.sortableList = Sortable.create(this.#state.itemsContainer, {
+            animation: 150,
+            onUpdate: (evt) => {
+                let newIndex = this._getSortableItemIndex(evt.item);
+                let tmp = this.items.splice(oldIndex, 1)[0];
+                this.items.splice(newIndex, 0, tmp);
+                if (this.options.settings.contentMapping.manualOrderKey) {
+                    let manualOrderKey = this.options.settings.contentMapping.manualOrderKey.split(".").pop();
+                    this.items = this.items.map((item, index) => {
+                        return this._setMappingKeyValue(item, manualOrderKey, index);
+                    });
+                }
+                this._reIndexRows();
+                this.onOrderChange({ items: this.items, oldIndex, newIndex });
+            },
+            onStart: (evt) => {
+                oldIndex = this._getSortableItemIndex(evt.item);
+            }
+        });
+    }
+
+    _toggleSortableList() {
+        if (this.#state.currentSortOption && this.#state.currentSortOption.title.toLowerCase() !== "manual") {
+            this.#state.sortableList.option("disabled", true);
+        }
+        else {
+            this.#state.sortableList.option("disabled", false);
+        }
+    }
+
+    _reIndexRows() {
+        let i = 0;
+        this.#state.itemsContainer.childNodes.forEach(e => {
+            e.setAttribute("arrayIndex", i);
+            i++;
+        });
+    }
+
+    _getSortableItemIndex(item) {
+        var index = 0;
+        while ((item = item.previousSibling) != null) {
+            index++;
+        }
+        return index;
+    }
+    //=======================================================================================
+    onOrderChange() { }
+
+    onAddButtonClick() { }
+
+    onItemClick() { }
+
+    onItemActionClick() { }
+
+    onItemRender() { }
+
+    onSearchInput() { }
+
+    onSortOptionChange() { }
+    //=======================================================================================
+    _initializeHeader(refresh = false) {
+        let header = this._createUIElement("div", "sortable-list-header");
+
+        if (this.options.appearance.title) {
+            let title = this._createUIElement("h1", "section-title", this.options.appearance.title, null);
+            header.appendChild(title);
+        }
+
+        if (this.options.appearance.info) {
+            let info = this._createUIElement("p", "info-note", this.options.appearance.info, null);
+            header.appendChild(info);
+        }
+
+        if (this.options.appearance.title || this.options.appearance.info) {
+            if (refresh && this.#state.headerContainer) this.#state.headerContainer.innerHTML = header.innerHTML;
+            else {
+                this.selector.insertBefore(header, this.selector.firstChild);
+                this.#state.headerContainer = header;
+            }
+        }
+    }
+
+    _initializeSearchBar(refresh = false) {
+        if (this.options.settings.showSearchBar) {
+            let searchBar = this._createUIElement("div", "sortable-list-search-container");
+
+            let input = document.createElement("input"),
+                button = this._createUIElement("button", "btn btn-info"),
+                icon = this._createUIElement("div", "search-icon")
+
+            input.type = "text";
+            input.placeholder = "Search";
+
+            button.onclick = () => {
+                this.#state.searchValue = input.value && input.value !== "" ? input.value : null;
+                if (this.onDataRequest)
+                    this._triggerOnDataRequested();
+                else if (this.onSearchInput)
+                    this.onSearchInput(this.#state.searchValue);
+            }
+
+            input.addEventListener("keyup", this._debounce(() => button.onclick(), 300));
+
+            button.appendChild(icon);
+            searchBar.appendChild(input);
+            searchBar.appendChild(button);
+
+            if (refresh) {
+                this.selector.replaceChild(searchBar, this.selector.querySelector(".sortable-list-search-container"));
+                this.#state.searchBarContainer.style.display = "flex";
+            }
+            else {
+                this.selector.appendChild(searchBar);
+                this.#state.searchBarContainer = searchBar;
+            }
+        } else if (this.#state.searchBarContainer) {
+            this.#state.searchBarContainer.style.display = "none";
+        }
+    }
+
+    _initializeActions(refresh = false) {
+        let actions = this._createUIElement("div", "sortable-list-actions-container");
+        if (this.options.settings.showSortOptions) {
+            let optionsDiv = this._initializeSortOptions();
+            optionsDiv ? actions.appendChild(optionsDiv) : null;
+        }
+        if (this.options.settings.showAddButton) {
+            actions.appendChild(this._initializeAddButton());
+        }
+
+        if (refresh) {
+            this.selector.replaceChild(actions, this.selector.querySelector(".sortable-list-actions-container"));
+            this.#state.actionsContainer.style.display = "flex";
+        }
+        else {
+            this.selector.appendChild(actions);
+            this.#state.actionsContainer = actions;
+        }
+        if (!this.options.settings.showSortOptions && !this.options.settings.showAddButton)
+            this.#state.actionsContainer.style.display = "none";
+    }
+
+    _initializeAddButton() {
+        if (this.options.addButtonOptions.length) {
+            let dropdown = this._createUIElement("div", "dropdown sortable-list-add-button", null, null),
+                btn = this._createUIElement("button", `btn btn-primary ${this.options.appearance.addButtonStyle === "outlined" ? "btn-outlined" : ""} btn-primary-add`, `<span class="pull-left">${this.options.appearance.addButtonText}</span><span class="chevron icon-chevron-down pull-right"></span>`, null),
+                list = this._createUIElement("ul", "dropdown-menu extended", null, null);
+
+            list.role = "menu";
+
+            btn.onclick = () => {
+                if (dropdown.classList.contains("open")) {
+                    dropdown.classList.remove("open");
+                } else
+                    dropdown.classList.add("open");
+            }
+
+            btn.setAttribute("data-toggle", "dropdown");
+            btn.setAttribute("dropdown-toggle", true);
+            btn.setAttribute("aria-expanded", true);
+
+            this.options.addButtonOptions.forEach(element => {
+                let li = this._createUIElement("li", null, `<a>${element.title}</a>`, null);
+                li.onclick = () => {
+                    this.onAddButtonClick({ option: element });
+                    dropdown.classList.remove("open");
+                };
+                list.appendChild(li);
+            });
+
+            dropdown.appendChild(btn);
+            dropdown.appendChild(list);
+            return dropdown;
+        } else {
+            let dropdown = this._createUIElement("div", "sortable-list-add-button", null, null);
+            let button = this._createUIElement("button", `btn btn-primary ${this.options.appearance.addButtonStyle === "outlined" ? "btn-outlined" : ""} btn-primary-add`, `<span>${this.options.appearance.addButtonText}</span>`, null);
+            button.onclick = () => {
+                this.onAddButtonClick();
+            }
+            dropdown.appendChild(button);
+            return dropdown;
+        }
+    }
+
+    _initializeSortOptions() {
+        if (!this.options.sortOptions.length) return null;
+
+        let defaultOption = this.options.sortOptions.find(el => el.default);
+
+        if (!this.options.settings.allowDragAndDrop)
+            this.options.sortOptions = this.options.sortOptions.filter(el => el.title.toLowerCase() !== "manual");
+
+        if (this.options.settings.allowDragAndDrop && !this.options.sortOptions.find(el => el.title.toLowerCase() == "manual"))
+            this.options.sortOptions.unshift({ title: "Manual", default: defaultOption ? false : true });
+
+
+        if (!defaultOption) this.options.sortOptions[0].default = true;
+
+        this.#state.currentSortOption = defaultOption ? defaultOption : this.options.sortOptions[0];
+
+        if (this.options.settings.allowDragAndDrop && this.#state.currentSortOption.title.toLowerCase() !== "manual")
+            this.#state.showDragAndDrop = false;
+
+        let dropdown = this._createUIElement("div", "dropdown", null, null),
+            btn = this._createUIElement("button", "btn btn-default dropdown-toggle sort-dropdown", `<span class="pull-left">${this.#state.currentSortOption.title}</span><span class="chevron icon-chevron-down pull-right"></span>`, null),
+            list = this._createUIElement("ul", "dropdown-menu extended", null, null);
+
+        btn.onclick = () => {
+            dropdown.classList.contains("open") ? dropdown.classList.remove("open") : dropdown.classList.add("open")
+        };
+
+        btn.setAttribute("data-toggle", "dropdown");
+        btn.setAttribute("dropdown-toggle", true);
+        btn.setAttribute("aria-expanded", true);
+
+        this.options.sortOptions.forEach(element => {
+            let li = this._createUIElement("li", null, `<a>${element.title}</a>`, null);
+            li.onclick = () => {
+                this.#state.currentSortOption = element;
+                btn.innerHTML = `<span class="pull-left">${this.#state.currentSortOption.title}</span><span class="chevron icon-chevron-down pull-right"></span>`;
+                dropdown.classList.remove("open");
+
+                if (this.options.settings.allowDragAndDrop) {
+                    this.#state.showDragAndDrop = element.title.toLowerCase() !== "manual" ? false : true;
+                    this._toggleSortableList();
+                    this._resetList();
+                }
+
+                if (this.onDataRequest)
+                    this._triggerOnDataRequested();
+                else if (this.onSortOptionChange)
+                    this.onSortOptionChange(this.#state.currentSortOption);
+            };
+            list.appendChild(li);
+        });
+
+        dropdown.appendChild(btn);
+        dropdown.appendChild(list);
+        return dropdown;
+    }
+    //=======================================================================================
+    _renderItem(item, index, appendToTop = false) {
+        let preferences = this.onItemRender({ item: item });
+        let rowExists = this.#state.itemsContainer.querySelector(`#item_${encodeURI(this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey))}`),
+            itemRow = null;
+
+        if (rowExists) {
+            itemRow = rowExists;
+            itemRow.innerHTML = "";
+        } else {
+            itemRow = document.createElement("div");
+        }
+
+        itemRow.id = `item_${this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey)}`;
+        itemRow.setAttribute("arrayIndex", index);
+        itemRow.className = "sortable-list-item clearfix";
+
+        let dragHandle = this._createUIElement("span", "icon icon-menu cursor-grab");
+        if (this.options.settings.allowDragAndDrop && this.#state.showDragAndDrop)
+            itemRow.appendChild(dragHandle);
+
+        const createImage = (key, index) => {
+            const getClassName = (initial) => {
+                let className = initial;
+                !this.options.appearance.itemImageEditable ? className += " disabled" : null;
+                this.options.appearance.itemImageStyle !== "square" ? className += " rounded" : null;
+                return className;
+            }
+
+            const getDefaultImage = () => {
+                switch (this.options.appearance.itemImageStyle) {
+                    case "square":
+                    case "circle":
+                        return "../../../../styles/media/holder-1x1.png";
+                    case "avatar":
+                        return "../../../../styles/media/avatar-placeholder.png"
+                }
+            }
+
+            let image = this._getMappingKeyValue(item, key);
+            if (!this.options.appearance.itemImageEditable && !image) {
+                image = getDefaultImage();
+            }
+
+            let isImage = image && (image.startsWith("http") || image.startsWith("https") || image.startsWith("../../"));
+
+            if (image && isImage) {
+                if (!image.startsWith("../../"))
+                    image = buildfire.imageLib.cropImage(image, { size: "half_width", aspect: "1:1" })
+                let img = this._createUIElement("img", getClassName("sortable-list-item-image"), null, image);
+                img.setAttribute("data-key", "imageKey");
+                img.setAttribute("data-columnIndex", index);
+                columnsDiv.appendChild(img);
+            } else {
+                let div = this._createUIElement("div", getClassName("sortable-list-item-icon-holder")),
+                    span = null;
+
+                if (image && !isImage) {
+                    span = this._createUIElement("div", image);
+                    div.appendChild(span);
+                } else {
+                    span = this._createUIElement("div", "add-icon text-success", "+");
+                    !this.options.appearance.itemImageEditable ? null : div.appendChild(span);
+                }
+
+                div.setAttribute("data-key", "imageKey");
+                div.setAttribute("data-columnIndex", index);
+                columnsDiv.appendChild(div);
+            }
+        }
+
+        const createToggle = (key) => {
+            let toggle = this._createUIElement("div", "button-switch"),
+                input = this._createUIElement("input", null),
+                label = this._createUIElement("label", "label-success");
+            input.type = "checkbox";
+            input.id = "toggle_" + this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey);
+            label.setAttribute("for", "toggle_" + this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey));
+            input.setAttribute("data-key", key);
+            input.checked = this._getMappingKeyValue(item, key) ? this._getMappingKeyValue(item, key) : false;
+
+            toggle.appendChild(input);
+            toggle.appendChild(label);
+            actionsDiv.appendChild(toggle);
+        }
+
+        itemRow.onclick = (e) => {
+            let columnIndex = e.target.parentNode.dataset.columnindex ? e.target.parentNode.dataset.columnindex : e.target.dataset.columnindex;
+            let columnKey = e.target.parentNode.dataset.key ? e.target.parentNode.dataset.key : e.target.dataset.key;
+
+            if (e.target && columnKey)
+                this.onItemClick({ item, column: this.options.settings.contentMapping.columns[columnIndex], targetKey: columnKey });
+            else if (e.target && e.target.dataset.actionid)
+                this.onItemActionClick({ item: item, actionId: e.target.dataset.actionid });
+        }
+
+        let columnsDiv = this._createUIElement("div", "sortable-list-columns");
+
+        const renderColumns = () => {
+            this.options.settings.contentMapping.columns.forEach((column, index) => {
+                if (column["imageKey"]) {
+                    if (Object.keys(column).length > 1)
+                        throw new Error("imageKey cannot be used in combination with any other");
+                    createImage(column["imageKey"], index);
+                }
+                else if (column["toggleKey"]) {
+                    if (Object.keys(column).length > 1)
+                        throw new Error("toggleKey cannot be used in combination with any other");
+                    createToggle(column["toggleKey"], index);
+                }
+                else {
+                    const buildColumn = (key, value, div = null) => {
+                        if (key == "anchorKey") {
+                            div = this._createUIElement("a", "sortable-list-item-anchor ellipsis", this._getMappingKeyValue(item, value), null);
+                        }
+                        else {
+                            let className = key == "titleKey" ? "sortable-list-item-title-bold ellipsis" : "ellipsis";
+                            let text = key == "dateKey" ?
+                                new Date(this._getMappingKeyValue(item, value)).toDateString() : this._getMappingKeyValue(item, value);
+                            div = this._createUIElement("div", className, null, null, text);
+                        }
+                        div.setAttribute("data-key", key);
+                        div.setAttribute("data-columnIndex", index);
+                        return div;
+                    }
+
+                    const firstColumn = {
+                        key: Object.keys(column)[0],
+                        value: Object.values(column)[0]
+                    }
+                    const secondColumn = {
+                        key: Object.keys(column)[1],
+                        value: Object.values(column)[1]
+                    }
+
+                    let columnElement = this._createUIElement("div", "sortable-list-column");
+                    columnElement.setAttribute("data-columnIndex", index);
+                    let firstColumnDiv = buildColumn(firstColumn.key, firstColumn.value);
+                    columnElement.appendChild(firstColumnDiv);
+                    secondColumn.key && secondColumn.value ? columnElement.appendChild(buildColumn(secondColumn.key, secondColumn.value)) : null;
+                    columnsDiv.appendChild(columnElement);
+                }
+            });
+            itemRow.appendChild(columnsDiv);
+        }
+
+        let actionsDiv = document.createElement("div");
+        actionsDiv.className = "sortable-list-item-actions";
+
+        const renderActions = () => {
+            this.#state.itemActionsPresets.forEach((element) => {
+                if (element.actionId == "custom" && preferences && preferences.actions && preferences.actions.length) {
+                    preferences.actions.forEach((element) => {
+                        let icon = this.#state.iconPresets[element.icon] ? this.#state.iconPresets[element.icon] : null
+                        let button = this._createUIElement("button", `btn btn--icon icon ${element.theme} ${icon ?? ""}`, null, null);
+                        button.disabled = true;
+                        button.setAttribute("data-actionId", element.actionId);
+                        actionsDiv.appendChild(button);
+                    });
+                }
+                else if (element.actionId == "edit" && this.options.settings.showEditButton) {
+                    let button = this._createUIElement("button", "btn btn--icon icon primary " + element.icon, null, null);
+                    button.disabled = preferences && preferences.presetOptions && preferences.presetOptions.disableEdit ? true : false;
+                    button.setAttribute("data-actionId", element.actionId);
+                    actionsDiv.appendChild(button);
+                }
+                else if (element.actionId == "delete" && this.options.settings.showDeleteButton) {
+                    let button = this._createUIElement("button", "btn btn--icon icon danger " + element.icon, null, null);
+                    button.disabled = preferences && preferences.presetOptions && preferences.presetOptions.disableDelete ? true : false;
+                    button.setAttribute("data-actionId", element.actionId);
+                    actionsDiv.appendChild(button);
+                }
+            });
+        }
+
+        this.options.settings.contentMapping.columns.length && renderColumns();
+
+        renderActions();
+        itemRow.appendChild(actionsDiv);
+
+        if (rowExists) {
+            this.#state.itemsContainer.replaceChild(rowExists, itemRow);
+        } else {
+            if (appendToTop)
+                this.#state.itemsContainer.insertBefore(itemRow, this.#state.itemsContainer.firstChild);
+            else
+                this.#state.itemsContainer.appendChild(itemRow);
+        }
+    }
+    //=======================================================================================
+    clear() {
+        this.#state.itemsContainer.innerHTML = "";
+        this.items = [];
+    }
+
+    refresh() {
+        this._initializeHeader(true);
+        this._initializeSearchBar(true);
+        this._initializeActions(true);
+    }
+
+    reset() {
+        this.refresh();
+        this.#state.itemsContainer.innerHTML = "";
+        this.items.forEach((item, index) => this._renderItem(item, index));
+    }
+
+    _resetList() {
+        this.#state.itemsContainer.innerHTML = "";
+        this.items.forEach((item, index) => this._renderItem(item, index));
+    }
+    //=======================================================================================
+    append(items, appendToTop = false) {
+        if ((items instanceof Array)) this.items = appendToTop ? [...items, ...this.items] : [...this.items, ...items];
+        else if ((items instanceof Object)) this.items = appendToTop ? [items, ...this.items,] : [...this.items, items];
+        else throw new Error("Invalid parameters!");
+        this.items.forEach((item, index) => {
+            this._renderItem(item, index, appendToTop);
+        });
+    }
+    update(id, data) {
+        let item = this.items.find(el => this._getMappingKeyValue(el, this.options.settings.contentMapping.idKey) === id);
+        let index = this.items.indexOf(item);
+        this.items[index] = data;
+        this._renderItem(this.items[index], index);
+    }
+    remove(id) {
+        this.items = this.items.filter(el => this._getMappingKeyValue(el, this.options.settings.contentMapping.idKey) !== id);
+        let node = this.#state.itemsContainer.querySelector(`#item_${id}`);
+        if (node) node.remove();
+        this._reIndexRows();
+    }
+    //=======================================================================================
+    _createUIElement(tag, className, innerHTML = null, src = null, textContent = null) {
+        let element = document.createElement(tag);
+        className ? element.className = className : null;
+        innerHTML && !textContent ? element.innerHTML = innerHTML : null;
+        textContent ? element.textContent = textContent : null;
+        if (tag == "img") element.src = src;
+        return element;
+    }
+
+    _debounce(func, wait) {
+        let timeout;
+
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    _setMappingKeyValue(obj, key, value) {
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                if (prop === key) {
+                    obj[prop] = value;
+                } else if (typeof obj[prop] === "object") {
+                    this._setMappingKeyValue(obj[prop], key, value);
+                }
+            }
+        }
+        return obj;
+    }
+
+    _getMappingKeyValue(item, key) {
+        if (!key) return null;
+        let sequence = key.split(".");
+
+        for (let i = 0; i < sequence.length; i++) {
+            if (item[sequence[i]])
+                item = item[sequence[i]];
+            else
+                return null;
+        }
+        return item;
+    }
+}
