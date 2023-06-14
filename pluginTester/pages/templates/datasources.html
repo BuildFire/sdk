@@ -1,0 +1,369 @@
+<style>
+    .btn-options-dropdown {
+        border: 1px solid transparent !important;
+        background-color: #14cb5d !important;
+    }
+
+    .h-200 {
+        height: 210px;
+    }
+
+    .result-holder {
+        width: 100%;
+    }
+
+    .scroll-section {
+        max-height: calc(100vh - 415px);
+        min-height: calc(100vh - 415px);
+		overflow-y: auto;
+    }
+
+    #appDatasources .CodeMirror {
+        border: 1px #ddd solid;
+        height: 75px;
+        border-radius: 4px;
+    }
+
+    #appDatasources .result-holder .CodeMirror {
+        height: 455px;
+        background: var(--c-gray1);
+        padding: 1rem 1rem 1rem 0;
+    }
+
+
+</style>
+<div ng-controller="datasourcesCtrl" id="appDatasources">
+    <div class="header clearfix border-bottom-grey" ng-if="dialogOptions.isDailog">
+        <h4 class="margin-zero" ng-show="!action">Datasources</h4>
+        <h4 class="margin-zero" ng-show="action">New Datasource</h4>
+        <span class="icon icon-cross2 close-modal" ng-click="close()"></span>
+    
+    </div>
+    <div id="datasources" ng-if="!action">
+        <div class="content-section-title" ng-if="!dialogOptions.isDailog">
+            <span class="top-line"></span>
+            <h5>Datasources</h5>
+        </div>
+        <div class="layout padded padding-top-ten clearfix scroll-section">
+            <div class="item clearfix">    
+                <div class="pull-right">               
+                    <div class="dropdown" uib-dropdown>
+                        <button class="btn btn-success dropdown-toggle btn-options-dropdown transition-third" data-toggle="dropdown"
+                                uib-dropdown-toggle aria-expanded="true" aria-haspopup="true">
+                            <span class="icon icon-plus"></span>
+                            New Datasource
+                            <span class="caret text-white pull-right"></span>
+                        </button>
+                        <ul class="dropdown-menu extended margin-top-ten" role="menu"
+                            uib-dropdown-menu>
+                            <li role="menuItem">
+                                <a class="transition-third" ng-click="addNewDatasource(DATASOURCE_TYPE.webApi.key)">
+                                    Web API
+                                </a>
+                            </li>
+                            <li role="menuItem">
+                                <a class="transition-third" ng-click="addNewDatasource(DATASOURCE_TYPE.googleSheet.key)">
+                                    Google Sheet
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>   
+            </div>
+            <hr class="none" />
+            <div class="well d-flex justify-center h-200  text-center" ng-show="loading">
+                <div  class="loader"></div>
+                <h4>Loading</h4>
+            </div>
+            <div class="well d-flex justify-center text-center h-200" ng-show="!loading && !datasources.length">
+                <h4>You haven’t added anything yet</h4>
+            </div>
+
+            <div ng-show="!loading && datasources.length">
+                <table class="table striped-table margin-top-twenty">
+                    <thead>
+                        <tr>
+                            <th class="col-md-4">
+                                <span class="cursor-pointer">
+                                    Datasource ID
+                                    <span class="glyphicon margin-left-five"></span>
+                                </span>
+                            </th>
+                            <th class="col-md-3">
+                                <span class="cursor-pointer">
+                                    Type
+                                </span>
+                            </th>
+                            <th class="col-md-3">
+                                <span class="cursor-pointer" ng-click="setSort(reverse?'Newest First':'Oldest First', !reverse)">
+                                    Created On
+                                    <span class="glyphicon margin-left-five" ng-class="sortBy === 'createdOn' && !reverse ? 'glyphicon-menu-down' : sortBy === 'createdOn' ? 'glyphicon-menu-up' : ''"></span>
+                                </span>
+                            </th>
+                            <th class="col-md-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="datasource in datasources">
+                            <td class="ellipsis">{{datasource.id}}</td>
+                            <td>{{datasource.subType === DATASOURCE_TYPE.googleSheet.key ? DATASOURCE_TYPE.googleSheet.alias : DATASOURCE_TYPE.webApi.alias }}</td>
+                            <td>{{datasource.createdOn | date:"MMM dd, yyyy" }}</td>
+                            <td class="text-right">
+                                <span ng-click="updateDatasource(datasource)" class="icon icon-pencil3 table-action padding-right-ten"></span>
+                                <span ng-click="deleteDatasource(datasource)" class="icon icon-cross2 table-action delete-action"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="newDatasource" ng-if="action">
+        <div class="content-section-title"  ng-show="!dialogOptions.isDailog">
+            <span class="top-line"></span>
+            <h5>New Datasource</h5>
+        </div>
+        <div class="layout padded padding-top-ten clearfix scroll-section">
+            <div class="item main clearfix">
+                <div class="col-md-7 clearfix padding-left-zero" ng-if="selectedDatasourceType === DATASOURCE_TYPE.webApi.key">
+                    <form role="form" autocomplete="off" ng-submit="fetchData(form)"  name="form"  novalidate>
+                        <div class="item clearfix">
+                            <div class="labels">
+                                <span class="required-label">Datasource ID</span>
+                            </div>
+                            <div class="input-column margin-top-ten" ng-class="{'has-error': form.id.$invalid && (form.$submitted)}">
+                                <input type="text" maxlength="255" class="form-control" ng-required="true" ng-readonly="action === 'edit'"
+                                   name="id" ng-model="newDatasource.id" pattern="[a-zA-Z_]+$" title="Please enter only letters and underscores">
+                            </div>
+                            <div class="margin-top-five" ng-show="form.$submitted">
+                                <span  class="text-danger" ng-show="form.id.$error.required">Required</span>
+                                <span  class="text-danger" ng-show="form.id.$error.pattern">Invalid format. Please use only letters (a-z, A-Z) and underscores (_) in this field</span>
+                                <span  class="text-danger" ng-show="!form.id.$error.required && !form.id.$error.pattern  && errors.uniqueID">Datasource ID should be unique</span>
+                            </div>
+                        </div>
+                        <hr class="none">
+                        <div class="item clearfix">
+                            <div class="labels">
+                                <span class="required-label">Request URL</span>
+                            </div>
+                            <div class="item clearfix row margin-top-ten">
+                                <div class="col-md-3  pull-left">
+                                    <div class="input-column"  ng-class="{'has-error': form.requestMethod.$invalid && (form.$submitted)}">
+                                        <div class="dropdown" uib-dropdown>
+                                            <button class="btn btn-default dropdown-toggle form-control" data-toggle="dropdown"
+                                                    uib-dropdown-toggle
+                                                    aria-expanded="true">
+                                                <span class="pull-left" name="requestMethod"
+                                                    ng-model="newDatasource.configuration.method"
+                                                    ng-required="true">
+                                                    {{newDatasource.configuration.method ? newDatasource.configuration.method : 'Select'}}
+                                                </span>
+                                                <span class="chevron icon-chevron-down pull-right"></span>
+                                            </button>
+                                            <ul class="dropdown-menu border-grey extended pull-left" uib-dropdown-menu role="menu">
+                                                <li><a tabindex="0" class="transition-third"
+                                                    ng-click="newDatasource.configuration.method='GET';">GET</a>
+                                                </li>
+                                                <li><a tabindex="1" class="transition-third"
+                                                    ng-click="newDatasource.configuration.method='POST';">POST</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pull-right col-md-9 padding-left-zero">
+                                    <div class="input-column" ng-class="{'has-error': form.requestUrl.$invalid && (form.$submitted)}">
+                                        <input type="url" maxlength="255" class="form-control"
+                                            placeholder="https://example.com"
+                                            name="requestUrl" ng-required="true"
+                                            ng-model="newDatasource.configuration.url">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix" >
+                                <div class="pull-left margin-top-five" ng-show="form.$submitted">
+                                    <span  class="text-danger" ng-show="form.requestUrl.$error.required">Required</span>
+                                    <span  class="text-danger" ng-show="form.requestUrl.$error.url">This is not valid URL.</span>
+                                    <span  class="text-danger" ng-show="form.requestMethod.$error.required">Required</span>
+                                </div>
+                               <div class="pull-right">
+                                   <a ng-click="openExpresionBuild('url')"> Open In Expression Builder </a> 
+                               </div>
+                            </div>
+                        </div>
+                        <hr class="none">
+                        <div class="item clearfix">
+                            <div class="labels">
+                                <span class="">Request Headers</span>
+                            </div>
+                            <div class="input-column margin-top-ten">
+                                <textarea type="text" id="codeEditor_headers" maxlength="255" rows="3" class="form-control"
+                                    placeholder='{"object1": "car", "object2": "house"}' 
+                                   name="requestHeader"
+                                   title="Please, enter valid string JSON format">
+                                </textarea>
+                            </div>
+                            <div class="item clearfix" >
+                                <div class="pull-left margin-top-five" ng-show="form.$submitted">
+                                    <span  class="text-danger" ng-show="errors.headers">Invalid string JSON format</span>
+                                </div>
+                               <div class="pull-right">
+                                   <a ng-click="openExpresionBuild('headers')"> Open In Expression Builder </a> 
+                               </div>
+                            </div>
+                        </div>
+                        <hr class="none">
+                        <div class="item clearfix" ng-show="newDatasource.configuration.method === 'GET'">
+                            <div class="labels">
+                                <span class="">Params</span>
+                            </div>
+                            <div class="input-column margin-top-ten">
+                                <textarea type="text" maxlength="255" rows="3" class="form-control"
+                                    placeholder='{"property1": "value1", "property2": "value2"}' id="codeEditor_params"
+                                    name="params" 
+                                    title="Please, enter valid string JSON format">
+                                </textarea>
+                            </div>
+                            <div class="item clearfix" >
+                                <div class="pull-left margin-top-five" ng-show="form.$submitted">
+                                    <span  class="text-danger" ng-show="errors.params">Invalid string JSON format</span>
+                                </div>
+                               <div class="pull-right">
+                                   <a ng-click="openExpresionBuild('params')"> Open In Expression Builder </a> 
+                               </div>
+                            </div>
+                        </div>
+                        <div class="item clearfix" ng-show="newDatasource.configuration.method === 'POST'">
+                            <div class="labels">
+                                <span class="">Body</span>
+                            </div>
+                            <div class="input-column margin-top-ten">
+                                <textarea type="text" maxlength="255" rows="3" class="form-control"
+                                    placeholder='{"object1": "car", "object2": "house"}' id="codeEditor_body"
+                                    name="body" >
+                                </textarea>
+                            </div>
+                            <div class="item clearfix" >
+                                <div class="pull-left margin-top-five" ng-show="form.$submitted">
+                                    <span  class="text-danger" ng-show="errors.body">Invalid string JSON format</span>
+                                </div>
+                               <div class="pull-right">
+                                   <a ng-click="openExpresionBuild('body')"> Open In Expression Builder </a> 
+                               </div>
+                            </div>
+                        </div>
+                        <hr class="none"/>
+                        <div class="item clearfix">
+                            <div class="pull-right">
+                                <button class="btn btn-primary btn-outlined btn-min-width" type="submit" 
+                                    ladda="fetching" ng-disabled="fetching">
+                                        Fetch Data
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-7 clearfix padding-left-zero" ng-if="selectedDatasourceType === DATASOURCE_TYPE.googleSheet.key">
+                    <form role="form" autocomplete="off" ng-submit="fetchData(form)"  name="form"  novalidate>
+                        <div class="item clearfix">
+                            <div class="labels">
+                                <span class="required-label">Datasource ID</span>
+                            </div>
+                            <div class="input-column margin-top-ten" ng-class="{'has-error': form.id.$invalid && (form.$submitted)}">
+                                <input type="text" maxlength="255" class="form-control" ng-required="true"
+                                   name="id" ng-model="newDatasource.id"  pattern="[a-zA-Z_]+$" title="Please enter only letters and underscores">
+                            </div>
+                            <div class="margin-top-five" ng-show="form.$submitted">
+                                <span  class="text-danger" ng-show="form.id.$error.required">Required</span>
+                                <span  class="text-danger" ng-show="form.id.$error.pattern">Invalid format. Please use only letters (a-z, A-Z) and underscores (_) in this field</span>
+                                <span  class="text-danger" ng-show="!form.id.$error.required && !form.id.$error.pattern  && errors.uniqueID">Datasource ID should be unique</span>
+                            </div>
+                        </div>
+                        <hr class="none"/>
+                        <div class="item clearfix">
+                            <div class="labels">
+                                <span class="required-label">Sheet ID</span>
+                            </div>
+                            <div class="input-column margin-top-ten" ng-class="{'has-error': form.sheetId.$invalid && (form.$submitted)}">
+                                <input type="text" maxlength="255" class="form-control" ng-required="true"
+                                   name="sheetId" ng-model="newDatasource.configuration.sheetId">
+                            </div>
+                            <div class="margin-top-five" ng-show="form.$submitted">
+                                <span  class="text-danger" ng-show="form.sheetId.$error.required">Required</span>
+                            </div>
+                        </div>
+                        <hr class="none"/>
+                        <div class="item clearfix">
+                            <div class="labels">
+                                <span class="required-label">Sheet Name</span>
+                            </div>
+                            <div class="input-column margin-top-ten" ng-class="{'has-error': form.sheetName.$invalid && (form.$submitted)}">
+                                <input type="text" maxlength="255" class="form-control" ng-required="true"
+                                   name="sheetName" ng-model="newDatasource.configuration.sheetName">
+                            </div>
+                            <div class="margin-top-five" ng-show="form.$submitted">
+                                <span  class="text-danger" ng-show="form.sheetName.$error.required">Required</span>
+                            </div>
+                        </div>
+                        <hr class="none"/>
+                        <div class="item clearfix">
+                            <div class="labels">
+                                <span class="required-label">API Key</span>
+                            </div>
+                            <div class="input-column margin-top-ten" ng-class="{'has-error': form.apiKey.$invalid && (form.$submitted)}">
+                                <input type="text" maxlength="255" class="form-control" ng-required="true"
+                                   name="apiKey" ng-model="newDatasource.configuration.apiKey">
+                            </div>
+                            <div class="margin-top-five" ng-show="form.$submitted">
+                                <span  class="text-danger" ng-show="form.apiKey.$error.required">Required</span>
+                            </div>
+                        </div>
+                        <hr class="none"/>
+                        <div class="item clearfix">
+                            <div class="pull-right">
+                                <button class="btn btn-primary btn-outlined btn-min-width" type="submit" 
+                                    ladda="fetching" ng-disabled="fetching">
+                                        Fetch Data
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-5 clearfix padding-right-zero">
+                    <div class="labels">
+                        <span>Result</span>
+                    </div>
+                    <div class="result-holder margin-top-ten" >
+                        <div class="input-column">
+                            <textarea type="text" id="codeEditor_results"
+                                class="form-control">
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="padded clearfix" ng-if="!dialogOptions.isDailog">
+            <div class="pull-right">
+                <button class="btn btn-default btn-min-width" ladda="saving" ng-disabled="saving"
+                    ng-click="cancel()">
+                        Cancel
+                </button>
+                <button class="btn btn-success btn-min-width" ladda="saving" ng-disabled="saving || !fetchDataSuccessfully"
+                    ng-click="save()">
+                        Save
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="bottom border-top-grey clearfix" ng-if="dialogOptions.isDailog">
+        <div class="pull-right text-center" ng-show="action">
+            <button class="btn btn-success transition-third " ladda="saving" ng-disabled="saving || !fetchDataSuccessfully"
+                type="button" ng-click="save()" >Save</button>
+        </div>
+        <div class="pull-right text-center">
+            <a class="btn btn-secondary transition-third" type="button" ladda="saving" ng-disabled="saving"  ng-click="action? cancel():close()">Cancel</a>
+        </div>
+    </div>
+</div>
