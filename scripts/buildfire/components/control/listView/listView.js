@@ -447,14 +447,15 @@ buildfire.components.control.listView = class ControlListView {
             }
         }
 
-        const createToggle = (key) => {
+        const createToggle = (key, index) => {
             let toggle = this._createUIElement("div", "button-switch"),
                 input = this._createUIElement("input", null),
                 label = this._createUIElement("label", "label-success");
             input.type = "checkbox";
             input.id = "toggle_" + this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey);
             label.setAttribute("for", "toggle_" + this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey));
-            input.setAttribute("data-key", key);
+            input.setAttribute("data-key", "toggleKey");
+            toggle.setAttribute("data-columnIndex", index);
             input.checked = this._getMappingKeyValue(item, key) ? this._getMappingKeyValue(item, key) : false;
 
             toggle.appendChild(input);
