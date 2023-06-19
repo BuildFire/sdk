@@ -4,61 +4,53 @@ if (typeof buildfire == "undefined")
 if (typeof buildfire.components == "undefined") buildfire.components = {};
 if (typeof buildfire.components.control == "undefined") buildfire.components.control = {};
 
-class ControlListViewStateManager {
-    constructor() {
-        this.selector = null;
-        this.items = [];
-        this.headerContainer = null;
-        this.searchBarContainer = null;
-        this.actionsContainer = null;
-        this.itemsContainer = null;
-        this.currentSortOption = null;
-        this.searchValue = null;
-        this.itemActionsPresets = [
-            { actionId: "toggle" },
-            { actionId: "custom" },
-            { actionId: "edit", icon: "icon-pencil", theme: "primary" },
-            { actionId: "delete", icon: "icon-cross2", theme: "danger" },
-        ];
-        this.sortOptionsPresets = [
-            { title: "Title A-Z" },
-            { title: "Title Z-A" },
-            { title: "Newest" },
-            { title: "Oldest" },
-        ];
-        this.iconPresets = {
-            bubble: "icon-bubble",
-            graph: "icon-graph",
-            calendar: "icon-calendar-full",
-            copy: "icon-copy",
-            download: "icon-download2",
-            upload: "icon-upload2",
-            link: "icon-link2",
-            user: "icon-user",
-            star: "icon-star",
-            mapMarker: "icon-map-marker",
-            edit: "icon-pencil",
-            delete: "icon-cross2"
-        };
-        this.contentMappingDefault = {
-            idKey: "id",
-            columns: []
-        };
-        this.showDragAndDrop = true;
-    }
-}
-
-buildfire.components.control.listView = class SortableList {
-    #state;
-
+buildfire.components.control.listView = class ControlListView {
     constructor(selector, options = {}) {
         if (!document.querySelector(selector)) throw new Error("Element not found!");
 
-        if (!this.#state) {
-            this.#state = new ControlListViewStateManager();
-        }
-        this.#state.selector = selector;
         this.selector = document.querySelector(selector);
+
+        this._state = {
+            selector: selector,
+            items: [],
+            headerContainer: null,
+            searchBarContainer: null,
+            actionsContainer: null,
+            itemsContainer: null,
+            currentSortOption: null,
+            searchValue: null,
+            itemActionsPresets: [
+                { actionId: "toggle" },
+                { actionId: "custom" },
+                { actionId: "edit", icon: "icon-pencil", theme: "primary" },
+                { actionId: "delete", icon: "icon-cross2", theme: "danger" },
+            ],
+            sortOptionsPresets: [
+                { title: "Title A-Z" },
+                { title: "Title Z-A" },
+                { title: "Newest" },
+                { title: "Oldest" },
+            ],
+            iconPresets: {
+                bubble: "icon-bubble",
+                graph: "icon-graph",
+                calendar: "icon-calendar-full",
+                copy: "icon-copy",
+                download: "icon-download2",
+                upload: "icon-upload2",
+                link: "icon-link2",
+                user: "icon-user",
+                star: "icon-star",
+                mapMarker: "icon-map-marker",
+                edit: "icon-pencil",
+                delete: "icon-cross2"
+            },
+            contentMappingDefault: {
+                idKey: "id",
+                columns: []
+            },
+            showDragAndDrop: true
+        }
 
         this.options = {
             appearance: {
@@ -66,7 +58,7 @@ buildfire.components.control.listView = class SortableList {
                 info: null,
                 addButtonText: "Add Item",
                 addButtonStyle: "filled",
-                itemImageStyle: "square",
+                itemImage: "square",
                 itemImageEditable: true
             },
             settings: {
@@ -82,7 +74,7 @@ buildfire.components.control.listView = class SortableList {
                 columns: []
             },
             addButtonOptions: [],
-            sortOptions: options.sortOptions ? options.sortOptions : this.#state.sortOptionsPresets,
+            sortOptions: options.sortOptions ? options.sortOptions : this._state.sortOptionsPresets,
         }
 
         this.options.appearance = options.appearance ?
@@ -90,7 +82,7 @@ buildfire.components.control.listView = class SortableList {
         this.options.settings = options.settings ?
             Object.assign(this.options.settings, options.settings) : this.options.settings;
         this.options.settings.contentMapping = options.settings && options.settings.contentMapping ?
-            Object.assign(this.#state.contentMappingDefault, options.settings.contentMapping) : this.#state.contentMappingDefault;
+            Object.assign(this._state.contentMappingDefault, options.settings.contentMapping) : this._state.contentMappingDefault;
         this.options.addButtonOptions = options.addButtonOptions ?
             Object.assign(this.options.addButtonOptions, options.addButtonOptions) : this.options.addButtonOptions;
 
@@ -105,8 +97,8 @@ buildfire.components.control.listView = class SortableList {
         this._initializeSearchBar();
         this._initializeActions();
 
-        this.#state.itemsContainer = this._createUIElement("div", "sortable-list-container");
-        this.selector.appendChild(this.#state.itemsContainer);
+        this._state.itemsContainer = this._createUIElement("div", "sortable-list-container");
+        this.selector.appendChild(this._state.itemsContainer);
 
         setTimeout(() => {
             if (this.onDataRequest) {
@@ -119,19 +111,19 @@ buildfire.components.control.listView = class SortableList {
         let callbackOptions = {};
 
         if (this.options.settings.showSearchBar)
-            callbackOptions.searchValue = this.#state.searchValue;
+            callbackOptions.searchValue = this._state.searchValue;
 
         if (this.options.settings.showSortOptions)
-            callbackOptions.sort = this.#state.currentSortOption;
+            callbackOptions.sort = this._state.currentSortOption;
 
         this.onDataRequest(callbackOptions, (items) => {
-            this.#state.itemsContainer.innerHTML = "";
+            this._state.itemsContainer.innerHTML = "";
             this.items = items;
             items.forEach((item, index) => {
                 this._renderItem(item, index);
             });
 
-            if (!this.#state.sortableList && this.options.settings.allowDragAndDrop) {
+            if (!this._state.sortableList && this.options.settings.allowDragAndDrop) {
                 this._initSortableList();
                 this._toggleSortableList();
             }
@@ -140,7 +132,7 @@ buildfire.components.control.listView = class SortableList {
 
     _initSortableList() {
         let oldIndex = 0;
-        this.#state.sortableList = Sortable.create(this.#state.itemsContainer, {
+        this._state.sortableList = Sortable.create(this._state.itemsContainer, {
             animation: 150,
             onUpdate: (evt) => {
                 let newIndex = this._getSortableItemIndex(evt.item);
@@ -162,17 +154,17 @@ buildfire.components.control.listView = class SortableList {
     }
 
     _toggleSortableList() {
-        if (this.#state.currentSortOption && this.#state.currentSortOption.title.toLowerCase() !== "manual") {
-            this.#state.sortableList.option("disabled", true);
+        if (this._state.currentSortOption && this._state.currentSortOption.title.toLowerCase() !== "manual") {
+            this._state.sortableList.option("disabled", true);
         }
         else {
-            this.#state.sortableList.option("disabled", false);
+            this._state.sortableList.option("disabled", false);
         }
     }
 
     _reIndexRows() {
         let i = 0;
-        this.#state.itemsContainer.childNodes.forEach(e => {
+        this._state.itemsContainer.childNodes.forEach(e => {
             e.setAttribute("arrayIndex", i);
             i++;
         });
@@ -214,10 +206,10 @@ buildfire.components.control.listView = class SortableList {
         }
 
         if (this.options.appearance.title || this.options.appearance.info) {
-            if (refresh && this.#state.headerContainer) this.#state.headerContainer.innerHTML = header.innerHTML;
+            if (refresh && this._state.headerContainer) this._state.headerContainer.innerHTML = header.innerHTML;
             else {
                 this.selector.insertBefore(header, this.selector.firstChild);
-                this.#state.headerContainer = header;
+                this._state.headerContainer = header;
             }
         }
     }
@@ -234,11 +226,11 @@ buildfire.components.control.listView = class SortableList {
             input.placeholder = "Search";
 
             button.onclick = () => {
-                this.#state.searchValue = input.value && input.value !== "" ? input.value : null;
+                this._state.searchValue = input.value && input.value !== "" ? input.value : null;
                 if (this.onDataRequest)
                     this._triggerOnDataRequested();
                 else if (this.onSearchInput)
-                    this.onSearchInput(this.#state.searchValue);
+                    this.onSearchInput(this._state.searchValue);
             }
 
             input.addEventListener("keyup", this._debounce(() => button.onclick(), 300));
@@ -249,14 +241,15 @@ buildfire.components.control.listView = class SortableList {
 
             if (refresh) {
                 this.selector.replaceChild(searchBar, this.selector.querySelector(".sortable-list-search-container"));
-                this.#state.searchBarContainer.style.display = "flex";
+                this._state.searchBarContainer = searchBar;
+                this._state.searchBarContainer.classList.remove("sortable-list-hidden");
             }
             else {
                 this.selector.appendChild(searchBar);
-                this.#state.searchBarContainer = searchBar;
+                this._state.searchBarContainer = searchBar;
             }
-        } else if (this.#state.searchBarContainer) {
-            this.#state.searchBarContainer.style.display = "none";
+        } else if (this._state.searchBarContainer) {
+            this._state.searchBarContainer.classList.add("sortable-list-hidden");
         }
     }
 
@@ -272,14 +265,17 @@ buildfire.components.control.listView = class SortableList {
 
         if (refresh) {
             this.selector.replaceChild(actions, this.selector.querySelector(".sortable-list-actions-container"));
-            this.#state.actionsContainer.style.display = "flex";
+            this._state.actionsContainer = actions;
+            this._state.actionsContainer.classList.remove("sortable-list-hidden");
         }
         else {
             this.selector.appendChild(actions);
-            this.#state.actionsContainer = actions;
+            this._state.actionsContainer = actions;
         }
-        if (!this.options.settings.showSortOptions && !this.options.settings.showAddButton)
-            this.#state.actionsContainer.style.display = "none";
+        if (!this.options.settings.showSortOptions && !this.options.settings.showAddButton) {
+            this._state.actionsContainer.classList.add("sortable-list-hidden");
+        }
+            
     }
 
     _initializeAddButton() {
@@ -338,13 +334,13 @@ buildfire.components.control.listView = class SortableList {
 
         if (!defaultOption) this.options.sortOptions[0].default = true;
 
-        this.#state.currentSortOption = defaultOption ? defaultOption : this.options.sortOptions[0];
+        this._state.currentSortOption = defaultOption ? defaultOption : this.options.sortOptions[0];
 
-        if (this.options.settings.allowDragAndDrop && this.#state.currentSortOption.title.toLowerCase() !== "manual")
-            this.#state.showDragAndDrop = false;
+        if (this.options.settings.allowDragAndDrop && this._state.currentSortOption.title.toLowerCase() !== "manual")
+            this._state.showDragAndDrop = false;
 
         let dropdown = this._createUIElement("div", "dropdown", null, null),
-            btn = this._createUIElement("button", "btn btn-default dropdown-toggle sort-dropdown", `<span class="pull-left">${this.#state.currentSortOption.title}</span><span class="chevron icon-chevron-down pull-right"></span>`, null),
+            btn = this._createUIElement("button", "btn btn-default dropdown-toggle sort-dropdown", `<span class="pull-left">${this._state.currentSortOption.title}</span><span class="chevron icon-chevron-down pull-right"></span>`, null),
             list = this._createUIElement("ul", "dropdown-menu extended", null, null);
 
         btn.onclick = () => {
@@ -358,12 +354,12 @@ buildfire.components.control.listView = class SortableList {
         this.options.sortOptions.forEach(element => {
             let li = this._createUIElement("li", null, `<a>${element.title}</a>`, null);
             li.onclick = () => {
-                this.#state.currentSortOption = element;
-                btn.innerHTML = `<span class="pull-left">${this.#state.currentSortOption.title}</span><span class="chevron icon-chevron-down pull-right"></span>`;
+                this._state.currentSortOption = element;
+                btn.innerHTML = `<span class="pull-left">${this._state.currentSortOption.title}</span><span class="chevron icon-chevron-down pull-right"></span>`;
                 dropdown.classList.remove("open");
 
                 if (this.options.settings.allowDragAndDrop) {
-                    this.#state.showDragAndDrop = element.title.toLowerCase() !== "manual" ? false : true;
+                    this._state.showDragAndDrop = element.title.toLowerCase() !== "manual" ? false : true;
                     this._toggleSortableList();
                     this._resetList();
                 }
@@ -371,7 +367,7 @@ buildfire.components.control.listView = class SortableList {
                 if (this.onDataRequest)
                     this._triggerOnDataRequested();
                 else if (this.onSortOptionChange)
-                    this.onSortOptionChange(this.#state.currentSortOption);
+                    this.onSortOptionChange(this._state.currentSortOption);
             };
             list.appendChild(li);
         });
@@ -383,7 +379,7 @@ buildfire.components.control.listView = class SortableList {
     //=======================================================================================
     _renderItem(item, index, appendToTop = false) {
         let preferences = this.onItemRender({ item: item });
-        let rowExists = this.#state.itemsContainer.querySelector(`#item_${encodeURI(this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey))}`),
+        let rowExists = this._state.itemsContainer.querySelector(`#item_${encodeURI(this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey))}`),
             itemRow = null;
 
         if (rowExists) {
@@ -398,19 +394,19 @@ buildfire.components.control.listView = class SortableList {
         itemRow.className = "sortable-list-item clearfix";
 
         let dragHandle = this._createUIElement("span", "icon icon-menu cursor-grab");
-        if (this.options.settings.allowDragAndDrop && this.#state.showDragAndDrop)
+        if (this.options.settings.allowDragAndDrop && this._state.showDragAndDrop)
             itemRow.appendChild(dragHandle);
 
         const createImage = (key, index) => {
             const getClassName = (initial) => {
                 let className = initial;
                 !this.options.appearance.itemImageEditable ? className += " disabled" : null;
-                this.options.appearance.itemImageStyle !== "square" ? className += " rounded" : null;
+                this.options.appearance.itemImage !== "square" ? className += " rounded" : null;
                 return className;
             }
 
             const getDefaultImage = () => {
-                switch (this.options.appearance.itemImageStyle) {
+                switch (this.options.appearance.itemImage) {
                     case "square":
                     case "circle":
                         return "../../../../styles/media/holder-1x1.png";
@@ -428,7 +424,7 @@ buildfire.components.control.listView = class SortableList {
 
             if (image && isImage) {
                 if (!image.startsWith("../../"))
-                    image = buildfire.imageLib.cropImage(image, { size: "half_width", aspect: "1:1" })
+                    image = buildfire.imageLib.cropImage(image, { size: "xs", aspect: "1:1" })
                 let img = this._createUIElement("img", getClassName("sortable-list-item-image"), null, image);
                 img.setAttribute("data-key", "imageKey");
                 img.setAttribute("data-columnIndex", index);
@@ -530,10 +526,10 @@ buildfire.components.control.listView = class SortableList {
         actionsDiv.className = "sortable-list-item-actions";
 
         const renderActions = () => {
-            this.#state.itemActionsPresets.forEach((element) => {
+            this._state.itemActionsPresets.forEach((element) => {
                 if (element.actionId == "custom" && preferences && preferences.actions && preferences.actions.length) {
                     preferences.actions.forEach((element) => {
-                        let icon = this.#state.iconPresets[element.icon] ? this.#state.iconPresets[element.icon] : null
+                        let icon = this._state.iconPresets[element.icon] ? this._state.iconPresets[element.icon] : null
                         let button = this._createUIElement("button", `btn btn--icon icon ${element.theme} ${icon ?? ""}`, null, null);
                         button.disabled = true;
                         button.setAttribute("data-actionId", element.actionId);
@@ -561,17 +557,17 @@ buildfire.components.control.listView = class SortableList {
         itemRow.appendChild(actionsDiv);
 
         if (rowExists) {
-            this.#state.itemsContainer.replaceChild(rowExists, itemRow);
+            this._state.itemsContainer.replaceChild(rowExists, itemRow);
         } else {
             if (appendToTop)
-                this.#state.itemsContainer.insertBefore(itemRow, this.#state.itemsContainer.firstChild);
+                this._state.itemsContainer.insertBefore(itemRow, this._state.itemsContainer.firstChild);
             else
-                this.#state.itemsContainer.appendChild(itemRow);
+                this._state.itemsContainer.appendChild(itemRow);
         }
     }
     //=======================================================================================
     clear() {
-        this.#state.itemsContainer.innerHTML = "";
+        this._state.itemsContainer.innerHTML = "";
         this.items = [];
     }
 
@@ -583,12 +579,12 @@ buildfire.components.control.listView = class SortableList {
 
     reset() {
         this.refresh();
-        this.#state.itemsContainer.innerHTML = "";
+        this._state.itemsContainer.innerHTML = "";
         this.items.forEach((item, index) => this._renderItem(item, index));
     }
 
     _resetList() {
-        this.#state.itemsContainer.innerHTML = "";
+        this._state.itemsContainer.innerHTML = "";
         this.items.forEach((item, index) => this._renderItem(item, index));
     }
     //=======================================================================================
@@ -608,7 +604,7 @@ buildfire.components.control.listView = class SortableList {
     }
     remove(id) {
         this.items = this.items.filter(el => this._getMappingKeyValue(el, this.options.settings.contentMapping.idKey) !== id);
-        let node = this.#state.itemsContainer.querySelector(`#item_${id}`);
+        let node = this._state.itemsContainer.querySelector(`#item_${id}`);
         if (node) node.remove();
         this._reIndexRows();
     }
