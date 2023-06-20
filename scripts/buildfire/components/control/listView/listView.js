@@ -103,6 +103,9 @@ buildfire.components.control.listView = class ControlListView {
         setTimeout(() => {
             if (this.onDataRequest) {
                 this._triggerOnDataRequested();
+            } else {
+                this._initSortableList();
+                this._toggleSortableList();
             }
         }, 0);
     }
