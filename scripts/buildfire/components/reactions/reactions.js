@@ -1509,7 +1509,7 @@ buildfire.components.reactions = (() => {
 
                         // Create the span with the reaction icon
                         const span = document.createElement('span');
-                        span.style = "position: absolute;bottom: 0;left: 23%;width: 2rem;height: 2rem;display: flex;align-items: center;justify-content: center; margin-left:0 !important;";
+                        span.style = "position: absolute;bottom: 0;left: 2.6rem;width: 2rem;height: 2rem;display: flex;align-items: center;justify-content: center; margin-left:0 !important;";
 
                         // Create the reaction icon within the span
                         const imgIcon = document.createElement('img');
