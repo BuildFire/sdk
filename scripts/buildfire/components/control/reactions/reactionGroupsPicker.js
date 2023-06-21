@@ -17,17 +17,17 @@ buildfire.components.control.reactionGroupPicker = (()=>{
             
             buildfire.getContext((error, result) => {
                 if (error) {
-                    this.onError({code:'_ERROR_CODE_', message: error});
+                    this.onError({errorCode:'5001', message: error});
                     return console.error(error);
                 } else if (result && result.type == "control") {
                     if(this.selector){
                         this._init();
                     }else{
-                        this.onError({code:'_ERROR_CODE_', message: 'Invalid selector'});
+                        this.onError({errorCode:'1001', message: 'Missing required data, Invalid selector'});
                         return console.error('Invalid selector');
                     }
                 } else {
-                    this.onError({code:'_ERROR_CODE_', message: 'reaction dialog should be called in CP-side'});
+                    this.onError({errorCode:'1002', message: 'reaction dialog should be called in CP-side'});
                     console.error('reaction dialog should be called in CP-side');
                 }
             })
@@ -37,7 +37,7 @@ buildfire.components.control.reactionGroupPicker = (()=>{
             if(this.groupName){
                 this._fixGroupName(this.groupName, (err,res)=>{
                     if(err){
-                        this.onError({code:'_ERROR_CODE_', message: err});
+                        this.onError({errorCode:'5001', message: 'error while getting data'+err});
                     }
                     if(!res.existGroupName){
                         let selectorContainer = document.querySelector(this.selector);
@@ -46,7 +46,7 @@ buildfire.components.control.reactionGroupPicker = (()=>{
                         errorSpan.innerHTML = 'Group name is not defined';
 
                         selectorContainer.appendChild(errorSpan);
-                        this.onError({code:'_ERROR_CODE_', message: 'group name is not defined'});
+                        this.onError({errorCode:'1002', message: 'group name is not defined'});
                     }
                 });
             }
@@ -59,7 +59,7 @@ buildfire.components.control.reactionGroupPicker = (()=>{
                     source: ({ }, callback) => {
                         ReactionGroups.openReactionGroupsDialog({selectedGroup: this.groupName}, (err, result) => {
                             if (err) {
-                                this.onError({code:'_ERROR_CODE_', message: err});
+                                this.onError({errorCode:'5001', message: err});
                                 return console.error(err);
                             }
     
@@ -117,7 +117,7 @@ buildfire.components.control.reactionGroupPicker = (()=>{
         onUpdate(event = {/* {name:'group name'} */}) {
             return event;
         }
-        onError(event = {/* {code:'', message:''} */}) {
+        onError(event = {/* {errorCode:'', message:''} */}) {
             return event;
         }
     }
@@ -231,7 +231,7 @@ buildfire.components.control.reactionGroupPicker = (()=>{
             options.groups.forEach((group, idx) => {
                 let reactions = '';
                 group.reactions.forEach(reaction => {
-                    let src = buildfire.imageLib.resizeImage(reaction.selectedUrl, { size: "half_width", aspect: "1:1" })
+                    let src = buildfire.imageLib.resizeImage(reaction.selectedUrl, { size: "sx", aspect: "1:1" })
                     reactions += `<img style="width:24px; height:24px;" class="margin-right-five" src="${src}" />`;
                 })
                 let checked = false;

@@ -24,9 +24,9 @@ buildfire.components.reactions = (() => {
             let reaction = new Reaction({
                 itemId: options.itemId,
                 userId: options.userId,
-                reactions: [{ reactionType: options.reactionType, createdOn: new Date() }]
+                reactions: [{ reactionType: options.reactionType }]
             })
-            reaction._buildfire.index = this.buildIndex(reaction);
+            reaction._buildfire.index = this._buildIndex(reaction);
 
             buildfire.appData.insert(
                 reaction, this.TAG, false,
@@ -45,34 +45,24 @@ buildfire.components.reactions = (() => {
         // options: reaction, reactionType, operation, allowMultipleReactions
         static _update(options, callback) {
 
-            if (!options) {
-                return callback("Invalid options. Options must be set and have at least reaction, reaction ID and operation properties!");
-            }
-            if (!["add", "remove", "toggle"].includes(options.operation)) {
-                return callback("Invalid operations option. Operations coulde be one of the following:  add, remove or toggle");
-            }
-            if (!options.reaction) {
-                return callback("Invalid options, Missing reaction!");
-            }
-
-            if (!options.reactionType) {
-                return callback("Invalid options, Missing reaction Type!");
-            }
-
             let filter = {
                 "_buildfire.index.string1": options.reaction.itemId + '-' + options.reaction.userId
             };
             let obj = {};
-
+            /**
+             * "obj" is a variable used to handle the process associated with a reaction. The behavior of the process depends on the user's selection. Here are the possibilities:
+             * - If the user chooses the same reaction type as before, the process will be remove.
+             * - If the user selects a new reaction type represented by a different icon, the process can either be toggle or add.
+            */
             if (options.allowMultipleReactions) {
                 if (options.operation == "add" || options.operation == "toggle") {
-                    obj = { $addToSet: { reactions: { reactionType: options.reactionType, createdOn: new Date() }, "_buildfire.index.array1": { string1: "reactionType-" + options.reaction.itemId + "-" + options.reactionType } } }
+                    obj = { $addToSet: { reactions: { reactionType: options.reactionType }, "_buildfire.index.array1": { string1: "reactionType-" + options.reaction.itemId + "-" + options.reactionType } } }
                 } else if (options.operation == "remove") {
                     obj = { $pull: { reactions: { reactionType: options.reactionType } } }
                 }
             } else {
                 if (options.operation == "add" || options.operation == "toggle") {
-                    obj = { $set: { reactions: [{ reactionType: options.reactionType, createdOn: new Date() }], "_buildfire.index.array1": [{ string1: "reactionType-" + options.reaction.itemId + "-" + options.reactionType }] } }
+                    obj = { $set: { reactions: [{ reactionType: options.reactionType }], "_buildfire.index.array1": [{ string1: "reactionType-" + options.reaction.itemId + "-" + options.reactionType }] } }
                 } else if (options.operation == "remove") {
                     obj = { $set: { reactions: [], "_buildfire.index.array1": [] } }
                 }
@@ -370,7 +360,7 @@ buildfire.components.reactions = (() => {
             })
         }
 
-        static buildIndex(data = {}) {
+        static _buildIndex(data = {}) {
             const index = {
                 string1: data.itemId + '-' + data.userId,
                 array1: data.reactions.map(reaction => ({ string1: "reactionType-" + data.itemId + "-" + reaction.reactionType }))
@@ -481,7 +471,7 @@ buildfire.components.reactions = (() => {
                         itemId,
                         reactions: [{ reactionType, count: 1, lastReactionBy: userId }]
                     })
-                    summery._buildfire.index = this.buildIndex(summery);
+                    summery._buildfire.index = this._buildIndex(summery);
                     this._create(summery, (err, res) => {
                         if (err) {
                             return callback(err);
@@ -538,7 +528,7 @@ buildfire.components.reactions = (() => {
                         itemId,
                         reactions: [{ reactionType, count: 0, lastReactionBy: null }]
                     })
-                    summery._buildfire.index = this.buildIndex(summery);
+                    summery._buildfire.index = this._buildIndex(summery);
                     this._create(summery, (err, res) => {
                         if (err) {
                             return callback(err);
@@ -572,7 +562,7 @@ buildfire.components.reactions = (() => {
 
         }
 
-        static buildIndex(data = {}) {
+        static _buildIndex(data = {}) {
             const index = {
                 string1: data.itemId,
                 array1: data.reactions.map(reaction => ({ string1: 'reactionType-' + reaction.reactionType }))
@@ -600,7 +590,6 @@ buildfire.components.reactions = (() => {
                 if (err) return callback(err)
 
                 if (!result.data || !result.data.groups || !result.data.groups.length) {
-                    console.error('No reaction groups added yet');
                     this.groups = [];
                     return callback(null, []);
                 }
@@ -635,7 +624,7 @@ buildfire.components.reactions = (() => {
                     }
                 }
                 if (!group) {
-                    group = this.groups[0];
+                    return callback("Invalid group name");
                 }
             } else {
                 group = this.groups[0];
@@ -644,8 +633,8 @@ buildfire.components.reactions = (() => {
             let allActiveReactions = group.reactions.filter(reaction => (reaction.isActive == true && reaction.selectedUrl && reaction.unSelectedUrl));
             // resize reaction images 
             allActiveReactions = allActiveReactions.map(reaction => {
-                let selectedUrl = buildfire.imageLib.resizeImage(reaction.selectedUrl, { size: "m", aspect: "1:1" }),
-                    unSelectedUrl = buildfire.imageLib.resizeImage(reaction.unSelectedUrl, { size: "m", aspect: "1:1" });
+                let selectedUrl = buildfire.imageLib.resizeImage(reaction.selectedUrl, { size: "xs", aspect: "1:1" }),
+                    unSelectedUrl = buildfire.imageLib.resizeImage(reaction.unSelectedUrl, { size: "xs", aspect: "1:1" });
 
                 return ({ ...reaction, selectedUrl, unSelectedUrl });
             });
@@ -865,10 +854,10 @@ buildfire.components.reactions = (() => {
 
         static buildReactionElements(selector) {
             let container;
-            if(selector){
-                container=document.querySelector(selector);
-            }else{
-                container=document.body;
+            if (selector) {
+                container = document.querySelector(selector);
+            } else {
+                container = document.body;
             }
             let firstElements = container.querySelectorAll('*');
             this._valid_HTML_Elements = [];
@@ -974,7 +963,7 @@ buildfire.components.reactions = (() => {
             if (data.onUpdate) {
                 this.onUpdate = data.onUpdate;
             }
-            
+
             if (data.onError) {
                 this.onError = data.onError;
             }
@@ -996,51 +985,51 @@ buildfire.components.reactions = (() => {
             this.allowMultipleReactions = false;
 
             if (!data.itemId) {
-                this.onError({code:'1001', message:'missing required data, invalid itemId'})
+                this.onError({ errorCode: '1001', message: 'missing required data, invalid itemId' })
                 return console.error('Missing itemId');
             }
 
             if (!this.container) {
-                this.onError({itemType: this.itemType, itemId:this.itemId, code:'1001', message:'missing required data, invalid selector/container'})
+                this.onError({ itemType: this.itemType, itemId: this.itemId, errorCode: '1001', message: 'missing required data, invalid selector/container' })
                 return console.error('Missing selector');
             }
 
-            buildfire.components.reactions.getReactionGroups((error,res)=>{
-                if(error) return console.error(error);
+            buildfire.components.reactions.getReactionGroups((error, res) => {
+                if (error) return console.error(error);
 
                 let options = {
                     groupName: this.groupName,
-                    itemId: this.itemId 
+                    itemId: this.itemId
                 }
-                this._getReactionTypes(options, (err,reactions)=>{
-                    if(err) return console.error(err);
+                this._getReactionTypes(options, (err, reactions) => {
+                    if (err) return this.onError({ itemType: this.itemType, itemId: this.itemId, errorCode: '1002', message: 'wrong data, invalid group name' });
 
                     this.reactionsArr = reactions;
                     this._init();
                 });
-                
+
             });
         }
 
         _init() {
             if (this.reactionsArr.length) {
-                this._fixGroupName(this.groupName, (err,res)=>{
-                    if(err){
-                        this.onError({itemType: this.itemType, itemId:this.itemId, code:'5001', message:'error while getting data, ' + err});
-                    }else if(!res.existGroupName){
-                        this.onError({itemType: this.itemType, itemId:this.itemId, code:'1002', message:'wrong data, invalid group name'});
-                    }else{
+                this._fixGroupName(this.groupName, (err, res) => {
+                    if (err) {
+                        this.onError({ itemType: this.itemType, itemId: this.itemId, errorCode: '5001', message: 'error while getting data, ' + err });
+                    } else if (!res.existGroupName) {
+                        this.onError({ itemType: this.itemType, itemId: this.itemId, errorCode: '1002', message: 'wrong data, invalid group name' });
+                    } else {
                         this._buildComponent();
                         State.debounce({ itemId: this.itemId, getUsersData: true, getSummariesData: true });
                     }
                 });
             } else {
-                this.onError({itemType: this.itemType, itemId:this.itemId, code:'1003', message:'empty record, No Reactions added yet'});
+                this.onError({ itemType: this.itemType, itemId: this.itemId, errorCode: '1003', message: 'empty record, No Reactions added yet' });
                 return console.error('No Reactions added yet');
             }
         }
 
-        _fixGroupName(groupName, callback){
+        _fixGroupName(groupName, callback) {
             const validateName = () => {
                 if (groupName && ReactionsTypes.groups.length) {
                     let currentGroup;
@@ -1050,22 +1039,22 @@ buildfire.components.reactions = (() => {
                             break;
                         }
                     }
-                    if(currentGroup && currentGroup.name){
-                        return callback(null, {existGroupName:true});
-                    }else{
-                        return callback(null, {existGroupName:false});
+                    if (currentGroup && currentGroup.name) {
+                        return callback(null, { existGroupName: true });
+                    } else {
+                        return callback(null, { existGroupName: false });
                     }
-                // if no group provided then return {existGroupName:true}, so we will take the default group 
-                } else if(ReactionsTypes.groups.length){
-                    return callback(null, {existGroupName:true});
+                    // if no group provided then return {existGroupName:true}, so we will take the default group 
+                } else if (ReactionsTypes.groups.length) {
+                    return callback(null, { existGroupName: true });
                 }
             }
-            if(!ReactionsTypes.groups){
-                buildfire.components.reactions.getReactionGroups((error,res)=>{
-                    if(error) return callback(error);
+            if (!ReactionsTypes.groups) {
+                buildfire.components.reactions.getReactionGroups((error, res) => {
+                    if (error) return callback(error);
                     validateName();
                 });
-            }else{
+            } else {
                 validateName();
             }
         }
@@ -1223,7 +1212,7 @@ buildfire.components.reactions = (() => {
                 Reactions.react(reactOptions, (error, result) => {
                     if (error) {
                         this._renderReactionIconsBox({ oldIcon: icon });
-                        this.onError({itemType:this.itemType, itemId:selectedReaction.itemId, code:'5002', message:'error while updating the data, '+error});
+                        this.onError({ itemType: this.itemType, itemId: selectedReaction.itemId, errorCode: '5002', message: 'error while updating the data, ' + error });
                         return console.error('Error while adding new Reaction: ' + error)
                     } else if (result) {
                         if (result.status === 'added') {
@@ -1233,7 +1222,7 @@ buildfire.components.reactions = (() => {
                                 this._checkPendingRequest();
 
                                 if (err) {
-                                    this.onError({itemType:this.itemType, itemId:selectedReaction.itemId, code:'5002', message:'error while updating the data, '+err});
+                                    this.onError({ itemType: this.itemType, itemId: selectedReaction.itemId, errorCode: '5002', message: 'error while updating the data, ' + err });
                                     return console.error(err);
                                 }
                                 if (res.status === 'done') {
@@ -1245,7 +1234,7 @@ buildfire.components.reactions = (() => {
                         } else if (result.status === 'updated') {
                             ReactionsSummaries.decrement({ itemId: selectedReaction.itemId, reactionType: result.oldData.reactions[0].reactionType }, (err, res) => {
                                 if (err) {
-                                    this.onError({itemType:this.itemType, itemId:selectedReaction.itemId, code:'5002', message:'error while updating the data, ',err});
+                                    this.onError({ itemType: this.itemType, itemId: selectedReaction.itemId, errorCode: '5002', message: 'error while updating the data, ', err });
                                     return console.error(err);
                                 }
                             });
@@ -1255,7 +1244,7 @@ buildfire.components.reactions = (() => {
                                 this._checkPendingRequest();
 
                                 if (err) {
-                                    this.onError({itemType:this.itemType, itemId:selectedReaction.itemId, code:'5002', message:'error while updating the data, ',err});
+                                    this.onError({ itemType: this.itemType, itemId: selectedReaction.itemId, errorCode: '5002', message: 'error while updating the data, ', err });
                                     return console.error(err)
                                 }
                                 if (res.status === 'done') {
@@ -1270,7 +1259,7 @@ buildfire.components.reactions = (() => {
                             // nothing will be happened
                         }
                         let groupName = ReactionsTypes.itemsReactionsGroupName[options.itemId];
-                        this.onUpdate({ status: 'add', reactionType: selectedReaction.reactionType, itemId: selectedReaction.itemId, userId, itemType: this.itemType, name:groupName })
+                        this.onUpdate({ status: 'add', reactionType: selectedReaction.reactionType, itemId: selectedReaction.itemId, userId, itemType: this.itemType, name: groupName })
                     }
                 });
             }
@@ -1290,7 +1279,7 @@ buildfire.components.reactions = (() => {
                 Reactions.unReactReact(reactOptions, (error, result) => {
                     if (error) {
                         this._renderReactionIconsBox({ oldIcon: icon, newIcon: this.container.querySelector(`[bf-reaction-type="${userReactUUID}"]`) });
-                        this.onError({itemType:this.itemType, itemId, code:'5002', message:'error while updating the data, ',error});
+                        this.onError({ itemType: this.itemType, itemId, errorCode: '5002', message: 'error while updating the data, ', error });
                         return console.error('Error while updated the Reaction: ' + error)
                     } else if (result) {
                         // reaction updated successfully 
@@ -1299,14 +1288,14 @@ buildfire.components.reactions = (() => {
                             ReactionsSummaries.decrement({ itemId, reactionType: userReactUUID }, (err, res) => {
                                 this._checkPendingRequest();
                                 if (err) {
-                                    this.onError({itemType:this.itemType, itemId, code:'5002', message:'error while updating the data, ',err});
+                                    this.onError({ itemType: this.itemType, itemId, errorCode: '5002', message: 'error while updating the data, ', err });
                                     return console.error(err)
                                 }
                             });
                             ReactionsSummaries.increment({ itemId, reactionType: selectedReaction.reactionType, userId }, (err, res) => {
                                 this._checkPendingRequest();
                                 if (err) {
-                                    this.onError({itemType:this.itemType, itemId, code:'5002', message:'error while updating the data, ',err});
+                                    this.onError({ itemType: this.itemType, itemId, errorCode: '5002', message: 'error while updating the data, ', err });
                                     return console.error(err)
                                 }
                             });
@@ -1315,7 +1304,7 @@ buildfire.components.reactions = (() => {
                             ReactionsSummaries.increment({ itemId, reactionType: selectedReaction.reactionType, userId }, (err, res) => {
                                 this._checkPendingRequest();
                                 if (err) {
-                                    this.onError({itemType:this.itemType, itemId, code:'5002', message:'error while updating the data, ',err});
+                                    this.onError({ itemType: this.itemType, itemId, errorCode: '5002', message: 'error while updating the data, ', err });
                                     return console.error(err)
                                 }
                             });
@@ -1325,7 +1314,7 @@ buildfire.components.reactions = (() => {
                             // nothing will be happened
                         }
                         let groupName = ReactionsTypes.itemsReactionsGroupName[options.itemId];
-                        this.onUpdate({ status: 'update', reactionType: selectedReaction.reactionType, itemId, userId, itemType:this.itemType, name:groupName });
+                        this.onUpdate({ status: 'update', reactionType: selectedReaction.reactionType, itemId, userId, itemType: this.itemType, name: groupName });
                     }
                 })
             }
@@ -1349,7 +1338,7 @@ buildfire.components.reactions = (() => {
                 Reactions.unReact(reactOptions, (error, result) => {
                     if (error) {
                         this._renderReactionIconsBox({ newIcon: icon });
-                        this.onError({itemType:this.itemType, itemId, code:'5003', message:'error while deleting the data, '+error});
+                        this.onError({ itemType: this.itemType, itemId, errorCode: '5003', message: 'error while deleting the data, ' + error });
                         return console.error('Error while deleting the Reaction: ' + error)
                     } else if (result) {
                         if (result.status === 'deleted') {
@@ -1358,7 +1347,7 @@ buildfire.components.reactions = (() => {
                             ReactionsSummaries.decrement({ itemId, reactionType }, (err, res) => {
                                 this._checkPendingRequest();
                                 if (err) {
-                                    this.onError({itemType:this.itemType, itemId, code:'5002', message:'error while updating the data, '+err});
+                                    this.onError({ itemType: this.itemType, itemId, errorCode: '5002', message: 'error while updating the data, ' + err });
                                     return console.error(err)
                                 }
                             });
@@ -1367,7 +1356,7 @@ buildfire.components.reactions = (() => {
                             // nothing will be happened
                         }
                         let groupName = ReactionsTypes.itemsReactionsGroupName[options.itemId];
-                        this.onUpdate({ status: 'delete', reactionType, itemId, userId, itemType:this.itemType, name:groupName });
+                        this.onUpdate({ status: 'delete', reactionType, itemId, userId, itemType: this.itemType, name: groupName });
                     }
                 });
             }
@@ -1491,16 +1480,48 @@ buildfire.components.reactions = (() => {
 
                     buildfire.auth.getUserProfile({ userId: reaction.data.userId }, (err, user) => {
                         if (err) return console.error(err);
+                        if (!user) user = { // handle deleted user
+                            displayName: 'User',
+                            imageUrl: 'https://app.buildfire.com/app/media/avatar.png'
+                        };
                         let userName = user.displayName ? user.displayName : user.firstName ? user.firstName : 'User';
                         let userImage = user.imageUrl ? user.imageUrl : 'https://app.buildfire.com/app/media/avatar.png';
-                        userImage = buildfire.imageLib.resizeImage(userImage, { size: "m", aspect: "1:1" });
-                        
+                        userImage = buildfire.imageLib.resizeImage(userImage, { size: "xs", aspect: "1:1" });
+
+                        // create user list item
+                        const listItem = document.createElement('div');
+                        // Create the main div
+                        const div = document.createElement('div');
+                        div.style = 'display:flex; gap:1rem; align-items:center';
+
+                        // Create the user image
+                        const img = document.createElement('img');
+                        img.style = "border-radius:100%; width:42px; height:42px; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-user-select: none;";
+                        img.alt = 'user image';
+                        img.src = userImage;
+                        div.appendChild(img);
+
+                        // Create the user name paragraph
+                        const p = document.createElement('p');
+                        p.style = "overflow:auto; max-width: 75%; margin:0 !important;";
+                        p.textContent = userName;
+                        div.appendChild(p);
+
+                        // Create the span with the reaction icon
+                        const span = document.createElement('span');
+                        span.style = "position: absolute;bottom: 0;left: 23%;width: 2rem;height: 2rem;display: flex;align-items: center;justify-content: center; margin-left:0 !important;";
+
+                        // Create the reaction icon within the span
+                        const imgIcon = document.createElement('img');
+                        imgIcon.style = "width: 2rem;height: 2rem; border-radius:100%;" ;
+                        imgIcon.src = url;
+                        span.appendChild(imgIcon);
+                        div.appendChild(span);
+
+                        listItem.appendChild(div);
+
                         listItems.push({
-                            text: `<div style="display: flex; gap: 1rem; align-items: center;">
-                                        <img style="border-radius:100%; width:42px; height:42px; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-user-select: none;" src="${userImage}" alt="user image" />
-                                        <p style="overflow:auto; max-width: 75%; margin:0 !important;">${userName}</p>
-                                        <span style="position: absolute;bottom: 0;left: 3px;width: 2rem;height: 2rem;display: flex;align-items: center;justify-content: center;" class="material-icons material-icons-sharp"><img class="disable-user-select" style="width: 2rem;height: 2rem; border-radius:100%;" src="${url}" /></span>
-                                    </div>`
+                            text: listItem.innerHTML
                         })
                         if (index == reactions.length - 1) {
                             this._openDrawer(listItems);
@@ -1561,20 +1582,20 @@ buildfire.components.reactions = (() => {
             );
         }
 
-        static getReactionGroups(callback){
-            if(ReactionsTypes.groups){
+        static getReactionGroups(callback) {
+            if (ReactionsTypes.groups) {
                 return callback(null, ReactionsTypes.groups);
-            }else{
+            } else {
                 ReactionsTypes.getReactionsGroups({}, (err, res) => {
                     if (err) return callback(err);
-                    
+
                     return callback(null, res);
                 })
             }
         }
 
-        _getReactionTypes(options, callback){
-            let {groupName, itemId} = options;
+        _getReactionTypes(options, callback) {
+            let { groupName, itemId } = options;
             ReactionsTypes.getReactionsTypes({ groupName, itemId }, (error, res) => {
                 if (error) return callback(error);
 
@@ -1583,7 +1604,7 @@ buildfire.components.reactions = (() => {
         }
 
         onUpdate(event) { /* event = {itemType, itemId, groupName, status, reactionID, userId} */ }
-        onError(event) { /* event = {itemType, itemId, code, message} */ }
+        onError(event) { /* event = {itemType, itemId, errorCode, message} */ }
 
         static injectReactions(selector) {
             State.buildReactionElements(selector);
