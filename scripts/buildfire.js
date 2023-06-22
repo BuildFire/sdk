@@ -4809,10 +4809,6 @@ var buildfire = {
 				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
 				buildfire._sendPacket(p, callback);
 			}
-		},
-		chat: function (options, callback) {
-			const p = new Packet(null, 'ai.chat', options);
-			buildfire._sendPacket(p, callback);		
 		}
 	},
 	onPluginJsonLoaded: function (pluginJson) {
