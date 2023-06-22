@@ -31,11 +31,16 @@ buildfire.ai.conversation = class Conversation {
         const p = new Packet(null, 'ai.chat', options);
         buildfire._sendPacket(p, callback);
     }
+
     getTextResponse (params, callback) {
         const options = {
             messages: this.messages,
         }
         const p = new Packet(null, 'ai.chat', options);
         buildfire._sendPacket(p, callback);
+    }
+    
+    clear () {
+        this.messages = [];
     }
 };
