@@ -19,7 +19,7 @@ buildfire.ai.conversation = class Conversation {
         this.messages.push({ role: "user", content });
     }
 
-    getJSONResponse (jsonTemplate, callback) {
+    getJsonResponse (jsonTemplate, callback) {
         if (!jsonTemplate || typeof jsonTemplate != 'object') {
             callback('invalid JSON template');
             return;
@@ -39,7 +39,7 @@ buildfire.ai.conversation = class Conversation {
         const p = new Packet(null, 'ai.chat', options);
         buildfire._sendPacket(p, callback);
     }
-    
+
     clear () {
         this.messages = [];
     }
