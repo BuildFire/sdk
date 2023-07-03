@@ -231,7 +231,7 @@ buildfire.components.control.reactionGroupPicker = (()=>{
             options.groups.forEach((group, idx) => {
                 let reactions = '';
                 group.reactions.forEach(reaction => {
-                    let src = buildfire.imageLib.resizeImage(reaction.selectedUrl, { size: "sx", aspect: "1:1" })
+                    let src = buildfire.imageLib.resizeImage(reaction.selectedUrl, { size: "xs", aspect: "1:1" })
                     reactions += `<img style="width:24px; height:24px;" class="margin-right-five" src="${src}" />`;
                 })
                 let checked = false;
