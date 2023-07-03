@@ -19,20 +19,23 @@ buildfire.ai.conversation = class Conversation {
         this.messages.push({ role: "user", content });
     }
 
-    getJsonResponse (jsonTemplate, callback) {
-        if (!jsonTemplate || typeof jsonTemplate != 'object') {
+    fetchJsonResponse (params, callback) {
+        if (!params) {
+            params = {};
+        }
+        if (!params.jsonTemplate || typeof params.jsonTemplate != 'object') {
             callback('invalid JSON template');
             return;
         }
         const options = {
             messages: this.messages,
-            jsonTemplate: jsonTemplate
+            jsonTemplate: params.jsonTemplate
         }
         const p = new Packet(null, 'ai.chat', options);
         buildfire._sendPacket(p, callback);
     }
 
-    getTextResponse (params, callback) {
+    fetchTextResponse (params, callback) {
         const options = {
             messages: this.messages,
         }
