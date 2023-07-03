@@ -285,6 +285,7 @@ var buildfire = {
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
+		, 'dynamic.triggerContextChange'
 		, 'dynamic.onReceivedWidgetContextRequest'
 		, 'dynamic.expressions.onReceivedCustomExpressionsRequest'
 		, 'history.triggerOnPop'
@@ -496,6 +497,17 @@ var buildfire = {
 				} else {
 					options.queryString = 'wid=' + wid;
 				}
+			}
+			if(options.headerContentHtml) {
+				var encodedHeaderContent = encodeURIComponent(options.headerContentHtml);
+				if(encodedHeaderContent.length < 4000) {
+					if(options.queryString) {
+						options.queryString += `&headerContentHtml=${encodedHeaderContent}`;
+					} else {
+						options.queryString = `headerContentHtml=${encodedHeaderContent}`;
+					}
+				}
+				delete options.headerContentHtml;
 			}
 			var predefinedPluginIds = {
 				'community': 'b15c62f2-7a99-48dc-a37a-e42d46bd3289',
@@ -2989,7 +3001,7 @@ var buildfire = {
 				const hasQueryString = url.indexOf('?') !== -1;
 				if (width || height) {
 					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop' : '' ) + '&width=' + width + '&height=' + height;
-				} 
+				}
 				return url;
 			},
 			// consists of whitelisted AWS urls in imgix as keys and the corresponding imgix urls as values
@@ -3989,7 +4001,7 @@ var buildfire = {
 										const cleanedName = name.replace('data-', '');
 										const attributeName = cleanedName.slice(5);
 										if (element.getAttribute(name) && !element.getAttribute(name).includes('undefined')) {
-											element.setAttribute(attributeName, element.getAttribute(name));                                
+											element.setAttribute(attributeName, element.getAttribute(name));
 											element.removeAttribute(name);
 										}
 									}
@@ -4014,6 +4026,12 @@ var buildfire = {
 				});
 			}
 		},
+		appDatasources: {
+			showDialog: function (options = {}, callback) {
+				const p = new Packet(null, 'appDatasources.showDialog', options);
+				buildfire._sendPacket(p, callback);
+			}
+		}
 	},
 	wysiwyg: {
 		injectPluginStyles: function(css) {
@@ -4092,6 +4110,19 @@ var buildfire = {
 										editor.dom.remove(tempElement);
 									}, 0);
 								};
+								const checkExpressionStatus = () => {
+									if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
+										dynamicExpressionsActivated = true;
+										_restoreCursorPosition(); // This function works with sync functionality
+										_injectExpressionNode();
+										editor.isNotDirty = false;
+										editor.fire('change');
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
+										dynamicExpressionsActivated = false;
+										_restoreCursorPosition(); // This function works with sync functionality
+										_removeExpressionNode();
+									}
+								};
 
 								editor.on('init', function () {
 									// add a mimic of buildfire object to prevent errors in tinymce
@@ -4136,22 +4167,35 @@ var buildfire = {
 										}
 										ele.classList.add(...classes);
 									});
+									if (dynamicExpressionsEnabled) {
+										// check if the expressions evaluation should be turned on or off
+										checkExpressionStatus();
+										// Get the image that triggers the evaluation process
+										let expressionImage = editor.dom.doc.body.querySelectorAll('[data-type="dynamic-expression"]');
+										// check if there is any duplicate of the image that trigger the evaluation process and delete duplicates if exist
+										expressionImage.forEach((element, index) => {
+											if (index === 0) {
+												if (element.parentElement.className.indexOf('bf-wysiwyg-top') == -1) {
+													// add the expressionImage to an element at the body root if it wasn't
+													editor.dom.doc.body.children[0].prepend(element);
+												}
+											} else {
+												// if there multiple expressionImage, then delete the duplicates
+												if (element.parentElement && !element.parentElement.innerText && element.parentElement.children.length === 1) {
+													element.parentElement.remove();
+												} else {
+													element.remove();
+												}
+											}
+										});
+									}
 								});
-								var keyupListenerDelay = null;
+								let keyupListenerDelay = null;
 								editor.on('keyup', function() {
 									if (keyupListenerDelay) clearTimeout(keyupListenerDelay);
 									keyupListenerDelay = setTimeout(() => {
-										if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
-											dynamicExpressionsActivated = true;
-											_restoreCursorPosition(); // This function works with sync functionality
-											_injectExpressionNode();
-											editor.isNotDirty = false;
-											editor.fire('change');
-										} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
-											dynamicExpressionsActivated = false;
-											_restoreCursorPosition(); // This function works with sync functionality
-											_removeExpressionNode();
-										}
+										// check if the expressions evaluation should be turned on or off
+										checkExpressionStatus();
 									}, 500);
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
@@ -4198,6 +4242,7 @@ var buildfire = {
 										return () => {};
 									}
 								});
+
 								editor.ui.registry.addMenuItem('bf_insertExpression', {
 									text: 'Insert expression',
 									onAction: function() {
@@ -4206,6 +4251,15 @@ var buildfire = {
 											if (res) {
 												editor.insertContent(res);
 											}
+										});
+									}
+								});
+
+								editor.ui.registry.addMenuItem('bf_datasources', {
+									text: 'Datasources',
+									onAction: function() {
+										buildfire.dynamic.appDatasources.showDialog(null, (err, res) => {
+											if (err) return console.error(err);
 										});
 									}
 								});
@@ -4240,7 +4294,7 @@ var buildfire = {
 							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
-							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
+							tools: {title: 'Tools', items: `code bf_datasources ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
 							ai: {title: 'AI Content (Beta)', items: 'bf_aiTextGenerator'},
 						};
 						if (userMenu) {
@@ -4280,7 +4334,7 @@ var buildfire = {
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-expr-src|expr-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*],div[*],span[*]';
+						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-expr-src|expr-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*],div[*],span[*],tr[*]';
 						options.height = options.height || 265;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
@@ -4431,7 +4485,7 @@ var buildfire = {
 					return;
 				}
 				//get instanceId
-				buildfire.getContext((err, context) => { 
+				buildfire.getContext((err, context) => {
 					let instanceId = null;
 					if (context && context.instanceId) {
 						instanceId = context.instanceId;
@@ -4524,10 +4578,10 @@ var buildfire = {
 		,
 		/**
 		* get one language string.
-		* @param {Object} params - The needed elements to get the language string. 
+		* @param {Object} params - The needed elements to get the language string.
 		* @param {string} params.stringKey - The Section key and the label key separated by a dot. (required)
 		* @param {string} params.instanceId - Instance Id of the plugin. (optional)
-		* @param {Boolean} params.executeCallbackOnUpdate - To keep executing the callback on language string value update or not. (optional) 
+		* @param {Boolean} params.executeCallbackOnUpdate - To keep executing the callback on language string value update or not. (optional)
 		* @param {Object} params.node - DOM node element. (optional)
 		* @param {Function} callback - Returns the value of the language string or error if existed
 		* @public
@@ -4555,7 +4609,7 @@ var buildfire = {
 				callback(error, null);
 				return;
 			}
-			
+
 			function onStringsReady(instanceId) {
 				const section = stringKeys[0];
 				const label = stringKeys[1];
@@ -4566,7 +4620,7 @@ var buildfire = {
 					return;
 				}
 
-				
+
 				function getStringValue(stringObj) {
 					if (stringObj.hasOwnProperty('value')) {
 						return stringObj.value;
@@ -4574,7 +4628,7 @@ var buildfire = {
 						return stringObj.defaultValue;
 					}
 				};
-				
+
 				const valueObj = strings[section][label];
 				const stringHasExpression = valueObj.hasExpression;
 
@@ -4585,7 +4639,7 @@ var buildfire = {
 						expression: stringValue,
 						// don't pass "id" here. it must be unique id for each string. even if it's the same string, it must have a unique id.
 					};
-					
+
 					//clean up previous request if it's existed. (should not be existed)
 					if (params.node && params.node.request && params.node.request.destroy) {
 						params.node.request.destroy();
@@ -4646,7 +4700,7 @@ var buildfire = {
 					node.request.destroy();
 					node.request = null;
 				}
-					
+
 			};
 
 			// Callback function to execute when mutations are observed
