@@ -3,10 +3,14 @@ if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
 buildfire.components.aiStateSeeder = {
 	request: function(options, callback) {
+		let requestResult = { isReady: false };
 		buildfire.lazyLoadScript({relativeScriptsUrl: "buildfire/services/ai/ai.js", scriptId: "ai" }, function(){
 			if(!document.body) throw new Error("Cannot find body element");
-			const packet = new Packet(null, 'ai.showSeederPrompt', { requestMessage: options.requestMessage });
+			const packet = new Packet(null, 'ai.showSeederPrompt', { userMessage: options.userMessage });
 			buildfire._sendPacket(packet, function(err, result) {
+
+				options.userMessage = result.userMessage;
+
 				buildfire.components.aiStateSeeder._startAIAnimation({emptyStateElement: options.emptyStateElement});
 				// show toast asap
 				setTimeout(function() {
@@ -16,8 +20,14 @@ buildfire.components.aiStateSeeder = {
 						message: "Loading data ....",
 					});
 				}, 2000);
-				setTimeout(function() {
-					if(callback) callback(null, {data: options.jsonTemplate, ready: function() {
+
+				let conversation = new buildfire.ai.conversation();
+				conversation.systemSays(options.systemMessage);
+				conversation.userSays(options.userMessage);
+
+				conversation.fetchJsonResponse({jsonTemplate: options.jsonTemplate }, (err, res) => {
+
+					requestResult.complete = function() {
 						if (options.emptyStateElement) {
 							options.emptyStateElement.style.display = "none";
 						}
@@ -36,12 +46,27 @@ buildfire.components.aiStateSeeder = {
 								},
 							},
 						});
-					}} );
-				}, 5000);
+					};
+
+
+					if(callback) callback(null, {response: {"data":{"locations":[{"lat":"40.7128","lng":"-74.0060","title":"New York City, USA"},
+										{"lat":"34.0522","lng":"-118.2437","title":"Los Angeles, USA"},
+										{"lat":"51.5074","lng":"-0.1278","title":"London, UK"},
+										{"lat":"48.8566","lng":"2.3522","title":"Paris, France"},
+										{"lat":"41.9028","lng":"12.4964","title":"Rome, Italy"},
+										{"lat":"35.6895","lng":"139.6917","title":"Tokyo, Japan"},
+										{"lat":"55.7558","lng":"37.6176","title":"Moscow, Russia"},
+										{"lat":"37.7749","lng":"-122.4194","title":"San Francisco, USA"},
+										{"lat":"-33.8651","lng":"151.2099","title":"Sydney, Australia"},
+										{"lat":"-22.9068","lng":"-43.1729","title":"Rio de Janeiro, Brazil"}]}},"responseType":"object"});
+				});
 			});
 		});
+
+		return requestResult;
 	},
 	buildEmptyStateElement: function(options, callback) {
+		let emptyStateResult = { };
 		let emptyStateElement =  document.createElement("div");
 		emptyStateElement.classList.add("well");
 		emptyStateElement.classList.add("ai-empty-state");
@@ -54,7 +79,7 @@ buildfire.components.aiStateSeeder = {
 		// in future, we can generate multiple buttons for each seeder
 		// if the plugin developer passes a certain request or specifies certain seeder we show only one
 		emptyStateElement.querySelector("button").onclick = function() {
-			if (!options.requestMessage) {
+			if (!options.userMessage) {
 				if (!window.pluginJson) {
 					throw new Error("No plugin.json");
 				}
@@ -66,22 +91,22 @@ buildfire.components.aiStateSeeder = {
 					if (!seeders.length) {
 						throw new Error(`No seeder found with the name ${options.seederName} in plugin.json`)
 					}
-					options.requestMessage = seeders[0].requestMessage;
+					options.userMessage = seeders[0].userMessage;
 				} else {
 					let seeders  = window.pluginJson.seeders;
 					if (!seeders || !seeders.length) {
 						throw new Error(`No seeders found in plugin.json`)
 					}
-					options.requestMessage = window.pluginJson.seeders[0].requestMessage;
+					options.userMessage = window.pluginJson.seeders[0].userMessage;
 				}
 			}
 			options.emptyStateElement = emptyStateElement;
-			buildfire.components.aiStateSeeder.request(options, function(err, result) {
+			emptyStateResult.requestResult = buildfire.components.aiStateSeeder.request(options, function(err, result) {
 				if (callback) callback(err, result);
 			}) ;
 		};
-
-		return emptyStateElement;
+		emptyStateResult.emptyStateElement = emptyStateElement;
+		return emptyStateResult;
 	},
 	_startAIAnimation: function(options) {
 		if (options && options.emptyStateElement) {
