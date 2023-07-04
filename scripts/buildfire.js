@@ -835,6 +835,7 @@ var buildfire = {
 			var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
 			var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 			var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
+			var disableFontIcons = (buildfire.options && buildfire.options.disableFontIcons) ? buildfire.options.disableFontIcons  : false;
 
 			if (!disableTheme && !enableMDTheme) {
 				if(!disableTheme && !disableBootstrap){
@@ -873,6 +874,35 @@ var buildfire = {
 				}
 			}
 
+			const attachFontIcons = function(theme) {
+				const fontIconLinkId = 'bfFontIcons';
+
+				// const fontIcon = document.querySelector(`#${fontIconLinkId}`);
+				// if (fontIcon) {
+				// 	fontIcon.remove();
+				// }
+
+				if (!theme || !theme.icons || !theme.icons.iconPack) {
+					return;
+				}
+
+				const iconPack = theme.icons.iconPack;
+				let fontFilePath = '';
+				switch(iconPack) {
+				case 'bootstrap':
+					fontFilePath = '/styles/bootstrap-icons.min.css';
+					break;
+				default:
+					fontFilePath = '';
+				}
+
+
+				if (fontFilePath) {
+					buildfire.appearance._attachAppCSSFiles(fontFilePath, fontIconLinkId);
+	     		}
+			};
+
+
 			buildfire.appearance.getWidgetTheme(function(err, theme) {
 				if (err) return console.error(err);
 				var bfWidgetTheme = document.createElement('style');
@@ -881,6 +911,12 @@ var buildfire = {
 				bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(theme);
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
+
+				if (!disableFontIcons) {
+					if((window.location.pathname.indexOf('/widget/') >= 0 && disableTheme) || window.location.pathname.indexOf('/control/')) {
+						attachFontIcons(theme);
+					}
+				}
 			});
 
 			if (enableMDTheme) {
