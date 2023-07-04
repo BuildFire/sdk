@@ -46,12 +46,42 @@ var buildfire = {
 		}
 
 	}
+	, lazyLoadScript: function({relativeScriptsUrl, scriptId}, readyCallback) {
+		this._lazyQueues = this._lazyQueues || {};
+		let lazyQueue = this._lazyQueues[scriptId] || { loaded: false, queue:[] };
+
+		if (lazyQueue.loaded) {
+			if(readyCallback) readyCallback();
+		}
+		if (lazyQueue.queue.length > 0) {
+			lazyQueue.queue.push(readyCallback);
+		} else {
+			let url;
+			lazyQueue.queue.push(readyCallback);
+			if (buildfire.getContext().type == 'control') {
+				url = '../../../../scripts/' + relativeScriptsUrl;
+			} else {
+				url = '../../../scripts/' + relativeScriptsUrl;
+			}
+			const scriptId = 'scriptId';
+			const _executeQueue = () => {
+				lazyQueue.queue.forEach((callback) => {
+					if(callback) callback();
+				});
+				lazyQueue.loaded = true;
+				lazyQueue.queue = []; // clear queue
+			};
+			buildfire.loadScript({ url, scriptId }, () => {
+				_executeQueue();
+			});
+		}
+	}
 	, loadScript: function({ url, scriptId }, callback = Function()) {
 		let script = document.getElementById(scriptId);
 		const scripts = document.getElementsByTagName('script');
 
 		// script exist
-		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url))) {
+		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url.replaceAll("../", "")))) {
 			return callback();
 		}
 
@@ -4805,7 +4835,7 @@ var buildfire = {
 	},
 	ai: {
 		content: {
-			showDialog: function(options ={}, callback) {
+			showDialog: function (options = {}, callback) {
 				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
 				buildfire._sendPacket(p, callback);
 			}
