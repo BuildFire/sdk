@@ -45,38 +45,36 @@ var buildfire = {
 			// don't return anything if context is not ready but we have a callback
 		}
 
-	}
-	, lazyLoadScript: function({relativeScriptsUrl, scriptId}, readyCallback) {
-		this._lazyQueues = this._lazyQueues || {};
-		let lazyQueue = this._lazyQueues[scriptId] || { loaded: false, queue:[] };
+	},
+	_lazyScriptsQueues: {},
+	lazyLoadScript: function({ relativeScriptsUrl, scriptId }, readyCallback) {
+		if (!this._lazyScriptsQueues[scriptId]) {
+			this._lazyScriptsQueues[scriptId] = { loaded: false, queue:[] };
+		} else if (this._lazyScriptsQueues[scriptId].loaded && readyCallback) {
+			return readyCallback();
+		}
 
-		if (lazyQueue.loaded) {
-			if(readyCallback) readyCallback();
+
+		const lazyQueue = this._lazyScriptsQueues[scriptId];
+		lazyQueue.queue.push(readyCallback);
+
+		if (lazyQueue.queue.length > 1) {
+			return;
 		}
-		if (lazyQueue.queue.length > 0) {
-			lazyQueue.queue.push(readyCallback);
-		} else {
-			let url;
-			lazyQueue.queue.push(readyCallback);
-			if (buildfire.getContext().type == 'control') {
-				url = '../../../../scripts/' + relativeScriptsUrl;
-			} else {
-				url = '../../../scripts/' + relativeScriptsUrl;
-			}
-			const scriptId = 'scriptId';
-			const _executeQueue = () => {
-				lazyQueue.queue.forEach((callback) => {
-					if(callback) callback();
-				});
-				lazyQueue.loaded = true;
-				lazyQueue.queue = []; // clear queue
-			};
-			buildfire.loadScript({ url, scriptId }, () => {
-				_executeQueue();
+		const url = buildfire.getContext().type === 'control' ?
+			`../../../../scripts/${relativeScriptsUrl}`
+			: `../../../scripts/${relativeScriptsUrl}`;
+
+		const _executeQueue = (err) => {
+			lazyQueue.queue.forEach((callback) => {
+				if (callback) callback(err);
 			});
-		}
-	}
-	, loadScript: function({ url, scriptId }, callback = Function()) {
+			lazyQueue.loaded = true;
+			lazyQueue.queue = []; // clear queue
+		};
+		buildfire.loadScript({ url, scriptId }, _executeQueue);
+	},
+	loadScript: function({ url, scriptId }, callback = Function()) {
 		let script = document.getElementById(scriptId);
 		const scripts = document.getElementsByTagName('script');
 
