@@ -3,281 +3,290 @@ if (typeof buildfire == "undefined")
 
 if (typeof buildfire.components == "undefined") buildfire.components = {};
 
-buildfire.components.swipeableDrawer = {};
-
-class SwipeableDrawer {
-    constructor(options = {}) {
-        this.options = {
-            startingStep: "min",
-            header: null,
-            footer: null,
-            content: null,
-            transitionDuration: 300,
-            mode: "free"
-        }
-
-        this.options = options ? Object.assign(this.options, options) : this.options;
-        this.initialize();
-    }
-    _helpers = {
-        topMargin: 135,
-        calcBottomMargin: () => {
-            const headerHasOptions = this.options.header && this.options.header.length;
-            let margin = 54;
-            if (headerHasOptions) {
-                margin = 90;
-            } else if (!headerHasOptions && document.querySelector('html').getAttribute('safe-area') === 'true') {
-                margin = 70;
-            }
-            return margin;
-        },
-        calcPositions: () => {
-            const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-            return {
-                max: screenHeight - this._helpers.topMargin,
-                mid: (screenHeight / 2),
-                min: this._helpers.calcBottomMargin()
-            };
-        },
-        reset: () => {
-            const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-            const position = this.options.startingStep;
-            const positions = this._helpers.calcPositions();
-            const positionToAdjust = position ? position === "min" && !this.options.header ? positions[position] - 50 : positions[position] : positions.mid
-            this._utils.drawerContainer.style.height = `${position ? positions[position] : positions.mid}px`;
-            this._utils.drawerContainer.style.top = `${screenHeight - (positionToAdjust)}px`;
-        },
-        createUIElement: (...args) => {
-            let elem = document.createElement(args[0]);
-            elem.className = args[1];
-            return elem;
-        },
-        checkHTMLTag: (tag) => {
-            if (tag === "SELECT" || tag === "TEXTAREA" || tag === "INPUT" || tag === "BUTTON" || tag === "A") {
-                return true;
-            }
-            return false;
-        }
-    };
-    _utils = {
-        drawerContainer: document.querySelector('.swipeable-drawer'),
-        drawerHeader: document.querySelector('.swipeable-drawer-header'),
-        drawerContent: document.querySelector('.swipeable-drawer-content'),
-        drawerFooter: document.querySelector('.swipeable-drawer-content'),
-        screenHeight: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
-        originalHeight: 0,
-        originalY: 0,
-        originalMouseY: 0,
-        upperMargin: 115,
-        adjustDrawer: (e) => {
-            let targetTop;
-            let targetHeight;
-            const positions = this._helpers.calcPositions();
-            const pageY = e.pageY || e.changedTouches[0]?.pageY;
-            const pointsToExpanded = Math.abs(positions.max - (this._utils.screenHeight - pageY));
-            const pointsToHalfExpanded = Math.abs(positions.mid - (this._utils.screenHeight - pageY));
-            const pointsToCollapsed = Math.abs(positions.min - (this._utils.screenHeight - pageY));
-            let positionToAdjust = null;
-            if (pageY > this._utils.originalMouseY) {
-                if (pointsToHalfExpanded > pointsToCollapsed) {
-                    targetHeight = positions.min;
-                    targetTop = this.options.header ? (this._utils.screenHeight - positions.min) : (this._utils.screenHeight - positions.min) + 50;
-                    positionToAdjust = "min";
-                } else {
-                    targetHeight = positions.mid;
-                    targetTop = this._utils.screenHeight - positions.mid;
-                    positionToAdjust = "mid";
-                }
-            } else if (pageY < this._utils.originalMouseY) {
-                if (pointsToExpanded > pointsToHalfExpanded) {
-                    targetHeight = positions.mid;
-                    targetTop = this._utils.screenHeight - positions.mid;
-                    positionToAdjust = "mid";
-                } else {
-                    targetHeight = positions.max;
-                    targetTop = this._utils.screenHeight - positions.max;
-                    positionToAdjust = "max";
-                }
-            }
-
-            this._utils.drawerContainer.className = `swipeable-drawer swipeable-drawer-${positionToAdjust}`;
-            this._utils.drawerContainer.style.height = `${targetHeight}px`;
-            this._utils.drawerContainer.style.top = `${targetTop}px`;
-
-            buildfire.components.swipeableDrawer.onStepChange(positionToAdjust);
-        },
-        resize: (e) => {
-            const pageY = e.pageY || e.changedTouches[0]?.pageY;
-            const height = this._utils.originalHeight - (pageY - this._utils.originalMouseY);
-            const lowerMargin = this._helpers.calcBottomMargin();
-            if (height > lowerMargin && height < (this._utils.screenHeight - this._utils.upperMargin)) {
-                this._utils.drawerContainer.style.height = `${height}px`;
-                this._utils.drawerContainer.style.top = `${this._utils.originalY + (pageY - this._utils.originalMouseY)}px`;
-            }
-        },
-        buildDrawer: () => {
-            let drawerDiv = this._helpers.createUIElement("div", "swipeable-drawer"),
-                drawerHeader = this._helpers.createUIElement("div", "swipeable-drawer-header"),
-                drawerHeaderContent = this._helpers.createUIElement("div", "swipeable-drawer-header-content"),
-                resizer = this._helpers.createUIElement("div", "swipeable-drawer-resizer"),
-                drawerContent = this._helpers.createUIElement("div", "swipeable-drawer-content"),
-                drawerFooter = this._helpers.createUIElement("div", "swipeable-drawer-footer");
-
-            this.options.header ? this._utils.setContent(drawerHeaderContent, this.options.header) : drawerHeaderContent.classList.add("swipeable-drawer-hidden");;
-            this.options.content ? this._utils.setContent(drawerContent, this.options.content) : drawerContent.classList.add("swipeable-drawer-hidden");
-            this.options.footer ? this._utils.setContent(drawerFooter, this.options.footer) : drawerFooter.classList.add("swipeable-drawer-hidden");
-
-            drawerHeader.insertBefore(resizer, drawerHeader.firstChild);
-            drawerHeader.appendChild(drawerHeaderContent);
-
-            drawerDiv.appendChild(drawerHeader);
-            drawerDiv.appendChild(drawerContent);
-            drawerDiv.appendChild(drawerFooter);
-
-            document.body.appendChild(drawerDiv);
-
-            this._utils.drawerContainer = drawerDiv;
-            this._utils.drawerHeaderContent = drawerHeaderContent;
-            this._utils.drawerContent = drawerContent;
-            this._utils.drawerFooter = drawerFooter;
-            this._utils.drawerContainer.style.transition = `all ${this.options.transitionDuration}ms`;
-
-            this._helpers.reset();
-        },
-        setContent: (element, content, append = false) => {
-            if (typeof content === 'object') {
-                append ? element.innerHTML += content.innerHTML : element.innerHTML = content.innerHTML;
-            }
-            else if (typeof content === 'string')
-                append ? element.innerHTML += content : element.innerHTML = content;
-        }
-    }
-
-    _events = {
-        stopResize: (e) => {
-            e.preventDefault();
-            document.removeEventListener('mousemove', this._utils.resize);
-            document.removeEventListener('mouseup', this._events.stopResize);
-            if (this.options.mode !== "free")
-                this._utils.adjustDrawer(e);
-        },
-        stopTouchResize: (e) => {
-            e.preventDefault();
-            document.removeEventListener('touchmove', this._utils.resize);
-            document.removeEventListener('touchend', this._events.stopTouchResize);
-            if (this.options.mode !== "free")
-                this._utils.adjustDrawer(e);
-        },
-        initialize: () => {
-            this._utils.drawerContainer.addEventListener('mousedown', (e) => {
-                if (this._helpers.checkHTMLTag(e.target.tagName)) return;
-                this._utils.originalHeight = parseFloat(getComputedStyle(this._utils.drawerContainer, null).getPropertyValue('height').replace('px', ''));
-                this._utils.originalY = this._utils.drawerContainer.getBoundingClientRect().top;
-                this._utils.originalMouseY = e.pageY || e.changedTouches[0]?.pageY;
-                document.addEventListener('mousemove', this._utils.resize);
-                document.addEventListener('mouseup', this._events.stopResize);
-            });
-
-            document.addEventListener('touchstart', (e) => {
-                this._utils.originalHeight = parseFloat(getComputedStyle(this._utils.drawerContainer, null).getPropertyValue('height').replace('px', ''));
-                this._utils.originalY = this._utils.drawerContainer.getBoundingClientRect().top;
-                this._utils.originalMouseY = e.pageY || e.changedTouches[0]?.pageY;
-                document.addEventListener('touchmove', this._utils.resize);
-                document.addEventListener('touchend', this._events.stopTouchResize);
-            });
-        },
-        destroy: () => {
-            this._utils.drawerContainer.removeEventListener('mousedown', () => { });
-            document.removeEventListener('mousemove', () => { });
-            document.removeEventListener('mouseup', () => { });
-
-            document.removeEventListener('touchstart', () => { });
-            document.removeEventListener('touchmove', () => { });
-            document.removeEventListener('touchend', () => { });
-        }
-    }
-
-    initialize() {
-        this._utils.buildDrawer();
-        this._events.initialize();
-    };
-
-    setBodyContent(content) {
-        this.options.content = content;
-        this._utils.drawerContent.classList.remove("swipeable-drawer-hidden");
-        this._utils.setContent(this._utils.drawerContent, content);
-    }
-    appendBodyContent(content) {
-        this._utils.setContent(this._utils.drawerContent, content, true);
-    }
-    clearBodyContent() {
-        this._utils.drawerContent.innerHTML = "";
-    }
-
-    setHeaderContent(content) {
-        this.options.header = content;
-        this._utils.drawerHeaderContent.classList.remove("swipeable-drawer-hidden");
-        this._utils.setContent(this._utils.drawerHeaderContent, content);
-        if (this.options.startingStep === "min")
-            this._helpers.reset();
-    }
-    setFooterContent(content) {
-        this.options.footer = content;
-        this._utils.drawerFooter.classList.remove("swipeable-drawer-hidden");
-        this._utils.setContent(this._utils.drawerFooter, content);
-    }
-
-    setStep(step) {
-        this.options.startingStep = step;
-        this._helpers.reset();
-    }
-
-    show() {
-        this._utils.drawerContainer.classList.remove("swipeable-drawer-hidden");
-    }
-    hide() {
-        this._utils.drawerContainer.classList.add("swipeable-drawer-hidden");
-    }
-
-    destroy() {
-        this._events.destroy();
-        this._utils.drawerContainer.remove();
-    }
-
-    onStepChange() {}
+let _swipeableDrawerState = {
+    startingStep: "min",
+    header: null,
+    footer: null,
+    content: null,
+    transitionDuration: 300,
+    mode: "free",
+    minHeight: null,
+    maxHeight: null
 }
 
-buildfire.components.swipeableDrawer.initialize = (options = {}, callback = null) => {
-    if (buildfire.components.swipeableDrawer._manager)
-        buildfire.components.swipeableDrawer._manager.destroy();
+const _swipeableDrawerConstants = {
+    topMargin: 135,
+    screenHeight: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
+    originalHeight: 0,
+    originalY: 0,
+    originalMouseY: 0,
+    upperMargin: 115
+}
 
-    buildfire.components.swipeableDrawer._manager = new SwipeableDrawer(options);
-    callback();
-};
-buildfire.components.swipeableDrawer.setBodyContent = (content) => {
-    buildfire.components.swipeableDrawer._manager.setBodyContent(content);
-};
-buildfire.components.swipeableDrawer.appendBodyContent = (content) => {
-    buildfire.components.swipeableDrawer._manager.appendBodyContent(content);
-};
-buildfire.components.swipeableDrawer.clearBodyContent = (content) => {
-    buildfire.components.swipeableDrawer._manager.clearBodyContent(content);
-};
-buildfire.components.swipeableDrawer.setHeaderContent = (content) => {
-    buildfire.components.swipeableDrawer._manager.setHeaderContent(content);
-};
-buildfire.components.swipeableDrawer.setFooterContent = (content) => {
-    buildfire.components.swipeableDrawer._manager.setFooterContent(content);
-};
-buildfire.components.swipeableDrawer.setStep = (step) => {
-    buildfire.components.swipeableDrawer._manager.setStep(step);
-};
-buildfire.components.swipeableDrawer.show = () => {
-    buildfire.components.swipeableDrawer._manager.show();
-};
-buildfire.components.swipeableDrawer.hide = () => {
-    buildfire.components.swipeableDrawer._manager.hide();
-};
-buildfire.components.swipeableDrawer.destroy = () => {
-    buildfire.components.swipeableDrawer._manager.destroy();
+const _swipeableDrawerElements = {
+    drawerContainer: document.querySelector('.swipeable-drawer'),
+    drawerHeaderContent: document.querySelector('.swipeable-drawer-header'),
+    drawerContent: document.querySelector('.swipeable-drawer-content'),
+    drawerFooter: document.querySelector('.swipeable-drawer-footer')
+}
+
+const _swipeableDrawerUtils = {
+    calcBottomMargin: () => {
+        const headerHasOptions = _swipeableDrawerState.header && _swipeableDrawerState.header.length;
+        const maxHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
+        const minHeight = _swipeableDrawerState.minHeight && _swipeableDrawerState.minHeight > maxHeight ? maxHeight : _swipeableDrawerState.minHeight
+
+        let margin = minHeight ? minHeight : 54;
+        if (headerHasOptions) {
+            margin = minHeight ? minHeight : 90;
+        } else if (!headerHasOptions && document.querySelector('html').getAttribute('safe-area') === 'true') {
+            margin = minHeight ? minHeight : 70;
+        }
+        return margin;
+    },
+    calcMiddlePosition: () => {
+        const defaultMaximumHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
+        if (!_swipeableDrawerState.minHeight && !_swipeableDrawerState.maxHeight)
+            return (_swipeableDrawerConstants.screenHeight / 2);
+        if (!_swipeableDrawerState.minHeight && _swipeableDrawerState.maxHeight) {
+            return (_swipeableDrawerState.defaultMaximumHeight / 2);
+        }
+        if (_swipeableDrawerState.minHeight && !_swipeableDrawerState.maxHeight) {
+            return Math.round((defaultMaximumHeight + _swipeableDrawerState.minHeight) / 2);
+        }
+        if (_swipeableDrawerState.minHeight && _swipeableDrawerState.maxHeight) {
+            return Math.round((_swipeableDrawerState.maxHeight + _swipeableDrawerState.minHeight) / 2);
+        }
+    },
+    calcPositions: () => {
+        const maxHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
+        return {
+            max: _swipeableDrawerState.maxHeight ? _swipeableDrawerState.maxHeight > maxHeight ? maxHeight : _swipeableDrawerState.maxHeight : maxHeight,
+            mid: _swipeableDrawerUtils.calcMiddlePosition(),
+            min: _swipeableDrawerUtils.calcBottomMargin()
+        };
+    },
+    reset: () => {
+        const position = _swipeableDrawerState.startingStep;
+        const positions = _swipeableDrawerUtils.calcPositions();
+        _swipeableDrawerElements.drawerContainer.style.height = `${position ? positions[position] : positions.mid}px`;
+        _swipeableDrawerElements.drawerContainer.style.top = `${_swipeableDrawerConstants.screenHeight - (position ? positions[position] : positions.mid)}px`;
+    },
+    setContent: (element, content, append = false) => {
+        if (typeof content === 'object') {
+            append ? element.innerHTML += content.innerHTML : element.innerHTML = content.innerHTML;
+        }
+        else if (typeof content === 'string')
+            append ? element.innerHTML += content : element.innerHTML = content;
+    },
+    adjustDrawer: (e) => {
+        let targetTop;
+        let targetHeight;
+        const positions = _swipeableDrawerUtils.calcPositions();
+        const pageY = e.pageY || e.changedTouches[0]?.pageY;
+        const pointsToExpanded = Math.abs(positions.max - (_swipeableDrawerConstants.screenHeight - pageY));
+        const pointsToHalfExpanded = Math.abs(positions.mid - (_swipeableDrawerConstants.screenHeight - pageY));
+        const pointsToCollapsed = Math.abs(positions.min - (_swipeableDrawerConstants.screenHeight - pageY));
+        let positionToAdjust = null;
+        if (pageY > _swipeableDrawerConstants.originalMouseY) {
+            if (pointsToHalfExpanded > pointsToCollapsed) {
+                targetHeight = positions.min;
+                targetTop = _swipeableDrawerConstants.screenHeight - positions.min;
+                positionToAdjust = "min";
+            } else {
+                targetHeight = positions.mid;
+                targetTop = _swipeableDrawerConstants.screenHeight - positions.mid;
+                positionToAdjust = "mid";
+            }
+        } else if (pageY < _swipeableDrawerConstants.originalMouseY) {
+            if (pointsToExpanded > pointsToHalfExpanded) {
+                targetHeight = positions.mid;
+                targetTop = _swipeableDrawerConstants.screenHeight - positions.mid;
+                positionToAdjust = "mid";
+            } else {
+                targetHeight = positions.max;
+                targetTop = _swipeableDrawerConstants.screenHeight - positions.max;
+                positionToAdjust = "max";
+            }
+        }
+
+
+        _swipeableDrawerElements.drawerContainer.style.height = `${targetHeight}px`;
+        _swipeableDrawerElements.drawerContainer.style.top = `${targetTop}px`;
+
+        if (positionToAdjust && buildfire.components.swipeableDrawer.onStepChange) {
+            _swipeableDrawerElements.drawerContainer.classList.remove("swipeable-drawer-min");
+            _swipeableDrawerElements.drawerContainer.classList.remove("swipeable-drawer-mid");
+            _swipeableDrawerElements.drawerContainer.classList.remove("swipeable-drawer-max");
+            _swipeableDrawerElements.drawerContainer.classList.add(`swipeable-drawer-${positionToAdjust}`);
+
+            buildfire.components.swipeableDrawer.onStepChange(positionToAdjust);
+        }
+
+    },
+    resize: (e) => {
+        const pageY = e.pageY || e.changedTouches[0]?.pageY;
+        const height = _swipeableDrawerConstants.originalHeight - (pageY - _swipeableDrawerConstants.originalMouseY);
+        const lowerMargin = _swipeableDrawerUtils.calcBottomMargin();
+        if (height > lowerMargin && height < (_swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.upperMargin)) {
+            _swipeableDrawerElements.drawerContainer.style.height = `${height}px`;
+            _swipeableDrawerElements.drawerContainer.style.top = `${_swipeableDrawerConstants.originalY + (pageY - _swipeableDrawerConstants.originalMouseY)}px`;
+        }
+    },
+    createUIElement: (...args) => {
+        let elem = document.createElement(args[0]);
+        elem.className = args[1];
+        return elem;
+    },
+    isDraggableElement: (tag) => {
+        if (tag === "SELECT" || tag === "TEXTAREA" || tag === "INPUT" || tag === "BUTTON" || tag === "A") {
+            return true;
+        }
+        return false;
+    },
+    containsElement: (el, tag) => {
+        while (el.parentNode) {
+            if (el && el.classList && el.classList.contains(tag)) {
+                return el;
+            }
+
+            el = el.parentNode;
+            if (el && el.classList && el.classList.contains(tag)) {
+                return el;
+            }
+        }
+        return null;
+    },
+    buildDrawer: () => {
+        let drawerDiv = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer"),
+            drawerHeader = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-header"),
+            drawerHeaderContent = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-header-content"),
+            resizer = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-resizer"),
+            drawerContent = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-content"),
+            drawerFooter = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-footer");
+
+        _swipeableDrawerState.header ? _swipeableDrawerUtils.setContent(drawerHeaderContent, _swipeableDrawerState.header) : drawerHeaderContent.classList.add("swipeable-drawer-hidden");;
+        _swipeableDrawerState.content ? _swipeableDrawerUtils.setContent(drawerContent, _swipeableDrawerState.content) : drawerContent.classList.add("swipeable-drawer-hidden");
+        _swipeableDrawerState.footer ? _swipeableDrawerUtils.setContent(drawerFooter, _swipeableDrawerState.footer) : drawerFooter.classList.add("swipeable-drawer-hidden");
+
+        drawerHeader.insertBefore(resizer, drawerHeader.firstChild);
+        drawerHeader.appendChild(drawerHeaderContent);
+
+        drawerDiv.appendChild(drawerHeader);
+        drawerDiv.appendChild(drawerContent);
+        drawerDiv.appendChild(drawerFooter);
+
+        document.body.appendChild(drawerDiv);
+
+        drawerDiv.classList.add("backgroundColorTheme");
+        drawerDiv.classList.add("bodyTextTheme");
+
+        _swipeableDrawerElements.drawerContainer = drawerDiv;
+        _swipeableDrawerElements.drawerHeaderContent = drawerHeaderContent;
+        _swipeableDrawerElements.drawerContent = drawerContent;
+        _swipeableDrawerElements.drawerFooter = drawerFooter;
+        _swipeableDrawerElements.drawerContainer.style.transition = `all ${_swipeableDrawerState.transitionDuration}ms`;
+
+        _swipeableDrawerUtils.reset();
+    }
+}
+
+const _swipeableDrawerEvents = {
+    stopResize: (e) => {
+        e.preventDefault();
+        document.removeEventListener('mousemove', _swipeableDrawerUtils.resize);
+        document.removeEventListener('mouseup', _swipeableDrawerEvents.stopResize);
+        if (_swipeableDrawerState.mode !== "free")
+            _swipeableDrawerUtils.adjustDrawer(e);
+    },
+    stopTouchResize: (e) => {
+        e.preventDefault();
+        document.removeEventListener('touchmove', _swipeableDrawerUtils.resize);
+        document.removeEventListener('touchend', _swipeableDrawerEvents.stopTouchResize);
+        if (_swipeableDrawerState.mode !== "free")
+            _swipeableDrawerUtils.adjustDrawer(e);
+    },
+    initialize: () => {
+        _swipeableDrawerElements.drawerContainer.addEventListener('mousedown', (e) => {
+            if (_swipeableDrawerUtils.isDraggableElement(e.target.tagName)) return;
+
+            _swipeableDrawerConstants.originalHeight = parseFloat(getComputedStyle(_swipeableDrawerElements.drawerContainer, null).getPropertyValue('height').replace('px', ''));
+            _swipeableDrawerConstants.originalY = _swipeableDrawerElements.drawerContainer.getBoundingClientRect().top;
+            _swipeableDrawerConstants.originalMouseY = e.pageY || e.changedTouches[0]?.pageY;
+            document.addEventListener('mousemove', _swipeableDrawerUtils.resize);
+            document.addEventListener('mouseup', _swipeableDrawerEvents.stopResize);
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            if (!_swipeableDrawerUtils.containsElement(e.target, "swipeable-drawer-header")) return;
+
+            _swipeableDrawerConstants.originalHeight = parseFloat(getComputedStyle(_swipeableDrawerElements.drawerContainer, null).getPropertyValue('height').replace('px', ''));
+            _swipeableDrawerConstants.originalY = _swipeableDrawerElements.drawerContainer.getBoundingClientRect().top;
+            _swipeableDrawerConstants.originalMouseY = e.pageY || e.changedTouches[0]?.pageY;
+            document.addEventListener('touchmove', _swipeableDrawerUtils.resize);
+            document.addEventListener('touchend', _swipeableDrawerEvents.stopTouchResize);
+        });
+    },
+    destroy: () => {
+        _swipeableDrawerElements.drawerContainer.removeEventListener('mousedown', () => { });
+        document.removeEventListener('mousemove', () => { });
+        document.removeEventListener('mouseup', () => { });
+
+        document.removeEventListener('touchstart', () => { });
+        document.removeEventListener('touchmove', () => { });
+        document.removeEventListener('touchend', () => { });
+    }
+}
+
+buildfire.components.swipeableDrawer = {
+    initialize(options, callback) {
+        _swipeableDrawerState = options ? Object.assign(_swipeableDrawerState, options) : _swipeableDrawerState;
+        if (_swipeableDrawerElements.drawerContainer) {
+            this.destroy();
+        }
+        _swipeableDrawerConstants.screenHeight =  window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
+        _swipeableDrawerUtils.buildDrawer();
+        _swipeableDrawerEvents.initialize();
+        callback();
+    },
+    setBodyContent(content) {
+        _swipeableDrawerState.content = content;
+        _swipeableDrawerElements.drawerContent.classList.remove("swipeable-drawer-hidden");
+        _swipeableDrawerUtils.setContent(_swipeableDrawerElements.drawerContent, content);
+    },
+    appendBodyContent(content) {
+        _swipeableDrawerUtils.setContent(_swipeableDrawerElements.drawerContent, content, true);
+    },
+    clearBodyContent() {
+        _swipeableDrawerElements.drawerContent.innerHTML = "";
+    },
+    setHeaderContent(content) {
+        _swipeableDrawerState.header = content;
+        _swipeableDrawerElements.drawerHeaderContent.classList.remove("swipeable-drawer-hidden");
+        _swipeableDrawerUtils.setContent(_swipeableDrawerElements.drawerHeaderContent, content);
+        if (_swipeableDrawerState.startingStep === "min")
+            _swipeableDrawerUtils.reset();
+    },
+    setFooterContent(content) {
+        _swipeableDrawerState.footer = content;
+        _swipeableDrawerElements.drawerFooter.classList.remove("swipeable-drawer-hidden");
+        _swipeableDrawerUtils.setContent(_swipeableDrawerElements.drawerFooter, content);
+    },
+    setStep(step) {
+        _swipeableDrawerState.startingStep = step;
+        _swipeableDrawerUtils.reset();
+    },
+    show() {
+        _swipeableDrawerEvents.initialize();
+        _swipeableDrawerElements.drawerContainer.classList.remove("swipeable-drawer-hidden");
+    },
+    hide() {
+        _swipeableDrawerEvents.destroy();
+        _swipeableDrawerElements.drawerContainer.classList.add("swipeable-drawer-hidden");
+    },
+    destroy() {
+        _swipeableDrawerEvents.destroy();
+        _swipeableDrawerElements.drawerContainer.remove();
+    },
+    onStepChange() { }
 };
