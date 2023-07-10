@@ -4627,10 +4627,18 @@ var buildfire = {
 					} else if (stringObj.hasOwnProperty('defaultValue')) {
 						return stringObj.defaultValue;
 					}
-				};
+				}
+
+				function checkExpression(str) {
+					let hasExpression = false;
+					if (str) hasExpression = str.search(/\${[^{}]*}/) > -1;
+					return hasExpression;
+				}
 
 				const valueObj = strings[section][label];
-				const stringHasExpression = valueObj.hasExpression;
+				const stringHasExpression = typeof valueObj.hasExpression != 'undefined' ? 
+					valueObj.hasExpression : valueObj.value ? 
+						checkExpression(valueObj.value) : checkExpression(valueObj.defaultValue);
 
 				if (stringHasExpression) {
 					const stringValue = getStringValue(valueObj);
@@ -4666,7 +4674,7 @@ var buildfire = {
 					const stringValue = getStringValue(valueObj);
 					callback(null, stringValue);
 				}
-			};
+			}
 
 			if (params.instanceId) {
 				registerStringsReady(params.instanceId);
@@ -4687,7 +4695,7 @@ var buildfire = {
 				} else {
 					onStringsReady(instanceId);
 				}
-			};
+			}
 		}
 		,
 		watch: function (instanceId) {
@@ -4725,7 +4733,7 @@ var buildfire = {
 					}
 
 					if (mutation.type === 'childList' && mutation.target) {
-							buildfire.language._handleNode(mutation.target, instanceId);
+						buildfire.language._handleNode(mutation.target, instanceId);
 						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
 							buildfire.language._handleNode(childList[i], instanceId);
