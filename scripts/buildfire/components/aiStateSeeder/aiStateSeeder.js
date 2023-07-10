@@ -33,7 +33,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 
 					const conversation = new buildfire.ai.conversation();
 					if (systemMessage) conversation.systemSays(systemMessage);
-					if (userMessage) conversation.userSays(userMessage);
+					if (this.options.userMessage) conversation.userSays(this.options.userMessage);
 
 					conversation.fetchJsonResponse({ jsonTemplate }, (err, response) => {
 						status.complete = () => {

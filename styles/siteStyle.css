@@ -2802,7 +2802,8 @@ html.translated-ltr body{
 /* Start AI empty state */
 
 .ai-empty-state {
-	padding-top:60px;
+	position: relative;
+	padding-top: 60px;
 	text-align: center;
 	height: 250px;
 }
