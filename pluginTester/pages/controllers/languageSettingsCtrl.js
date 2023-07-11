@@ -83,7 +83,14 @@ $app.controller('languageSettingsCtrl', ['$scope', '$http', '$routeParams',
         //check if the string has expression or not.
         const checkExpression = (str) => {
             let hasExpression = false;
-            if (str) hasExpression = str.search(/\${[^{}]*}/) > -1;
+            let firstIndex = -1; 
+            if (str) {
+                firstIndex = str.indexOf('${');
+                if (firstIndex > -1 && str.indexOf("}") > firstIndex) {
+                    hasExpression = true;
+                }
+            }
+
             return hasExpression;
         };
 

@@ -4636,9 +4636,7 @@ var buildfire = {
 				}
 
 				const valueObj = strings[section][label];
-				const stringHasExpression = typeof valueObj.hasExpression != 'undefined' ? 
-					valueObj.hasExpression : valueObj.value ? 
-						checkExpression(valueObj.value) : checkExpression(valueObj.defaultValue);
+				const stringHasExpression = valueObj.value ? checkExpression(valueObj.value) : checkExpression(valueObj.defaultValue);
 
 				if (stringHasExpression) {
 					const stringValue = getStringValue(valueObj);
