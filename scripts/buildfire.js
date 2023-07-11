@@ -4513,7 +4513,7 @@ var buildfire = {
 					obj[sectionKey] = {};
 
 					for (const labelKey in defaultSection) {
-						if (dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty('value') || dbSection[labelKey].hasOwnProperty('defaultValue'))) {
+						if (dbSection && dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty('value') || dbSection[labelKey].hasOwnProperty('defaultValue'))) {
 							//handle backward compatibility, cuz some plugins has it in "value" and the others in "defaultValue"
 							if (dbSection[labelKey].hasOwnProperty('value')) {
 								obj[sectionKey][labelKey] = {
@@ -4532,7 +4532,7 @@ var buildfire = {
 						}
 
 						//check if we have `hasExpression` flag for each label.
-						if (dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
+						if (dbSection && dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
 							obj[sectionKey][labelKey].hasExpression = dbSection[labelKey].hasExpression;
 						}
 					}
