@@ -54,6 +54,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				errors.push('importOptions.jsonTemplate parameter is required');
 			}
 		}
+
 		return {
 			errors,
 			isValid: !errors.length,
@@ -66,15 +67,12 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		if (!Object.keys(options).length) {
 			errors.push('request options parameter is required');
 		}
-
 		if (!options.jsonTemplate) {
 			errors.push('jsonTemplate parameter is required');
 		}
-
 		if (!callback) {
 			errors.push('callback parameter is required');
 		}
-
 		if (options.type !== 'import' && !options.userMessage) {
 			errors.push('userMessage parameter is required');
 		}
@@ -159,15 +157,15 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		return status;
 	}
 
-	showEmptyState({ selector, isOverlay, bannerRequestResult } = { isOverlay: false, bannerRequestResult: null }, callback) {
+	showEmptyState(options = {  isOverlay: false, _result: {} }, callback) {
+		const { selector, isOverlay, _result } = options;
 		const emptyStateContainer = document.querySelector(selector);
 
 		if (!emptyStateContainer) throw new Error(`Invalid selector ${selector}`);
 		if (!callback) throw new Error('callback parameter is required');
 
-		const result = bannerRequestResult || {};
 		const emptyStateOverlay = document.createElement('div');
-		emptyStateOverlay.classList.add('ai-seeder-blocking');
+		emptyStateOverlay.classList.add('ai-seeder-fixed');
 
 		const emptyStateElement =  document.createElement('div');
 		emptyStateElement.classList.add('well');
@@ -178,7 +176,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					<p>Add sample data to preview this feature.</p>
 					<div>
 
-					${isOverlay ? '<button id="skipBtn" class="btn btn-primary">Enter Manually</button>\n            <button id="importBtn" class="btn btn-primary">Import Data</button>' : ''}
+					${isOverlay ? '<button id="skipBtn" class="btn btn-primary inverted">Enter Manually</button>\n            <button id="importBtn" class="btn btn-primary inverted">Import Data</button>' : ''}
             <button id="generateBtn" class="btn btn-primary">Generate AI Data</button>
 					</div>
 				</div>`;
@@ -194,13 +192,13 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const onClickHandler = (e) => {
 			switch (e.target.id) {
 			case 'generateBtn':
-				result.requestResult = this.request(this.options.generateOptions, (err, response) => {
+				_result.requestResult = this.request(this.options.generateOptions, (err, response) => {
 					clearEmptyState();
 					callback(err, response);
 				});
 				break;
 			case 'importBtn':
-				result.requestResult = this.request(this.options.importOptions, (err, response) => {
+				_result.requestResult = this.request(this.options.importOptions, (err, response) => {
 					clearEmptyState();
 					callback(err, response);
 				});
@@ -220,7 +218,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		} else {
 			emptyStateContainer.appendChild(emptyStateElement);
 		}
-		return result;
+		return _result;
 	}
 
 	smartShowEmptyState(options = null, callback) {
@@ -228,24 +226,25 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const isNewInstance = true; // urlParams.get('new_instance'); todo
 
 		if (isNewInstance) {
-			const _options = { selector: 'body', isOverlay: true };
+			const emptyStateOptions = { selector: 'body', isOverlay: true, _result: {} };
 
-			// todo retest
-			if (Object.keys(this.options.generateOptions).length) {
-				const div = document.createElement('div');
-				div.innerText = 'Utilize our AI-powered generator to effortlessly create compelling content for this feature.';
-				const button = document.createElement('button');
-				button.innerText = 'Generate AI Data';
-				div.appendChild(button);
-				_options.bannerRequestResult = {};
-				button.onclick = () => {
-					_options.bannerRequestResult.requestResult = this.request(this.options.generateOptions, (err, response) => {
-						callback(err, response);
-					});
-				};
-				document.body.prepend(div);
-			}
-			return this.showEmptyState(_options, callback);
+			// create banner element
+			const banner = document.createElement('p');
+			banner.classList.add('ai-seeder-banner');
+			banner.innerText = 'Utilize our AI-powered generator to effortlessly create compelling content for this feature. ';
+
+			const bannerBtn = document.createElement('a');
+			bannerBtn.classList.add('text-primary');
+			bannerBtn.href = '#';
+			bannerBtn.innerText = 'Generate AI Data';
+			bannerBtn.onclick = () => {
+				emptyStateOptions._result.requestResult = this.request(this.options.generateOptions, callback);
+			};
+
+			banner.append(bannerBtn);
+			document.body.prepend(banner);
+
+			return this.showEmptyState(emptyStateOptions, callback);
 		}
 	}
 
@@ -253,12 +252,11 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const emptyStateElement = document.body;
 		const animationElement = AiStateSeeder._createAIAnimationElement();
 		animationElement.classList.add('ai-progress-overlay');
-		emptyStateElement.append(animationElement);
+		emptyStateElement.prepend(animationElement);
 	}
 
 	static _createAIAnimationElement() {
 		const animationElement =  document.createElement('div');
-		animationElement.classList.add('well');
 		animationElement.classList.add('ai-progress');
 		animationElement.innerHTML = `<div class="ai-animation">
 						<div class="blob"></div>
