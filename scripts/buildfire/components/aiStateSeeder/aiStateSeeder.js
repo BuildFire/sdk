@@ -159,13 +159,13 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		return status;
 	}
 
-	showEmptyState({ selector, isOverlay } = { isOverlay: false }, callback) {
+	showEmptyState({ selector, isOverlay, bannerRequestResult } = { isOverlay: false, bannerRequestResult: null }, callback) {
 		const emptyStateContainer = document.querySelector(selector);
 
 		if (!emptyStateContainer) throw new Error(`Invalid selector ${selector}`);
 		if (!callback) throw new Error('callback parameter is required');
 
-		const result = {};
+		const result = bannerRequestResult || {};
 		const emptyStateOverlay = document.createElement('div');
 		emptyStateOverlay.classList.add('ai-seeder-blocking');
 
@@ -189,9 +189,9 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 			} else {
 				emptyStateElement.remove();
 			}
+			emptyStateElement.removeEventListener('click', onClickHandler.bind(this));
 		};
-
-		emptyStateElement.addEventListener('click', (e) => {
+		const onClickHandler = (e) => {
 			switch (e.target.id) {
 			case 'generateBtn':
 				result.requestResult = this.request(this.options.generateOptions, (err, response) => {
@@ -211,7 +211,8 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 			default:
 				break;
 			}
-		});
+		};
+		emptyStateElement.addEventListener('click', onClickHandler.bind(this));
 
 		if (isOverlay) {
 			emptyStateOverlay.appendChild(emptyStateElement);
@@ -228,6 +229,22 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 
 		if (isNewInstance) {
 			const _options = { selector: 'body', isOverlay: true };
+
+			// todo retest
+			if (Object.keys(this.options.generateOptions).length) {
+				const div = document.createElement('div');
+				div.innerText = 'Utilize our AI-powered generator to effortlessly create compelling content for this feature.';
+				const button = document.createElement('button');
+				button.innerText = 'Generate AI Data';
+				div.appendChild(button);
+				_options.bannerRequestResult = {};
+				button.onclick = () => {
+					_options.bannerRequestResult.requestResult = this.request(this.options.generateOptions, (err, response) => {
+						callback(err, response);
+					});
+				};
+				document.body.prepend(div);
+			}
 			return this.showEmptyState(_options, callback);
 		}
 	}
