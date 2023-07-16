@@ -2674,3 +2674,9 @@ html.translated-ltr body{
     min-width: unset !important;
 }
 /* Language Settings styles ends */
+
+/* Icons Pack Settings */
+.bi {
+	line-height: 1 !important;
+}
+/* End Icons Pack Settings */

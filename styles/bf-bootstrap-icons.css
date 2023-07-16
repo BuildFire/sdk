@@ -1,0 +1,40 @@
+.bf-icon::before,
+[class^="bf-icon-"]::before,
+[class*=" bf-icon-"]::before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -.125em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bf-icon-search::before { content: "\f52a"; }
+.bf-icon-plus::before { content: "\f64d"; }
+.bf-icon-chevron-up::before { content: "\f286"; }
+.bf-icon-chevron-down::before { content: "\f282"; }
+.bf-icon-chevron-left::before { content: "\f284"; }
+.bf-icon-chevron-right::before { content: "\f285"; }
+.bf-icon-calendar::before { content: "\f1f2"; }
+.bf-icon-star-fill::before { content: "\f586"; }
+.bf-icon-star::before { content: "\f588"; }
+.bf-icon-trash::before { content: "\f5de"; }
+.bf-icon-tag::before { content: "\f5af"; }
+.bf-icon-list::before { content: "\f479"; }
+.bf-icon-geo-alt::before { content: "\f3e7"; }
+.bf-icon-question-circle::before { content: "\f504"; }
+.bf-icon-log-out::before { content: "\f1c3"; }
+.bf-icon-log-in::before { content: "\f1be"; }
+.bf-icon-mail::before { content: "\f32c"; }
+.bf-icon-bell::before { content: "\f189"; }
+.bf-icon-option-vertical::before { content: "\f5d3"; }
+.bf-icon-option-horizontal::before { content: "\f5d4"; }
+.bf-icon-funnel::before { content: "\f3e0"; }
+.bf-icon-pencil-square::before { content: "\f4ca"; }
+.bf-icon-pencil::before { content: "\f4c9"; }
+.bf-icon-cross::before { content: "\f659"; }
+.bf-icon-user::before { content: "\f4da"; }
