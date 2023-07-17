@@ -110,7 +110,10 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 			() => {
 				const packet = (options.type === 'import')
 					? new Packet(null, 'ai.showSeederCSVPrompt', { sampleCsv: options.sampleCsv })
-					: new Packet(null, 'ai.showSeederMessagePrompt', { userMessage: options.userMessage });
+					: new Packet(null, 'ai.showSeederMessagePrompt', {
+						userMessage: options.userMessage,
+						showClearDataWarning: options.showClearDataWarning
+					});
 
 				buildfire._sendPacket(packet, (err, result) => {
 					// in case user requested to regenerate, dialog should appear with the last typed message
@@ -157,9 +160,13 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		return status;
 	}
 
-	showEmptyState(options = {  isOverlay: false, _result: {} }, callback) {
-		const { selector, isOverlay, _result } = options;
+	showEmptyState(options = {  isOverlay: false }, callback) {
+		const { selector, isOverlay, showBanner } = options;
 		const emptyStateContainer = document.querySelector(selector);
+		const result = {
+			requestType: null,
+			requestResult: null,
+		};
 
 		if (!emptyStateContainer) throw new Error(`Invalid selector ${selector}`);
 		if (!callback) throw new Error('callback parameter is required');
@@ -192,13 +199,15 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const onClickHandler = (e) => {
 			switch (e.target.id) {
 			case 'generateBtn':
-				_result.requestResult = this.request(this.options.generateOptions, (err, response) => {
+				result.requestType = 'generate';
+				result.requestResult = this.request(this.options.generateOptions, (err, response) => {
 					clearEmptyState();
 					callback(err, response);
 				});
 				break;
 			case 'importBtn':
-				_result.requestResult = this.request(this.options.importOptions, (err, response) => {
+				result.requestType = 'import';
+				result.requestResult = this.request(this.options.importOptions, (err, response) => {
 					clearEmptyState();
 					callback(err, response);
 				});
@@ -218,7 +227,37 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		} else {
 			emptyStateContainer.appendChild(emptyStateElement);
 		}
-		return _result;
+
+
+		if (showBanner) {
+			const bannerElement = AiStateSeeder._createBannerElement({
+				hideGenerate: !this.options.generateOptions,
+				hideImport: !this.options.importOptions,
+			});
+
+			if (this.options.generateOptions) {
+				const bannerGenerateBtn = bannerElement.querySelector('#bannerGenerateBtn');
+				bannerGenerateBtn.onclick = () => {
+					result.requestType = 'generate';
+					result.requestResult = this.request({
+						...this.options.generateOptions,
+						showClearDataWarning: true
+					}, callback);
+				};
+			}
+
+			if (this.options.importOptions) {
+				const bannerImportBtn = bannerElement.querySelector('#bannerImportBtn');
+				bannerImportBtn.onclick = () => {
+					result.requestType = 'import';
+					result.requestResult = this.request(this.options.importOptions, callback);
+				};
+			}
+
+			document.body.prepend(bannerElement);
+		}
+
+		return result;
 	}
 
 	smartShowEmptyState(options = null, callback) {
@@ -226,26 +265,45 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const isNewInstance = true; // urlParams.get('new_instance'); todo
 
 		if (isNewInstance) {
-			const emptyStateOptions = { selector: 'body', isOverlay: true, _result: {} };
-
-			// create banner element
-			const banner = document.createElement('p');
-			banner.classList.add('ai-seeder-banner');
-			banner.innerText = 'Utilize our AI-powered generator to effortlessly create compelling content for this feature. ';
-
-			const bannerBtn = document.createElement('a');
-			bannerBtn.classList.add('text-primary');
-			bannerBtn.href = '#';
-			bannerBtn.innerText = 'Generate AI Data';
-			bannerBtn.onclick = () => {
-				emptyStateOptions._result.requestResult = this.request(this.options.generateOptions, callback);
+			const emptyStateOptions = {
+				selector: 'body',
+				isOverlay: true,
+				showBanner: true,
 			};
-
-			banner.append(bannerBtn);
-			document.body.prepend(banner);
 
 			return this.showEmptyState(emptyStateOptions, callback);
 		}
+	}
+
+	static _createBannerElement({ hideGenerate, hideImport } = {}) {
+		const banner = document.createElement('p');
+		banner.classList.add('ai-seeder-banner');
+		banner.innerText = 'Utilize our AI-powered generator to effortlessly create compelling content for this feature. ';
+
+		if (!hideGenerate) {
+			const generateBtn = document.createElement('a');
+			generateBtn.classList.add('text-primary');
+			generateBtn.href = '#';
+			generateBtn.id = 'bannerGenerateBtn';
+			generateBtn.innerText = 'Generate AI Data';
+			banner.append(generateBtn);
+		}
+
+		if (!hideImport) {
+			if (!hideGenerate) {
+				const separator = document.createElement('span');
+				separator.innerText = ' or ';
+				banner.append(separator);
+			}
+			const importBtn = document.createElement('a');
+			importBtn.classList.add('text-primary');
+			importBtn.href = '#';
+			importBtn.id = 'bannerImportBtn';
+			importBtn.innerText = 'Import AI Data';
+			banner.append(importBtn);
+		}
+
+		return banner;
 	}
 
 	static _startAIAnimation() {
