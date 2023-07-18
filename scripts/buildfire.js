@@ -875,8 +875,7 @@ var buildfire = {
 			}
 
 			const attachFontIcons = function(theme) {
-				const fontIconLinkId = 'bfFontIcons',
-					  bfIconLinkId = 'bfCommonIcons';
+				const fontIconLinkId = 'bfFontIcons';
 
 				// const fontIcon = document.querySelector(`#${fontIconLinkId}`);
 				// if (fontIcon) {
@@ -888,22 +887,39 @@ var buildfire = {
 				}
 
 				const iconPack = theme.icons.iconPack;
-				let fontFilePath = '',
-					bfCommonIconsPath = '';
+				let fontFilePath = '';
 				switch(iconPack) {
 				case 'bootstrap':
 					fontFilePath = '/styles/bootstrap-icons.min.css';
-					bfCommonIconsPath = '/styles/bf-bootstrap-icons.css';
 					break;
 				default:
 					fontFilePath = '';
-					bfCommonIconsPath = '/styles/bf-glyph-icons.css';
 				}
 
 
 				if (fontFilePath) {
 					buildfire.appearance._attachAppCSSFiles(fontFilePath, fontIconLinkId);
 	     		}
+			};
+			
+			const attachCommonIcons = function(theme) {
+				const bfIconLinkId = 'bfCommonIcons';
+
+				if (!theme || !theme.icons || !theme.icons.iconPack) {
+					return;
+				}
+
+				const iconPack = theme.icons.iconPack;
+				let bfCommonIconsPath = '';
+
+				switch(iconPack) {
+				case 'bootstrap':
+					bfCommonIconsPath = '/styles/bf-bootstrap-icons.css';
+					break;
+				default:
+					bfCommonIconsPath = '/styles/bf-glyph-icons.css';
+				}
+
 				if (bfCommonIconsPath) {
 					buildfire.appearance._attachAppCSSFiles(bfCommonIconsPath, bfIconLinkId);
 	     		}
@@ -923,6 +939,10 @@ var buildfire = {
 					if((window.location.pathname.indexOf('/widget/') >= 0 && disableTheme) || window.location.pathname.indexOf('/control/')) {
 						attachFontIcons(theme);
 					}
+				}
+				// common icons should be always attached in widget and control
+				if((window.location.pathname.indexOf('/widget/') >= 0 && disableTheme) || window.location.pathname.indexOf('/control/')) {
+					attachCommonIcons(theme);
 				}
 			});
 

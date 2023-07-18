@@ -1,3 +1,4 @@
+.bf-icon,
 .bf-icon::before,
 [class^="bf-icon-"]::before,
 [class*=" bf-icon-"]::before {
@@ -7,7 +8,7 @@
   font-weight: normal !important;
   font-variant: normal;
   text-transform: none;
-  line-height: 1;
+  line-height: 1 !important;
   vertical-align: -.125em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -37,4 +38,8 @@
 .bf-icon-pencil-square::before { content: "\f4ca"; }
 .bf-icon-pencil::before { content: "\f4c9"; }
 .bf-icon-cross::before { content: "\f659"; }
+.bf-icon-link::before { content: "\f470"; }
+.bf-icon-globe::before { content: "\f882"; }
+.bf-icon-phone::before { content: "\f5b4"; }
 .bf-icon-user::before { content: "\f4da"; }
+.bf-icon-home::before { content: "\f422"; }

@@ -1,3 +1,4 @@
+.bf-icon,
 .bf-icon::before,
 [class^="bf-icon-"]::before,
 [class*=" bf-icon-"]::before{
@@ -7,7 +8,7 @@
     font-family: 'Glyphicons Halflings';
     font-style: normal;
     font-weight: normal;
-    line-height: 1;
+    line-height: 1 !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -36,4 +37,8 @@
 .bf-icon-pencil-square::before { content: "\e065"; }
 .bf-icon-pencil::before { content: "\270f"; }
 .bf-icon-cross::before { content: "\e014"; }
+.bf-icon-link::before { content: "\e144"; }
+.bf-icon-globe::before { content: "\e135"; }
+.bf-icon-phone::before { content: "\e182"; }
 .bf-icon-user::before { content: "\e008"; }
+.bf-icon-home::before { content: "\e021"; }
