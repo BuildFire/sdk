@@ -133,24 +133,16 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 
 					AiStateSeeder._startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate }, (err, response) => {
-						status.complete = () => {
-							AiStateSeeder._stopAIAnimation();
-							// show toast asap
-							// todo below is temporary to allow testing re-generation in the plugins
+						if (err) {
 							buildfire.dialog.toast({
-								hideDismissButton: false,
-								duration: 60000,
-								type: 'success',
-								message: 'Loaded Successfully',
-								actionButton: {
-									text: 'Regenerate',
-									action: () => {
-										this.request(options, callback);
-									},
-								},
+								type: 'danger',
+								message: err.message,
 							});
-						};
+							AiStateSeeder._stopAIAnimation();
+							return;
+						}
 
+						status.complete = AiStateSeeder._stopAIAnimation;
 						callback(err, response);
 					});
 				});
