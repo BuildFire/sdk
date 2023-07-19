@@ -904,8 +904,8 @@ var buildfire = {
 			
 			const attachCommonIcons = function(theme) {
 				const bfIconLinkId = 'bfCommonIcons';
-
-				if (!theme || !theme.icons || !theme.icons.iconPack) {
+				// if no pack selected, the default one will be glyphicon pack
+				if (!theme || !theme.icons) {
 					return;
 				}
 
@@ -941,7 +941,7 @@ var buildfire = {
 					}
 				}
 				// common icons should be always attached in widget and control
-				if((window.location.pathname.indexOf('/widget/') >= 0 && disableTheme) || window.location.pathname.indexOf('/control/')) {
+				if((window.location.pathname.indexOf('/widget/') >= 0) || window.location.pathname.indexOf('/control/')) {
 					attachCommonIcons(theme);
 				}
 			});
