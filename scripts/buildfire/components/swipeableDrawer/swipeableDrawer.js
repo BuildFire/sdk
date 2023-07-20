@@ -8,7 +8,7 @@ let _swipeableDrawerState = {
     header: null,
     footer: null,
     content: null,
-    transitionDuration: 300,
+    transitionDuration: 125,
     mode: "free",
     minHeight: null,
     maxHeight: null
@@ -33,9 +33,9 @@ const _swipeableDrawerElements = {
 const _swipeableDrawerUtils = {
     calcBottomMargin: () => {
         const headerHasOptions = _swipeableDrawerState.header && _swipeableDrawerState.header.length;
-        const maxHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
-        const minHeight = _swipeableDrawerState.minHeight && _swipeableDrawerState.minHeight > maxHeight ? maxHeight : _swipeableDrawerState.minHeight
 
+        let maxHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
+        let minHeight = _swipeableDrawerState.minHeight && _swipeableDrawerState.minHeight > maxHeight ? maxHeight : _swipeableDrawerState.minHeight
         let margin = minHeight ? minHeight : 54;
         if (headerHasOptions) {
             margin = minHeight ? minHeight : 90;
@@ -45,7 +45,7 @@ const _swipeableDrawerUtils = {
         return margin;
     },
     calcMiddlePosition: () => {
-        const defaultMaximumHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
+        let defaultMaximumHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
         if (!_swipeableDrawerState.minHeight && !_swipeableDrawerState.maxHeight)
             return (_swipeableDrawerConstants.screenHeight / 2);
         if (!_swipeableDrawerState.minHeight && _swipeableDrawerState.maxHeight) {
@@ -59,7 +59,7 @@ const _swipeableDrawerUtils = {
         }
     },
     calcPositions: () => {
-        const maxHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
+        let maxHeight = _swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.topMargin;
         return {
             max: _swipeableDrawerState.maxHeight ? _swipeableDrawerState.maxHeight > maxHeight ? maxHeight : _swipeableDrawerState.maxHeight : maxHeight,
             mid: _swipeableDrawerUtils.calcMiddlePosition(),
@@ -144,7 +144,7 @@ const _swipeableDrawerUtils = {
         }
         return false;
     },
-    containsElement: (el, tag) => {
+    findParentNode: (el, tag) => {
         while (el.parentNode) {
             if (el && el.classList && el.classList.contains(tag)) {
                 return el;
@@ -161,6 +161,7 @@ const _swipeableDrawerUtils = {
         let drawerDiv = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer"),
             drawerHeader = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-header"),
             drawerHeaderContent = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-header-content"),
+            resizerHolder = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-resizer-container"),
             resizer = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-resizer"),
             drawerContent = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-content"),
             drawerFooter = _swipeableDrawerUtils.createUIElement("div", "swipeable-drawer-footer");
@@ -169,7 +170,8 @@ const _swipeableDrawerUtils = {
         _swipeableDrawerState.content ? _swipeableDrawerUtils.setContent(drawerContent, _swipeableDrawerState.content) : drawerContent.classList.add("swipeable-drawer-hidden");
         _swipeableDrawerState.footer ? _swipeableDrawerUtils.setContent(drawerFooter, _swipeableDrawerState.footer) : drawerFooter.classList.add("swipeable-drawer-hidden");
 
-        drawerHeader.insertBefore(resizer, drawerHeader.firstChild);
+        resizerHolder.appendChild(resizer);
+        drawerHeader.insertBefore(resizerHolder, drawerHeader.firstChild);
         drawerHeader.appendChild(drawerHeaderContent);
 
         drawerDiv.appendChild(drawerHeader);
@@ -218,7 +220,7 @@ const _swipeableDrawerEvents = {
         });
 
         document.addEventListener('touchstart', (e) => {
-            if (!_swipeableDrawerUtils.containsElement(e.target, "swipeable-drawer-header")) return;
+            if (!_swipeableDrawerUtils.findParentNode(e.target, "swipeable-drawer-header")) return;
 
             _swipeableDrawerConstants.originalHeight = parseFloat(getComputedStyle(_swipeableDrawerElements.drawerContainer, null).getPropertyValue('height').replace('px', ''));
             _swipeableDrawerConstants.originalY = _swipeableDrawerElements.drawerContainer.getBoundingClientRect().top;
@@ -281,7 +283,6 @@ buildfire.components.swipeableDrawer = {
         _swipeableDrawerElements.drawerContainer.classList.remove("swipeable-drawer-hidden");
     },
     hide() {
-        _swipeableDrawerEvents.destroy();
         _swipeableDrawerElements.drawerContainer.classList.add("swipeable-drawer-hidden");
     },
     destroy() {
