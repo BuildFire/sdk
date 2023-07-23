@@ -25,8 +25,8 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		if (this.options.importOptions) {
 			this.options.importOptions.type = 'import';
 
-			if (!this.options.importOptions.sampleCsv) {
-				this.options.importOptions.sampleCsv = AiStateSeeder.DEFAULT_SAMPLE_CSV;
+			if (!this.options.importOptions.sampleCSV) {
+				this.options.importOptions.sampleCSV = AiStateSeeder.DEFAULT_SAMPLE_CSV;
 			}
 		}
 	}
@@ -48,10 +48,16 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 			if (!options.generateOptions.userMessage) {
 				errors.push('generateOptions.userMessage parameter is required');
 			}
+			if (!options.generateOptions.callback) {
+				errors.push('generateOptions.callback parameter is required');
+			}
 		}
 		if (options.importOptions) {
 			if (!options.importOptions.jsonTemplate) {
 				errors.push('importOptions.jsonTemplate parameter is required');
+			}
+			if (!options.importOptions.callback) {
+				errors.push('importOptions.callback parameter is required');
 			}
 		}
 
@@ -89,14 +95,14 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				options.userMessage = AiStateSeeder.DEFAULT_IMPORT_USER_MESSAGE;
 			}
 
-			if (!options.sampleCsv) {
-				options.sampleCsv = AiStateSeeder.DEFAULT_SAMPLE_CSV;
+			if (!options.sampleCSV) {
+				options.sampleCSV = AiStateSeeder.DEFAULT_SAMPLE_CSV;
 			}
 		}
 	}
 
 	request(options = {}, callback) {
-		const status = { isReady: false };
+		const status = { isReady: false, resetData: false, };
 		const { errors } = AiStateSeeder._validateRequestOptions(...arguments);
 
 		if (errors.length) {
@@ -109,7 +115,10 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 			{ relativeScriptsUrl: 'buildfire/services/ai/ai.js', scriptId: 'ai' },
 			() => {
 				const packet = (options.type === 'import')
-					? new Packet(null, 'ai.showSeederCSVPrompt', { sampleCsv: options.sampleCsv })
+					? new Packet(null, 'ai.showSeederCSVPrompt', {
+						sampleCSV: options.sampleCSV,
+						showResetAndSaveButton: options.showResetAndSaveButton,
+					})
 					: new Packet(null, 'ai.showSeederMessagePrompt', {
 						userMessage: options.userMessage,
 						showClearDataWarning: options.showClearDataWarning
@@ -120,15 +129,18 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					if (result) {
 						if (result.userMessage) {
 							options.userMessage = result.userMessage;
-						} else if (result.sampleCsv) {
-							options.sampleCsv = result.sampleCsv;
+						} else if (result.sampleCSV) {
+							options.sampleCSV = result.sampleCSV;
 						}
+
+						if (typeof result.reset !== 'undefined') status.resetData = result.reset;
 					}
+
 
 					const conversation = new buildfire.ai.conversation();
 					conversation.userSays(options.userMessage);
 
-					if (options.type === 'import') conversation.userSays(result.sampleCsv);
+					if (options.type === 'import') conversation.userSays(result.sampleCSV);
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
 
 					conversation.systemSays('If you are returning multiple records, do not exceed 5 records');
@@ -153,16 +165,14 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		return status;
 	}
 
-	showEmptyState(options = {  isOverlay: false }, callback) {
+	showEmptyState(options = {  isOverlay: false }) {
 		const { selector, isOverlay, showBanner } = options;
 		const emptyStateContainer = document.querySelector(selector);
 		const result = {
-			requestType: null,
 			requestResult: null,
 		};
 
 		if (!emptyStateContainer) throw new Error(`Invalid selector ${selector}`);
-		if (!callback) throw new Error('callback parameter is required');
 
 		const emptyStateOverlay = document.createElement('div');
 		emptyStateOverlay.classList.add('ai-seeder-fixed');
@@ -176,7 +186,8 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					<p>Add sample data to preview this feature.</p>
 					<div>
 
-					${isOverlay ? '<button id="skipBtn" class="btn btn-primary inverted">Enter Manually</button>\n            <button id="importBtn" class="btn btn-primary inverted">Import Data</button>' : ''}
+					${isOverlay ? '<button id="skipBtn" class="btn btn-primary inverted">Enter Manually</button>' : ''}
+					${isOverlay && this.options.importOptions ? '<button id="importBtn" class="btn btn-primary inverted">Import Data</button>' : ''}
             <button id="generateBtn" class="btn btn-primary">Generate AI Data</button>
 					</div>
 				</div>`;
@@ -192,17 +203,15 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const onClickHandler = (e) => {
 			switch (e.target.id) {
 			case 'generateBtn':
-				result.requestType = 'generate';
 				result.requestResult = this.request(this.options.generateOptions, (err, response) => {
 					clearEmptyState();
-					callback(err, response);
+					this.options.generateOptions.callback(err, response);
 				});
 				break;
 			case 'importBtn':
-				result.requestType = 'import';
 				result.requestResult = this.request(this.options.importOptions, (err, response) => {
 					clearEmptyState();
-					callback(err, response);
+					this.options.importOptions.callback(err, response);
 				});
 				break;
 			case 'skipBtn':
@@ -230,20 +239,23 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 
 			if (this.options.generateOptions) {
 				const bannerGenerateBtn = bannerElement.querySelector('#bannerGenerateBtn');
-				bannerGenerateBtn.onclick = () => {
-					result.requestType = 'generate';
+				bannerGenerateBtn.onclick = (e) => {
+					e.preventDefault();
 					result.requestResult = this.request({
 						...this.options.generateOptions,
 						showClearDataWarning: true
-					}, callback);
+					}, this.options.generateOptions.callback);
 				};
 			}
 
 			if (this.options.importOptions) {
 				const bannerImportBtn = bannerElement.querySelector('#bannerImportBtn');
-				bannerImportBtn.onclick = () => {
-					result.requestType = 'import';
-					result.requestResult = this.request(this.options.importOptions, callback);
+				bannerImportBtn.onclick = (e) => {
+					e.preventDefault();
+					result.requestResult = this.request({
+						...this.options.importOptions,
+						showResetAndSaveButton: true
+					}, this.options.importOptions.callback);
 				};
 			}
 
@@ -253,18 +265,15 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		return result;
 	}
 
-	smartShowEmptyState(options = null, callback) {
-		const urlParams = new URLSearchParams(window.location.search);
-		const isNewInstance = true; // urlParams.get('new_instance'); todo
-
-		if (isNewInstance) {
+	smartShowEmptyState(options = null) {
+		if (buildfire.getContext().showAiSuggestions) {
 			const emptyStateOptions = {
 				selector: 'body',
 				isOverlay: true,
 				showBanner: true,
 			};
 
-			return this.showEmptyState(emptyStateOptions, callback);
+			return this.showEmptyState(emptyStateOptions);
 		}
 	}
 
@@ -292,7 +301,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 			importBtn.classList.add('text-primary');
 			importBtn.href = '#';
 			importBtn.id = 'bannerImportBtn';
-			importBtn.innerText = 'Import AI Data';
+			importBtn.innerText = 'AI Import Data';
 			banner.append(importBtn);
 		}
 
