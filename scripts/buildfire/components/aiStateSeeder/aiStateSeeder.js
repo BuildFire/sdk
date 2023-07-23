@@ -131,6 +131,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					if (options.type === 'import') conversation.userSays(result.sampleCsv);
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
 
+					conversation.systemSays('If you are returning multiple records, do not exceed 5 records');
 					AiStateSeeder._startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate }, (err, response) => {
 						if (err) {
@@ -139,7 +140,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 								message: err.message,
 							});
 							AiStateSeeder._stopAIAnimation();
-							return;
+							return callback(err);
 						}
 
 						status.complete = AiStateSeeder._stopAIAnimation;
