@@ -912,7 +912,7 @@ var buildfire = {
 				files.push('styles/bfUIElements.css');
 
 				if (!disableFontIcons) {
-					if((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme)) || window.location.pathname.indexOf('/control/') >= 0) {
+					if((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme)) || window.location.pathname.indexOf('/control/')) {
 						attachFontIcons(theme);
 					}
 				}
