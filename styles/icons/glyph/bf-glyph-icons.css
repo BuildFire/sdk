@@ -14,15 +14,15 @@
 }
 
 .bf-icon-search::before { content: "\e003"; }
-.bf-icon-plus::before { content: "\2b"; }
-.bf-icon-chevron-down::before { content: "\e114"; }
-.bf-icon-chevron-left::before { content: "\e079"; }
-.bf-icon-chevron-right::before { content: "\e080"; }
-.bf-icon-chevron-up::before { content: "\e113"; }
+.bf-icon-add::before { content: "\2b"; }
+.bf-icon-arrow-down::before { content: "\e114"; }
+.bf-icon-arrow-left::before { content: "\e079"; }
+.bf-icon-arrow-right::before { content: "\e080"; }
+.bf-icon-arrow-up::before { content: "\e113"; }
 .bf-icon-calendar::before { content: "\e109"; }
 .bf-icon-star-fill::before { content: "\e006"; }
 .bf-icon-star::before { content: "\e007"; }
-.bf-icon-trash::before { content: "\e020"; }
+.bf-icon-delete::before { content: "\e020"; }
 .bf-icon-tag::before { content: "\e041"; }
 .bf-icon-list::before { content: "\e055"; }
 .bf-icon-question-circle::before { content: "\e085"; }
@@ -42,3 +42,4 @@
 .bf-icon-phone::before { content: "\e182"; }
 .bf-icon-user::before { content: "\e008"; }
 .bf-icon-home::before { content: "\e021"; }
+.bf-icon-copy::before { content: "\e205"; }

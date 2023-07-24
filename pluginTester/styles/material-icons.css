@@ -4,7 +4,7 @@
   font-weight: 400;
   src: url('../fonticons/MaterialIcons-Regular.eot');
   src: url('../fonticons/Material Icons') format('embedded-opentype'), 
-       url('../fonticonsMaterialIcons-Regular') format('embedded-opentype'), 
+       url('../fonticons/MaterialIcons-Regular') format('embedded-opentype'), 
        url('../fonticons/MaterialIcons-Regular.woff2') format('woff2'),
        url('../fonticons/MaterialIcons-Regular.woff') format('woff'),
        url('../fonticons/MaterialIcons-Regular.ttf') format('truetype'),
