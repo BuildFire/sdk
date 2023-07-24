@@ -188,7 +188,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 
 	//override the imageLib options
 	imageLibCurrentApp.options = {
-		showAIImages: false
+		showAiImages: false
 	};
 })();
 
