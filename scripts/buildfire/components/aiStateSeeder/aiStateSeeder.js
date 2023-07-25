@@ -131,9 +131,9 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					// in case user requested to regenerate, dialog should appear with the last typed message
 					if (result) {
 						if (result.userMessage) {
-							options.userMessage = result.userMessage;
+							this.options.generateOptions.userMessage = result.userMessage;
 						} else if (result.sampleCSV) {
-							options.sampleCSV = result.sampleCSV;
+							this.options.importOptions.sampleCSV = result.sampleCSV;
 						}
 
 						if (typeof result.reset !== 'undefined') status.resetData = result.reset;
