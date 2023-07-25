@@ -102,7 +102,10 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 	}
 
 	request(options = {}, callback) {
-		const status = { isReady: false, resetData: false, };
+		const status = {
+			isReady: false,
+			resetData: (options.type !== 'import'),
+		};
 		const { errors } = AiStateSeeder._validateRequestOptions(...arguments);
 
 		if (errors.length) {
