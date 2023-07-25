@@ -912,7 +912,7 @@ var buildfire = {
 
 				if (!disableFontIcons && 
 					((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme)) 
-					|| window.location.pathname.indexOf('/control/') >= 0)) {
+					|| window.location.pathname.indexOf('/control/'))) {
 					// if appTheme.css is loaded, common css will be referenced already
 					attachFontIcons(theme);
 				}
