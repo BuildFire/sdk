@@ -4145,6 +4145,10 @@ var buildfire = {
 										_injectExpressionNode();
 										editor.isNotDirty = false;
 										editor.fire('change');
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search('data-type="dynamic-expression"') === -1) {
+										_injectExpressionNode();
+										editor.isNotDirty = false;
+										editor.fire('change');
 									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
 										dynamicExpressionsActivated = false;
 										_restoreCursorPosition(); // This function works with sync functionality
@@ -4357,12 +4361,20 @@ var buildfire = {
 						} else {
 							options.toolbar = defaultToolbar;
 						}
+						let extended_valid_elements = '';
+						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute) 
+						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
+							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr'];
+						supportedElement.forEach((element, index) => {
+							extended_valid_elements += `${element}[*]`;
+							if (index != supportedElement.length - 1) extended_valid_elements += ',';
+						});
+						options.extended_valid_elements = extended_valid_elements;
 						options.toolbar_mode = 'floating';
 						options.theme = 'silver';
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-expr-src|expr-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*],div[*],span[*],tr[*]';
 						options.height = options.height || 265;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
@@ -4541,7 +4553,7 @@ var buildfire = {
 					obj[sectionKey] = {};
 
 					for (const labelKey in defaultSection) {
-						if (dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty('value') || dbSection[labelKey].hasOwnProperty('defaultValue'))) {
+						if (dbSection && dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty('value') || dbSection[labelKey].hasOwnProperty('defaultValue'))) {
 							//handle backward compatibility, cuz some plugins has it in "value" and the others in "defaultValue"
 							if (dbSection[labelKey].hasOwnProperty('value')) {
 								obj[sectionKey][labelKey] = {
@@ -4560,7 +4572,7 @@ var buildfire = {
 						}
 
 						//check if we have `hasExpression` flag for each label.
-						if (dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
+						if (dbSection && dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
 							obj[sectionKey][labelKey].hasExpression = dbSection[labelKey].hasExpression;
 						}
 					}
@@ -4655,10 +4667,16 @@ var buildfire = {
 					} else if (stringObj.hasOwnProperty('defaultValue')) {
 						return stringObj.defaultValue;
 					}
-				};
+				}
+
+				function checkExpression(str) {
+					let hasExpression = false;
+					if (str) hasExpression = str.search(/\${[^{}]*}/) > -1;
+					return hasExpression;
+				}
 
 				const valueObj = strings[section][label];
-				const stringHasExpression = valueObj.hasExpression;
+				const stringHasExpression = valueObj.value ? checkExpression(valueObj.value) : checkExpression(valueObj.defaultValue);
 
 				if (stringHasExpression) {
 					const stringValue = getStringValue(valueObj);
@@ -4694,7 +4712,7 @@ var buildfire = {
 					const stringValue = getStringValue(valueObj);
 					callback(null, stringValue);
 				}
-			};
+			}
 
 			if (params.instanceId) {
 				registerStringsReady(params.instanceId);
@@ -4715,7 +4733,7 @@ var buildfire = {
 				} else {
 					onStringsReady(instanceId);
 				}
-			};
+			}
 		}
 		,
 		watch: function (instanceId) {
@@ -4753,7 +4771,7 @@ var buildfire = {
 					}
 
 					if (mutation.type === 'childList' && mutation.target) {
-							buildfire.language._handleNode(mutation.target, instanceId);
+						buildfire.language._handleNode(mutation.target, instanceId);
 						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
 							buildfire.language._handleNode(childList[i], instanceId);
