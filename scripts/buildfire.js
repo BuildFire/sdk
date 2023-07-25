@@ -45,13 +45,41 @@ var buildfire = {
 			// don't return anything if context is not ready but we have a callback
 		}
 
-	}
-	, loadScript: function({ url, scriptId }, callback = Function()) {
+	},
+	_lazyScriptsQueues: {},
+	lazyLoadScript: function({ relativeScriptsUrl, scriptId }, readyCallback) {
+		if (!this._lazyScriptsQueues[scriptId]) {
+			this._lazyScriptsQueues[scriptId] = { loaded: false, queue:[] };
+		} else if (this._lazyScriptsQueues[scriptId].loaded && readyCallback) {
+			return readyCallback();
+		}
+
+
+		const lazyQueue = this._lazyScriptsQueues[scriptId];
+		lazyQueue.queue.push(readyCallback);
+
+		if (lazyQueue.queue.length > 1) {
+			return;
+		}
+		const url = buildfire.getContext().type === 'control' ?
+			`../../../../scripts/${relativeScriptsUrl}`
+			: `../../../scripts/${relativeScriptsUrl}`;
+
+		const _executeQueue = (err) => {
+			lazyQueue.queue.forEach((callback) => {
+				if (callback) callback(err);
+			});
+			lazyQueue.loaded = true;
+			lazyQueue.queue = []; // clear queue
+		};
+		buildfire.loadScript({ url, scriptId }, _executeQueue);
+	},
+	loadScript: function({ url, scriptId }, callback = Function()) {
 		let script = document.getElementById(scriptId);
 		const scripts = document.getElementsByTagName('script');
 
 		// script exist
-		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url))) {
+		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url.replaceAll("../", "")))) {
 			return callback();
 		}
 
@@ -4823,7 +4851,7 @@ var buildfire = {
 	},
 	ai: {
 		content: {
-			showDialog: function(options ={}, callback) {
+			showDialog: function (options = {}, callback) {
 				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
 				buildfire._sendPacket(p, callback);
 			}
