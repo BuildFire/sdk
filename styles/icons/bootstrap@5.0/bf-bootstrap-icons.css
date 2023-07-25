@@ -1,6 +1,13 @@
 
 @import url('./bootstrap-icons.min.css');
 
+/* Icons Pack Settings */
+.bf-icon,
+.bi {
+	line-height: 1 !important;
+	font-size: 206.25% !important;
+}
+
 .bf-icon,
 .bf-icon::before,
 [class^="bf-icon-"]::before,

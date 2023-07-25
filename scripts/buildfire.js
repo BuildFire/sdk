@@ -878,27 +878,26 @@ var buildfire = {
 				const fontIconLinkId = 'bfFontIcons';
 
 				let iconPack;
-				if(theme && theme.icons && theme.icons.iconPack){
+				if (theme && theme.icons && theme.icons.iconPack) {
 					iconPack = theme.icons.iconPack;
-				}else{
-					iconPack = 'glyph'
+				} else {
+					iconPack = 'glyph';
 				}
 				
 				let fontFilePath = '';
 
-				switch(iconPack) {
+				switch (iconPack) {
 					case 'bootstrap':
 						fontFilePath = '/styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
-					break;
+						break;
 					default:
-						fontFilePath = '/styles/icons/glyph/bf-glyph-icons.css';
-					break;
+						fontFilePath = '/styles/icons/glyph@3.0/bf-glyph-icons.css';
+						break;
 				}
 
 				if (fontFilePath) {
 					buildfire.appearance._attachAppCSSFiles(fontFilePath, fontIconLinkId);
 	     		}
-
 			};
 
 
@@ -911,10 +910,11 @@ var buildfire = {
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 
-				if (!disableFontIcons) {
-					if((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme)) || window.location.pathname.indexOf('/control/')) {
-						attachFontIcons(theme);
-					}
+				if (!disableFontIcons && 
+					((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme)) 
+					|| window.location.pathname.indexOf('/control/') >= 0)) {
+					// if appTheme.css is loaded, common css will be referenced already
+					attachFontIcons(theme);
 				}
 			});
 
