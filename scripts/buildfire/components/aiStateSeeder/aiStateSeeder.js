@@ -132,6 +132,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					if (result) {
 						if (result.userMessage) {
 							this.options.generateOptions.userMessage = result.userMessage;
+							options.userMessage = result.userMessage;
 						} else if (result.sampleCSV) {
 							this.options.importOptions.sampleCSV = result.sampleCSV;
 						}
