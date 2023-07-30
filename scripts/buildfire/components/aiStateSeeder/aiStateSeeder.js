@@ -186,7 +186,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		emptyStateElement.classList.add('ai-empty-state');
 
 		emptyStateElement.innerHTML = `<div class="ai-empty-state-content"
-					<p>You haven’t added anything yet.</p>
+					<p>You haven't added anything yet.</p>
 					<p>Add sample data to preview this feature.</p>
 					<div>
 
