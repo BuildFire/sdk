@@ -26,6 +26,7 @@ module.exports = {
 		]
 	},
 	"globals": {
+		"buildfire": true,
 		"dynamicEngine": true,
 		"tinymce": true,
 		"FastClick": true

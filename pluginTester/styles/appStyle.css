@@ -4,6 +4,9 @@
 [ios="true"][view="browser"][is-pwa-or-html5-ios="true"] {
 	--full-app-height: 100%;
 }
+[is-pwa-android="true"] {
+	--full-app-height: -webkit-fill-available;
+}
 *{
 	outline:none;
 	-webkit-box-sizing: border-box;

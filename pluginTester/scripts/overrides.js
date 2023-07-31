@@ -151,7 +151,6 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		};
 	}
 
-
 	///override the authAPI.getCurrentUser to return auth
 	authAPI.secondaryUserLookup = function () {
 		if(!window.currentUser || !window.currentUser.userToken || !window.currentUser.auth)
@@ -186,6 +185,11 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'https://app.buildfire.com/app/pages/templates/actionItemsListDialog.html';
 	postMaster.controlPluginAPI.pluginInstances.templateUrl = 'https://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html';
 	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
+
+	//override the imageLib options
+	imageLibCurrentApp.options = {
+		showAiImages: false
+	};
 })();
 
 

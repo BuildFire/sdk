@@ -1052,7 +1052,7 @@ table.table span.sort-icon{
 	/*margin-right:0;*/
 }
 
-.modal-dialog .media-container .files-set .file-holder-stock-images:nth-child(6n){
+.modal-dialog .media-container .files-set .file-holder-images:nth-child(6n){
 	margin-right:0;
 }
 
@@ -1064,7 +1064,7 @@ table.table span.sort-icon{
 	flex-flow: wrap;
 	align-content: space-between;
 }
-.media-container .files-set .file-holder-stock-images{
+.media-container .files-set .file-holder-images{
 	width: 132px;
 	height: 80px;
 	line-height: 77px;
@@ -1078,19 +1078,19 @@ table.table span.sort-icon{
 	margin-top:5px;
 	margin-bottom: 10px;
 }
-.media-container .files-set .file-holder-stock-images img{
+.media-container .files-set .file-holder-images img{
 	max-width: 100%;
 	max-height: 100%;
 	vertical-align: middle;
 }
-.media-container .files-set .file-holder-stock-images a{
+.media-container .files-set .file-holder-images a{
 	display: inline-block;
 	width: 100%;
 	height: 100%;
 	background: #eef0f0;
 }
 
-.media-container .files-set .file-holder-stock-images a.selected{
+.media-container .files-set .file-holder-images a.selected{
 	box-shadow: 0 0 0 2px #09a3ee;
 }
 
@@ -1132,17 +1132,17 @@ table.table span.sort-icon{
 	left:5px;
 }
 
-.media-container .files-set .file-holder-stock-images span.icon{
+.media-container .files-set .file-holder-images span.icon{
 	position:absolute;
 	top:5px;
 	right:5px;
 	opacity:0;
 }
-.media-container .files-set .file-holder-stock-images span.icon.btn-link-icon, .media-container .masonry-container span.icon.btn-link-ico{
+.media-container .files-set .file-holder-images span.icon.btn-link-icon, .media-container .masonry-container span.icon.btn-link-ico{
 	right:inherit;
 	left:5px;
 }
-.media-container .files-set .file-holder span.file-label,.media-container .files-set .file-holder-stock-images span.file-label, .media-container .masonry-container span.file-label{
+.media-container .files-set .file-holder span.file-label,.media-container .files-set .file-holder-images span.file-label, .media-container .masonry-container span.file-label{
 	color:#fff;
 	background:rgba(50,55,58,0.8);
 	font-size:11px;
@@ -1158,8 +1158,8 @@ table.table span.sort-icon{
 }
 .media-container .files-set .file-holder:hover > span.icon,
 .media-container .files-set .file-holder a:hover > span.file-label,
-.media-container .files-set .file-holder-stock-images:hover > span.icon,
-.media-container .files-set .file-holder-stock-images a:hover > span.file-label,
+.media-container .files-set .file-holder-images:hover > span.icon,
+.media-container .files-set .file-holder-images a:hover > span.file-label,
 .media-container .masonry-container .masonry-grid:hover span.icon,
 .media-container .masonry-container .masonry-grid a:hover span.file-label{
 	opacity:1;
@@ -2674,3 +2674,176 @@ html.translated-ltr body{
     min-width: unset !important;
 }
 /* Language Settings styles ends */
+
+
+/* Start AI animation */
+
+.ai-progress {
+	justify-content: center;
+	align-items: center;
+	display: flex;
+	position: fixed;
+	top: 60px;
+	z-index: 1002;
+	background-color: #ffffffa6;
+	left: 0;
+	margin-top: -60px;
+	width: 100vw;
+	height: 100vh;
+}
+
+.ai-animation {
+	position: relative;
+	width: 200px;
+	height: 200px;
+}
+.ai-animation h1 {
+	position: relative;
+	text-transform: uppercase;
+	font-size: 22px;
+	letter-spacing: 2px;
+	font-family: 'Inconsolata', monospace;
+	text-align: center;
+	line-height: 7;
+	overflow: hidden;
+	background: linear-gradient(90deg, #ffffff50, #ffffff99, #ffffff50);
+	background-repeat: no-repeat;
+	background-size: 80%;
+	animation: animate 3s linear infinite;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: rgba(255, 255, 255, 0);
+}
+
+.ai-animation .blob {
+	width: 200px;
+	height: 200px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: linear-gradient(45deg, #3023ae 0%, #ff0099 100%);
+	box-shadow: 0 0 200px 0 rgba(255, 0, 153, 0.7), 0 0 50px 0 rgba(48, 35, 174, 0.7);
+	background-size: 200% 200%;
+	animation: ai-blob 3s, gradient 12s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+	z-index:4;
+}
+
+.ai-animation .blob1 {
+	width: 220px;
+	height: 220px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #3E29C120;
+	animation: ai-blob 4s linear infinite;
+	animation-direction: reverse;
+	z-index:3;
+}
+
+.ai-animation .blob2 {
+	width: 230px;
+	height: 230px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #E3117C20;
+	animation: ai-blob 5s linear infinite;
+	z-index:2;
+}
+
+.ai-animation .blob3 {
+	width: 240px;
+	height: 240px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #7B20A820;
+	animation: ai-blob 3.5s linear infinite;
+	z-index:1;
+}
+
+@keyframes animate {
+	0% {
+		background-position: -1000%;
+	}
+	100% {
+		background-position: 1000%;
+	}
+}
+
+@keyframes ai-blob {
+	0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+	20% { border-radius: 60% 40% 40% 60% / 60% 25% 75% 40%; }
+	40% { border-radius: 70% 30% 65% 35% / 80% 45% 55% 20%; }
+	60% { border-radius: 30% 70% 70% 30% / 20% 30% 70% 80%; }
+	80% { border-radius: 40% 60% 40% 60% / 70% 55% 45% 30%; }
+	100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/* End AI animation */
+
+/* Start AI empty state */
+
+.ai-empty-state {
+	padding-top: 60px;
+	text-align: center;
+	height: 250px;
+}
+
+.ai-empty-state .ai-progress {
+	width: 100%;
+	height: 250px;
+	left: 0;
+	margin-top: -61px;
+	background-color: #eef0f0;
+}
+
+.ai-empty-state .btn {
+  margin: 20px 5px 0;
+}
+.ai-empty-state .btn-primary.inverted {
+  background-color: transparent;
+  border-color: #09A3EE;
+  color: #09A3EE;
+}
+
+.ai-seeder-fixed {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	background-color: white;
+	z-index: 1001;
+	left: 0;
+	top: 30px;
+	overflow-x: hidden;
+}
+
+p.ai-seeder-banner {
+  background-color: #F2F2F2;
+  line-height: 1.33;
+  text-align: left;
+  color: #9e9e9e;
+  padding: 8px 15px;
+  width: 100%;
+  margin-bottom: 0;
+  border-radius: 4px;
+}
+
+/* End AI empty state */

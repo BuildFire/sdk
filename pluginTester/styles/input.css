@@ -328,7 +328,6 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	background: rgba(0, 0, 0, 0.5);
 	z-index: 99999999;
 }
-
 html[type="pluginTester"] #input-backdrop,
 html[type="pluginTester"] #gif-backdrop {
 	height: 100% !important;
