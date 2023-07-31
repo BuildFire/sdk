@@ -174,6 +174,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const emptyStateContainer = document.querySelector(selector);
 		const result = {
 			requestResult: null,
+			actionSource: null,
 		};
 
 		if (!emptyStateContainer) throw new Error(`Invalid selector ${selector}`);
@@ -186,7 +187,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		emptyStateElement.classList.add('ai-empty-state');
 
 		emptyStateElement.innerHTML = `<div class="ai-empty-state-content"
-					<p>You haven’t added anything yet.</p>
+					<p>You haven't added anything yet.</p>
 					<p>Add sample data to preview this feature.</p>
 					<div>
 
@@ -211,12 +212,14 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					clearEmptyState();
 					this.options.generateOptions.callback(err, response);
 				});
+				result.actionSource = 'emptyState';
 				break;
 			case 'importBtn':
 				result.requestResult = this.request(this.options.importOptions, (err, response) => {
 					clearEmptyState();
 					this.options.importOptions.callback(err, response);
 				});
+				result.actionSource = 'emptyState';
 				break;
 			case 'skipBtn':
 				clearEmptyState();
@@ -245,6 +248,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				const bannerGenerateBtn = bannerElement.querySelector('#bannerGenerateBtn');
 				bannerGenerateBtn.onclick = (e) => {
 					e.preventDefault();
+					result.actionSource = 'banner';
 					result.requestResult = this.request({
 						...this.options.generateOptions,
 						showClearDataWarning: true
@@ -256,6 +260,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				const bannerImportBtn = bannerElement.querySelector('#bannerImportBtn');
 				bannerImportBtn.onclick = (e) => {
 					e.preventDefault();
+					result.actionSource = 'banner';
 					result.requestResult = this.request({
 						...this.options.importOptions,
 						showResetAndSaveButton: true
