@@ -45,13 +45,41 @@ var buildfire = {
 			// don't return anything if context is not ready but we have a callback
 		}
 
-	}
-	, loadScript: function({ url, scriptId }, callback = Function()) {
+	},
+	_lazyScriptsQueues: {},
+	lazyLoadScript: function({ relativeScriptsUrl, scriptId }, readyCallback) {
+		if (!this._lazyScriptsQueues[scriptId]) {
+			this._lazyScriptsQueues[scriptId] = { loaded: false, queue:[] };
+		} else if (this._lazyScriptsQueues[scriptId].loaded && readyCallback) {
+			return readyCallback();
+		}
+
+
+		const lazyQueue = this._lazyScriptsQueues[scriptId];
+		lazyQueue.queue.push(readyCallback);
+
+		if (lazyQueue.queue.length > 1) {
+			return;
+		}
+		const url = buildfire.getContext().type === 'control' ?
+			`../../../../scripts/${relativeScriptsUrl}`
+			: `../../../scripts/${relativeScriptsUrl}`;
+
+		const _executeQueue = (err) => {
+			lazyQueue.queue.forEach((callback) => {
+				if (callback) callback(err);
+			});
+			lazyQueue.loaded = true;
+			lazyQueue.queue = []; // clear queue
+		};
+		buildfire.loadScript({ url, scriptId }, _executeQueue);
+	},
+	loadScript: function({ url, scriptId }, callback = Function()) {
 		let script = document.getElementById(scriptId);
 		const scripts = document.getElementsByTagName('script');
 
 		// script exist
-		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url))) {
+		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url.replaceAll("../", "")))) {
 			return callback();
 		}
 
@@ -4152,6 +4180,10 @@ var buildfire = {
 										_injectExpressionNode();
 										editor.isNotDirty = false;
 										editor.fire('change');
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search('data-type="dynamic-expression"') === -1) {
+										_injectExpressionNode();
+										editor.isNotDirty = false;
+										editor.fire('change');
 									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
 										dynamicExpressionsActivated = false;
 										_restoreCursorPosition(); // This function works with sync functionality
@@ -4364,12 +4396,20 @@ var buildfire = {
 						} else {
 							options.toolbar = defaultToolbar;
 						}
+						let extended_valid_elements = '';
+						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute) 
+						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
+							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr'];
+						supportedElement.forEach((element, index) => {
+							extended_valid_elements += `${element}[*]`;
+							if (index != supportedElement.length - 1) extended_valid_elements += ',';
+						});
+						options.extended_valid_elements = extended_valid_elements;
 						options.toolbar_mode = 'floating';
 						options.theme = 'silver';
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|data-expr-src|expr-src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick],p[*],div[*],span[*],tr[*]';
 						options.height = options.height || 265;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
@@ -4846,7 +4886,7 @@ var buildfire = {
 	},
 	ai: {
 		content: {
-			showDialog: function(options ={}, callback) {
+			showDialog: function (options = {}, callback) {
 				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
 				buildfire._sendPacket(p, callback);
 			}
