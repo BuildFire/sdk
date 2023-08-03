@@ -970,7 +970,7 @@ buildfire.components.reactions = (() => {
             }
 
             this.itemType = data.itemType || '';
-            this.itemId = this.itemType ? `${data.itemId}-${this.itemType}` : data.itemId;
+            this.itemId = this.itemType ? `${this.itemType}-${data.itemId}` : data.itemId;
             this.groupName = data.groupName || '';
             this.selector = selector || null;
             this.container = data.container || null;
@@ -987,7 +987,7 @@ buildfire.components.reactions = (() => {
 
             if (!data.itemId && buildfire.context.type !== "control") {
                 this.onError({ errorCode: '1001', message: 'missing required data, invalid itemId' })
-                return console.warning('Missing itemId');
+                return console.error('Missing itemId');
             }
 
             if (!this.container) {
