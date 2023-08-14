@@ -373,7 +373,7 @@ buildfire.components.reactions = (() => {
     class ReactionsSummary {
         constructor(data = {}) {
             this.itemId = data.itemId || null;
-            this.reactions = data.reactions || []; // reaction types {type, count, lastReactionBy} 
+            this.reactions = data.reactions || []; // reaction types {type, count, lastReactionBy}
 
             this._buildfire = data._buildfire || {}
         }
@@ -631,7 +631,7 @@ buildfire.components.reactions = (() => {
             }
 
             let allActiveReactions = group.reactions.filter(reaction => (reaction.isActive == true && reaction.selectedUrl && reaction.unSelectedUrl));
-            // resize reaction images 
+            // resize reaction images
             allActiveReactions = allActiveReactions.map(reaction => {
                 let selectedUrl = buildfire.imageLib.resizeImage(reaction.selectedUrl, { size: "xs", aspect: "1:1" }),
                     unSelectedUrl = buildfire.imageLib.resizeImage(reaction.unSelectedUrl, { size: "xs", aspect: "1:1" });
@@ -681,7 +681,7 @@ buildfire.components.reactions = (() => {
         static user = null;
         static longPressPeriod = 500; //  500 ms
         static userListLimit = 250; // 250 users maximum
-        static userListPageSize = 50; // 50 records per page 
+        static userListPageSize = 50; // 50 records per page
 
         // options = {itemId, getUsersData, getSummariesData}
         static debounce(options) {
@@ -970,7 +970,17 @@ buildfire.components.reactions = (() => {
             }
 
             this.itemType = data.itemType || '';
-            this.itemId = this.itemType ? `${this.itemType}-${data.itemId}` : data.itemId;
+			/**
+			 * itemId notes:
+			 * we have two itemId property:
+			 * 1. this._data.itemId : which is the actual item id that is used in the plugin level
+			 *    so developer can use it to access item and manage it
+			 *
+			 * 2. this._itemId which : which is a combination between actual item id and item type
+			 *    this property is used on component level to manage reactions and shouldn't be returned to user side
+			 *
+			 */
+            this._itemId = this.itemType ? `${this.itemType}-${data.itemId}` : data.itemId;
             this.groupName = data.groupName || '';
             this.selector = selector || null;
             this.container = data.container || null;
@@ -982,7 +992,7 @@ buildfire.components.reactions = (() => {
 
             if (data.dataFromMessage) {
                 ReactionsTypes.groups = data.dataFromMessage;
-                ReactionsTypes.itemsReactionsGroupName[this.itemId] = data.groupName || data.dataFromMessage[0].name;
+                ReactionsTypes.itemsReactionsGroupName[this._itemId] = data.groupName || data.dataFromMessage[0].name;
             }
 
             if (!data.itemId && buildfire.context.type !== "control") {
@@ -1000,7 +1010,7 @@ buildfire.components.reactions = (() => {
 
                 let options = {
                     groupName: this.groupName,
-                    itemId: this.itemId
+                    itemId: this._itemId
                 }
                 this._getReactionTypes(options, (err, reactions) => {
                     if (err) return this.onError({ itemType: this.itemType, itemId: this._data.itemId, errorCode: '1002', message: 'wrong data, invalid group name' });
@@ -1021,7 +1031,7 @@ buildfire.components.reactions = (() => {
                         this.onError({ itemType: this.itemType, itemId: this._data.itemId, errorCode: '1002', message: 'wrong data, invalid group name' });
                     } else {
                         this._buildComponent();
-                        State.debounce({ itemId: this.itemId, getUsersData: true, getSummariesData: true });
+                        State.debounce({ itemId: this._itemId, getUsersData: true, getSummariesData: true });
                     }
                 });
             } else {
@@ -1045,7 +1055,7 @@ buildfire.components.reactions = (() => {
                     } else {
                         return callback(null, { existGroupName: false });
                     }
-                    // if no group provided then return {existGroupName:true}, so we will take the default group 
+                    // if no group provided then return {existGroupName:true}, so we will take the default group
                 } else if (ReactionsTypes.groups.length) {
                     return callback(null, { existGroupName: true });
                 }
@@ -1069,7 +1079,7 @@ buildfire.components.reactions = (() => {
                                         <img style="animation-duration:${idx / 10 + 0.1}s;" bf-reactions-non-reacted-url="${reaction.unSelectedUrl}" bf-reactions-reacted-url="${reaction.selectedUrl}" bf-reactions-url="${reaction.url}" bf-reaction-type="${reaction.id}" class="disable-user-select reactions-clickable-image reactions-icon-animation" src="${reaction.selectedUrl}" />
                                     </div>`
             });
-            this.container.setAttribute('bf-reactions-item-id', this.itemId);
+            this.container.setAttribute('bf-reactions-item-id', this._itemId);
             this.container.setAttribute('bf-user_react-type', ''); // reaction id from the reaction list
             this.container.setAttribute('bf-user_react-id', '');   // selected reaction id that autogenerated when the user selected
             this.container.classList.add('reactions-main-container');
@@ -1259,7 +1269,7 @@ buildfire.components.reactions = (() => {
                             this._checkPendingRequest();
                             // nothing will be happened
                         }
-                        let groupName = ReactionsTypes.itemsReactionsGroupName[this.itemId];
+                        let groupName = ReactionsTypes.itemsReactionsGroupName[this._itemId];
                         this.onUpdate({ status: 'add', reactionType: selectedReaction.reactionType, itemId: this._data.itemId, userId, itemType: this.itemType, name: groupName })
                     }
                 });
@@ -1283,7 +1293,7 @@ buildfire.components.reactions = (() => {
                         this.onError({ itemType: this.itemType, itemId: this._data.itemId, errorCode: '5002', message: 'error while updating the data, '+ error });
                         return console.error('Error while updated the Reaction: ' + error)
                     } else if (result) {
-                        // reaction updated successfully 
+                        // reaction updated successfully
                         if (result.status === 'updated') {
                             // decrement for the old type and increment the new one
                             ReactionsSummaries.decrement({ itemId, reactionType: userReactUUID }, (err, res) => {
@@ -1314,7 +1324,7 @@ buildfire.components.reactions = (() => {
                             this._checkPendingRequest();
                             // nothing will be happened
                         }
-                        let groupName = ReactionsTypes.itemsReactionsGroupName[this.itemId];
+                        let groupName = ReactionsTypes.itemsReactionsGroupName[this._itemId];
                         this.onUpdate({ status: 'update', reactionType: selectedReaction.reactionType, itemId:this._data.itemId, userId, itemType: this.itemType, name: groupName });
                     }
                 })
@@ -1356,7 +1366,7 @@ buildfire.components.reactions = (() => {
                             this._checkPendingRequest();
                             // nothing will be happened
                         }
-                        let groupName = ReactionsTypes.itemsReactionsGroupName[this.itemId];
+                        let groupName = ReactionsTypes.itemsReactionsGroupName[this._itemId];
                         this.onUpdate({ status: 'delete', reactionType, itemId:this._data.itemId, userId, itemType: this.itemType, name: groupName });
                     }
                 });
@@ -1535,7 +1545,7 @@ buildfire.components.reactions = (() => {
                 }
             }
 
-            let options = { itemId: this.itemId, groupName: this.groupName, pageIndex: 0, pageSize: State.userListPageSize }, totalUsersReactions = [];
+            let options = { itemId: this._itemId, groupName: this.groupName, pageIndex: 0, pageSize: State.userListPageSize }, totalUsersReactions = [];
             Reactions.get(options, (error, res) => {
                 if (error) { }
                 else if (res.result.length) {
