@@ -153,13 +153,16 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 						if (typeof result.reset !== 'undefined') status.resetData = result.reset;
 					}
 
-					options.userMessage += ` If you are returning multiple records please ensure that the generated response does not exceed ${options.maxRecords} records.`;
-
 					const conversation = new buildfire.ai.conversation();
-					conversation.userSays(options.userMessage);
+					// concat with the maxRecords guard
+					conversation.userSays(
+						`${options.userMessage}.If you are returning multiple records please ensure that the generated response does not exceed ${options.maxRecords} records.`,
+					);
+
 
 					if (options.type === 'import') conversation.userSays(result.sampleCSV);
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
+
 
 					AiStateSeeder._startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate }, (err, response) => {
