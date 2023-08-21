@@ -107,7 +107,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		if (
 			typeof options.maxRecords === 'undefined' ||
 			isNaN(options.maxRecords) ||
-			options.maxRecords < 0 ||
+			options.maxRecords <= 0 ||
 			options.maxRecords > 50
 		) {
 			options.maxRecords = AiStateSeeder.DEFAULT_MAX_RECORDS;
