@@ -156,7 +156,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					const conversation = new buildfire.ai.conversation();
 					// concat with the maxRecords guard
 					conversation.userSays(
-						`${options.userMessage}.If you are returning multiple records please ensure that the generated response does not exceed ${options.maxRecords} records.`,
+						`${options.userMessage}. If you are returning multiple records please ensure that the generated response does not exceed ${options.maxRecords} records.`,
 					);
 
 
