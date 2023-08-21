@@ -161,8 +161,6 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					if (options.type === 'import') conversation.userSays(result.sampleCSV);
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
 
-
-
 					AiStateSeeder._startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate }, (err, response) => {
 						if (err) {
