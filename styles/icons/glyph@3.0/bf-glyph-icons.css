@@ -1,3 +1,6 @@
+/* in case bootstrap.css is not referenced in the plugin */
+@import url("./glyph-icons.css");
+
 .bf-icon,
 .bf-icon::before,
 [class^="bf-icon-"]::before,
@@ -26,7 +29,7 @@
 .bf-icon-tag::before { content: "\e041"; }
 .bf-icon-list::before { content: "\e055"; }
 .bf-icon-question-circle::before { content: "\e085"; }
-.bf-icon-geo-alt::before { content: "\e062"; }  
+.bf-icon-geo-alt::before { content: "\e062"; }
 .bf-icon-log-out::before { content: "\e163"; }
 .bf-icon-log-in::before { content: "\e161"; }
 .bf-icon-mail::before { content: "\2709"; }
