@@ -1,12 +1,12 @@
 @font-face {
 	font-family: "Glyphicons Halflings";
-	src: url("../../../fonticons/glyphicons-halflings-regular.eot");
-	src: url("../../../fonticons/glyphicons-halflings-regular.eot?#iefix")
+	src: url("./fonts/fonticons/glyphicons-halflings-regular.eot");
+	src: url("./fonts/fonticons/glyphicons-halflings-regular.eot?#iefix")
 			format("embedded-opentype"),
-		url("../../../fonticons/glyphicons-halflings-regular.woff2") format("woff2"),
-		url("../../../fonticons/glyphicons-halflings-regular.woff") format("woff"),
-		url("../../../fonticons/glyphicons-halflings-regular.ttf") format("truetype"),
-		url("../../../fonticons/glyphicons-halflings-regular.svg#glyphicons_halflingsregular")
+		url("./fonts/fonticons/glyphicons-halflings-regular.woff2") format("woff2"),
+		url("./fonts/fonticons/glyphicons-halflings-regular.woff") format("woff"),
+		url("./fonts/fonticons/glyphicons-halflings-regular.ttf") format("truetype"),
+		url("./fonts/fonticons/glyphicons-halflings-regular.svg#glyphicons_halflingsregular")
 			format("svg");
 }
 .glyphicon {
