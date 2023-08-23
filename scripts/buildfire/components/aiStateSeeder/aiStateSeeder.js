@@ -13,6 +13,10 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		this._applyClassDefaults();
 	}
 
+	static get DEFAULT_MAX_RECORDS() {
+		return 5;
+	}
+
 	static get DEFAULT_SAMPLE_CSV() {
 		return 'val1, val2, val3\n\rval1, val2, val3';
 	}
@@ -99,6 +103,15 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				options.sampleCSV = AiStateSeeder.DEFAULT_SAMPLE_CSV;
 			}
 		}
+
+		if (
+			typeof options.maxRecords === 'undefined' ||
+			isNaN(options.maxRecords) ||
+			options.maxRecords <= 0 ||
+			options.maxRecords > 50
+		) {
+			options.maxRecords = AiStateSeeder.DEFAULT_MAX_RECORDS;
+		}
 	}
 
 	request(options = {}, callback) {
@@ -140,14 +153,17 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 						if (typeof result.reset !== 'undefined') status.resetData = result.reset;
 					}
 
-
 					const conversation = new buildfire.ai.conversation();
-					conversation.userSays(options.userMessage);
+					// concat with the maxRecords guard
+					conversation.userSays(
+						`${options.userMessage}. If you are returning multiple records please ensure that the generated response does not exceed ${options.maxRecords} records.`,
+					);
+
 
 					if (options.type === 'import') conversation.userSays(result.sampleCSV);
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
 
-					conversation.systemSays('If you are returning multiple records, do not exceed 5 records');
+
 					AiStateSeeder._startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate }, (err, response) => {
 						if (err) {
@@ -174,6 +190,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		const emptyStateContainer = document.querySelector(selector);
 		const result = {
 			requestResult: null,
+			actionSource: null,
 		};
 
 		if (!emptyStateContainer) throw new Error(`Invalid selector ${selector}`);
@@ -186,7 +203,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		emptyStateElement.classList.add('ai-empty-state');
 
 		emptyStateElement.innerHTML = `<div class="ai-empty-state-content"
-					<p>You haven’t added anything yet.</p>
+					<p>You haven't added anything yet.</p>
 					<p>Add sample data to preview this feature.</p>
 					<div>
 
@@ -211,12 +228,14 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					clearEmptyState();
 					this.options.generateOptions.callback(err, response);
 				});
+				result.actionSource = 'emptyState';
 				break;
 			case 'importBtn':
 				result.requestResult = this.request(this.options.importOptions, (err, response) => {
 					clearEmptyState();
 					this.options.importOptions.callback(err, response);
 				});
+				result.actionSource = 'emptyState';
 				break;
 			case 'skipBtn':
 				clearEmptyState();
@@ -245,6 +264,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				const bannerGenerateBtn = bannerElement.querySelector('#bannerGenerateBtn');
 				bannerGenerateBtn.onclick = (e) => {
 					e.preventDefault();
+					result.actionSource = 'banner';
 					result.requestResult = this.request({
 						...this.options.generateOptions,
 						showClearDataWarning: true
@@ -256,6 +276,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				const bannerImportBtn = bannerElement.querySelector('#bannerImportBtn');
 				bannerImportBtn.onclick = (e) => {
 					e.preventDefault();
+					result.actionSource = 'banner';
 					result.requestResult = this.request({
 						...this.options.importOptions,
 						showResetAndSaveButton: true

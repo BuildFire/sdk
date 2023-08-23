@@ -110,7 +110,10 @@ buildfire.components.listView = class ListView {
 					this._state.searchValue = e.target.value && e.target.value !== '' ? e.target.value : null;
 					this._state.page = 0;
 					this._state.fetchNextPage = true;
-					this._triggerOnDataRequested();
+					if (this.onDataRequest) {
+						this._triggerOnDataRequested();
+					} else if (this.onSearchInput)
+						this.onSearchInput(this._state.searchValue);
 				}, 250))
 			);
 
@@ -154,6 +157,7 @@ buildfire.components.listView = class ListView {
 	}
 
 	_triggerOnDataRequested() {
+		if (!this.onDataRequest) return;
 		if (!this._state.fetchNextPage) return;
 		if (this._state.busy) return;
 
@@ -195,10 +199,10 @@ buildfire.components.listView = class ListView {
 		this.onRenderEnd({ items: items, containers: containers });
 
 		this._toggleEmptyState();
-		if (this.options.settings.paginationEnabled) {
+		if (this.options.settings.paginationEnabled && this.items.length > 0 && this.onDataRequest) {
 			const observer = new IntersectionObserver((payload) => {
 				if (!payload[0].isIntersecting) return;
-				
+
 				observer.unobserve(this._state.listViewItemsContainer.lastElementChild);
 				this._state.page++;
 				this._triggerOnDataRequested();
