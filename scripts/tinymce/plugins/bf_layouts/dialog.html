@@ -4,8 +4,18 @@
 		<link href='./style.css' rel='stylesheet'></link>
 	</head>
 	<body>
-		Select Preset
-        <div id="main"></div>
+		<div id="selectLayoutPage">
+			<div id="selectPresetDiv">
+				<span>Select Preset</span>
+				<div id="linkDataButton" class="bf-border-primary" onclick="openLinkDataPage()">
+					<a class="bf-text-primary">Link Data</a>
+				</div>
+			</div>
+			<div id="main"></div>
+		</div>
+		<div id="linkDataPage">
+			<p class="info">Customize the selected layout by manually entering data or dynamic expressions. After inserting the layout, you can continue editing it using the WYSIWYG editor.</p>
+		</div>
 		<script src='./script.js'></script>
 	</body>
 </html>

@@ -13,3 +13,6 @@ body *:hover {
 .bf-wysiwyg-hide-app:not(style) {
   display: inherit;
 }
+img[data-expr-src] {
+    visibility: hidden;
+}
