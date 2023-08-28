@@ -122,7 +122,19 @@ const dynamicEngine = {
 		* @private
 		*/
 		_getBaseContext(options, callback) {
-			let baseContext = {}; // shared functionality that (app/web/sdk) could use
+			let baseContext = {
+				// shared functionality that (app/web/sdk) could use
+				htmlEncode: function(expression) {
+					let divElement = document.createElement('div');
+					divElement.innerText = expression;
+					return divElement.innerHTML;	
+				},
+				htmlDecode: function(expression) {
+					let divElement = document.createElement('div');
+					divElement.innerHTML = expression;
+					return divElement.innerText;
+				}
+			};
 			callback(null, baseContext);
 		},
 		/**
