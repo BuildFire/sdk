@@ -56,7 +56,7 @@ function render(layouts) {
 		}
 		if (selectedLayout?.expressionFields) {
 			let linkDataButton = document.getElementById('linkDataButton');
-			linkDataButton.style.display = 'flex';
+			// linkDataButton.style.display = 'flex';
 			linkDataButton.style.opacity = '1';
 		}
 		imageDiv.classList.add('imageDiv');
@@ -68,7 +68,7 @@ function render(layouts) {
 			imageDiv.classList.add('active');
 			selectLayout(item.id);
 			if (selectedLayout.expressionFields) {
-				linkDataButton.style.display = 'flex';
+				// linkDataButton.style.display = 'flex';
 				setTimeout(() => { linkDataButton.style.opacity = '1'; }, 0);
 			} else {
 				linkDataButton.style.opacity = '0';

@@ -5,7 +5,7 @@
         "cssUrl": "layouts/bf_mce_layout1.css",
         "htmlUrl" : "layouts/template_a.html",
         "expressionFields": [
-            { "name": "Photo", "defaultValue": "https://d335ljseg2f9ry.cloudfront.net/scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Photo", "defaultValue": "https://pluginserver.buildfire.com/scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
             { "name": "Title", "defaultValue": "Title", "info": "Replace the layout title with custom text or an expression", "selector": "div.bf_mce_copy h1" },
             { "name": "Caption", "defaultValue": "Caption", "info": "Replace the layout caption with custom text or an expression", "selector": "p.bf_mce_caption" },
             { "name": "Body", "defaultValue": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus placeat ab, commodi quo, officiis voluptatum earum perferendis doloremque.", "info": "Replace the layout body content with custom text or an expression", "selector": "p.bf_mce_body" },
@@ -19,7 +19,7 @@
         "cssUrl": "layouts/bf_mce_layout2.css",
         "htmlUrl" : "layouts/template_a.html",
         "expressionFields": [
-            { "name": "Photo", "defaultValue": "https://d335ljseg2f9ry.cloudfront.net/scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Photo", "defaultValue": "https://pluginserver.buildfire.com/scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
             { "name": "Title", "defaultValue": "Title", "info": "Replace the layout title with custom text or an expression", "selector": "div.bf_mce_copy h1" },
             { "name": "Caption", "defaultValue": "Caption", "info": "Replace the layout caption with custom text or an expression", "selector": "p.bf_mce_caption" },
             { "name": "Body", "defaultValue": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus placeat ab, commodi quo, officiis voluptatum earum perferendis doloremque.", "info": "Replace the layout body content with custom text or an expression", "selector": "p.bf_mce_body" },
@@ -33,7 +33,7 @@
         "cssUrl": "layouts/bf_mce_layout3.css",
         "htmlUrl" : "layouts/template_b.html",
         "expressionFields": [
-            { "name": "Photo", "defaultValue": "https://d335ljseg2f9ry.cloudfront.net/scripts/tinymce/plugins/bf_layouts/layouts/resources/img2.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Photo", "defaultValue": "https://pluginserver.buildfire.com/scripts/tinymce/plugins/bf_layouts/layouts/resources/img2.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
             { "name": "Title", "defaultValue": "Title", "info": "Replace the layout title with custom text or an expression", "selector": "h1.bf_mce_main-title" },
             { "name": "Caption", "defaultValue": "Caption", "info": "Replace the layout caption with custom text or an expression", "selector": "p.bf_mce_caption" },
             { "name": "Body", "defaultValue": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus placeat ab, commodi quo, officiis voluptatum earum perferendis doloremque.", "info": "Replace the layout body content with custom text or an expression", "selector": "p.bf_mce_body-copy" },
@@ -65,7 +65,7 @@
         "cssUrl": "layouts/bf_mce_layout7.css",
         "htmlUrl" : "layouts/template_b.html",
         "expressionFields": [
-            { "name": "Photo", "defaultValue": "https://d335ljseg2f9ry.cloudfront.net/scripts/tinymce/plugins/bf_layouts/layouts/resources/img2.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Photo", "defaultValue": "https://pluginserver.buildfire.com/scripts/tinymce/plugins/bf_layouts/layouts/resources/img2.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
             { "name": "Title", "defaultValue": "Title", "info": "Replace the layout title with custom text or an expression", "selector": "h1.bf_mce_main-title" },
             { "name": "Caption", "defaultValue": "Caption", "info": "Replace the layout caption with custom text or an expression", "selector": "p.bf_mce_caption" },
             { "name": "Body", "defaultValue": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus placeat ab, commodi quo, officiis voluptatum earum perferendis doloremque.", "info": "Replace the layout body content with custom text or an expression", "selector": "p.bf_mce_body-copy" },
@@ -79,7 +79,7 @@
         "cssUrl": "layouts/bf_mce_layout8.css",
         "htmlUrl" : "layouts/template_a.html",
         "expressionFields": [
-            { "name": "Photo", "defaultValue": "https://d335ljseg2f9ry.cloudfront.net/scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Photo", "defaultValue": "https://pluginserver.buildfire.com/scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
             { "name": "Title", "defaultValue": "Title", "info": "Replace the layout title with custom text or an expression", "selector": "div.bf_mce_copy h1" },
             { "name": "Caption", "defaultValue": "Caption", "info": "Replace the layout caption with custom text or an expression", "selector": "p.bf_mce_caption" },
             { "name": "Body", "defaultValue": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus placeat ab, commodi quo, officiis voluptatum earum perferendis doloremque.", "info": "Replace the layout body content with custom text or an expression", "selector": "p.bf_mce_body" },
@@ -93,7 +93,7 @@
         "cssUrl": "layouts/bf_mce_layout9.css",
         "htmlUrl" : "layouts/template_f.html",
         "expressionFields": [
-            { "name": "Photo", "defaultValue": "https://d335ljseg2f9ry.cloudfront.net/scripts/tinymce/plugins/bf_layouts/layouts/resources/img3.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Photo", "defaultValue": "https://pluginserver.buildfire.com/scripts/tinymce/plugins/bf_layouts/layouts/resources/img3.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
             { "name": "Label", "defaultValue": "Label", "info": "Replace the layout label with custom text or an expression", "selector": "h2.bf_mce_secondary-title" },
             { "name": "Title", "defaultValue": "Title", "info": "Replace the layout title with custom text or an expression", "selector": "h1.bf_mce_main-title" },
             { "name": "Caption", "defaultValue": "Caption", "info": "Replace the layout caption with custom text or an expression", "selector": "p.bf_mce_caption" },
