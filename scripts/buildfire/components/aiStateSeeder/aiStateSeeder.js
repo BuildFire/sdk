@@ -134,10 +134,12 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					? new Packet(null, 'ai.showSeederCSVPrompt', {
 						sampleCSV: options.sampleCSV,
 						showResetAndSaveButton: options.showResetAndSaveButton,
+						hintText: options.hintText,
 					})
 					: new Packet(null, 'ai.showSeederMessagePrompt', {
 						userMessage: options.userMessage,
-						showClearDataWarning: options.showClearDataWarning
+						showClearDataWarning: options.showClearDataWarning,
+						hintText: options.hintText,
 					});
 
 				buildfire._sendPacket(packet, (err, result) => {
