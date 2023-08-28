@@ -208,12 +208,7 @@ const buildExpressionsContainer = () => {
 				}
 			}
 		} else {
-			if (expressionField.attribute == 'src' && expressionField.type == 'img') {
-				// replace the relative image path to be absolute (pointing to prod) in all environment
-				inputElement.value = expressionField.defaultValue.replace('../../../..', 'https://d335ljseg2f9ry.cloudfront.net');
-			} else {
-				inputElement.value = expressionField.defaultValue;
-			}
+			inputElement.value = expressionField.defaultValue;
 		}
 		
 		inputElement.schemaData = expressionField;
