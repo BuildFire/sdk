@@ -209,10 +209,8 @@ const buildExpressionsContainer = () => {
 			}
 		} else {
 			if (expressionField.attribute == 'src' && expressionField.type == 'img') {
-				// this is just a way to convert the relative image path url to an absolute url (assign the src to an image then retrieve it)
-				let image = document.createElement('img');
-				image.src = expressionField.defaultValue;
-				inputElement.value = image.src;
+				// replace the relative image path to be absolute (pointing to prod) in all environment
+				inputElement.value = expressionField.defaultValue.replace('../../../..', 'https://d335ljseg2f9ry.cloudfront.net');
 			} else {
 				inputElement.value = expressionField.defaultValue;
 			}
