@@ -203,7 +203,7 @@ tinymce.PluginManager.add('bf_layouts', function (editor, url) {
 		let repeaterReplacementExpression = layoutData.repeaterReplacementExpression;
 		if (repeaterReplacementExpression) { // if true, this mean that there is a repeater expression we need to iterate over
 			let cleanedExpression = repeaterReplacementExpression.replace(/[?]/g, '').replace(/\.\[/g, '[')	;
-			let squareBracketIndex = cleanedExpression.search(/\[[0-9]\]/);
+			let squareBracketIndex = cleanedExpression.search(/\[[0-9]+\]/);
 			let repeaterArray = cleanedExpression.slice(0, squareBracketIndex);
 			let repeatedElement = layoutWrapperElement.querySelector(layoutData.repeatedSelector);
 			if (repeatedElement) {

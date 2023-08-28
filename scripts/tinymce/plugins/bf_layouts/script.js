@@ -331,7 +331,7 @@ const checkForRepeater = (expression) => {
 	let wasRepeaterFound = false;
 	let repeaterArray = '';
 	expression.match(/\${[^{}]*}/g)?.forEach((exp) => {
-		if (exp.search(/\[[0-9]\]/) > -1 && !wasRepeaterFound) {
+		if (exp.search(/\[[0-9]+\]/) > -1 && !wasRepeaterFound) {
 			wasRepeaterFound = true;
 			repeaterArray = getRepeaterArray(exp);
 		}
@@ -344,7 +344,7 @@ const getRepeaterArray = (expression) => {
 
 	if (!expressionBody) return '';
 	let cleanedExpression = expressionBody.replace(/[?]/g, '').replace(/\.\[/g, '[');
-	let squareBracketIndex = cleanedExpression.search(/\[[0-9]\]/);
+	let squareBracketIndex = cleanedExpression.search(/\[[0-9]+\]/);
 	let repeaterArray = cleanedExpression.slice(0, squareBracketIndex);
 
 	let closedBracketIndex = expressionBody.indexOf(']');
@@ -384,7 +384,7 @@ const checkRepeatersErrors = () => {
 
 const checkRepeaterStatus = (expression) => {
 	expression.match(/\${[^{}]*}/g)?.forEach((exp) => {
-		if (exp.search(/\[[0-9]\]/) > -1 && !state.isRepeaterTurnedOn) {
+		if (exp.search(/\[[0-9]+\]/) > -1 && !state.isRepeaterTurnedOn) {
 			document.getElementById('switchButton').click();
 		}
 	});
