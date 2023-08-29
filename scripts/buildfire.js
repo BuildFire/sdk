@@ -911,15 +911,23 @@ var buildfire = {
 				} else {
 					iconPack = 'glyph';
 				}
-				
+
 				let fontFilePath = '';
 
 				switch (iconPack) {
 					case 'bootstrap':
-						fontFilePath = '/styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
+						if (buildfire.isWidget()) {
+							fontFilePath = '../../../styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
+						} else {
+							fontFilePath = '../../../../styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
+						}
 						break;
 					default:
-						fontFilePath = '/styles/icons/glyph@3.0/bf-glyph-icons.css';
+						if (buildfire.isWidget()) {
+							fontFilePath = '../../../styles/icons/glyph@3.0/bf-glyph-icons.css';
+						} else {
+							fontFilePath = '../../../../styles/icons/glyph@3.0/bf-glyph-icons.css';
+						}
 						break;
 				}
 
@@ -938,8 +946,8 @@ var buildfire = {
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 
-				if (!disableFontIcons && 
-					((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme)) 
+				if (!disableFontIcons &&
+					((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
 					|| window.location.pathname.indexOf('/control/'))) {
 					// if appTheme.css is loaded, common css will be referenced already
 					attachFontIcons(theme);
@@ -4397,7 +4405,7 @@ var buildfire = {
 							options.toolbar = defaultToolbar;
 						}
 						let extended_valid_elements = '';
-						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute) 
+						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute)
 						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
 							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr'];
 						supportedElement.forEach((element, index) => {
