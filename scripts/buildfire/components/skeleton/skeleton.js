@@ -9,7 +9,7 @@ buildfire.components.skeleton = class SkeletonLoader {
 		).filter(
 			(c) =>
 				![...c.childNodes].some((i) =>
-					i.classList.contains('bf-skeleton-container')
+					i.classList?.contains('bf-skeleton-container')
 				)
 		);
 

@@ -863,6 +863,7 @@ var buildfire = {
 			var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
 			var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 			var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
+			var disableFontIcons = (buildfire.options && buildfire.options.disableFontIcons) ? buildfire.options.disableFontIcons  : false;
 
 			if (!disableTheme && !enableMDTheme) {
 				if(!disableTheme && !disableBootstrap){
@@ -901,6 +902,41 @@ var buildfire = {
 				}
 			}
 
+			const attachFontIcons = function(theme) {
+				const fontIconLinkId = 'bfFontIcons';
+
+				let iconPack;
+				if (theme && theme.icons && theme.icons.iconPack) {
+					iconPack = theme.icons.iconPack;
+				} else {
+					iconPack = 'glyph';
+				}
+
+				let fontFilePath = '';
+
+				switch (iconPack) {
+					case 'bootstrap':
+						if (buildfire.isWidget()) {
+							fontFilePath = '../../../styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
+						} else {
+							fontFilePath = '../../../../styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
+						}
+						break;
+					default:
+						if (buildfire.isWidget()) {
+							fontFilePath = '../../../styles/icons/glyph@3.0/bf-glyph-icons.css';
+						} else {
+							fontFilePath = '../../../../styles/icons/glyph@3.0/bf-glyph-icons.css';
+						}
+						break;
+				}
+
+				if (fontFilePath) {
+					buildfire.appearance._attachAppCSSFiles(fontFilePath, fontIconLinkId);
+	     		}
+			};
+
+
 			buildfire.appearance.getWidgetTheme(function(err, theme) {
 				if (err) return console.error(err);
 				var bfWidgetTheme = document.createElement('style');
@@ -909,6 +945,13 @@ var buildfire = {
 				bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(theme);
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
+
+				if (!disableFontIcons &&
+					((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
+					|| window.location.pathname.indexOf('/control/'))) {
+					// if appTheme.css is loaded, common css will be referenced already
+					attachFontIcons(theme);
+				}
 			});
 
 			if (enableMDTheme) {
@@ -1093,7 +1136,7 @@ var buildfire = {
 				FastClick.attach(element);
 		}
 		, attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
-			const cssUrl = `${appHost}/api/app/styles/appTheme.css?appId=${appId}&liveMode=${liveMode}&v=${buildfire.appearance.CSSBusterCounter}`;
+			const cssUrl = `${appHost}/api/app/styles/appTheme.css?appId=${appId}&liveMode=${liveMode}&v=${buildfire.appearance.CSSBusterCounter}&isWeb=true`;
 			this._attachAppCSSFiles(cssUrl, 'appThemeCSS');
 		}
 		, attachLocalAppThemeCSSFiles: function (appId) {
@@ -4078,7 +4121,7 @@ var buildfire = {
 			if (typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
 				var appContext = buildfire.getContext();
 				if (appContext && appContext.endPoints) {
-					var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
+					var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode + '&isWeb=true';
 					var originalTinymceInit = tinymce.init.bind(tinymce);
 
 					tinymce.init = function(options) {
@@ -4362,7 +4405,7 @@ var buildfire = {
 							options.toolbar = defaultToolbar;
 						}
 						let extended_valid_elements = '';
-						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute) 
+						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute)
 						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
 							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr'];
 						supportedElement.forEach((element, index) => {

@@ -13,6 +13,10 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		this._applyClassDefaults();
 	}
 
+	static get DEFAULT_MAX_RECORDS() {
+		return 5;
+	}
+
 	static get DEFAULT_SAMPLE_CSV() {
 		return 'val1, val2, val3\n\rval1, val2, val3';
 	}
@@ -99,6 +103,15 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 				options.sampleCSV = AiStateSeeder.DEFAULT_SAMPLE_CSV;
 			}
 		}
+
+		if (
+			typeof options.maxRecords === 'undefined' ||
+			isNaN(options.maxRecords) ||
+			options.maxRecords <= 0 ||
+			options.maxRecords > 50
+		) {
+			options.maxRecords = AiStateSeeder.DEFAULT_MAX_RECORDS;
+		}
 	}
 
 	request(options = {}, callback) {
@@ -121,10 +134,12 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					? new Packet(null, 'ai.showSeederCSVPrompt', {
 						sampleCSV: options.sampleCSV,
 						showResetAndSaveButton: options.showResetAndSaveButton,
+						hintText: options.hintText,
 					})
 					: new Packet(null, 'ai.showSeederMessagePrompt', {
 						userMessage: options.userMessage,
-						showClearDataWarning: options.showClearDataWarning
+						showClearDataWarning: options.showClearDataWarning,
+						hintText: options.hintText,
 					});
 
 				buildfire._sendPacket(packet, (err, result) => {
@@ -140,14 +155,17 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 						if (typeof result.reset !== 'undefined') status.resetData = result.reset;
 					}
 
-
 					const conversation = new buildfire.ai.conversation();
-					conversation.userSays(options.userMessage);
+					// concat with the maxRecords guard
+					conversation.userSays(
+						`${options.userMessage}. If you are returning multiple records please ensure that the generated response does not exceed ${options.maxRecords} records.`,
+					);
+
 
 					if (options.type === 'import') conversation.userSays(result.sampleCSV);
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
 
-					conversation.systemSays('If you are returning multiple records, do not exceed 5 records');
+
 					AiStateSeeder._startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate }, (err, response) => {
 						if (err) {
