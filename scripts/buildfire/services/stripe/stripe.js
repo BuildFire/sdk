@@ -22,7 +22,6 @@ if (typeof (buildfire.services.stripe.invoice) == 'undefined') buildfire.service
  * @param {string} [options.items[].currency = "usd"] - Three-letter ISO currency code, in lowercase. Must be a supported, for more details check [https://stripe.com/docs/currencies].
  * @param {number} [options.items[].quantity = 1] - The quantity of the line item being purchased.
  * @param {number} [params.items[].taxBehavior=unspecified] - Specifies whether the price is considered inclusive of taxes or exclusive of taxes. Possible enum values `["inclusive", "exclusive"]`. Once specify it cannot be changed. Required to specify it when enable `automatic tax`
- * @param {string} options.invoiceId - Invoice id, optional. If provided, no need to send any info of items here.
  * @param {string} [options.submitType] - Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. Supported values are "auto, book, donate, or pay".
  * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
  * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
@@ -377,6 +376,30 @@ buildfire.services.stripe.invoice.get = function (options, cb) {
 buildfire.services.stripe.invoice.delete = function (options, cb) {
 	var packetId = null;
 	var command = 'stripe.invoice.delete';
+
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * charge invoice using stripe checkout.
+ * @param {Object} options.
+ * @param {string} options.invoiceId - Invoice id.
+ * @param {string} [options.submitType] - Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. Supported values are "auto, book, donate, or pay".
+ * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
+ * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
+ * @param {string} [params.captureMethod=automatic] - Controls when the funds will be captured from the customer’s account. Possible enum values [automatic, manual].
+ * @param {boolean} [params.automaticTax=false] - Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions. Set it to automaticTax=true to enable automatic taxes.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.invoice.charge = function (options, cb) {
+	var packetId = null;
+	var command = 'stripe.invoice.chargeInvoice';
 
 	var packet = new Packet(packetId, command, options);
 	buildfire._sendPacket(packet, cb);
