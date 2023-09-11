@@ -397,6 +397,7 @@ span.rating-time-ago {
 }
 
 .text-area-input {
+  pointer-events: none;
   height: auto;
   max-width: 100%;
   min-width: 100%;
@@ -451,7 +452,7 @@ span#closeButton {
 
 .bf-more-alt::before {
   right: -6px
-} 
+}
 
 .ovarall-rating-container a.rating-cancel-btn {
   position: absolute;
