@@ -369,6 +369,10 @@ h1::before {
 .sortable-list-actions-container>.sortable-list-add-button>.btn-primary-add.btn-outlined::before {
     background-color: var(--c-primary) !important;
 }
+.sortable-list-container{
+    height: 50vh;
+    overflow-y: auto;
+}
 
 .sortable-list-hidden {
     display: none;

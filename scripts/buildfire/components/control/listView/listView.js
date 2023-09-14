@@ -49,7 +49,12 @@ buildfire.components.control.listView = class ControlListView {
                 idKey: "id",
                 columns: []
             },
-            showDragAndDrop: true
+            showDragAndDrop: true,
+            paginationOptions : {
+                page: 0,
+                pageSize: 10
+            },
+            hasMoreData : true,
         }
 
         this.options = {
@@ -67,7 +72,9 @@ buildfire.components.control.listView = class ControlListView {
                 showAddButton: false,
                 allowDragAndDrop: true,
                 showEditButton: true,
-                showDeleteButton: true
+                showDeleteButton: true,
+                paginationEnabled: false,
+                paginationOptions: null,
             },
             contentMapping: {
                 idKey: "id",
@@ -85,7 +92,8 @@ buildfire.components.control.listView = class ControlListView {
             Object.assign(this._state.contentMappingDefault, options.settings.contentMapping) : this._state.contentMappingDefault;
         this.options.addButtonOptions = options.addButtonOptions ?
             Object.assign(this.options.addButtonOptions, options.addButtonOptions) : this.options.addButtonOptions;
-
+        this.options.settings.paginationOptions = options.settings && options.settings.paginationOptions ?
+        Object.assign(this._state.paginationOptions, options.settings.paginationOptions) : this._state.paginationOptions;
         this.items = [];
         this.init();
     }
@@ -100,8 +108,10 @@ buildfire.components.control.listView = class ControlListView {
         this._state.itemsContainer = this._createUIElement("div", "sortable-list-container");
         this.selector.appendChild(this._state.itemsContainer);
 
+        
         setTimeout(() => {
             if (this.onDataRequest) {
+                this._state.itemsContainer.addEventListener("scroll", this._handleScroll.bind(this));
                 this._triggerOnDataRequested();
             } else {
                 this._initSortableList();
@@ -109,6 +119,30 @@ buildfire.components.control.listView = class ControlListView {
             }
         }, 0);
     }
+    //=======================================================================================
+    _handleScroll(e) {
+        if (this._state.hasMoreData && this._isScrolledToBottom(e)) {
+            // Load more data when scrolled to the bottom
+            this.options.settings.paginationOptions.page++;
+            this._loadMoreData();
+        }
+    }
+
+    _isScrolledToBottom(e) {
+        const container = e.target;
+        const scrollHeight = container.scrollHeight;
+        const scrollTop = container.scrollTop || document.body.scrollTop;
+        const clientHeight = container.clientHeight;
+
+        return scrollTop + clientHeight >= scrollHeight - 200;
+    }
+    
+    _loadMoreData() {
+        this._state.hasMoreData  = false;
+        this._triggerOnDataRequested();
+    }
+
+
     //=======================================================================================
     _triggerOnDataRequested() {
         let callbackOptions = {};
@@ -119,9 +153,20 @@ buildfire.components.control.listView = class ControlListView {
         if (this.options.settings.showSortOptions)
             callbackOptions.sort = this._state.currentSortOption;
 
+        if (this.options.settings.paginationEnabled){
+            callbackOptions.page = this.options.settings.paginationOptions.page;
+            callbackOptions.pageSize = this.options.settings.paginationOptions.pageSize;
+        }
+
         this.onDataRequest(callbackOptions, (items) => {
-            this._state.itemsContainer.innerHTML = "";
-            this.items = items;
+
+            if (this._state.page !== 0){
+                this._state.hasMoreData  = true;
+				this.items = [...this.items, ...items];
+            }else{
+                this._state.itemsContainer.innerHTML = "";
+                this.items = items;
+            }
             items.forEach((item, index) => {
                 this._renderItem(item, index);
             });
@@ -230,8 +275,11 @@ buildfire.components.control.listView = class ControlListView {
 
             button.onclick = () => {
                 this._state.searchValue = input.value && input.value !== "" ? input.value : null;
-                if (this.onDataRequest)
+                if (this.onDataRequest){
+                    this.clear();
+                    this.options.settings.paginationOptions.page = 0;
                     this._triggerOnDataRequested();
+                }
                 else if (this.onSearchInput)
                     this.onSearchInput(this._state.searchValue);
             }
@@ -367,8 +415,11 @@ buildfire.components.control.listView = class ControlListView {
                     this._resetList();
                 }
 
-                if (this.onDataRequest)
+                if (this.onDataRequest){
+                    this.clear();
+                    this.options.settings.paginationOptions.page = 0;
                     this._triggerOnDataRequested();
+                }
                 else if (this.onSortOptionChange)
                     this.onSortOptionChange(this._state.currentSortOption);
             };
@@ -431,6 +482,7 @@ buildfire.components.control.listView = class ControlListView {
                 let img = this._createUIElement("img", getClassName("sortable-list-item-image"), null, image);
                 img.setAttribute("data-key", "imageKey");
                 img.setAttribute("data-columnIndex", index);
+                img.setAttribute("loading", "lazy");
                 columnsDiv.appendChild(img);
             } else {
                 let div = this._createUIElement("div", getClassName("sortable-list-item-icon-holder")),
@@ -582,9 +634,17 @@ buildfire.components.control.listView = class ControlListView {
     }
 
     reset() {
-        this.refresh();
-        this._state.itemsContainer.innerHTML = "";
-        this.items.forEach((item, index) => this._renderItem(item, index));
+        let items = this.items;
+        if (this.onDataRequest) {
+            this.selector.innerHTML = "";
+            this.options.settings.paginationOptions = {page : 1, pageSize: 10}
+            this.init();
+        }else{
+            this.refresh();
+            this.clear();
+            this.items = items;
+            this._resetList();
+        }
     }
 
     _resetList() {
