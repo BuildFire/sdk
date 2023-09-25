@@ -2690,6 +2690,39 @@ html.translated-ltr body{
 	width: 100vw;
 	height: 100vh;
 }
+/* ai loading animation container starts here */
+@keyframes show-container {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+@keyframes hide-container {
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+#aiLoadingAnimationContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #ffffff6e;
+    z-index: 2222;
+    visibility: visible;
+    animation: show-container 0.3s;
+}
+#aiLoadingAnimationContainer.stop {
+    animation: hide-container 0.3s forwards;
+}
+/* ai loading animation container ends */
 
 .ai-animation {
 	position: relative;
