@@ -2715,7 +2715,7 @@ html.translated-ltr body{
     height: 100%;
     width: 100%;
     background: #ffffff6e;
-    z-index: 2222;
+    z-index: 100;
     visibility: visible;
     animation: show-container 0.3s;
 }
