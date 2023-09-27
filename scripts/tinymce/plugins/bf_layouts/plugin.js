@@ -126,6 +126,8 @@ tinymce.PluginManager.add('bf_layouts', function (editor, url) {
 						layoutDiv.id = layout.id;
 						layoutDiv.innerHTML = layoutHtml;
 						layoutDiv.querySelectorAll('img').forEach((image) => {
+							// to prevent showing pluginserver.buildfire.com to white labels
+							image.src = image.src && image.src.replace('https://pluginserver.buildfire.com', 'https://pluginserver.appdocumentation.com');
 							// this is just a way to convert the relative image path url to an absolute url
 							image.setAttribute('src', image.src);
 						});
@@ -164,6 +166,7 @@ tinymce.PluginManager.add('bf_layouts', function (editor, url) {
 						let stringifiedData = escape(JSON.stringify(data));
 						selectedLayout.setAttribute('data-bf-layout', stringifiedData);
 						selectedLayout.setAttribute('data-layout-name', layout.id);
+						editor.selection.collapse(); // to prevent content removal
 						editor.isNotDirty = false;
 						editor.fire('change');
 					}
