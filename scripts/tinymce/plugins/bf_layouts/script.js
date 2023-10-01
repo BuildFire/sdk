@@ -56,7 +56,7 @@ function render(layouts) {
 		}
 		if (selectedLayout?.expressionFields) {
 			let linkDataButton = document.getElementById('linkDataButton');
-			// linkDataButton.style.display = 'flex';
+			linkDataButton.style.display = 'flex';
 			linkDataButton.style.opacity = '1';
 		}
 		imageDiv.classList.add('imageDiv');
@@ -68,7 +68,7 @@ function render(layouts) {
 			imageDiv.classList.add('active');
 			selectLayout(item.id);
 			if (selectedLayout.expressionFields) {
-				// linkDataButton.style.display = 'flex';
+				linkDataButton.style.display = 'flex';
 				setTimeout(() => { linkDataButton.style.opacity = '1'; }, 0);
 			} else {
 				linkDataButton.style.opacity = '0';
@@ -190,7 +190,7 @@ const buildExpressionsContainer = () => {
 			if (targetElement) {
 				if (expressionField.attribute) {
 					let value;
-					if (expressionField.attribute == 'src' && targetElement.nodeName == 'IMG' && targetElement.dataset.exprSrc) { 
+					if (expressionField.attribute == 'src' && targetElement.nodeName == 'IMG' && targetElement.dataset.exprSrc) {
 						value = targetElement.dataset.exprSrc;
 					} else {
 						value = targetElement.getAttribute(expressionField.attribute);
@@ -198,6 +198,8 @@ const buildExpressionsContainer = () => {
 					if (originalLayoutData.repeaterReplacementExpression) {
 						value = value?.replaceAll('layoutItem', originalLayoutData.repeaterReplacementExpression);
 					}
+					// to prevent showing pluginserver.buildfire.com to white labels
+					value = value?.replace('https://pluginserver.buildfire.com', 'https://pluginserver.appdocumentation.com');
 					inputElement.value = value || '';
 				} else {
 					let value = targetElement.innerHTML;
@@ -208,7 +210,16 @@ const buildExpressionsContainer = () => {
 				}
 			}
 		} else {
-			inputElement.value = expressionField.defaultValue;
+			if (expressionField.attribute == 'src' && expressionField.type == 'img') {
+				// this is just a way to convert the relative image path url to an absolute url (assign the src to an image then retrieve it)
+				let image = document.createElement('img');
+				image.src = expressionField.defaultValue;
+				// to prevent showing pluginserver.buildfire.com to white labels
+				image.src = image.src?.replace('https://pluginserver.buildfire.com', 'https://pluginserver.appdocumentation.com');
+				inputElement.value = image.src;
+			} else {
+				inputElement.value = expressionField.defaultValue;
+			}
 		}
 		
 		inputElement.schemaData = expressionField;
