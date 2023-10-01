@@ -729,6 +729,9 @@ justify-content: center;
 .relative-position {
     position: relative;
 }
+.fixed-position {
+    position: fixed !important;
+}
 .padded-md {
     padding: 16px;
 }

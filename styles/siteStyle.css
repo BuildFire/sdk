@@ -2721,6 +2721,12 @@ html.translated-ltr body{
 #aiLoadingAnimationContainer.stop {
     animation: hide-container 0.3s forwards;
 }
+.z-index-0 {
+    z-index: 0 !important;
+}
+.z-index-1050 {
+    z-index: 1050 !important;
+}
 /* ai loading animation container ends */
 
 .ai-animation {
