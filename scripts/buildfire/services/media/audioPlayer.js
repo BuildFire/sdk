@@ -83,6 +83,14 @@ buildfire.services.media.audioPlayer = {
 		var packet = new Packet(null,'mediaAPI.audioPlayer.setTime',sec);
 		buildfire._sendPacket(packet);
 	}
+	,setPlaybackRate:function(rate){
+		var packet = new Packet(null,'mediaAPI.audioPlayer.setPlaybackRate', rate);
+		buildfire._sendPacket(packet);
+	}
+	,setDefaultPlaybackRate:function(rate){
+		var packet = new Packet(null,'mediaAPI.audioPlayer.setDefaultPlaybackRate', rate);
+		buildfire._sendPacket(packet);
+	}
 	, settings:{
 		set: function(audioSettings){
 			buildfire._sendPacket(new Packet(null,'mediaAPI.audioPlayer.setSettings',audioSettings));
