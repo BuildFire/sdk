@@ -245,7 +245,7 @@ buildfire.components.listView = class ListView {
 			itemHolder.innerHTML = '';
 		} else {
 			itemHolder = this._createUIElement('div', 'listView-item');
-			itemHolder.setAttribute("data-id", encodeURI(this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey)));
+			itemHolder.setAttribute('data-id', encodeURI(this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey)));
 			shouldAppend = true;
 		}
 		//this is for image section===============================================================================================
@@ -376,7 +376,8 @@ buildfire.components.listView = class ListView {
 		let item = this.items.find(el => this._getMappingKeyValue(el, this.options.settings.contentMapping.idKey) === id);
 		let index = this.items.indexOf(item);
 		this.items[index] = data;
-		this._renderItem(this.items[index]);
+		let itemHolder = this._renderItem(this.items[index]);
+		this.onRenderEnd({ items: [item], containers: [itemHolder] });
 	}
 
 	remove(id) {
