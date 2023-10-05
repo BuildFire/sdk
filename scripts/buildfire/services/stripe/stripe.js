@@ -199,7 +199,7 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
  * @param {Object} options.
  * @param {string} options.email - The email address of the account holder. This is only to make the account easier to identify to you. Stripe will never directly email Custom accounts.
  * @param {Object} options.metadata - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value.
- * @param {string} options.skipAccountCreation - Only check if user stripe connected or not, and don't show create account popup
+ * @param {boolean} options.skipAccountCreation - Only check if user stripe connected or not, and don't show create account popup
  */
 
 /**
