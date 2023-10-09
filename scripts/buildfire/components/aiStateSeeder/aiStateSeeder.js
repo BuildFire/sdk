@@ -167,7 +167,7 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 
 
 					AiStateSeeder._startAIAnimation();
-					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate }, (err, response) => {
+					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate, hideAiAnimation: true }, (err, response) => {
 						if (err) {
 							buildfire.dialog.toast({
 								type: 'danger',
