@@ -2724,7 +2724,7 @@ html.translated-ltr body{
 .z-index-0 {
     z-index: 0 !important;
 }
-.z-index-1050 {
+.ai-container-overlay {
     z-index: 1050 !important;
 }
 /* ai loading animation container ends */
