@@ -4147,9 +4147,11 @@ var buildfire = {
 								const timestamp = new Date().getTime();
 								const EXPRESSION_HTML = `<img data-no-blob data-id="${timestamp}" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamic.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />`;
 								const _injectExpressionNode = () => {
-									const currentContent = editor.getContent();
-									editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
-									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add('bf-wysiwyg-hide-app'); });
+									if (!editor.dom.doc.body.querySelector('[data-type="dynamic-expression"]')) {
+										const currentContent = editor.getContent();
+										editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
+										editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add('bf-wysiwyg-hide-app'); });
+									}
 								};
 								const _removeExpressionNode = () => {
 									const div = document.createElement('div');
@@ -4189,9 +4191,12 @@ var buildfire = {
 										editor.isNotDirty = false;
 										editor.fire('change');
 									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search('data-type="dynamic-expression"') === -1) {
-										_injectExpressionNode();
-										editor.isNotDirty = false;
-										editor.fire('change');
+										setTimeout(() => {
+											_restoreCursorPosition();
+											_injectExpressionNode();
+											editor.isNotDirty = false;
+											editor.fire('change');
+										}, 0);
 									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
 										dynamicExpressionsActivated = false;
 										_restoreCursorPosition(); // This function works with sync functionality
@@ -4309,14 +4314,6 @@ var buildfire = {
 										return element.dataset.bfLayout ? '' : 'cut copy paste bf_insertBefore bf_insertAfter | bf_delete';
 									}
 								});
-								editor.ui.registry.addToggleMenuItem('bf_toggleDynamicExpression', {
-									text: 'Expressions',
-									onAction: () => {},
-									onSetup: (api) => {
-										api.setActive(dynamicExpressionsActivated);
-										return () => {};
-									}
-								});
 
 								editor.ui.registry.addMenuItem('bf_insertExpression', {
 									text: 'Insert expression',
@@ -4369,7 +4366,7 @@ var buildfire = {
 							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
-							tools: {title: 'Tools', items: `code bf_datasources ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
+							tools: {title: 'Tools', items: 'code bf_datasources'},
 							ai: {title: 'AI Content (Beta)', items: 'bf_aiTextGenerator'},
 						};
 						if (userMenu) {
@@ -4898,6 +4895,10 @@ var buildfire = {
 				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
 				buildfire._sendPacket(p, callback);
 			}
+		},
+		getAppRecipe: function (options = {}, callback) {
+			var p = new Packet(null, 'ai.getAppRecipe', options);
+			buildfire._sendPacket(p, callback);
 		}
 	},
 	onPluginJsonLoaded: function (pluginJson) {
