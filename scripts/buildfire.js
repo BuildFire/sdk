@@ -4895,6 +4895,10 @@ var buildfire = {
 				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
 				buildfire._sendPacket(p, callback);
 			}
+		},
+		getAppRecipe: function (options = {}, callback) {
+			var p = new Packet(null, 'ai.getAppRecipe', options);
+			buildfire._sendPacket(p, callback);
 		}
 	},
 	onPluginJsonLoaded: function (pluginJson) {

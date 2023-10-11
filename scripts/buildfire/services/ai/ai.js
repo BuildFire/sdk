@@ -29,7 +29,8 @@ buildfire.ai.conversation = class Conversation {
         }
         const options = {
             messages: this.messages,
-            jsonTemplate: params.jsonTemplate
+            jsonTemplate: params.jsonTemplate,
+            hideAiAnimation: params.hideAiAnimation
         }
         const p = new Packet(null, 'ai.chat', options);
         buildfire._sendPacket(p, callback);
