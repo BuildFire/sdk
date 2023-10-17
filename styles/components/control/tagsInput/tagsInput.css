@@ -44,6 +44,8 @@
 	box-sizing: border-box;
 	transition: .1s;
 	overflow: hidden;
+	max-height: 54px;
+	overflow-y: auto;
 }
 
 @keyframes tags--bump {
