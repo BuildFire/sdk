@@ -171,19 +171,21 @@ section.showNav #plugin, #plugin.access-code-visible{
 }
 
 /* Footer Menu */
-#footerMenuParent{
-	text-align:center;
+#navbarContainer{
 	position: absolute;
 	left: 0;
 	bottom: 0;
-	/*height: 40px;*/
 	min-height: 40px;
-	height: 7vh;
 	width: 100%;
 	z-index: 1;
 }
+#footerMenuParent{
+	text-align:center;
+	height: 7vh;
+	width: 100%;
+}
 
-html[ios="true"] #footerMenuParent{
+html[ios="true"] #navbarContainer{
 	position: fixed;
 }
 
@@ -217,6 +219,12 @@ html[ios="true"] #footerMenuParent{
 	/*height:calc(100% - 40px) !important;*/
 	/*padding-bottom: 43px;*/
 	padding-bottom: 7vh;
+}
+
+.has-footer-menu.navbar-with-addon,
+#plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+#plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
+	padding-bottom: 14vh;
 }
 .keyboard-visible .has-footer-menu,
 .has-footer-menu.notes-wrapper,
@@ -1263,7 +1271,7 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 		padding-top: 25px; this is causing launcher plugin with BG images to appear they are cut from the top
 	} */
 
-	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent{
+	[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer{
 		min-height:10% !important;
 	}
 	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu,
@@ -1273,6 +1281,14 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
 	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
 		padding-bottom: 10vh !important;
+	}
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.navbar-with-addon,
+	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.navbar-with-addon,
+	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage,
+	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
+		padding-bottom: 17vh !important;
 	}
 	[ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
 	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
@@ -1300,15 +1316,16 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 
 }
 
-[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent, [ios="true"][view="browser"][is-pwa-ios="true"] #footerMenuParent {
+[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer,
+[ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
 	padding-bottom: constant(safe-area-inset-bottom) !important; /* iOS 11.0 */
 	padding-bottom: env(safe-area-inset-bottom) !important; /* iOS 11.2 */
 }
-[ios="true"][view="browser"][is-pwa-ios="true"] #footerMenuParent {
+[ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
 	min-height: 10vh !important;
 }
 
-.keyboard-visible #footerMenuParent {
+.keyboard-visible #navbarContainer {
 	display: none !important;
 }
 
@@ -2682,7 +2699,7 @@ nav.menu a.active .active-indicator,
 #footerMenuParent .action-item.active .active-indicator{
 	display: block;
 }
-#footerMenuParent .app-info{
+#navbarContainer .app-info{
 	display: none;
 }
 
@@ -2721,6 +2738,10 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar-hero.has-footer-menu{
 	padding: 0 !important;
 	bottom: calc(16px + env(safe-area-inset-bottom) + 7vh);
+}
+.snackbar-hero.has-footer-menu.navbar-with-addon{
+	padding: 0 !important;
+	bottom: calc(16px + env(safe-area-inset-bottom) + 14vh);
 }
 .snackbar-message{
 	flex: auto;
@@ -2802,14 +2823,18 @@ html:not([type="app"]) .snackbar-hero{
 		height: 100% !important;
 	}
 
-	[type="app"] #footerMenuParent:not(.ng-hide){
+	[type="app"] #navbarContainer:not(.ng-hide){
 		top: 0;
 		height: 68px;
 		z-index: 99999999;
 		display: block !important;
 		/* border-bottom: 1px solid rgba(150,150,150,.3); */
 	}
-	[type="app"] #footerMenuParent .app-info {
+
+	[type="app"] .navbar-playback-addon {
+		display: none;
+	}
+	[type="app"] #navbarContainer .app-info {
 		display: flex;
 		align-items: center;
 		position: absolute;
@@ -2818,10 +2843,10 @@ html:not([type="app"]) .snackbar-hero{
 		/* cursor: pointer; */
 		/* padding: 0 18px; */
 	}
-	[type="app"] #footerMenuParent .app-info:active {
+	[type="app"] #navbarContainer .app-info:active {
 		opacity: 0.7;
 	}
-	[type="app"] #footerMenuParent .app-info img{
+	[type="app"] #navbarContainer .app-info img{
 		width: 44px;
 		height: 44px;
 		border-radius: 4px;
@@ -2830,7 +2855,7 @@ html:not([type="app"]) .snackbar-hero{
 		flex-shrink: 0;
 		margin-right: 12px;
 	}
-	[type="app"] #footerMenuParent .app-info h3{
+	[type="app"] #navbarContainer .app-info h3{
 		margin: 0;
 	}
 	[type="app"] #footerMenuParent .action-group{
@@ -3552,6 +3577,9 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 }
 .dev-mode-actions.has-footer-menu, .preview-mode-actions.has-footer-menu {
 	bottom: calc( 7vh + env(safe-area-inset-bottom));
+}
+.dev-mode-actions.has-footer-menu.navbar-with-addon, .preview-mode-actions.has-footer-menu.navbar-with-addon {
+	bottom: calc( 14vh + env(safe-area-inset-bottom));
 }
 .dev-mode-actions.active, .preview-mode-actions.active {
 	transform: translateX(0);
@@ -4665,7 +4693,7 @@ html[ios="true"] .profile-overlay .profile-content{
 	/* #appBody.blur-animation, */
 	body.blur-animation.has-menu #appBody,
 	body.blur-animation.has-menu #login,
-	body.blur-animation.has-menu #footerMenuParent{
+	body.blur-animation.has-menu #navbarContainer{
 		animation: plugin-blur-animation .4s ease-in-out forwards;
 	}
 	/* #appBody.blur-animation.closing, */
@@ -5115,4 +5143,46 @@ button.list-group-item {
 	border: 0;
 	margin: 0;
 	padding: 20px;
+}
+
+/* 
+  ==============================
+  New Feature: Playback Bar
+  ==============================
+  The following CSS rules are specific to the new playback bar feature.
+*/
+.navbar-playback-addon {
+	max-width: 100%;
+	padding: 12px;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: 7vh;
+	cursor: pointer;
+}
+.playback-addon-thumbnail {
+	border-radius: 4px;
+	margin-right: 1rem;
+	border-style: none;
+	width: 40px;
+	height: 40px;
+}
+.playback-addon-body {
+	overflow: hidden;
+	flex: 1;
+}
+.playback-addon-body h2 {
+	margin-bottom: 0;
+	margin-top: 0;
+	font-weight: bold;
+	font-size: 16px;
+}
+.playback-addon-body h2,
+.playback-addon-body p {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+} 
+.playback-addon-icon {
+	margin-left: 1rem;
 }
