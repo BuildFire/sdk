@@ -125,13 +125,13 @@ const _swipeableDrawerUtils = {
 
 	},
 	resize: (e) => {
-		const pageY = e.pageY || e.changedTouches[0]?.pageY;
-		const height = _swipeableDrawerConstants.originalHeight - (pageY - _swipeableDrawerConstants.originalMouseY);
-		const lowerMargin = _swipeableDrawerUtils.calcBottomMargin();
-		if (height > lowerMargin && height < (_swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.upperMargin)) {
-			_swipeableDrawerElements.drawerContainer.style.height = `${height}px`;
-			_swipeableDrawerElements.drawerContainer.style.top = `${_swipeableDrawerConstants.originalY + (pageY - _swipeableDrawerConstants.originalMouseY)}px`;
-		}
+			const pageY = e.pageY || e.changedTouches[0]?.pageY;
+			const height = _swipeableDrawerConstants.originalHeight - (pageY - _swipeableDrawerConstants.originalMouseY);
+			const lowerMargin = _swipeableDrawerUtils.calcBottomMargin();
+			if (height > lowerMargin && height < (_swipeableDrawerConstants.screenHeight - _swipeableDrawerConstants.upperMargin)) {
+				_swipeableDrawerElements.drawerContainer.style.height = `${height}px`;
+				_swipeableDrawerElements.drawerContainer.style.top = `${_swipeableDrawerConstants.originalY + (pageY - _swipeableDrawerConstants.originalMouseY)}px`;
+			}
 	},
 	createUIElement: (...args) => {
 		let elem = document.createElement(args[0]);
@@ -267,8 +267,6 @@ buildfire.components.swipeableDrawer = {
 		_swipeableDrawerState.header = content;
 		_swipeableDrawerElements.drawerHeaderContent.classList.remove('swipeable-drawer-hidden');
 		_swipeableDrawerUtils.setContent(_swipeableDrawerElements.drawerHeaderContent, content);
-		if (_swipeableDrawerState.startingStep === 'min')
-			_swipeableDrawerUtils.reset();
 	},
 	setFooterContent(content) {
 		_swipeableDrawerState.footer = content;
