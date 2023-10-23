@@ -1,26 +1,6 @@
 if (typeof buildfire == 'undefined') throw 'please add buildfire.js first to use buildfire components';
 if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
-function State() {
-	this.listViewSearchBarContainer = null;
-	this.listViewItemsContainer = null;
-	this.searchValue = null;
-	this.page = null;
-	this.fetchNextPage = true;
-	this.contentMappingDefault = {
-		idKey: 'id',
-		imageKey: 'imageUrl',
-		titleKey: 'title',
-		subtitleKey: 'subtitle',
-		descriptionKey: 'description'
-	};
-	this.paginationOptions = {
-		page: 0,
-		pageSize: 10
-	};
-	this.busy = false;
-}
-
 buildfire.components.listView = class ListView {
 	constructor(selector, options = {}) {
 		if (!document.querySelector(selector)) throw new Error('Element not found!');
@@ -45,7 +25,25 @@ buildfire.components.listView = class ListView {
 				searchInputPlaceholder: 'Search'
 			},
 		};
-		this._state = new State();
+		this._state = {
+			listViewSearchBarContainer: null,
+			listViewItemsContainer: null,
+			searchValue: null,
+			page: null,
+			fetchNextPage: true,
+			contentMappingDefault: {
+				idKey: 'id',
+				imageKey: 'imageUrl',
+				titleKey: 'title',
+				subtitleKey: 'subtitle',
+				descriptionKey: 'description'
+			},
+			paginationOptions: {
+				page: 0,
+				pageSize: 10
+			},
+			busy: false,
+		};
 		this.options.settings = options.settings ? Object.assign(this.options.settings, options.settings) : this.options.settings;
 		this.options.translations = options.translations ? Object.assign(this.options.translations, options.translations) : this.options.translations;
 		this.options.settings.contentMapping = options.settings && options.settings.contentMapping ?
