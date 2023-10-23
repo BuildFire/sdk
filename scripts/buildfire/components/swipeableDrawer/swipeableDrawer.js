@@ -267,8 +267,6 @@ buildfire.components.swipeableDrawer = {
 		_swipeableDrawerState.header = content;
 		_swipeableDrawerElements.drawerHeaderContent.classList.remove('swipeable-drawer-hidden');
 		_swipeableDrawerUtils.setContent(_swipeableDrawerElements.drawerHeaderContent, content);
-		if (_swipeableDrawerState.startingStep === 'min')
-			_swipeableDrawerUtils.reset();
 	},
 	setFooterContent(content) {
 		_swipeableDrawerState.footer = content;
