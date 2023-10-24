@@ -3855,18 +3855,42 @@ var buildfire = {
 			});
 		}
 		,overrideNativeLocalStorage: function() {
-			localStorage.getItem = function (key) {
-				return buildfire.localStorage.getItem(key);
-			};
-			localStorage.setItem = function (key, value) {
-				return buildfire.localStorage.setItem(key, value);
-			};
-			localStorage.removeItem = function (key) {
-				return buildfire.localStorage.removeItem(key);
-			};
-			localStorage.clear = function () {
-				return buildfire.localStorage.clear();
-			};
+			try {
+				localStorage.getItem = function (key) {
+					return buildfire.localStorage.getItem(key);
+				};
+				localStorage.setItem = function (key, value) {
+					return buildfire.localStorage.setItem(key, value);
+				};
+				localStorage.removeItem = function (key) {
+					return buildfire.localStorage.removeItem(key);
+				};
+				localStorage.clear = function () {
+					return buildfire.localStorage.clear();
+				};
+			}
+			catch {
+				console.warn("falling back to defineProperty localStorage override");
+				// in case access to localStorage is not allowed; third party cookies, storage not allowed in private mode
+				Object.defineProperty(window, "localStorage", new (function () {
+					this.get = function() {
+						return {
+							getItem:function (key) {
+								return buildfire.localStorage.getItem(key);
+							},
+							setItem: function (key, value) {
+								return buildfire.localStorage.setItem(key, value);
+							},
+							removeItem: function (key) {
+								return buildfire.localStorage.removeItem(key);
+							},
+							clear: function () {
+								return buildfire.localStorage.clear();
+							}
+						};
+					}
+				})());
+			}
 		}
 	},
 	input: {
