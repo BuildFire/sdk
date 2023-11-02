@@ -300,8 +300,8 @@ var buildfire = {
 				}
 			});
 		}
-
-
+		//init logger
+		buildfire.loggerClient.init();
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -3560,6 +3560,7 @@ var buildfire = {
 		triggerOnLogin: function (user) {
 			buildfire.eventManager.trigger('authOnLogin', user);
 			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: user});
+			buildfire.loggerClient.triggerContextChange(user);
 		},
 		onLogout: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
@@ -3567,6 +3568,7 @@ var buildfire = {
 		triggerOnLogout: function (data) {
 			buildfire.eventManager.trigger('authOnLogout', data);
 			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: data});
+			buildfire.loggerClient.triggerContextChange(data);
 		},
 		onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
@@ -4910,6 +4912,69 @@ var buildfire = {
 			attachPluginLanguageJsScript();
 		}
 		buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+	},
+	loggerClient: {
+		init: function () {
+			function loadLoggerClient() {
+				let script = document.createElement('script');
+				script.type = 'text/javascript';
+				script.src = 'https://cdn.jsdelivr.net/gh/Ahmad-AbuOsbeh/CDN/logger-client-v1.js';
+				script.async = true;
+				script.onload = () => {
+					initLogs();
+				};
+				document.head.appendChild(script);
+			};
+			loadLoggerClient();
+
+			function initLogs() {
+				buildfire.loggerClient._setLoggerContext({}, (context) => {
+					if (typeof bfLoggerTracker != "undefined" && bfLoggerTracker && bfLoggerTracker.init) {
+						bfLoggerTracker.init({tags:['SDK'], token:'c23c3945-dd0b-4451-b512-234dc6e2b2e5', levels:['error'], context});
+					} else {
+						console.error("Failed to initialize logger in SDK");
+					}
+				});
+			};
+		},
+		_setLoggerContext: function (options, callback) {
+			const context = { 
+				appId: "",
+				appName: "",
+				pluginId: "",
+				instanceId: "",
+				userId: "",
+				email: "",
+				name: "",
+			};
+			buildfire.getContext((err, appContext) => {
+				if (appContext) {
+					context.appId = appContext.appId;
+					context.pluginId = appContext.pluginId;
+					context.instanceId = appContext.instanceId;
+				}
+				buildfire.auth.getCurrentUser((err, user) => {					  
+					if (user) {
+						context.userId = user._id;
+						context.email = user.email;
+						context.name = user.displayName;
+					}
+					if (callback && typeof callback == 'function') {
+						callback(context);
+					}
+				});
+			});
+		},
+		triggerContextChange: function (user) {
+			buildfire.loggerClient._setLoggerContext({}, (context) => {
+				//set context in bfLoggerTracker
+				if (typeof bfLoggerTracker != "undefined" && bfLoggerTracker && bfLoggerTracker.setLoggerContext) {
+					bfLoggerTracker.setLoggerContext(context);
+				} else {
+					console.error("Failed to set bfLoggerTracker context.");
+				}
+			});
+		}
 	}
 };
 
