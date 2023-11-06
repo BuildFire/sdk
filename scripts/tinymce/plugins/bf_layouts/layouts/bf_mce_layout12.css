@@ -1,0 +1,110 @@
+#bf_mce_layout_12 *>span {
+  color: currentColor;
+}
+
+#bf_mce_layout_12 {
+  margin: 1rem;
+}
+
+#bf_mce_layout_12 .bf_mce_container-grid {
+  font-size: 16px;
+  display: grid;
+  grid-gap: 1em;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  padding: 1rem 0;
+}
+
+#bf_mce_layout_12 .bf_mce_container {
+  font-size: 16px;
+  padding: 2em 1em 1em;
+  margin: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 .5rem 1rem rgba(77, 77, 77, 0.5);
+}
+
+#bf_mce_layout_12 .bf_mce_img-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+#bf_mce_layout_12 .bf_mce_img-container::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 45%, rgba(0, 0, 0, 0.8) 100%);
+  pointer-events: none;
+}
+
+#bf_mce_layout_12 .bf_mce_img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#bf_mce_layout_12 .bf_mce_secondary-title {
+  font-size: 1em;
+  position: relative;
+  margin-top: 3em;
+  z-index: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#bf_mce_layout_12 #bf_mce_banner {
+  font-size: 16px !important;
+  line-height: 1.5;
+  padding: 1.5em 1em;
+  margin: 1em 0;
+  border-radius: 1em;
+  position: relative;
+  border: 1px solid rgba(150, 150, 150, 0.4);
+  box-shadow: 0 .25em .75em rgba(150, 150, 150, 0.3);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+#bf_mce_layout_12 #bf_mce_banner .bf_mce_main-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: .5em;
+}
+
+#bf_mce_layout_12 #bf_mce_banner .bf_mce_caption {
+  font-size: 1em;
+  margin-top: 0;
+  margin-bottom: 1.5em;
+}
+
+#bf_mce_layout_12 #bf_mce_banner .bf-btn {
+  width: 100%;
+}
+
+#bf_mce_layout_12 h1,
+#bf_mce_layout_12 h2,
+#bf_mce_layout_12 h3,
+#bf_mce_layout_12 h4,
+#bf_mce_layout_12 h5,
+#bf_mce_layout_12 h6,
+#bf_mce_layout_12 .headerTextTheme {
+  color: var(--bf-theme-header-text);
+}
+
+#bf_mce_layout_12 p,
+#bf_mce_layout_12 span,
+#bf_mce_layout_12 label,
+#bf_mce_layout_12 body {
+  color: var(--bf-theme-body-text);
+}
