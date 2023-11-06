@@ -4915,29 +4915,26 @@ var buildfire = {
 	},
 	loggerClient: {
 		init: function () {
-			function loadLoggerClient() {
-				let script = document.createElement('script');
-				script.type = 'text/javascript';
-				script.src = 'https://cdn.jsdelivr.net/gh/Ahmad-AbuOsbeh/CDN/logger-client-v1.js';
-				script.async = true;
-				script.onload = () => {
-					initLogs();
-				};
-				document.head.appendChild(script);
+			let script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = 'https://pluginserver.buildfire.com/logger/logger-client.min.js';
+			script.async = true;
+			script.onload = () => {
+				_onLoggerLoaded();
 			};
-			loadLoggerClient();
+			document.head.appendChild(script);
 
-			function initLogs() {
-				buildfire.loggerClient._setLoggerContext({}, (context) => {
-					if (typeof bfLoggerTracker != "undefined" && bfLoggerTracker && bfLoggerTracker.init) {
-						bfLoggerTracker.init({tags:['SDK'], token:'c23c3945-dd0b-4451-b512-234dc6e2b2e5', levels:['error'], context});
+			function _onLoggerLoaded() {
+				buildfire.loggerClient._getLoggerContext({}, (context) => {
+					if (typeof window.loggingTracker != "undefined" && window.loggingTracker && window.loggingTracker.init) {
+						window.loggingTracker.init({tags:['sdk'], token:'93cbe5ea-7286-486c-bedd-791d44aa7d95', levels:['error'], context});
 					} else {
 						console.error("Failed to initialize logger in SDK");
 					}
 				});
 			};
 		},
-		_setLoggerContext: function (options, callback) {
+		_getLoggerContext: function (options, callback) {
 			const context = { 
 				appId: "",
 				appName: "",
@@ -4966,12 +4963,12 @@ var buildfire = {
 			});
 		},
 		triggerContextChange: function (user) {
-			buildfire.loggerClient._setLoggerContext({}, (context) => {
-				//set context in bfLoggerTracker
-				if (typeof bfLoggerTracker != "undefined" && bfLoggerTracker && bfLoggerTracker.setLoggerContext) {
-					bfLoggerTracker.setLoggerContext(context);
+			buildfire.loggerClient._getLoggerContext({}, (context) => {
+				//set context in window.loggingTracker
+				if (typeof window.loggingTracker != "undefined" && window.loggingTracker && window.loggingTracker.setLoggerContext) {
+					window.loggingTracker.setLoggerContext(context);
 				} else {
-					console.error("Failed to set bfLoggerTracker context.");
+					console.error("Failed to set window.loggingTracker context.");
 				}
 			});
 		}
