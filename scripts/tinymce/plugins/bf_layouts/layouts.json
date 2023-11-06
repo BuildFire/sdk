@@ -101,6 +101,39 @@
             { "name": "Button", "defaultValue": "Button", "info": "Replace the button text with custom text or an expression", "selector": "button.bf-btn.bf-btn-primary" }
         ],
         "repeatedSelector": "div#bf_mce_layout_9"
+    },
+    {
+        "id": "bf_mce_layout_10",
+        "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_10.png",
+        "cssUrl": "layouts/bf_mce_layout10.css",
+        "htmlUrl" : "layouts/template_g.html",
+        "expressionFields": [
+            { "name": "Photo", "defaultValue": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Title", "defaultValue": "Card Title", "info": "Replace the card title with custom text or an expression", "selector": "h2.bf_mce_secondary-title" }
+        ],
+        "repeatedSelector": "div#bf_mce_layout_10 div.bf_mce_container"
+    },
+    {
+        "id": "bf_mce_layout_11",
+        "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_11.png",
+        "cssUrl": "layouts/bf_mce_layout11.css",
+        "htmlUrl" : "layouts/template_g.html",
+        "expressionFields": [
+            { "name": "Photo", "defaultValue": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Title", "defaultValue": "Card Title", "info": "Replace the card title with custom text or an expression", "selector": "h2.bf_mce_secondary-title" }
+        ],
+        "repeatedSelector": "div#bf_mce_layout_11 div.bf_mce_container"
+    },
+    {
+        "id": "bf_mce_layout_12",
+        "imageUrl": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/previews/lyt_12.png",
+        "cssUrl": "layouts/bf_mce_layout12.css",
+        "htmlUrl" : "layouts/template_g.html",
+        "expressionFields": [
+            { "name": "Photo", "defaultValue": "../../../../scripts/tinymce/plugins/bf_layouts/layouts/resources/img1.jpeg", "info": "Use only for photos. Leave empty if you want to manually add a photo inside the WYSIWYG.", "selector": "div.bf_mce_img-container img", "attribute": "src", "type": "img" },
+            { "name": "Title", "defaultValue": "Card Title", "info": "Replace the card title with custom text or an expression", "selector": "h2.bf_mce_secondary-title" }
+        ],
+        "repeatedSelector": "div#bf_mce_layout_12 div.bf_mce_container"
     }
 ]
 
