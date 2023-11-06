@@ -1,5 +1,4 @@
-
-#bf_mce_layout_4{
+#bf_mce_layout_4 {
     font-size: 16px !important;
     line-height: 1.5;
     padding: 1.5em;
@@ -11,31 +10,54 @@
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
 }
-#bf_mce_layout_4 * > span{
+
+#bf_mce_layout_4 *>span {
     color: currentColor;
 }
-#bf_mce_layout_4 .bf_mce_main-title{
+
+#bf_mce_layout_4 .bf_mce_main-title {
     font-size: 2.5em;
     font-weight: bold;
     margin-top: 0;
     margin-bottom: 1em;
 }
-#bf_mce_layout_4 .bf_mce_secondary-title{
+
+#bf_mce_layout_4 .bf_mce_secondary-title {
     font-size: 1.5em;
     font-weight: bold;
     margin-top: 0;
     margin-bottom: .125em;
 }
-#bf_mce_layout_4 .bf_mce_caption{
+
+#bf_mce_layout_4 .bf_mce_caption {
     font-size: .75em;
     margin-top: 0;
     margin-bottom: 1.5em;
 }
-#bf_mce_layout_4 .bf_mce_body-copy{
+
+#bf_mce_layout_4 .bf_mce_body-copy {
     margin-top: 0;
     font-size: .875em;
     margin-bottom: 2em;
 }
-#bf_mce_layout_4 .bf-btn{
+
+#bf_mce_layout_4 .bf-btn {
     width: 100%;
+}
+
+#bf_mce_layout_4 h1,
+#bf_mce_layout_4 h2,
+#bf_mce_layout_4 h3,
+#bf_mce_layout_4 h4,
+#bf_mce_layout_4 h5,
+#bf_mce_layout_4 h6,
+#bf_mce_layout_4 .headerTextTheme {
+    color: var(--bf-theme-header-text);
+}
+
+#bf_mce_layout_4 p,
+#bf_mce_layout_4 span,
+#bf_mce_layout_4 label,
+#bf_mce_layout_4 body {
+    color: var(--bf-theme-body-text);
 }

@@ -211,6 +211,8 @@ tinymce.PluginManager.add('bf_layouts', function (editor, url) {
 			let repeatedElement = layoutWrapperElement.querySelector(layoutData.repeatedSelector);
 			if (repeatedElement) {
 				repeatedElement.setAttribute('buildfire-repeat', `layoutItem in ${repeaterArray}`);
+				let nonRepeatingElements = layoutWrapperElement.querySelectorAll(layoutData.repeatedSelector + ':not([buildfire-repeat])');
+				nonRepeatingElements.forEach(el => el.remove());
 			} else if (layoutData.repeatedSelector == `div#${layoutData.id}`) {
 				layoutWrapperElement.setAttribute('buildfire-repeat', `layoutItem in ${repeaterArray}`);
 			}
