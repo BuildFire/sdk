@@ -156,6 +156,29 @@ var buildfire = {
 			script.id = 'BuildFireAppDebuggerScript';
 			header.appendChild(script);
 
+		},
+		init: function () {
+			const originalConsoleError = console.error;
+			console.error = function (...args) {
+				if (args && args[0]) {
+					buildfire.logger.log({
+						message: typeof args[0] == "string" ? args[0] : "no error message provided.",
+						data: args
+					});
+				}
+				originalConsoleError(...args);
+			};
+		},
+		log: function (options = {}, callback) {
+			buildfire.getContext((context) => {
+				if (!options.context) {
+					options.context = {};
+				}
+				options.context.pluginId = context.pluginId;
+				options.context.instanceId = context.instanceId;
+				const p = new Packet(null, 'logger.log', options);
+				buildfire._sendPacket(p, callback);
+			});
 		}
 	}
 	, _callbacks: {}
@@ -300,8 +323,6 @@ var buildfire = {
 				}
 			});
 		}
-		//init logger
-		buildfire.loggerClient.init();
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -4912,66 +4933,6 @@ var buildfire = {
 			attachPluginLanguageJsScript();
 		}
 		buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
-	},
-	loggerClient: {
-		init: function () {
-			let script = document.createElement('script');
-			script.type = 'text/javascript';
-			script.src = 'https://pluginserver.buildfire.com/logger/logger-client.min.js';
-			script.async = true;
-			script.onload = () => {
-				_onLoggerLoaded();
-			};
-			document.head.appendChild(script);
-
-			function _onLoggerLoaded() {
-				buildfire.loggerClient._getLoggerContext({}, (context) => {
-					if (typeof window.loggingTracker != "undefined" && window.loggingTracker && window.loggingTracker.init) {
-						window.loggingTracker.init({tags:['sdk'], token:'93cbe5ea-7286-486c-bedd-791d44aa7d95', levels:['error'], context});
-					} else {
-						console.error("Failed to initialize logger in SDK");
-					}
-				});
-			};
-		},
-		_getLoggerContext: function (options, callback) {
-			const context = { 
-				appId: "",
-				appName: "",
-				pluginId: "",
-				instanceId: "",
-				userId: "",
-				email: "",
-				name: "",
-			};
-			buildfire.getContext((err, appContext) => {
-				if (appContext) {
-					context.appId = appContext.appId;
-					context.pluginId = appContext.pluginId;
-					context.instanceId = appContext.instanceId;
-				}
-				buildfire.auth.getCurrentUser((err, user) => {					  
-					if (user) {
-						context.userId = user._id;
-						context.email = user.email;
-						context.name = user.displayName;
-					}
-					if (callback && typeof callback == 'function') {
-						callback(context);
-					}
-				});
-			});
-		},
-		triggerContextChange: function (user) {
-			buildfire.loggerClient._getLoggerContext({}, (context) => {
-				//set context in window.loggingTracker
-				if (typeof window.loggingTracker != "undefined" && window.loggingTracker && window.loggingTracker.setContext) {
-					window.loggingTracker.setContext(context);
-				} else {
-					console.error("Failed to set window.loggingTracker context.");
-				}
-			});
-		}
 	}
 };
 
