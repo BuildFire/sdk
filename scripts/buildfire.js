@@ -4965,8 +4965,8 @@ var buildfire = {
 		triggerContextChange: function (user) {
 			buildfire.loggerClient._getLoggerContext({}, (context) => {
 				//set context in window.loggingTracker
-				if (typeof window.loggingTracker != "undefined" && window.loggingTracker && window.loggingTracker.setLoggerContext) {
-					window.loggingTracker.setLoggerContext(context);
+				if (typeof window.loggingTracker != "undefined" && window.loggingTracker && window.loggingTracker.setContext) {
+					window.loggingTracker.setContext(context);
 				} else {
 					console.error("Failed to set window.loggingTracker context.");
 				}
