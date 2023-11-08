@@ -3605,7 +3605,6 @@ var buildfire = {
 		triggerOnLogin: function (user) {
 			buildfire.eventManager.trigger('authOnLogin', user);
 			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: user});
-			buildfire.loggerClient.triggerContextChange(user);
 		},
 		onLogout: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnLogout', callback, allowMultipleHandlers);
@@ -3613,7 +3612,6 @@ var buildfire = {
 		triggerOnLogout: function (data) {
 			buildfire.eventManager.trigger('authOnLogout', data);
 			buildfire.dynamic.triggerContextChange({contextProperty: 'appUser', data: data});
-			buildfire.loggerClient.triggerContextChange(data);
 		},
 		onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('authOnUpdate', callback, allowMultipleHandlers);
