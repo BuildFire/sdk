@@ -183,6 +183,8 @@ var buildfire = {
 						url: event.filename
 					}
 				});
+				originalConsoleError('Error: ' + event.message, ' Script: ' + event.filename, ' Line: ' + event.lineno
+					, ' Column: ' + event.colno, ' StackTrace: ' + event.error && event.error.stack ? event.error && event.error.stack : "n/a");
 			});
 		},
 		log: function (options = {}, callback) {
@@ -5085,11 +5087,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
 document.addEventListener('resize', function (event) {
 	buildfire.appearance.autosizeContainer();
 });
-
-window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-	console.error('Error: ' + errorMsg, ' Script: ' + url, ' Line: ' + lineNumber
-		, ' Column: ' + column, ' StackTrace: ' + errorObj);
-};
 
 //IE and old Android Custom Event Fix
 if(typeof(CustomEvent) != 'function'){
