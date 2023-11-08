@@ -163,19 +163,39 @@ var buildfire = {
 				if (args && args[0]) {
 					buildfire.logger.log({
 						message: typeof args[0] == "string" ? args[0] : "no error message provided.",
-						data: args
+						data: args.length > 1 ? {...args} : undefined,
+						level: "error",
+						category: "ConsoleError"
 					});
 				}
 				originalConsoleError(...args);
 			};
+			window.addEventListener("error", (event) => {
+				buildfire.logger.log({
+					message: event.message,
+					level: "error",
+					category: "BrowserJsException",
+					exception: {
+						colno: event.colno,
+						lineno: event.lineno,
+						message: event.message,
+						stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
+						url: event.filename
+					}
+				});
+			});
 		},
 		log: function (options = {}, callback) {
-			buildfire.getContext((context) => {
+			buildfire.getContext((err, context) => {
 				if (!options.context) {
 					options.context = {};
 				}
-				options.context.pluginId = context.pluginId;
-				options.context.instanceId = context.instanceId;
+				options.context.pluginId = context?.pluginId;
+				options.context.instanceId = context?.instanceId;
+				if (!options.tags) {
+					options.tags = [];
+				}
+				options.tags.push('sdk');
 				const p = new Packet(null, 'logger.log', options);
 				buildfire._sendPacket(p, callback);
 			});
@@ -323,6 +343,8 @@ var buildfire = {
 				}
 			});
 		}
+		//init logger
+		buildfire.logger.init();
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
