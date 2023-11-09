@@ -187,7 +187,10 @@ var buildfire = {
 					, ' Column: ' + event.colno, ' StackTrace: ' + event.error && event.error.stack ? event.error && event.error.stack : "n/a");
 			});
 		},
-		log: function (options = {}, callback) {
+		log: function (options, callback) {
+			if (!options || (options && typeof options != 'object')) {
+				options = {};
+			}
 			buildfire.getContext((err, context) => {
 				if (!options.context) {
 					options.context = {};
