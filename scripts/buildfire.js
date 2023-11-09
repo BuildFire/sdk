@@ -194,10 +194,11 @@ var buildfire = {
 				}
 				options.context.pluginId = context?.pluginId;
 				options.context.instanceId = context?.instanceId;
+				options.context.pluginTitle = context?.title;
 				if (!options.tags) {
 					options.tags = [];
 				}
-				options.tags.push('sdk');
+				options.tags.push('sdkAndPlugins');
 				const p = new Packet(null, 'logger.log', options);
 				buildfire._sendPacket(p, callback);
 			});
