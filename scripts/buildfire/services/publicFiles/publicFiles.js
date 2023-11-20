@@ -6,20 +6,26 @@ if (typeof (buildfire.services.publicFiles) == 'undefined')
 	buildfire.services.publicFiles = {};
 
 buildfire.services.publicFiles.showDialog = function (options, onProgress, onComplete, callback) {
-	buildfire.eventManager.clear('publicFilesOnProgress');
-	buildfire.eventManager.clear('publicFilesOnComplete');
+	options = options || {};
+	options._operationId = new Date().getTime();
 
 	if (typeof onProgress == 'function') {
 		buildfire.eventManager.add('publicFilesOnProgress', function (data) {
-			onProgress(data);
-		}, false);
+			if(data.file && data.file._operationId === options._operationId) {
+				onProgress(data);
+			}
+		}, true);
 	}
 
 	if (typeof onComplete == 'function') {
 		buildfire.eventManager.add('publicFilesOnComplete', function (data) {
-			onComplete(data);
-		}, false);
+			if(data.file && data.file._operationId === options._operationId) {
+				onComplete(data);
+			}
+		}, true);
 	}
+
+
 
 	var p = new Packet(null, 'publicFiles.showDialog', options);
 	buildfire._sendPacket(p, callback);
@@ -49,19 +55,23 @@ buildfire.services.publicFiles._triggerOnComplete = function (data) {
 };
 
 buildfire.services.publicFiles.uploadFiles = function (files, options, onProgress, onComplete, callback) {
-	buildfire.eventManager.clear('publicFilesOnProgress');
-	buildfire.eventManager.clear('publicFilesOnComplete');
+	options = options || {};
+	options._operationId = new Date().getTime();
 
 	if (typeof onProgress == 'function') {
 		buildfire.eventManager.add('publicFilesOnProgress', function (data) {
-			onProgress(data);
-		}, false);
+			if(data.file && data.file._operationId === options._operationId) {
+				onProgress(data);
+			}
+		}, true);
 	}
 
 	if (typeof onComplete == 'function') {
 		buildfire.eventManager.add('publicFilesOnComplete', function (data) {
-			onComplete(data);
-		}, false);
+			if(data.file && data.file._operationId === options._operationId) {
+				onComplete(data);
+			}
+		}, true);
 	}
 
 	if (!options) options = {};
