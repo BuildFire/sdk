@@ -152,24 +152,30 @@
 
 .bf-wysiwyg-top img.full_width:not([width]):not([height]) {
     width: 100%;
+    max-width: 100vw;
 }
 
 .bf-wysiwyg-top img.half_width:not([width]):not([height]) {
     width: 50%;
+    max-width: 50vw;
 }
 
 .bf-wysiwyg-top img.third_width:not([width]):not([height]) {
     width: 33%;
+    max-width: 33vw;
 }
 
 .bf-wysiwyg-top img.quarter_width:not([width]):not([height]) {
     width: 25%;
+    max-width: 25vw;
 }
 
 .bf-wysiwyg-top img.fifth_width:not([width]):not([height]) {
     width: 20%;
+    max-width: 20vw;
 }
  
 .bf-wysiwyg-top img.sixth_width:not([width]):not([height]) {
     width: 16%;
+    max-width: 16vw;
 }
