@@ -393,6 +393,7 @@ var buildfire = {
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseRequested'
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 		, 'services.reportAbuse._triggerOnAdminResponse'
+		, 'geo.session.onSessionWatchChange'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
@@ -3815,6 +3816,66 @@ var buildfire = {
 		, degreesToRadians: function (degrees) {
 			return (degrees * Math.PI)/180;
 		},
+		startTracking: function(options, callback) {
+			buildfire._sendPacket(new Packet(null,'geo.startTracking', options));
+			this.onPositionChange = callback;
+		},
+		isTracking: function(options, callback) {
+			buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
+		},
+		stopTracking: function(options, callback) {
+			buildfire._sendPacket(new Packet(null,'geo.stopTracking', options), callback);
+		}
+		, session: {
+			create: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.create',options),callback);
+			},
+			delete: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.delete',options),callback);
+			},
+			addUsers: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.addUsers',options),callback);
+			},
+			removeUsers: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.removeUsers',options),callback);
+			},
+			updateInfo: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.updateInfo',options),callback);
+			},
+			get: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.get',options),callback);
+			},
+			getCurrentUserSessions: function(options, callback) {
+				buildfire._sendPacket(new Packet(null, 'geo.session.getCurrentUserSessions', options), callback);
+			},
+			enableTracking : function (options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.enableTracking', options));
+			},
+			disableTracking : function (options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.disableTracking', options));
+			},
+			startSessionWatch: function(options, callback) {
+				options.watchId = buildfire.getContext().instanceId + '-' + options.sessionId;
+				buildfire._sendPacket(new Packet(null,'geo.session.startSessionWatch', options), (err, res) => {
+					if (err) callback(err, null);
+				});
+				this.onSessionWatchChange = ({watchId, session}) =>  {
+				if (watchId == options.watchId) {
+					callback(null, session);
+				}
+				};
+			},
+			// override this to listen to session watch changes
+			onSessionWatchChange: function(err, res) {
+			},
+			stopWatch: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.stopUsersWatch', options), callback);
+			},
+		},
+		// for testing only, to be removed, todo
+		_updateLastKnownLocation: function(options, callback) {
+			buildfire._sendPacket(new Packet(null,'geo._updateLastKnownLocation', options), callback);
+		}
 	}
 	, localStorage : {
 		setItem: function(key,value,callback) {
