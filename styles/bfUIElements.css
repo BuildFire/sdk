@@ -149,3 +149,27 @@
 .bf-wysiwyg-top h6, h6.bf-wysiwyg-top {
     color: var(--bf-theme-header-text);
 }
+
+.bf-wysiwyg-top img.full_width:not([width]):not([height]) {
+    width: 100%;
+}
+
+.bf-wysiwyg-top img.half_width:not([width]):not([height]) {
+    width: 50%;
+}
+
+.bf-wysiwyg-top img.third_width:not([width]):not([height]) {
+    width: 33%;
+}
+
+.bf-wysiwyg-top img.quarter_width:not([width]):not([height]) {
+    width: 25%;
+}
+
+.bf-wysiwyg-top img.fifth_width:not([width]):not([height]) {
+    width: 20%;
+}
+ 
+.bf-wysiwyg-top img.sixth_width:not([width]):not([height]) {
+    width: 16%;
+}
