@@ -393,7 +393,7 @@ var buildfire = {
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseRequested'
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 		, 'services.reportAbuse._triggerOnAdminResponse'
-		, 'geo.session.onSessionWatchChange'
+		, 'geo.session._triggerOnSessionWatchChange'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
@@ -3818,7 +3818,9 @@ var buildfire = {
 		},
 		startTracking: function(options, callback) {
 			buildfire._sendPacket(new Packet(null,'geo.startTracking', options));
-			this.onPositionChange = callback;
+			this.onPositionChange = (position) => {
+				callback(null, {position: position});
+			} 
 		},
 		isTracking: function(options, callback) {
 			buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
@@ -3848,25 +3850,28 @@ var buildfire = {
 			getCurrentUserSessions: function(options, callback) {
 				buildfire._sendPacket(new Packet(null, 'geo.session.getCurrentUserSessions', options), callback);
 			},
-			enableTracking : function (options, callback) {
-				buildfire._sendPacket(new Packet(null,'geo.session.enableTracking', options));
+			enableTracking: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.enableTracking', options), callback);
 			},
-			disableTracking : function (options, callback) {
-				buildfire._sendPacket(new Packet(null,'geo.session.disableTracking', options));
+			disableTracking: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.disableTracking', options), callback);
 			},
 			startSessionWatch: function(options, callback) {
-				options.watchId = buildfire.getContext().instanceId + '-' + options.sessionId;
+				const generatedWatchId = buildfire.getContext().instanceId + '-' + options.sessionId;
+				options.watchId = generatedWatchId;
 				buildfire._sendPacket(new Packet(null,'geo.session.startSessionWatch', options), (err, res) => {
 					if (err) callback(err, null);
 				});
-				this.onSessionWatchChange = ({watchId, session}) =>  {
-				if (watchId == options.watchId) {
-					callback(null, session);
-				}
-				};
+
+				buildfire.eventManager.add('onSessionWatchChange', function ({watchId, session}) {
+					let sessionWatchId = generatedWatchId;
+					if (watchId == sessionWatchId) {
+						callback(null, session);
+					}
+				}, true);
 			},
-			// override this to listen to session watch changes
-			onSessionWatchChange: function(err, res) {
+			_triggerOnSessionWatchChange: function(data) {
+				buildfire.eventManager.trigger('onSessionWatchChange', data);
 			},
 			stopWatch: function(options, callback) {
 				buildfire._sendPacket(new Packet(null,'geo.stopUsersWatch', options), callback);
