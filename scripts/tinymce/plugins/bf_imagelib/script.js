@@ -107,7 +107,7 @@ document.getElementById('responsiveOptions').onclick = (event) => {
 function getresizedImage () {
     let widgetImageExpression = '';
     const size = fixed.checked ? fixedValue : responsiveValue;
-    const widgetImageClass = size.includes('_') ? size : '';
+    const widgetImageClass = size.includes('_') && !fixed.checked ? size : '';
     // Any changes here should be compatible with SDK context.resizeImage
     if (resize.checked) {
         resizedImage = window.parent.buildfire.imageLib.resizeImage(imageUrl, {
@@ -157,7 +157,7 @@ window.addEventListener('message', function (event) {
     } else {
         imageData.widgetImageExpression = '${buildfire.imageLib.cropImage(\'' + imageUrl + '\', { size: \'' + imageSize + '\', aspect: \'' + cropAspectRatio + '\'' +  '})}';
     }
-    imageData.widgetImageClass = imageSize.includes('_') ? imageSize : '';
+    imageData.widgetImageClass = imageSize.includes('_') && !fixed.checked ? imageSize : '';
     if (event.data.message === 'getImage') {
         window.parent.postMessage({
             mceAction: 'setImage',

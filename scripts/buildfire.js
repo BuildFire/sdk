@@ -4239,6 +4239,7 @@ var buildfire = {
 									}
 								};
 								const _restoreCursorPosition = () => { // This function works with sync functionality
+									editor.selection.collapse(); // to prevent content removal
 									editor.execCommand('mceInsertContent', false, '<span id="temp-cursor-position"></span>');
 									setTimeout(() => {
 										const tempElement = editor.dom.select('#temp-cursor-position')[0];
