@@ -77,7 +77,6 @@ buildfire.gamify.Scoreboard.prototype = {
 		buildfire.publicData.get(this.tagName, function (err, result) {
 			function logError(err){
 				if(err){
-					debugger;
 					callback(err);
 				}
 			}

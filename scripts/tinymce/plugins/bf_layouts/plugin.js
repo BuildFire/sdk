@@ -227,7 +227,7 @@ tinymce.PluginManager.add('bf_layouts', function (editor, url) {
 				}
 				if (expressionField.attribute) {
 					if (expressionField.attribute == 'src' && layoutTargetElement.nodeName == 'IMG') {
-						if (expression.search(/\${[^{}]*}/) > -1) {
+						if (expression.search(/\${[^$]*}/) > -1) {
 							layoutTargetElement.setAttribute('data-expr-src', expression);
 						} else {
 							layoutTargetElement.removeAttribute('data-expr-src');

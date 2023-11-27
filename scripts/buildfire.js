@@ -2703,6 +2703,9 @@ var buildfire = {
 					get fourth_width() {
 						return this.findNearest(4);
 					},
+					get quarter_width() {
+						return this.findNearest(4);
+					},
 					get fifth_width() {
 						return this.findNearest(5);
 					},
@@ -2711,7 +2714,7 @@ var buildfire = {
 					},
 					findNearest: function (ratio) {
 						var match = null;
-						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_' < -1));
+						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_') == -1);
 
 						for (size of sizes) {
 							if ((window.innerWidth / ratio) < this[size]) {
@@ -3962,7 +3965,7 @@ var buildfire = {
 		onReceivedWidgetContextRequest(options, callback) {
 			buildfire.dynamic.expressions._prepareContext(null, (err, result) => {
 				if (err) return callback(err);
-				callback(null , result);
+				callback(null , buildfire.dynamic.expressions._cleanseContext(result));
 			});
 		},
 		triggerContextChange(options) {
@@ -4023,8 +4026,9 @@ var buildfire = {
 					const { appId, appTheme, pluginId } = buildfire.getContext();
 					buildfire.auth.getCurrentUser((err, appUser) => {
 						if (err) return callback(err);
-						const context = { appUser, appId, appTheme, pluginId };
-						buildfire.dynamic.expressions._mergeContext({context}, callback);
+						const expressionsContext = { appUser, appId, appTheme, pluginId };
+
+						buildfire.dynamic.expressions._mergeContext({context: expressionsContext}, callback);
 					});
 				}
 			},
@@ -4036,6 +4040,16 @@ var buildfire = {
 				} else {
 					callback(null, context);
 				}
+			},
+			_cleanseContext(context) {
+				let cleansedContext = {};
+				Object.keys(context).forEach(key => {
+					if (typeof context[key] !== 'function' ) {
+						cleansedContext[key] = context[key];
+					}
+				});
+				cleansedContext.sdk = null;
+				return cleansedContext;
 			},
 			_dynamicEngineQueue: [],
 			_htmlContainers: {},
@@ -4225,6 +4239,7 @@ var buildfire = {
 									}
 								};
 								const _restoreCursorPosition = () => { // This function works with sync functionality
+									editor.selection.collapse(); // to prevent content removal
 									editor.execCommand('mceInsertContent', false, '<span id="temp-cursor-position"></span>');
 									setTimeout(() => {
 										const tempElement = editor.dom.select('#temp-cursor-position')[0];
@@ -4233,7 +4248,7 @@ var buildfire = {
 									}, 0);
 								};
 								const checkExpressionStatus = () => {
-									if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
+									if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^$]*}/) > -1) {
 										dynamicExpressionsActivated = true;
 										_restoreCursorPosition(); // This function works with sync functionality
 										_injectExpressionNode();
@@ -4246,7 +4261,7 @@ var buildfire = {
 											editor.isNotDirty = false;
 											editor.fire('change');
 										}, 0);
-									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^$]*}/) === -1) {
 										dynamicExpressionsActivated = false;
 										_restoreCursorPosition(); // This function works with sync functionality
 										_removeExpressionNode();
