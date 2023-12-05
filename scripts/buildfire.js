@@ -3817,19 +3817,23 @@ var buildfire = {
 			return (degrees * Math.PI)/180;
 		},
 		startTracking: function(options, callback) {
-			buildfire._sendPacket(new Packet(null,'geo.startTracking', options));
+			options.instanceId = options.instanceId || buildfire.getContext()?.instanceId; // todo for testing only
+			buildfire._sendPacket(new Packet(null,'geo.startTracking', options), callback);
 			this.onPositionChange = (position) => {
 				callback(null, {position: position});
-			} 
+			}
 		},
 		isTracking: function(options, callback) {
+			options.instanceId = buildfire.getContext()?.instanceId;
 			buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
 		},
 		stopTracking: function(options, callback) {
+			options.instanceId = buildfire.getContext()?.instanceId;
 			buildfire._sendPacket(new Packet(null,'geo.stopTracking', options), callback);
 		}
 		, session: {
 			create: function(options, callback) {
+				options.instanceId = buildfire.getContext()?.instanceId;
 				buildfire._sendPacket(new Packet(null,'geo.session.create',options),callback);
 			},
 			delete: function(options, callback) {
@@ -3850,14 +3854,17 @@ var buildfire = {
 			getCurrentUserSessions: function(options, callback) {
 				buildfire._sendPacket(new Packet(null, 'geo.session.getCurrentUserSessions', options), callback);
 			},
-			enableTracking: function(options, callback) {
-				buildfire._sendPacket(new Packet(null,'geo.session.enableTracking', options), callback);
+			enableTrackability: function(options, callback) {
+				options.isTrackable = true;
+				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
 			},
-			disableTracking: function(options, callback) {
-				buildfire._sendPacket(new Packet(null,'geo.session.disableTracking', options), callback);
+			disableTrackability: function(options, callback) {
+				options.isTrackable = false;
+				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
 			},
-			startSessionWatch: function(options, callback) {
-				const generatedWatchId = buildfire.getContext().instanceId + '-' + options.sessionId;
+			startWatch: function(options, callback) {
+				const generatedWatchId = buildfire.getContext()?.instanceId + '-' + options.sessionId + '-' + Date.now();
+				options.instanceId = buildfire.getContext()?.instanceId;
 				options.watchId = generatedWatchId;
 				buildfire._sendPacket(new Packet(null,'geo.session.startSessionWatch', options), (err, res) => {
 					if (err) callback(err, null);
@@ -3866,7 +3873,7 @@ var buildfire = {
 				buildfire.eventManager.add('onSessionWatchChange', function ({watchId, session}) {
 					let sessionWatchId = generatedWatchId;
 					if (watchId == sessionWatchId) {
-						callback(null, session);
+						callback(null, {session: session, watchId: watchId});
 					}
 				}, true);
 			},
@@ -3874,7 +3881,7 @@ var buildfire = {
 				buildfire.eventManager.trigger('onSessionWatchChange', data);
 			},
 			stopWatch: function(options, callback) {
-				buildfire._sendPacket(new Packet(null,'geo.stopUsersWatch', options), callback);
+				buildfire._sendPacket(new Packet(null,'geo.session.stopSessionWatch', options), callback);
 			},
 		},
 		// for testing only, to be removed, todo
