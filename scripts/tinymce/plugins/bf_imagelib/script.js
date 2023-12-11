@@ -105,21 +105,26 @@ document.getElementById('responsiveOptions').onclick = (event) => {
 }
 
 function getresizedImage () {
-    let size = fixed.checked ? fixedValue : responsiveValue;
+    let widgetImageExpression = '';
+    const size = fixed.checked ? fixedValue : responsiveValue;
+    const widgetImageClass = size.includes('_') && !fixed.checked ? size : '';
+    // Any changes here should be compatible with SDK context.resizeImage
     if (resize.checked) {
         resizedImage = window.parent.buildfire.imageLib.resizeImage(imageUrl, {
             size: size,
             aspect: "1:1",
         });
+         widgetImageExpression = '${buildfire.imageLib.resizeImage(\'' + imageUrl + '\', { size: \'' + size + '\', aspect: \'1:1\' })}';
     } else {
         resizedImage = window.parent.buildfire.imageLib.cropImage(imageUrl, {
             size: size,
             aspect: cropAspectRatio,
         });
+        widgetImageExpression = '${buildfire.imageLib.cropImage(\'' + imageUrl + '\', { size: \'' + size + '\', aspect: \'' + cropAspectRatio + '\'' + '})}';
     }
     let img = `<img width="${
         fixed.checked ? fixedOptions[fixedValue] : ""
-    }" src="${resizedImage}" />`
+    }" src="${resizedImage}" expr-src="${widgetImageExpression}" class="${widgetImageClass}" />`
     document.getElementById('imageDiv').innerHTML = "";
     document.getElementById('imageDiv').innerHTML= img;
 }
@@ -146,6 +151,13 @@ window.addEventListener('message', function (event) {
         alt: imageDescription,
         imageAspects: stringifiedImageAspects
     }
+    const imageSize = fixed.checked ? fixedValue : responsiveValue;
+    if (resize.checked) {
+        imageData.widgetImageExpression = '${buildfire.imageLib.resizeImage(\'' + imageUrl + '\', { size: \'' + imageSize + '\', aspect: \'1:1\' })}';
+    } else {
+        imageData.widgetImageExpression = '${buildfire.imageLib.cropImage(\'' + imageUrl + '\', { size: \'' + imageSize + '\', aspect: \'' + cropAspectRatio + '\'' +  '})}';
+    }
+    imageData.widgetImageClass = imageSize.includes('_') && !fixed.checked ? imageSize : '';
     if (event.data.message === 'getImage') {
         window.parent.postMessage({
             mceAction: 'setImage',

@@ -211,6 +211,9 @@ tinymce.PluginManager.add('bf_layouts', function (editor, url) {
 			let repeatedElement = layoutWrapperElement.querySelector(layoutData.repeatedSelector);
 			if (repeatedElement) {
 				repeatedElement.setAttribute('buildfire-repeat', `layoutItem in ${repeaterArray}`);
+				// remove followed non repeating elements when the original layout has multiple (grid for example) to allow repeating of one only  
+				let nonRepeatingElements = layoutWrapperElement.querySelectorAll(layoutData.repeatedSelector + ':not([buildfire-repeat])');
+				nonRepeatingElements.forEach(el => el.remove());
 			} else if (layoutData.repeatedSelector == `div#${layoutData.id}`) {
 				layoutWrapperElement.setAttribute('buildfire-repeat', `layoutItem in ${repeaterArray}`);
 			}
@@ -224,7 +227,7 @@ tinymce.PluginManager.add('bf_layouts', function (editor, url) {
 				}
 				if (expressionField.attribute) {
 					if (expressionField.attribute == 'src' && layoutTargetElement.nodeName == 'IMG') {
-						if (expression.search(/\${[^{}]*}/) > -1) {
+						if (expression.search(/\${[^$]*}/) > -1) {
 							layoutTargetElement.setAttribute('data-expr-src', expression);
 						} else {
 							layoutTargetElement.removeAttribute('data-expr-src');

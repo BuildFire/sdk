@@ -1,7 +1,8 @@
-#bf_mce_layout_7 * > span{
+#bf_mce_layout_7 *>span {
   color: currentColor;
 }
-#bf_mce_layout_7{
+
+#bf_mce_layout_7 {
   font-size: 16px !important;
 
   line-height: 1.5;
@@ -14,7 +15,8 @@
   margin-top: calc(120px + 1em);
   text-align: center;
 }
-#bf_mce_layout_7 .bf_mce_img-container{
+
+#bf_mce_layout_7 .bf_mce_img-container {
   border-radius: .5em;
   width: 240px;
   height: 240px;
@@ -25,16 +27,18 @@
   overflow: hidden;
   min-height: 12em;
   position: absolute;
-  
+
 }
-#bf_mce_layout_7 .bf_mce_img-container .bf_mce_img-copy{
+
+#bf_mce_layout_7 .bf_mce_img-container .bf_mce_img-copy {
   margin: 1rem;
   text-align: center;
   color: #fff;
   position: relative;
   z-index: 2;
 }
-#bf_mce_layout_7 .bf_mce_img-container > img{
+
+#bf_mce_layout_7 .bf_mce_img-container>img {
   position: absolute;
   top: 0;
   left: 0;
@@ -43,7 +47,8 @@
   object-fit: cover;
   z-index: 0;
 }
-#bf_mce_layout_7 .bf_mce_img-container::after{
+
+#bf_mce_layout_7 .bf_mce_img-container::after {
   content: '';
   width: 100%;
   height: 100%;
@@ -54,21 +59,42 @@
   pointer-events: none;
   z-index: 1;
 }
+
 #bf_mce_layout_7 .bf_mce_img-container .bf_mce_main-title,
-#bf_mce_layout_7 .bf_mce_img-container .bf_mce_main-title > span{
+#bf_mce_layout_7 .bf_mce_img-container .bf_mce_main-title>span {
   margin-bottom: 0;
   padding-top: 3em;
   font-size: 1.5em;
 }
-#bf_mce_layout_7 .bf_mce_img-container .bf_mce_main-title > span{
+
+#bf_mce_layout_7 .bf_mce_img-container .bf_mce_main-title>span {
   font-size: inherit;
 }
+
 #bf_mce_layout_7 .bf_mce_img-container .bf_mce_caption,
-#bf_mce_layout_7 .bf_mce_img-container .bf_mce_caption > span{
+#bf_mce_layout_7 .bf_mce_img-container .bf_mce_caption>span {
   font-size: .75em;
   margin-bottom: 6em;
   margin-top: 0;
 }
-#bf_mce_layout_7 .bf-btn{
+
+#bf_mce_layout_7 .bf-btn {
   width: 100%;
+}
+
+#bf_mce_layout_7 h1,
+#bf_mce_layout_7 h2,
+#bf_mce_layout_7 h3,
+#bf_mce_layout_7 h4,
+#bf_mce_layout_7 h5,
+#bf_mce_layout_7 h6,
+#bf_mce_layout_7 .headerTextTheme {
+  color: var(--bf-theme-header-text);
+}
+
+#bf_mce_layout_7 p,
+#bf_mce_layout_7 span,
+#bf_mce_layout_7 label,
+#bf_mce_layout_7 body {
+  color: var(--bf-theme-body-text);
 }

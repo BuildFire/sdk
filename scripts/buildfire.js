@@ -156,6 +156,55 @@ var buildfire = {
 			script.id = 'BuildFireAppDebuggerScript';
 			header.appendChild(script);
 
+		},
+		init: function () {
+			const originalConsoleError = console.error;
+			console.error = function (...args) {
+				if (args && args[0]) {
+					buildfire.logger.log({
+						message: typeof args[0] == "string" ? args[0] : "no error message provided.",
+						data: args.length > 1 ? {...args} : undefined,
+						level: "error",
+						category: "ConsoleError"
+					});
+				}
+				originalConsoleError(...args);
+			};
+			window.addEventListener("error", (event) => {
+				buildfire.logger.log({
+					message: event.message,
+					level: "error",
+					category: "BrowserJsException",
+					exception: {
+						colno: event.colno,
+						lineno: event.lineno,
+						message: event.message,
+						stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
+						url: event.filename
+					}
+				});
+				originalConsoleError('Error: ' + event.message, ' Script: ' + event.filename, ' Line: ' + event.lineno
+					, ' Column: ' + event.colno, ' StackTrace: ' + event.error && event.error.stack ? event.error && event.error.stack : "n/a");
+			});
+		},
+		log: function (options, callback) {
+			if (!options || (options && typeof options != 'object')) {
+				options = {};
+			}
+			buildfire.getContext((err, context) => {
+				if (!options.context) {
+					options.context = {};
+				}
+				options.context.pluginId = context?.pluginId;
+				options.context.instanceId = context?.instanceId;
+				options.context.pluginTitle = context?.title;
+				if (!options.tags) {
+					options.tags = [];
+				}
+				options.tags.push('sdkAndPlugins');
+				const p = new Packet(null, 'logger.log', options);
+				buildfire._sendPacket(p, callback);
+			});
 		}
 	}
 	, _callbacks: {}
@@ -300,8 +349,8 @@ var buildfire = {
 				}
 			});
 		}
-
-
+		//init logger
+		buildfire.logger.init();
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -2654,6 +2703,9 @@ var buildfire = {
 					get fourth_width() {
 						return this.findNearest(4);
 					},
+					get quarter_width() {
+						return this.findNearest(4);
+					},
 					get fifth_width() {
 						return this.findNearest(5);
 					},
@@ -2662,7 +2714,7 @@ var buildfire = {
 					},
 					findNearest: function (ratio) {
 						var match = null;
-						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_' < -1));
+						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_') == -1);
 
 						for (size of sizes) {
 							if ((window.innerWidth / ratio) < this[size]) {
@@ -3913,7 +3965,7 @@ var buildfire = {
 		onReceivedWidgetContextRequest(options, callback) {
 			buildfire.dynamic.expressions._prepareContext(null, (err, result) => {
 				if (err) return callback(err);
-				callback(null , result);
+				callback(null , buildfire.dynamic.expressions._cleanseContext(result));
 			});
 		},
 		triggerContextChange(options) {
@@ -3974,8 +4026,9 @@ var buildfire = {
 					const { appId, appTheme, pluginId } = buildfire.getContext();
 					buildfire.auth.getCurrentUser((err, appUser) => {
 						if (err) return callback(err);
-						const context = { appUser, appId, appTheme, pluginId };
-						buildfire.dynamic.expressions._mergeContext({context}, callback);
+						const expressionsContext = { appUser, appId, appTheme, pluginId };
+
+						buildfire.dynamic.expressions._mergeContext({context: expressionsContext}, callback);
 					});
 				}
 			},
@@ -3987,6 +4040,16 @@ var buildfire = {
 				} else {
 					callback(null, context);
 				}
+			},
+			_cleanseContext(context) {
+				let cleansedContext = {};
+				Object.keys(context).forEach(key => {
+					if (typeof context[key] !== 'function' ) {
+						cleansedContext[key] = context[key];
+					}
+				});
+				cleansedContext.sdk = null;
+				return cleansedContext;
 			},
 			_dynamicEngineQueue: [],
 			_htmlContainers: {},
@@ -4176,6 +4239,7 @@ var buildfire = {
 									}
 								};
 								const _restoreCursorPosition = () => { // This function works with sync functionality
+									editor.selection.collapse(); // to prevent content removal
 									editor.execCommand('mceInsertContent', false, '<span id="temp-cursor-position"></span>');
 									setTimeout(() => {
 										const tempElement = editor.dom.select('#temp-cursor-position')[0];
@@ -4184,7 +4248,7 @@ var buildfire = {
 									}, 0);
 								};
 								const checkExpressionStatus = () => {
-									if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) > -1) {
+									if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^$]*}/) > -1) {
 										dynamicExpressionsActivated = true;
 										_restoreCursorPosition(); // This function works with sync functionality
 										_injectExpressionNode();
@@ -4197,7 +4261,7 @@ var buildfire = {
 											editor.isNotDirty = false;
 											editor.fire('change');
 										}, 0);
-									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^{}]*}/) === -1) {
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^$]*}/) === -1) {
 										dynamicExpressionsActivated = false;
 										_restoreCursorPosition(); // This function works with sync functionality
 										_removeExpressionNode();
@@ -5040,11 +5104,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
 document.addEventListener('resize', function (event) {
 	buildfire.appearance.autosizeContainer();
 });
-
-window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-	console.error('Error: ' + errorMsg, ' Script: ' + url, ' Line: ' + lineNumber
-		, ' Column: ' + column, ' StackTrace: ' + errorObj);
-};
 
 //IE and old Android Custom Event Fix
 if(typeof(CustomEvent) != 'function'){
