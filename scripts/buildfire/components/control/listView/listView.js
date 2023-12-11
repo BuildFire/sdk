@@ -43,7 +43,8 @@ buildfire.components.control.listView = class ControlListView {
                 star: "icon-star",
                 mapMarker: "icon-map-marker",
                 edit: "icon-pencil",
-                delete: "icon-cross2"
+                delete: "icon-cross2",
+                chart: "icon-chart-growth"
             },
             contentMappingDefault: {
                 idKey: "id",
@@ -535,7 +536,7 @@ buildfire.components.control.listView = class ControlListView {
                     preferences.actions.forEach((element) => {
                         let icon = this._state.iconPresets[element.icon] ? this._state.iconPresets[element.icon] : null
                         let button = this._createUIElement("button", `btn btn--icon icon ${element.theme} ${icon ?? ""}`, null, null);
-                        button.disabled = true;
+                        button.disabled = element.disabled;
                         button.setAttribute("data-actionId", element.actionId);
                         actionsDiv.appendChild(button);
                     });
