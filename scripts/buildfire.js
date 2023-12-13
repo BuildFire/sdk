@@ -3820,24 +3820,57 @@ var buildfire = {
 			return (degrees * Math.PI)/180;
 		},
 		startTracking: function(options, callback) {
-			options.instanceId = options.instanceId || buildfire.getContext()?.instanceId; // todo for testing only
-			buildfire._sendPacket(new Packet(null,'geo.startTracking', options), callback);
-			this.onPositionChange = (position) => {
-				callback(null, {position: position});
-			}
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					options.instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.startTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
 		},
 		isTracking: function(options, callback) {
-			options.instanceId = buildfire.getContext()?.instanceId;
-			buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					options.instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
 		},
 		stopTracking: function(options, callback) {
-			options.instanceId = buildfire.getContext()?.instanceId;
-			buildfire._sendPacket(new Packet(null,'geo.stopTracking', options), callback);
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					options.instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.stopTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
 		}
 		, session: {
 			create: function(options, callback) {
-				options.instanceId = buildfire.getContext()?.instanceId;
-				buildfire._sendPacket(new Packet(null,'geo.session.create',options),callback);
+				buildfire.getContext((err, res) => {
+					if (err){
+						return callback(err, null);
+					}
+					if (res && res.instanceId) {
+						options.instanceId = res.instanceId;
+						buildfire._sendPacket(new Packet(null,'geo.session.create',options),callback);
+					} else {
+						callback('instanceId not found', null);
+					}
+				});
 			},
 			delete: function(options, callback) {
 				buildfire._sendPacket(new Packet(null,'geo.session.delete',options),callback);
@@ -3866,19 +3899,29 @@ var buildfire = {
 				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
 			},
 			startWatch: function(options, callback) {
-				const generatedWatchId = buildfire.getContext()?.instanceId + '-' + options.sessionId + '-' + Date.now();
-				options.instanceId = buildfire.getContext()?.instanceId;
-				options.watchId = generatedWatchId;
-				buildfire._sendPacket(new Packet(null,'geo.session.startSessionWatch', options), (err, res) => {
-					if (err) callback(err, null);
-				});
 
-				buildfire.eventManager.add('onSessionWatchChange', function ({watchId, session}) {
-					let sessionWatchId = generatedWatchId;
-					if (watchId == sessionWatchId) {
-						callback(null, {session: session, watchId: watchId});
+				buildfire.getContext((err, res) => {
+					if (err){
+						return callback(err, null);
 					}
-				}, true);
+					if (res && res.instanceId) {
+						const generatedWatchId = res.instanceId + '-' + options.sessionId + '-' + Date.now();
+						options.instanceId = res.instanceId;
+						options.watchId = generatedWatchId;
+						buildfire._sendPacket(new Packet(null,'geo.session.startSessionWatch', options), (err, res) => {
+							if (err) callback(err, null);
+						});
+
+						buildfire.eventManager.add('onSessionWatchChange', function ({watchId, session}) {
+							let sessionWatchId = generatedWatchId;
+							if (watchId == sessionWatchId) {
+								callback(null, {session: session, watchId: watchId});
+							}
+						}, true);
+					} else {
+						callback('instanceId not found', null);
+					}
+				});
 			},
 			_triggerOnSessionWatchChange: function(data) {
 				buildfire.eventManager.trigger('onSessionWatchChange', data);
