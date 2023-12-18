@@ -3825,7 +3825,7 @@ var buildfire = {
 					return callback(err, null);
 				}
 				if (res && res.instanceId) {
-					options.instanceId = res.instanceId;
+					(options || {}).instanceId = res.instanceId;
 					buildfire._sendPacket(new Packet(null,'geo.startTracking', options), callback);
 				} else {
 					callback('instanceId not found', null);
@@ -3838,7 +3838,7 @@ var buildfire = {
 					return callback(err, null);
 				}
 				if (res && res.instanceId) {
-					options.instanceId = res.instanceId;
+					(options || {}).instanceId = res.instanceId;
 					buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
 				} else {
 					callback('instanceId not found', null);
@@ -3851,7 +3851,7 @@ var buildfire = {
 					return callback(err, null);
 				}
 				if (res && res.instanceId) {
-					options.instanceId = res.instanceId;
+					(options || {}).instanceId = res.instanceId;
 					buildfire._sendPacket(new Packet(null,'geo.stopTracking', options), callback);
 				} else {
 					callback('instanceId not found', null);
@@ -3865,7 +3865,7 @@ var buildfire = {
 						return callback(err, null);
 					}
 					if (res && res.instanceId) {
-						options.instanceId = res.instanceId;
+						(options || {}).instanceId = res.instanceId;
 						buildfire._sendPacket(new Packet(null,'geo.session.create',options),callback);
 					} else {
 						callback('instanceId not found', null);
@@ -3891,11 +3891,11 @@ var buildfire = {
 				buildfire._sendPacket(new Packet(null, 'geo.session.getCurrentUserSessions', options), callback);
 			},
 			enableTrackability: function(options, callback) {
-				options.isTrackable = true;
+				(options || {}).isTrackable = true;
 				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
 			},
 			disableTrackability: function(options, callback) {
-				options.isTrackable = false;
+				(options || {}).isTrackable = false;
 				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
 			},
 			startWatch: function(options, callback) {
@@ -3903,6 +3903,9 @@ var buildfire = {
 				buildfire.getContext((err, res) => {
 					if (err){
 						return callback(err, null);
+					}
+					if (!options || !options.sessionId) {
+						return callback('please provide a valid sessionId', null);
 					}
 					if (res && res.instanceId) {
 						const generatedWatchId = res.instanceId + '-' + options.sessionId + '-' + Date.now();
