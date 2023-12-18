@@ -393,6 +393,7 @@ var buildfire = {
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseRequested'
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 		, 'services.reportAbuse._triggerOnAdminResponse'
+		, 'geo.session._triggerOnSessionWatchChange'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
@@ -3818,6 +3819,124 @@ var buildfire = {
 		, degreesToRadians: function (degrees) {
 			return (degrees * Math.PI)/180;
 		},
+		startTracking: function(options, callback) {
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					(options || {}).instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.startTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
+		},
+		isTracking: function(options, callback) {
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					(options || {}).instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
+		},
+		stopTracking: function(options, callback) {
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					(options || {}).instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.stopTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
+		}
+		, session: {
+			create: function(options, callback) {
+				buildfire.getContext((err, res) => {
+					if (err){
+						return callback(err, null);
+					}
+					if (res && res.instanceId) {
+						(options || {}).instanceId = res.instanceId;
+						buildfire._sendPacket(new Packet(null,'geo.session.create',options),callback);
+					} else {
+						callback('instanceId not found', null);
+					}
+				});
+			},
+			delete: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.delete',options),callback);
+			},
+			addUsers: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.addUsers',options),callback);
+			},
+			removeUsers: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.removeUsers',options),callback);
+			},
+			updateInfo: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.updateInfo',options),callback);
+			},
+			get: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.get',options),callback);
+			},
+			getCurrentUserSessions: function(options, callback) {
+				buildfire._sendPacket(new Packet(null, 'geo.session.getCurrentUserSessions', options), callback);
+			},
+			enableTrackability: function(options, callback) {
+				(options || {}).isTrackable = true;
+				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
+			},
+			disableTrackability: function(options, callback) {
+				(options || {}).isTrackable = false;
+				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
+			},
+			startWatch: function(options, callback) {
+
+				buildfire.getContext((err, res) => {
+					if (err){
+						return callback(err, null);
+					}
+					if (!options || !options.sessionId) {
+						return callback('please provide a valid sessionId', null);
+					}
+					if (res && res.instanceId) {
+						const generatedWatchId = res.instanceId + '-' + options.sessionId + '-' + Date.now();
+						options.instanceId = res.instanceId;
+						options.watchId = generatedWatchId;
+						buildfire._sendPacket(new Packet(null,'geo.session.startSessionWatch', options), (err, res) => {
+							if (err) callback(err, null);
+						});
+
+						buildfire.eventManager.add('onSessionWatchChange', function ({watchId, session}) {
+							let sessionWatchId = generatedWatchId;
+							if (watchId == sessionWatchId) {
+								callback(null, {session: session, watchId: watchId});
+							}
+						}, true);
+					} else {
+						callback('instanceId not found', null);
+					}
+				});
+			},
+			_triggerOnSessionWatchChange: function(data) {
+				buildfire.eventManager.trigger('onSessionWatchChange', data);
+			},
+			stopWatch: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.stopSessionWatch', options), callback);
+			},
+		},
+		// for testing only, to be removed, todo
+		_updateLastKnownLocation: function(options, callback) {
+			buildfire._sendPacket(new Packet(null,'geo._updateLastKnownLocation', options), callback);
+		}
 	}
 	, localStorage : {
 		setItem: function(key,value,callback) {
