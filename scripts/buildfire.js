@@ -394,6 +394,7 @@ var buildfire = {
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 		, 'services.reportAbuse._triggerOnAdminResponse'
 		, 'geo.session._triggerOnSessionWatchChange'
+		, 'imageLib._onImageReady'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
@@ -2743,6 +2744,21 @@ var buildfire = {
 				}
 			};
 		},
+		_getIntermediateUrl: function(options, url) {
+			if (window.location.origin.indexOf("localhost") > -1) {
+				return window.location.origin + `/intermediate-image-sdk?options=${encodeURIComponent(JSON.stringify(options))}&url=${encodeURIComponent(url)}`;
+			}
+			return url;
+		},
+		_onImageReady: function(event) {
+			// Select all images with the old URL
+			const images = document.querySelectorAll(`img[src="${event.currentImageUrl}"]`);
+
+			// Update the src attribute of each matching image
+			images.forEach(image => {
+				image.src = event.newImageUrl;
+			});
+		},
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib#buildfireimagelibshowdialogoptions-callback
 		showDialog: function (options, callback) {
 			var p = new Packet(null, 'imageLib.showDialog', options);
@@ -2823,7 +2839,7 @@ var buildfire = {
 
 			this._handleElement(element, result, callback);
 
-			return result;
+			return buildfire.imageLib._getIntermediateUrl(options, result);
 		}
 
 		, cropImage: function (url, options, element, callback) {
@@ -2888,7 +2904,7 @@ var buildfire = {
 
 			this._handleElement(element, result, callback);
 
-			return result;
+			return  buildfire.imageLib._getIntermediateUrl(options, result);
 		},
 		_handleElement: function (element, src, callback) {
 			if (!element || !src) return;
