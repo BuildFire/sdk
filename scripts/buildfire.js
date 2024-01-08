@@ -3149,7 +3149,7 @@ var buildfire = {
 		},
 		_cloudImg: {
 			isSupportedUrl: function(url) {
-				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
+				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg|webp)(?!.)/gi.test(url)));
 			},
 			constructUrl: function({width, height, url, method}) {
 				const baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
