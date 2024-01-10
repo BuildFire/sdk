@@ -16,7 +16,8 @@ buildfire.components.listView = class ListView {
 				contentMapping: null,
 				customListAction: null,
 				enableReadMore: true,
-				maxHeight: null
+				maxHeight: null,
+				enableSkeletons: true,
 			},
 			translations: {
 				readMore: 'Read More',
@@ -68,7 +69,9 @@ buildfire.components.listView = class ListView {
 		this._initializeSearchBar();
 		this._initializeHeaderContent();
 		this._loadDrawerScript('../../../scripts/buildfire/components/drawer/drawer.js');
-		this._loadSkeletonScript('../../../scripts/buildfire/components/skeleton/skeleton.js');
+		if (this.options.settings.enableSkeletons) {
+			this._loadSkeletonScript('../../../scripts/buildfire/components/skeleton/skeleton.js');
+		}
 
 		if (this.options.settings.paginationEnabled) {
 			this._state.page = this.options.settings.paginationOptions.page;
@@ -162,7 +165,9 @@ buildfire.components.listView = class ListView {
 		if (this._state.searchValue) buildfire.spinner.show();
 		else {
 			this._hideEmptyState();
-			this._showSkeletons();
+			if (this.options.settings.enableSkeletons) {
+				this._showSkeletons();
+			}
 		}
 		this._state.busy = true;
 
@@ -176,7 +181,9 @@ buildfire.components.listView = class ListView {
 				this._state.fetchNextPage = false;
 
 			if (this._state.searchValue) buildfire.spinner.hide();
-			else this._hideSkeletons();
+			else if (this.options.settings.enableSkeletons) {
+				this._hideSkeletons();
+			}
 
 			if (this._state.page !== 0)
 				this.items = [...this.items, ...items];
