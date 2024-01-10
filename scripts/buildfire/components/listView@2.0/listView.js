@@ -17,7 +17,7 @@ buildfire.components.listView = class ListView {
 				customListAction: null,
 				enableReadMore: true,
 				maxHeight: null,
-				enableSkeletons: true,
+				showSkeleton: true,
 			},
 			translations: {
 				readMore: 'Read More',
@@ -69,7 +69,7 @@ buildfire.components.listView = class ListView {
 		this._initializeSearchBar();
 		this._initializeHeaderContent();
 		this._loadDrawerScript('../../../scripts/buildfire/components/drawer/drawer.js');
-		if (this.options.settings.enableSkeletons) {
+		if (this.options.settings.showSkeleton) {
 			this._loadSkeletonScript('../../../scripts/buildfire/components/skeleton/skeleton.js');
 		}
 
@@ -165,7 +165,7 @@ buildfire.components.listView = class ListView {
 		if (this._state.searchValue) buildfire.spinner.show();
 		else {
 			this._hideEmptyState();
-			if (this.options.settings.enableSkeletons) {
+			if (this.options.settings.showSkeleton) {
 				this._showSkeletons();
 			}
 		}
@@ -181,7 +181,7 @@ buildfire.components.listView = class ListView {
 				this._state.fetchNextPage = false;
 
 			if (this._state.searchValue) buildfire.spinner.hide();
-			else if (this.options.settings.enableSkeletons) {
+			else if (this.options.settings.showSkeleton) {
 				this._hideSkeletons();
 			}
 
