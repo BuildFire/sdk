@@ -24,7 +24,6 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 	style.innerHTML += ' .lorySlides { display: inline-block;}';
 	style.innerHTML += ' .loryPercentage .lorySlides { display: block; padding: 0px;}';
 	style.innerHTML += ' .loryPercentage li { width: 100%;}';
-	style.innerHTML += ' .blurred-background-image { filter: blur(30px); position: absolute; top: 0 }';
 	style.innerHTML += ' .js_slide { text-align: center; position: relative; max-height: 380px; vertical-align: top; }';
 	style.innerHTML += ' .js_slide img { max-height: 380px; width: auto !important; margin: 0 auto }';
 	style.innerHTML += ' .js_slide.static_slide { display: none }';
@@ -477,10 +476,15 @@ buildfire.components.carousel.view.prototype = {
 			if (!err) {
 				let image = document.createElement('img');
 				let backgroundImage = document.createElement('img');
-				image.src = backgroundImage.src = result;
+				image.src = result;
+				backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+					height: Math.ceil(self.height / 20),
+					width: Math.ceil(self.width / 20),
+					blur: 40,
+				});
 				image.alt = backgroundImage.alt = item.title || '';
 				backgroundImage.className = 'blurred-background-image';
-				backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2) !important;`);
+				backgroundImage.setAttribute('style', `width: 100% !important; height: ${self.height}px; top: 50%; left: 50%; transform: translate(-50%, -50%);`);
 				slide.style.overflow = 'hidden';
 				image.style.transform = 'translateZ(0)';
 				if (self.height > 380) {
@@ -502,10 +506,15 @@ buildfire.components.carousel.view.prototype = {
 			if (!err) {
 				let image = document.createElement('img');
 				let backgroundImage = document.createElement('img');
-				image.src = backgroundImage.src = result;
+				image.src = result;
+				backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+					height: Math.ceil(self.height / 20),
+					width: Math.ceil(self.width / 20),
+					blur: 40,
+				});
 				image.alt = backgroundImage.alt = item.title || '';
 				backgroundImage.className = 'blurred-background-image';
-				backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2, 2) !important; height: 100%`);
+				backgroundImage.setAttribute('style', `width: 100% !important; height: ${self.height}px; top: 50%; left: 50%; transform: translate(-50%, -50%);`);
 				image.style.transform = 'translateZ(0)';
 				slide.setAttribute('style', `vertical-align: middle; overflow: visible;`);
 				slide.appendChild(backgroundImage);

@@ -550,11 +550,17 @@ buildfire.components.carousel.view.prototype = {
 				height: me.height
 			}, function (err, result) {
 				if (!err) {
-					image.src = backgroundImage.src = result;
+					image.src = result;
+					backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+						height: Math.ceil(me.height / 20),
+						width: Math.ceil(me.width / 20),
+						blur: 40,
+					});
 					image.alt = backgroundImage.alt = item.title || '';
 					backgroundImage.className = 'blurred-background-image';
-					backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2, 2) !important; height: 100%`);
-					image.style.transform = 'translateZ(0)';
+					backgroundImage.setAttribute('style', `width: 100% !important; height: 100% !important;`);
+					image.style.transform = 'translateZ(0);';
+					image.setAttribute('style', 'transform: translateZ(0); max-height: 100vh; object-fit: contain;');
 					slider.setAttribute('style', `display: flex; align-items: center; justify-content: center; height: ${me.height}px; overflow: hidden;`);
 					let imagesContainer = document.createElement('div');
 					imagesContainer.style.display = 'inline-block';
@@ -575,10 +581,15 @@ buildfire.components.carousel.view.prototype = {
 				height: this.height
 			}, function (err, result) {
 				if (!err) {
-					image.src = backgroundImage.src = result;
+					image.src = result;
+					backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+						height: Math.ceil(me.height / 20),
+						width: Math.ceil(me.width / 20),
+						blur: 40,
+					});
 					image.alt = backgroundImage.alt = item.title || '';
 					backgroundImage.className = 'blurred-background-image';
-					backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2) !important;`);
+					backgroundImage.setAttribute('style', `width: 100% !important; height: 100% !important;`);
 					image.style.transform = 'translateZ(0)';
 					slider.style.overflow = 'hidden';
 					if (me.height > 380) {
