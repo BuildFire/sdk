@@ -62,8 +62,6 @@
 .owl-carousel .owl-stage {
   position: relative;
   -ms-touch-action: pan-Y;
-  max-height: 100Vh;
-  height: 100%;
 }
 .owl-carousel .owl-stage:after {
   content: ".";
