@@ -373,14 +373,17 @@ buildfire.components.carousel.view.prototype = {
 	_initDimensions: function (layout) {
 		this.width = window.innerWidth;
 		layout = layout || 'WideScreen';
+		this.layout = layout;
 		if (layout == 'WideScreen') {
 			this.height = Math.ceil(9 * this.width / 16);
 		} else if (layout == 'Square') {
 			this.height = this.width;
 		} else if (layout == 'Cinema') {
 			this.height = Math.ceil(1 * this.width / 2.39);
-		} else if (layout == 'MobileScreen'){
+		} else if (layout == 'MobileScreen' || layout == 'Fit'){
 			this.height = (window.innerHeight / this.width) * this.width;
+		} else {
+			this.height = Math.ceil(9 * this.width / 16);
 		}
 
 		this.cssWidth = this.width + 'px';
@@ -542,28 +545,64 @@ buildfire.components.carousel.view.prototype = {
 		var image = document.createElement('img');
 		var backgroundImage = document.createElement('img');
 		me.$slider = $(me.selector);
-
-		buildfire.imageLib.local.cropImage(item.iconUrl, {
-			width: this.width,
-			height: this.height
-		}, function (err, result) {
-			if (!err) {
-				image.src = backgroundImage.src = result;
-				image.alt = backgroundImage.alt = item.title || '';
-				backgroundImage.className = 'blurred-background-image';
-				backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2) !important;`);
-				image.style.transform = 'translateZ(0)';
-				slider.style.overflow = 'hidden';
-				if (me.height > 380) {
-					slider.appendChild(backgroundImage);
+		if (me.layout == 'Fit') {
+			buildfire.imageLib.local.resizeImage(item.iconUrl, {
+				height: me.height
+			}, function (err, result) {
+				if (!err) {
+					image.src = result;
+					backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+						height: Math.ceil(me.height / 20),
+						width: Math.ceil(me.width / 20),
+						blur: 40,
+					});
+					image.alt = backgroundImage.alt = item.title || '';
+					backgroundImage.className = 'blurred-background-image';
+					backgroundImage.setAttribute('style', `width: 100% !important; height: 100% !important;`);
+					image.style.transform = 'translateZ(0);';
+					image.setAttribute('style', 'transform: translateZ(0); max-height: 100vh; object-fit: contain;');
+					slider.setAttribute('style', `display: flex; align-items: center; justify-content: center; height: ${me.height}px; overflow: hidden;`);
+					let imagesContainer = document.createElement('div');
+					imagesContainer.style.display = 'inline-block';
+					imagesContainer.appendChild(backgroundImage);
+					imagesContainer.appendChild(image);
+					slider.appendChild(imagesContainer);
+					me.selector.appendChild(slider);
 				}
-				slider.appendChild(image);
-				me.selector.appendChild(slider);
-			}
-			else
-				console.log('Error occurred while cropping image: ', err);
+				else
+					console.log('Error occurred while resizing image: ', err);
+	
+				callback();
+			});
+		} else {
 
-			callback();
-		});
+			buildfire.imageLib.local.cropImage(item.iconUrl, {
+				width: this.width,
+				height: this.height
+			}, function (err, result) {
+				if (!err) {
+					image.src = result;
+					backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+						height: Math.ceil(me.height / 20),
+						width: Math.ceil(me.width / 20),
+						blur: 40,
+					});
+					image.alt = backgroundImage.alt = item.title || '';
+					backgroundImage.className = 'blurred-background-image';
+					backgroundImage.setAttribute('style', `width: 100% !important; height: 100% !important;`);
+					image.style.transform = 'translateZ(0)';
+					slider.style.overflow = 'hidden';
+					if (me.height > 380) {
+						slider.appendChild(backgroundImage);
+					}
+					slider.appendChild(image);
+					me.selector.appendChild(slider);
+				}
+				else
+					console.log('Error occurred while cropping image: ', err);
+
+				callback();
+			});
+		}
 	}
 };

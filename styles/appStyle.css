@@ -885,9 +885,10 @@ nav.menu.layout7 a.notifications span.icon{
 	background:none;
 }
 .blurred-background-image {
-	filter: blur(30px);
 	position: absolute;
 	top: 0;
+	left: 0;
+	clip-path: inset(0);
 }
 
 /* Dynamic Links */
