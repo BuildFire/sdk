@@ -171,18 +171,21 @@ var buildfire = {
 				originalConsoleError(...args);
 			};
 			window.addEventListener("error", (event) => {
-				buildfire.logger.log({
-					message: event.message,
-					level: "error",
-					category: "BrowserJsException",
-					exception: {
-						colno: event.colno,
-						lineno: event.lineno,
+				// ignore 90% of errors to sample error reporting
+				if(Math.random() >= 0.9) {
+					buildfire.logger.log({
 						message: event.message,
-						stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
-						url: event.filename
-					}
-				});
+						level: "error",
+						category: "BrowserJsException",
+						exception: {
+							colno: event.colno,
+							lineno: event.lineno,
+							message: event.message,
+							stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
+							url: event.filename
+						}
+					});
+				}
 				originalConsoleError('Error: ' + event.message, ' Script: ' + event.filename, ' Line: ' + event.lineno
 					, ' Column: ' + event.colno, ' StackTrace: ' + event.error && event.error.stack ? event.error && event.error.stack : "n/a");
 			});
