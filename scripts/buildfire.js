@@ -404,10 +404,16 @@ var buildfire = {
 		}//e.origin != "null"
 
 		var packet;
-		if(typeof(e.data) == 'object')
+		if (typeof(e.data) === 'object') {
 			packet = e.data;
-		else
-			packet = JSON.parse(e.data);
+		} else {
+			try {
+				packet = JSON.parse(e.data);
+			} catch (error) {
+				console.warn(window.location.href + ' unhandled packet', packet);
+				return;
+			}
+		}
 
 		if (packet.id && buildfire._callbacks[packet.id]) {
 			buildfire._callbacks[packet.id](packet.error, packet.data);
@@ -440,6 +446,7 @@ var buildfire = {
 			//alert('parent sent: ' + packet.data);
 		}
 	}
+
 	//, _resendAttempts:0
 	, _sendPacket: function (packet, callback) {
 		if (typeof (callback) != 'function')// handels better on response
