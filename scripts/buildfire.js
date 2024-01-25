@@ -401,7 +401,7 @@ var buildfire = {
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
 			return;
-		}//e.origin != "null"
+		}
 
 		var packet;
 		if (typeof(e.data) === 'object') {
@@ -410,7 +410,16 @@ var buildfire = {
 			try {
 				packet = JSON.parse(e.data);
 			} catch (error) {
-				console.warn(window.location.href + ' unhandled packet', packet);
+				buildfire.getContext(function (err, { pluginId, instanceId, title }) {
+					let data = {
+						origin: e.origin,
+						data: e.data,
+						pluginId,
+						instanceId,
+						title
+					};
+					console.warn('ignored malformed packet', data);
+				});
 				return;
 			}
 		}
@@ -443,7 +452,6 @@ var buildfire = {
 		}
 		else {
 			console.warn(window.location.href + ' unhandled packet', packet);
-			//alert('parent sent: ' + packet.data);
 		}
 	}
 
