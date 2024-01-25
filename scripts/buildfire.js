@@ -171,18 +171,21 @@ var buildfire = {
 				originalConsoleError(...args);
 			};
 			window.addEventListener("error", (event) => {
-				buildfire.logger.log({
-					message: event.message,
-					level: "error",
-					category: "BrowserJsException",
-					exception: {
-						colno: event.colno,
-						lineno: event.lineno,
+				// ignore 90% of errors to sample error reporting
+				if(Math.random() >= 0.9) {
+					buildfire.logger.log({
 						message: event.message,
-						stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
-						url: event.filename
-					}
-				});
+						level: "error",
+						category: "BrowserJsException",
+						exception: {
+							colno: event.colno,
+							lineno: event.lineno,
+							message: event.message,
+							stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
+							url: event.filename
+						}
+					});
+				}
 				originalConsoleError('Error: ' + event.message, ' Script: ' + event.filename, ' Line: ' + event.lineno
 					, ' Column: ' + event.colno, ' StackTrace: ' + event.error && event.error.stack ? event.error && event.error.stack : "n/a");
 			});
@@ -2823,6 +2826,7 @@ var buildfire = {
 			}
 			let width;
 			let height;
+			let blur;
 			// check for missing size or aspect
 			if (options.width && !options.height) {
 				width = Math.floor(options.width * ratio);
@@ -2834,8 +2838,11 @@ var buildfire = {
 				width = Math.floor(options.width * ratio);
 				height = Math.floor(options.height * ratio);
 			}
+			if (options.blur) {
+				blur = options.blur;
+			}
 
-			let result = imageCdnHandler.constructUrl({width, height, url, method: 'resize'});
+			let result = imageCdnHandler.constructUrl({width, height, url, blur, method: 'resize'});
 
 			this._handleElement(element, result, callback);
 
@@ -2899,8 +2906,12 @@ var buildfire = {
 
 			let width = Math.floor(options.width * ratio);
 			let height = Math.floor(options.height * ratio);
+			let blur;
+			if (options.blur) {
+				blur = options.blur;
+			}
 
-			let result = imageCdnHandler.constructUrl({width, height, url, method: 'crop'});
+			let result = imageCdnHandler.constructUrl({width, height, url, blur, method: 'crop'});
 
 			this._handleElement(element, result, callback);
 
@@ -3165,14 +3176,14 @@ var buildfire = {
 		},
 		_cloudImg: {
 			isSupportedUrl: function(url) {
-				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
+				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg|webp)(?!.)/gi.test(url)));
 			},
-			constructUrl: function({width, height, url, method}) {
+			constructUrl: function({width, height, url, blur, method}) {
 				const baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
 				const hasQueryString = url.indexOf('?') !== -1;
 				if (width || height) {
 					const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'func=crop': 'func=bound') + '&width=' + width + '&height=' + height + (isDevMode ? '&ci_info=1' : '');
+					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'func=crop': 'func=bound') + '&width=' + width + '&height=' + height + (blur ? '&blur=' + blur : '') + (isDevMode ? '&ci_info=1' : '');
 				}
 				return url;
 			},
