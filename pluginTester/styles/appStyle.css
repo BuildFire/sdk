@@ -5220,6 +5220,13 @@ button.list-group-item {
 	margin-left: 1rem;
 	max-height: calc(7vh - 14px);
 }
+.playback-addon-close-icon {
+	height: 45px;
+	margin-left: 0;
+	padding-left: 1.75rem;
+	min-height: 18px;
+	max-height: calc(7vh - 30px);
+}
 .navbar-playback-addon .playback-progress-bar-container {
 	height: 2px;
 	position: absolute;
