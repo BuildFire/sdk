@@ -5029,14 +5029,34 @@ var buildfire = {
 				}
 			};
 
-			const targetNode = document.body;
-			// Options for the observer (which mutations to observe)
-			// attributes should be false >> performance issues
-			const config = { childList: true, subtree: true, attributes: false };
-			// Create an observer instance linked to the callback function
-			const observer = new MutationObserver(callback);
-			// Start observing the target node for configured mutations
-			observer.observe(targetNode, config);
+			let observe = function (targetNode) {
+				// Options for the observer (which mutations to observe)
+				// attributes should be false >> performance issues
+				const config = { childList: true, subtree: true, attributes: false };
+				// Create an observer instance linked to the callback function
+				const observer = new MutationObserver(callback);
+				// Start observing the target node for configured mutations
+				observer.observe(targetNode, config);
+			};
+
+			if (document.body != null) {
+				observe(document.body);
+			} else {
+				let currentTrial = 0;
+				function checkTargetNode() {
+					if (document.body) {
+						console.info(`document.body found at trial ${currentTrial + 1}`);
+						clearInterval(intervalId);
+						observe(document.body);
+					} else {
+						if (++currentTrial >= 10) {
+							clearInterval(intervalId);
+							console.warn("max trials reached. Unable to find document.body to observe.");
+						}
+					}
+				}
+				let intervalId = setInterval(checkTargetNode, 250);
+			}
 		}
 		,
 		onStringsReady: function (callback, allowMultipleHandlers) {
