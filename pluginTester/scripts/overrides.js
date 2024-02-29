@@ -124,6 +124,8 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		return false;
 	};
 
+	postMaster.widgetPluginAPI.spinner = window.spinner;
+
 	postMaster.controlPluginAPI.analytics.trackAction = postMaster.widgetPluginAPI.analytics.trackAction = function (actionName, metadata) {
 		console.log('analytics mock track action [' + actionName + ']', metadata);
 	};
@@ -151,8 +153,14 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		};
 	}
 
+	console.log('postMaster initialized');
+
 	///override the authAPI.getCurrentUser to return auth
 	authAPI.secondaryUserLookup = function () {
+		if (isOriginatingFromApp()) {
+			return null;
+		}
+
 		if(!window.currentUser || !window.currentUser.userToken || !window.currentUser.auth)
 			return null;
 
@@ -177,6 +185,19 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	};
 	///
 
+	let isOriginatingFromApp = function() {
+		const error = new Error();
+		const stackLines = error.stack.split('\n');
+
+		for (const line of stackLines) {
+			if (line.indexOf("appOverrides.js") > 0) {
+				console.debug("request originated from app side");
+				return true;
+			}
+		}
+		return false;
+	}
+
 	window.keyboardResize  = function() {}; // works for ios only
 
 	//override the imageLibTemplate url
@@ -195,7 +216,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 
 /**
  * Created by Rami Hadi.
- * description : this is a Dummy secition just used to mock things to work like in the CP
+ * description : this is a Dummy section just used to mock things to work like in the CP
  */
 $app.service('$analytics', [ function () {
 

@@ -45,6 +45,7 @@ $app.run(function () {
 	var appUser;
 	if(window.appContext && window.appContext.currentApp && window.appContext.currentApp.appId) {
 		var appId = window.appContext.currentApp.appId;
+		window.currentAppId = appId;
 		appUser = localStorage.getItem(appId + '-AUTH_CURRENT_USER');
 	}
 	if (appUser) {
@@ -92,7 +93,7 @@ window.spinner = {
 				clearTimeout(window.spinner.hideTimer);
 			}
 		}
-		
+
 	},
 	show: function(options) {
 		console.log('show', { hideCount: window.spinner.hideCount });
