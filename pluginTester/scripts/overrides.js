@@ -191,7 +191,6 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 
 		for (const line of stackLines) {
 			if (line.indexOf("appOverrides.js") > 0) {
-				console.debug("request originated from app side");
 				return true;
 			}
 		}
