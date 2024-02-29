@@ -153,8 +153,6 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		};
 	}
 
-	console.log('postMaster initialized');
-
 	///override the authAPI.getCurrentUser to return auth
 	authAPI.secondaryUserLookup = function () {
 		if (isOriginatingFromApp()) {
