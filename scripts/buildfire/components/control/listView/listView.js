@@ -43,7 +43,8 @@ buildfire.components.control.listView = class ControlListView {
                 star: "icon-star",
                 mapMarker: "icon-map-marker",
                 edit: "icon-pencil",
-                delete: "icon-cross2"
+                delete: "icon-cross2",
+                chart: "icon-chart-growth"
             },
             contentMappingDefault: {
                 idKey: "id",
@@ -182,6 +183,8 @@ buildfire.components.control.listView = class ControlListView {
         let oldIndex = 0;
         this._state.sortableList = Sortable.create(this._state.itemsContainer, {
             animation: 150,
+            handle: '.icon-menu',
+            filter: '.disable-drag',
             onUpdate: (evt) => {
                 let newIndex = this._getSortableItemIndex(evt.item);
                 let tmp = this.items.splice(oldIndex, 1)[0];
@@ -196,8 +199,19 @@ buildfire.components.control.listView = class ControlListView {
                 this.onOrderChange({ items: this.items, oldIndex, newIndex });
             },
             onStart: (evt) => {
+                this._changeActionIconPointerEvents('none');
                 oldIndex = this._getSortableItemIndex(evt.item);
-            }
+            },
+            onEnd: () => {
+                this._changeActionIconPointerEvents('all');
+            },
+        });
+    }
+    // _changeActionIconPointerEvents is using to prevent filtered items to be draged
+    _changeActionIconPointerEvents(enablePointer) {
+        const actionIcons = Array.from(this._state.itemsContainer.querySelectorAll('.sortable-list-item-actions .btn--icon'));
+        actionIcons.forEach((icon) => {
+            icon.style.pointerEvents = enablePointer;
         });
     }
 
@@ -447,7 +461,12 @@ buildfire.components.control.listView = class ControlListView {
         itemRow.setAttribute("arrayIndex", index);
         itemRow.className = "sortable-list-item clearfix";
 
-        let dragHandle = this._createUIElement("span", "icon icon-menu cursor-grab");
+        let sortableMenuClasses = 'icon icon-menu cursor-grab';
+        if (preferences && preferences.presetOptions && preferences.presetOptions.disableManualSorting) {
+            sortableMenuClasses += ' disabled';
+            itemRow.className += ' disable-drag';
+        }
+        let dragHandle = this._createUIElement("span", sortableMenuClasses);
         if (this.options.settings.allowDragAndDrop && this._state.showDragAndDrop)
             itemRow.appendChild(dragHandle);
 
@@ -587,8 +606,14 @@ buildfire.components.control.listView = class ControlListView {
                     preferences.actions.forEach((element) => {
                         let icon = this._state.iconPresets[element.icon] ? this._state.iconPresets[element.icon] : null
                         let button = this._createUIElement("button", `btn btn--icon icon ${element.theme} ${icon ?? ""}`, null, null);
-                        button.disabled = true;
+                        button.disabled = element.disabled;
                         button.setAttribute("data-actionId", element.actionId);
+                        
+                        if (element.tooltipText) {
+                            const tooltipSpan = this._createUIElement("span", "listview-action-tooltip border-radius-four", null, null, element.tooltipText);
+                            button.appendChild(tooltipSpan);
+                        }
+                        
                         actionsDiv.appendChild(button);
                     });
                 }
@@ -596,12 +621,24 @@ buildfire.components.control.listView = class ControlListView {
                     let button = this._createUIElement("button", "btn btn--icon icon primary " + element.icon, null, null);
                     button.disabled = preferences && preferences.presetOptions && preferences.presetOptions.disableEdit ? true : false;
                     button.setAttribute("data-actionId", element.actionId);
+                    
+                    if (preferences && preferences.presetOptions && preferences.presetOptions.editButtonTooltip) {
+                        const tooltipSpan = this._createUIElement("span", "listview-action-tooltip border-radius-four", null, null, preferences.presetOptions.editButtonTooltip);
+                        button.appendChild(tooltipSpan);
+                    }
+                    
                     actionsDiv.appendChild(button);
                 }
                 else if (element.actionId == "delete" && this.options.settings.showDeleteButton) {
                     let button = this._createUIElement("button", "btn btn--icon icon danger " + element.icon, null, null);
                     button.disabled = preferences && preferences.presetOptions && preferences.presetOptions.disableDelete ? true : false;
                     button.setAttribute("data-actionId", element.actionId);
+                    
+                    if (preferences && preferences.presetOptions && preferences.presetOptions.deleteButtonTooltip) {
+                        const tooltipSpan = this._createUIElement("span", "listview-action-tooltip border-radius-four", null, null, preferences.presetOptions.deleteButtonTooltip);
+                        button.appendChild(tooltipSpan);
+                    }
+                    
                     actionsDiv.appendChild(button);
                 }
             });

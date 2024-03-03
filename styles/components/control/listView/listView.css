@@ -66,11 +66,19 @@ h1::before {
     min-height: 62px;
 }
 
+.sortable-list-item.disable-drag {
+    pointer-events: none;
+}
+
 .sortable-list-columns {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+}
+
+.sortable-list-item.disable-drag:last-child {
+    margin: 0;
 }
 
 .sortable-list-item>.sortable-list-columns {
@@ -206,6 +214,11 @@ h1::before {
     cursor: grab;
 }
 
+.sortable-list-item>span.icon.cursor-grab.disabled{
+    opacity: 0.4;
+    pointer-events: none;
+}
+
 .sortable-list-item>.btn--icon {
     font-size: 18px;
 }
@@ -227,17 +240,62 @@ h1::before {
 }
 
 .sortable-list-item>.sortable-list-item-actions>.btn--icon {
-    display: flex !important;
+    pointer-events: all;
+    position: relative;
+    color: var(--c-info);
 }
 
-.sortable-list-item>.sortable-list-item-actions>.btn--icon.primary:hover {
+.sortable-list-item>.sortable-list-item-actions>.btn--icon.primary:not([disabled]):hover {
     background-color: buttonface;
     color: var(--c-primary)
 }
 
-.sortable-list-item>.sortable-list-item-actions>.btn--icon.danger:hover {
+.sortable-list-item>.sortable-list-item-actions>.btn--icon.danger:not([disabled]):hover {
     background-color: buttonface;
     color: var(--c-danger);
+}
+
+.sortable-list-item>.sortable-list-item-actions>.btn--icon[disabled]{
+    pointer-events: all;
+    cursor: default;
+    opacity: 1;
+    color: var(--c-gray4);
+}
+
+.sortable-list-item>.sortable-list-item-actions>.btn--icon>.listview-action-tooltip{
+    pointer-events: none;
+    background: #000000CC;
+    color: var(--c-white);
+    padding: 8px;
+    position: absolute;
+    right: 100%;
+    top: 10%;
+    cursor: auto;
+    font-size: 12px;
+    opacity: 0;
+    transform: scale(.1);
+    transition: opacity ease .1s, transform ease .1s;
+    transform-origin: right;
+    font-weight: 400;
+    line-height: 18px;
+    -webkit-text-stroke: 0;
+}
+
+.sortable-list-item>.sortable-list-item-actions>.btn--icon>.listview-action-tooltip::before{
+    content: "";
+    position: absolute;
+    bottom: 45%;
+    right: -10px;
+    transform: rotate(270deg) translate(-50%);
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #000000CC transparent transparent transparent;
+}
+
+.sortable-list-item>.sortable-list-item-actions>.btn--icon:hover>.listview-action-tooltip{
+    opacity: 1;
+    transform: scale(1);
 }
 
 /* Search bar container */
