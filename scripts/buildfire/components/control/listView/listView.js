@@ -587,6 +587,36 @@ buildfire.components.control.listView = class ControlListView {
         this.items.forEach((item, index) => this._renderItem(item, index));
     }
 
+    reload() {
+        this._initializeHeader(true);
+        this._initializeSearchBar(true);
+        this._initializeActions(true);
+        this._state.itemsContainer.innerHTML = "";
+        // if (this.onDataRequest) {
+        //     this.onDataRequest({searchValue: '', sort: this._state.currentSortOption}, (items) => {
+        //         this.items = items;
+        //         items.forEach((item, index) => {
+        //             this._renderItem(item, index);
+        //         });
+        //     })
+        // }else {
+        //     this.items.forEach((item, index) => this._renderItem(item, index));
+        // }
+        if (this.onDataRequest) {
+            this._triggerOnDataRequested();
+        } else {
+            this._initSortableList();
+            this._toggleSortableList();
+        }
+    }
+
+    rebuild() {
+        this._initializeHeader(true);
+        this._initializeSearchBar(true);
+        this._initializeActions(true);
+        this.clear();
+    }
+
     _resetList() {
         this._state.itemsContainer.innerHTML = "";
         this.items.forEach((item, index) => this._renderItem(item, index));
