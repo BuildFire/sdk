@@ -16,7 +16,8 @@ buildfire.components.listView = class ListView {
 				contentMapping: null,
 				customListAction: null,
 				enableReadMore: true,
-				maxHeight: null
+				maxHeight: null,
+				enableSkeleton: true,
 			},
 			translations: {
 				readMore: 'Read More',
@@ -131,6 +132,7 @@ buildfire.components.listView = class ListView {
 	}
 
 	_showSkeletons() {
+		if (!this.options.settings.enableSkeleton) return;
 		let skeletonContainer = this._createUIElement('div', 'bf-skeleton-container');
 		let squareImageClass = this.options.settings.itemImage == 'square' ? 'square' : '';
 
@@ -150,6 +152,7 @@ buildfire.components.listView = class ListView {
 	}
 
 	_hideSkeletons() {
+		if (!this.options.settings.enableSkeleton) return;
 		let node = this._state.listViewItemsContainer.querySelector('.bf-skeleton-container');
 		if (node) node.remove();
 	}
@@ -445,6 +448,7 @@ buildfire.components.listView = class ListView {
 		}
 	}
 	_loadSkeletonScript(url) {
+		if (!this.options.settings.enableSkeleton) return;
 		if (!document.head)
 			throw new Error('please add head element to the document first to use Drawer component');
 
