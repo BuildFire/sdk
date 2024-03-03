@@ -77,7 +77,7 @@ buildfire.components.listView = class ListView {
 		setTimeout(() => {
 			if (this.onDataRequest) {
 				this._triggerOnDataRequested();
-			} else this._toggleEmptyState();
+			} else this._updateEmptyState();
 		}, 0);
 	}
 
@@ -123,7 +123,7 @@ buildfire.components.listView = class ListView {
 		this._state.listViewItemsContainer.classList.remove('empty_state');
 	}
 
-	_toggleEmptyState() {
+	_updateEmptyState() {
 		if (!this.options.settings.headerContent && !this.items.length) {
 			this._state.listViewItemsContainer.setAttribute('data-text', this.options.translations.emptyStateMessage);
 			this._state.listViewItemsContainer.classList.add('empty_state');
@@ -196,7 +196,7 @@ buildfire.components.listView = class ListView {
 		});
 		this.onRenderEnd({ items: items, containers: containers });
 
-		this._toggleEmptyState();
+		this._updateEmptyState();
 		if (this.options.settings.paginationEnabled && this.items.length > 0 && this.onDataRequest) {
 			const observer = new IntersectionObserver((payload) => {
 				if (!payload[0].isIntersecting) return;
@@ -400,7 +400,7 @@ buildfire.components.listView = class ListView {
 
 		this._initializeSearchBar();
 		this._initializeHeaderContent();
-		this._toggleEmptyState();
+		this._updateEmptyState()
 	}
 
 	reset() {
@@ -411,10 +411,40 @@ buildfire.components.listView = class ListView {
 		this._renderItems(items);
 	}
 
+
+	reload() {
+		if (this._state.listViewHeaderContainer) this._state.listViewHeaderContainer.remove();
+		if (this._state.listViewSearchBarContainer) this._state.listViewSearchBarContainer.remove();
+		this._initializeSearchBar();
+		this._initializeHeaderContent();
+
+		const items = this.items;
+		if (this.onDataRequest) {
+			this.onDataRequest({ searchValue: '', page: this.options?.settings?.paginationOptions?.page || 0, pageSize: this.options?.settings?.paginationOptions?.pageSize || 10 }, (items) => {
+				this.clear();
+				debugger
+				this.items = items;
+				this._renderItems(items);
+			});
+		} else {
+			this.clear();
+			this.items = items;
+			this._renderItems(items);
+		}
+	}
+
+	rebuild() {
+		if (this._state.listViewHeaderContainer) this._state.listViewHeaderContainer.remove();
+		if (this._state.listViewSearchBarContainer) this._state.listViewSearchBarContainer.remove();
+		this._initializeSearchBar();
+		this._initializeHeaderContent();
+		this.clear();
+	}
+
 	clear() {
 		this._state.listViewItemsContainer.innerHTML = '';
 		this.items = [];
-		this._toggleEmptyState();
+		this._updateEmptyState();
 	}
 
 	_createUIElement(tag, className, innerHTML = null, src = null) {
