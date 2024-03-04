@@ -402,13 +402,28 @@ var buildfire = {
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
 			return;
-		}//e.origin != "null"
+		}
 
 		var packet;
-		if(typeof(e.data) == 'object')
+		if (typeof(e.data) === 'object') {
 			packet = e.data;
-		else
-			packet = JSON.parse(e.data);
+		} else {
+			try {
+				packet = JSON.parse(e.data);
+			} catch (error) {
+				buildfire.getContext(function (err, { pluginId, instanceId, title }) {
+					let data = {
+						origin: e.origin,
+						data: e.data,
+						pluginId,
+						instanceId,
+						title
+					};
+					console.warn('ignored malformed packet', data);
+				});
+				return;
+			}
+		}
 
 		if (packet.id && buildfire._callbacks[packet.id]) {
 			buildfire._callbacks[packet.id](packet.error, packet.data);
@@ -438,9 +453,9 @@ var buildfire = {
 		}
 		else {
 			console.warn(window.location.href + ' unhandled packet', packet);
-			//alert('parent sent: ' + packet.data);
 		}
 	}
+
 	//, _resendAttempts:0
 	, _sendPacket: function (packet, callback) {
 		if (typeof (callback) != 'function')// handels better on response
@@ -5030,14 +5045,34 @@ var buildfire = {
 				}
 			};
 
-			const targetNode = document.body;
-			// Options for the observer (which mutations to observe)
-			// attributes should be false >> performance issues
-			const config = { childList: true, subtree: true, attributes: false };
-			// Create an observer instance linked to the callback function
-			const observer = new MutationObserver(callback);
-			// Start observing the target node for configured mutations
-			observer.observe(targetNode, config);
+			let observe = function (targetNode) {
+				// Options for the observer (which mutations to observe)
+				// attributes should be false >> performance issues
+				const config = { childList: true, subtree: true, attributes: false };
+				// Create an observer instance linked to the callback function
+				const observer = new MutationObserver(callback);
+				// Start observing the target node for configured mutations
+				observer.observe(targetNode, config);
+			};
+
+			if (document.body != null) {
+				observe(document.body);
+			} else {
+				let currentTrial = 0;
+				function checkTargetNode() {
+					if (document.body) {
+						console.info(`document.body found at trial ${currentTrial + 1}`);
+						clearInterval(intervalId);
+						observe(document.body);
+					} else {
+						if (++currentTrial >= 10) {
+							clearInterval(intervalId);
+							console.warn("max trials reached. Unable to find document.body to observe.");
+						}
+					}
+				}
+				let intervalId = setInterval(checkTargetNode, 250);
+			}
 		}
 		,
 		onStringsReady: function (callback, allowMultipleHandlers) {

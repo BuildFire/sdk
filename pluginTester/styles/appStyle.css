@@ -2727,12 +2727,12 @@ html:not([type="app"]) .snackbar-hero{
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	flex-wrap: wrap;
 	opacity: 0;
 	transform: scale(.1);
 	pointer-events: auto;
 	transition: opacity .15s cubic-bezier(0,0,.2,1) 0ms,transform .15s cubic-bezier(0,0,.2,1) 0ms,-webkit-transform .15s cubic-bezier(0,0,.2,1) 0ms;
 	background-color: #222;
+	padding:7px 0;
 }
 .snackbar.open{
 	opacity: 1;
@@ -2749,7 +2749,7 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar-message{
 	flex: auto;
 	word-break: break-word;
-	padding:14px 16px;
+	padding:7px 16px;
 	margin: 0;
 	color: #fff;
 }
@@ -2762,7 +2762,7 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar .btn{
 	background-color: transparent !important;
 	text-transform: uppercase;
-	height: 36px;
+	max-height: 36px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -2773,10 +2773,13 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar .btn:active{
 	opacity: .5;
 }
-.snackbar .btn.dismiss{
+
+.snackbar .btn.btn-icon {
 	width: 36px;
-	padding: 9px;
+	padding: 4px;
+	height: 100%;
 }
+
 .snackbar .btn.dismiss .icon{
 	font-size: 14px !important;
 }
@@ -2794,6 +2797,11 @@ html:not([type="app"]) .snackbar-hero{
 	margin-left: auto;
 	padding-bottom: 8px;
 }
+
+.snackbar:not(:has(.snackbar-action.hide)) { 
+	flex-wrap: wrap; 
+}
+
 .gdpr-notice{
 	z-index: 9999999991;
 }
@@ -5211,6 +5219,13 @@ button.list-group-item {
 	height: 80px;
 	margin-left: 1rem;
 	max-height: calc(7vh - 14px);
+}
+.playback-addon-close-icon {
+	height: 45px;
+	margin-left: 0;
+	padding-left: 1.75rem;
+	min-height: 18px;
+	max-height: calc(7vh - 30px);
 }
 .navbar-playback-addon .playback-progress-bar-container {
 	height: 2px;
