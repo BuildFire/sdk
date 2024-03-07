@@ -112,7 +112,12 @@ buildfire.components.control.listView = class ControlListView {
         
         setTimeout(() => {
             if (this.onDataRequest) {
-                this._state.itemsContainer.addEventListener("scroll", this._handleScroll.bind(this));
+                if (this.options.settings.paginationEnabled) {
+                    this._state.itemsContainer.addEventListener("scroll", this._handleScroll.bind(this));
+                }
+                if (this.options.settings.paginationEnabled) {
+                    this._state.page = this.options.settings.paginationOptions.page;
+                }
                 this._triggerOnDataRequested();
             } else {
                 this._initSortableList();
@@ -124,7 +129,7 @@ buildfire.components.control.listView = class ControlListView {
     _handleScroll(e) {
         if (this._state.hasMoreData && this._isScrolledToBottom(e)) {
             // Load more data when scrolled to the bottom
-            this.options.settings.paginationOptions.page++;
+            this._state.page++;
             this._loadMoreData();
         }
     }
@@ -155,14 +160,20 @@ buildfire.components.control.listView = class ControlListView {
             callbackOptions.sort = this._state.currentSortOption;
 
         if (this.options.settings.paginationEnabled){
-            callbackOptions.page = this.options.settings.paginationOptions.page;
+            callbackOptions.page = this._state.page;
             callbackOptions.pageSize = this.options.settings.paginationOptions.pageSize;
         }
 
         this.onDataRequest(callbackOptions, (items) => {
 
-            if (this._state.page !== 0){
+            if (this.options.settings.paginationEnabled && this._state.page !== 0){
                 this._state.hasMoreData  = true;
+                if (items.length > this.options.settings.paginationOptions.pageSize) {
+                    items = items.slice(0, this.options.settings.paginationOptions.pageSize);
+                    console.warn("The number of items returned is more than the page size, only the page size will be displayed");
+                } else if (items.length < this.options.settings.paginationOptions.pageSize) {
+                    this._state.hasMoreData  = false;
+                }
 				this.items = [...this.items, ...items];
             }else{
                 this._state.itemsContainer.innerHTML = "";
@@ -207,7 +218,7 @@ buildfire.components.control.listView = class ControlListView {
             },
         });
     }
-    // _changeActionIconPointerEvents is using to prevent filtered items to be draged
+    // _changeActionIconPointerEvents is using to prevent filtered items to be dragged
     _changeActionIconPointerEvents(enablePointer) {
         const actionIcons = Array.from(this._state.itemsContainer.querySelectorAll('.sortable-list-item-actions .btn--icon'));
         actionIcons.forEach((icon) => {
@@ -291,7 +302,7 @@ buildfire.components.control.listView = class ControlListView {
                 this._state.searchValue = input.value && input.value !== "" ? input.value : null;
                 if (this.onDataRequest){
                     this.clear();
-                    this.options.settings.paginationOptions.page = 0;
+                    this._state.page = 0;
                     this._triggerOnDataRequested();
                 }
                 else if (this.onSearchInput)
@@ -431,7 +442,7 @@ buildfire.components.control.listView = class ControlListView {
 
                 if (this.onDataRequest){
                     this.clear();
-                    this.options.settings.paginationOptions.page = 0;
+                    this._state.page = 0;
                     this._triggerOnDataRequested();
                 }
                 else if (this.onSortOptionChange)
@@ -610,7 +621,8 @@ buildfire.components.control.listView = class ControlListView {
                         button.setAttribute("data-actionId", element.actionId);
                         
                         if (element.tooltipText) {
-                            const tooltipSpan = this._createUIElement("span", "listview-action-tooltip border-radius-four", null, null, element.tooltipText);
+                            button.classList.add("button-tooltip-container");
+                            const tooltipSpan = this._createUIElement("span", "button-tooltip-left", null, null, element.tooltipText);
                             button.appendChild(tooltipSpan);
                         }
                         
@@ -623,7 +635,8 @@ buildfire.components.control.listView = class ControlListView {
                     button.setAttribute("data-actionId", element.actionId);
                     
                     if (preferences && preferences.presetOptions && preferences.presetOptions.editButtonTooltip) {
-                        const tooltipSpan = this._createUIElement("span", "listview-action-tooltip border-radius-four", null, null, preferences.presetOptions.editButtonTooltip);
+                        button.classList.add("button-tooltip-container");
+                        const tooltipSpan = this._createUIElement("span", "button-tooltip-left", null, null, preferences.presetOptions.editButtonTooltip);
                         button.appendChild(tooltipSpan);
                     }
                     
@@ -635,7 +648,8 @@ buildfire.components.control.listView = class ControlListView {
                     button.setAttribute("data-actionId", element.actionId);
                     
                     if (preferences && preferences.presetOptions && preferences.presetOptions.deleteButtonTooltip) {
-                        const tooltipSpan = this._createUIElement("span", "listview-action-tooltip border-radius-four", null, null, preferences.presetOptions.deleteButtonTooltip);
+                        button.classList.add("button-tooltip-container");
+                        const tooltipSpan = this._createUIElement("span", "button-tooltip-left", null, null, preferences.presetOptions.deleteButtonTooltip);
                         button.appendChild(tooltipSpan);
                     }
                     
@@ -671,17 +685,9 @@ buildfire.components.control.listView = class ControlListView {
     }
 
     reset() {
-        let items = this.items;
-        if (this.onDataRequest) {
-            this.selector.innerHTML = "";
-            this.options.settings.paginationOptions = {page : 1, pageSize: 10}
-            this.init();
-        }else{
-            this.refresh();
-            this.clear();
-            this.items = items;
-            this._resetList();
-        }
+        this.refresh();
+        this._state.itemsContainer.innerHTML = "";
+        this.items.forEach((item, index) => this._renderItem(item, index));
     }
 
     _resetList() {
