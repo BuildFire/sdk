@@ -2858,6 +2858,7 @@ html.translated-ltr body{
 	line-height: 18px;
 	-webkit-text-stroke: 0;
 	border-radius: 4px;
+	font-family: 'Conv_apercu_regular','Conv_apercu_bold','Helvetica','Sans-Serif','Arial';
 }
 
 .button-tooltip-left {
