@@ -1894,18 +1894,9 @@ textarea.md-input{
 	animation: .9s cubic-bezier(0.21, 1.74, 0.94, 1.04) load-appear;
 	animation-fill-mode: forwards;
 }
-.empty-state i{
-	position: absolute;
-	top: calc(10vh + 156px);
-	right: calc(50% - 27px);
-	font-size: 24px;
-	text-align: center;
-	width: 48px;
-	height: 48px;
-	opacity: .5;
-}
 .bookmarks-container .empty-state img,
-.notes-container .empty-state img{
+.notes-container .empty-state img,
+.notification-plugin .empty-state img {
 	margin: 0 auto;
 	display: block;
 	padding-top: 10vh;
