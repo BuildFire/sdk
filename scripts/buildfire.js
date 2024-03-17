@@ -5203,6 +5203,26 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		document.getElementsByTagName('body')[0].className += ' noSelect';
 	}
 
+	//attach funnel class and cssPath
+	const attachFunnelClassAndCssPath = () => {
+		debugger;
+		if (buildfire.getFrameType() == "CONTROL_FRAME") {
+			const funnelClass = buildfire.parseQueryString().funnelClass;
+			if (funnelClass) {
+				document.body.classList.add(funnelClass);
+			}
+			const cssPath = buildfire.parseQueryString().cssPath;
+			if (cssPath) {
+				const link = document.createElement('link');
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = cssPath;
+				document.head.appendChild(link);
+			}
+		}
+	};
+	attachFunnelClassAndCssPath();
+
 	buildfire.getContext(function (err, context) {
 		if (err) {
 			console.error(err);
@@ -5263,6 +5283,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		if(!buildfire.options.disableTheme)
 			buildfire.appearance._forceCSSRender();
 	}, 1750);
+
+
 
 });
 
