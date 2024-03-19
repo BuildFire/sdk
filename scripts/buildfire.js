@@ -5203,31 +5203,29 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		document.getElementsByTagName('body')[0].className += ' noSelect';
 	}
 
-	//attach plugin class names and css paths
-	const attachClassNamesAndCSSPaths = () => {
-		if (buildfire.getFrameType() == "CONTROL_FRAME") {
-			const injectClassNames = buildfire.parseQueryString().injectClassNames;
-			if (injectClassNames && injectClassNames.length) {
-				for (let i = 0; i < injectClassNames.length; i++) {
-					document.body.classList.add(injectClassNames[i]);					
-				}
+	//attach plugin class names and css paths for highlighting and customization
+	const injectCSS = () => {
+		const injectClassNames = buildfire.parseQueryString().injectClassNames;
+		if (injectClassNames && injectClassNames.length && document.body) {
+			for (let i = 0; i < injectClassNames.length; i++) {
+				document.body.classList.add(injectClassNames[i]);					
 			}
-			const injectCSSPaths = buildfire.parseQueryString().injectCSSPaths;
-			if (injectCSSPaths && injectCSSPaths.length) {
-				for (let i = 0; i < injectCSSPaths.length; i++) {
- 					const cssPath = injectCSSPaths[i];
-					if (cssPath) {
-						const link = document.createElement('link');
-						link.rel = 'stylesheet';
-						link.type = 'text/css';
-						link.href = cssPath;
-						document.head.appendChild(link);
-					}					
-				}
+		}
+		const injectCSSPaths = buildfire.parseQueryString().injectCSSPaths;
+		if (injectCSSPaths && injectCSSPaths.length && document.head) {
+			for (let i = 0; i < injectCSSPaths.length; i++) {
+				 const cssPath = injectCSSPaths[i];
+				if (cssPath) {
+					const link = document.createElement('link');
+					link.rel = 'stylesheet';
+					link.type = 'text/css';
+					link.href = cssPath;
+					document.head.appendChild(link);
+				}					
 			}
 		}
 	};
-	attachClassNamesAndCSSPaths();
+	injectCSS();
 
 	buildfire.getContext(function (err, context) {
 		if (err) {
