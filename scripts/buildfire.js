@@ -5211,6 +5211,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 			injectCSS = JSON.parse(injectCSS);
 		} catch (error) {
 			console.error('Error parsing injectCSS', error);
+			return;
 		}
 		const { classNames, paths } = injectCSS;
 		if (classNames && classNames.length && document.body) {
