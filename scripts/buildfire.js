@@ -5205,16 +5205,22 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
 	//attach plugin class names and css paths for highlighting and customization
 	const injectCSS = () => {
-		const injectClassNames = buildfire.parseQueryString().injectClassNames;
-		if (injectClassNames && injectClassNames.length && document.body) {
-			for (let i = 0; i < injectClassNames.length; i++) {
-				document.body.classList.add(injectClassNames[i]);					
+		let injectCSS = buildfire.parseQueryString().injectCSS;
+		if (!injectCSS) return;
+		try {
+			injectCSS = JSON.parse(injectCSS);
+		} catch (error) {
+			console.error('Error parsing injectCSS', error);
+		}
+		const { classNames, paths } = injectCSS;
+		if (classNames && classNames.length && document.body) {
+			for (let i = 0; i < classNames.length; i++) {
+				document.body.classList.add(classNames[i]);					
 			}
 		}
-		const injectCSSPaths = buildfire.parseQueryString().injectCSSPaths;
-		if (injectCSSPaths && injectCSSPaths.length && document.head) {
-			for (let i = 0; i < injectCSSPaths.length; i++) {
-				 const cssPath = injectCSSPaths[i];
+		if (paths && paths.length && document.head) {
+			for (let i = 0; i < paths.length; i++) {
+				 const cssPath = paths[i];
 				if (cssPath) {
 					const link = document.createElement('link');
 					link.rel = 'stylesheet';
