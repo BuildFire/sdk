@@ -5203,25 +5203,31 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		document.getElementsByTagName('body')[0].className += ' noSelect';
 	}
 
-	//attach funnel class and cssPath
-	const attachFunnelClassAndCssPath = () => {
-		debugger;
+	//attach plugin class names and css paths
+	const attachClassNamesAndCSSPaths = () => {
 		if (buildfire.getFrameType() == "CONTROL_FRAME") {
-			const funnelClass = buildfire.parseQueryString().funnelClass;
-			if (funnelClass) {
-				document.body.classList.add(funnelClass);
+			const injectClassNames = buildfire.parseQueryString().injectClassNames;
+			if (injectClassNames && injectClassNames.length) {
+				for (let i = 0; i < injectClassNames.length; i++) {
+					document.body.classList.add(injectClassNames[i]);					
+				}
 			}
-			const cssPath = buildfire.parseQueryString().cssPath;
-			if (cssPath) {
-				const link = document.createElement('link');
-				link.rel = 'stylesheet';
-				link.type = 'text/css';
-				link.href = cssPath;
-				document.head.appendChild(link);
+			const injectCSSPaths = buildfire.parseQueryString().injectCSSPaths;
+			if (injectCSSPaths && injectCSSPaths.length) {
+				for (let i = 0; i < injectCSSPaths.length; i++) {
+ 					const cssPath = injectCSSPaths[i];
+					if (cssPath) {
+						const link = document.createElement('link');
+						link.rel = 'stylesheet';
+						link.type = 'text/css';
+						link.href = cssPath;
+						document.head.appendChild(link);
+					}					
+				}
 			}
 		}
 	};
-	attachFunnelClassAndCssPath();
+	attachClassNamesAndCSSPaths();
 
 	buildfire.getContext(function (err, context) {
 		if (err) {
