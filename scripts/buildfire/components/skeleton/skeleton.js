@@ -187,7 +187,6 @@ buildfire.components.skeleton = class SkeletonLoader {
 		} else {
 			const hex = colorNameToHex(color);
 			if (hex) {
-				debugger;
 				return hexToRGB(hex);
 			}
 			throw new Error(`INVALID COLOR VALUE: ${color}`);
