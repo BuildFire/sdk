@@ -5203,6 +5203,37 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		document.getElementsByTagName('body')[0].className += ' noSelect';
 	}
 
+	//attach plugin class names and css paths for highlighting and customization
+	const injectCSS = () => {
+		let injectCSS = buildfire.parseQueryString().injectCSS;
+		if (!injectCSS) return;
+		try {
+			injectCSS = JSON.parse(injectCSS);
+		} catch (error) {
+			console.error('Error parsing injectCSS', error);
+			return;
+		}
+		const { classNames, paths } = injectCSS;
+		if (classNames && classNames.length && document.body) {
+			for (let i = 0; i < classNames.length; i++) {
+				document.body.classList.add(classNames[i]);					
+			}
+		}
+		if (paths && paths.length && document.head) {
+			for (let i = 0; i < paths.length; i++) {
+				 const cssPath = paths[i];
+				if (cssPath) {
+					const link = document.createElement('link');
+					link.rel = 'stylesheet';
+					link.type = 'text/css';
+					link.href = cssPath;
+					document.head.appendChild(link);
+				}					
+			}
+		}
+	};
+	injectCSS();
+
 	buildfire.getContext(function (err, context) {
 		if (err) {
 			console.error(err);
@@ -5263,6 +5294,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		if(!buildfire.options.disableTheme)
 			buildfire.appearance._forceCSSRender();
 	}, 1750);
+
+
 
 });
 
