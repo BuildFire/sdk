@@ -52,10 +52,11 @@ buildfire.components.listView = class ListView {
 			Object.assign(this._state.paginationOptions, options.settings.paginationOptions) : this._state.paginationOptions;
 		this.options.settings.customListAction = options.settings && options.settings.customListAction ?
 			options.settings.customListAction : null;
-
+		this._state.newBehavior = options?.settings?.newBehavior || null; // TODO: delete after plugins deploy
 		this.items = [];
 
 		this.init();
+        this._reservedOptions = JSON.stringify(this.options);
 	}
 	//================================================================================================            
 	init() {
@@ -395,20 +396,60 @@ buildfire.components.listView = class ListView {
 	onRenderEnd() { }
 	//================================================================================================     
 	refresh() {
-		if (this._state.listViewHeaderContainer) this._state.listViewHeaderContainer.remove();
-		if (this._state.listViewSearchBarContainer) this._state.listViewSearchBarContainer.remove();
+		if (this._state.newBehavior) { // TODO: delete after plugins deploy
+			if (this._state.listViewHeaderContainer) this._state.listViewHeaderContainer.remove();
+			if (this._state.listViewSearchBarContainer) this._state.listViewSearchBarContainer.remove();
 
-		this._initializeSearchBar();
-		this._initializeHeaderContent();
-		this._toggleEmptyState();
+			this._initializeSearchBar();
+			this._initializeHeaderContent();
+			this._toggleEmptyState();
+	
+			if (this.onDataRequest){
+				if (this.options.settings.paginationEnabled){
+					this._state.page = 0;
+				}
+				this._state.fetchNextPage = true;
+	
+				this._triggerOnDataRequested();
+			} else {
+				setTimeout(() => {
+					this._renderItems(this.items);
+				});
+			}
+		} else {
+			if (this._state.listViewHeaderContainer) this._state.listViewHeaderContainer.remove();
+			if (this._state.listViewSearchBarContainer) this._state.listViewSearchBarContainer.remove();
+
+			this._initializeSearchBar();
+			this._initializeHeaderContent();
+			this._toggleEmptyState();
+		}
 	}
 
 	reset() {
-		let items = this.items;
-		this.refresh();
-		this.clear();
-		this.items = items;
-		this._renderItems(items);
+		if (this._state.newBehavior) { // TODO: delete after plugins deploy
+			this.options = JSON.parse(this._reservedOptions);
+			this.clear();
+			if (this._state.listViewHeaderContainer) this._state.listViewHeaderContainer.remove();
+			if (this._state.listViewSearchBarContainer) this._state.listViewSearchBarContainer.remove();
+			this._initializeSearchBar();
+			this._initializeHeaderContent();
+			this._toggleEmptyState();
+			if (this.onDataRequest){
+				if (this.options.settings.paginationEnabled){
+					this._state.page = 0;
+				}
+				this._state.fetchNextPage = true;
+				this._state.searchValue = null;
+				this._triggerOnDataRequested();
+			}
+		} else {
+			let items = this.items;
+			this.refresh();
+			this.clear();
+			this.items = items;
+			this._renderItems(items);
+		}
 	}
 
 	clear() {
