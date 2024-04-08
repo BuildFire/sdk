@@ -5130,6 +5130,16 @@ var buildfire = {
 			buildfire._sendPacket(p, callback);
 		}
 	},
+	diagnostics: {
+		checkFeature: function (options = {}, callback) {
+			var p = new Packet(null, 'diagnostics.checkFeature', options);
+			buildfire._sendPacket(p, callback);
+		},
+		requestFeaturePermission: function (options = {}, callback) {
+			var p = new Packet(null, 'diagnostics.requestFeaturePermission', options);
+			buildfire._sendPacket(p, callback);
+		}
+	},
 	onPluginJsonLoaded: function (pluginJson) {
 		//attach pluginLanguage.js script that contains languages.json content.
 		function attachPluginLanguageJsScript () {
@@ -5216,7 +5226,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		const { classNames, paths } = injectCSS;
 		if (classNames && classNames.length && document.body) {
 			for (let i = 0; i < classNames.length; i++) {
-				document.body.classList.add(classNames[i]);					
+				document.body.classList.add(classNames[i]);
 			}
 		}
 		if (paths && paths.length && document.head) {
@@ -5228,7 +5238,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 					link.type = 'text/css';
 					link.href = cssPath;
 					document.head.appendChild(link);
-				}					
+				}
 			}
 		}
 	};
