@@ -1570,6 +1570,30 @@ var buildfire = {
 				if (callback)callback(err, result);
 			});
 		}
+		, bulkDelete: function ( ids, tag, callback) {
+
+			let tagType = typeof(tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof(callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'datastore.bulkDelete', {tag: tag, ids: ids});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.datastore.triggerOnUpdate(result);
+				if (callback)callback(err, result);
+			});
+		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresearchoptions-tag-optional-callback
 		, search: function (options, tag, callback) {
 
@@ -1841,6 +1865,37 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.userData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
+		, bulkDelete: function (ids, tag, userToken, callback) {
+
+			let userTokenType = typeof (userToken);
+			if (userTokenType == 'undefined')
+				userToken = '';
+			else if (userTokenType == 'function' && typeof (callback) == 'undefined') {
+				callback = userToken;
+				userToken = '';
+			}
+			let tagType = typeof (tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof (callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'userData.bulkDelete', { tag: tag, userToken: userToken, ids: ids});
 			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.userData.triggerOnUpdate(result);
 				if (callback) callback(err, result);
@@ -2208,6 +2263,30 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 		}
+		, bulkDelete: function (ids, tag, callback) {
+
+			let tagType = typeof (tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof (callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'publicData.bulkDelete', {tag: tag, ids: ids});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.publicData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
 		///
 		, search: function (options, tag, callback) {
 
@@ -2508,6 +2587,23 @@ var buildfire = {
 			if (!this._isTagValid(tag, callback)) return;
 
 			var p = new Packet(null, 'appData.delete', {tag: tag, id: id});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.appData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
+		, bulkDelete: function (ids, tag, callback) {
+			if (!this._isTagValid(tag, callback)) return;
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'appData.bulkDelete', {tag: tag, ids: ids});
 			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.appData.triggerOnUpdate(result);
 				if (callback) callback(err, result);
