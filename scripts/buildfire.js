@@ -1393,9 +1393,23 @@ var buildfire = {
 			var p = new Packet(null, 'analytics.registerPluginEvent', {data: event, options: options});
 			buildfire._sendPacket(p, callback);
 		},
+		bulkRegisterEvents: function (events, options, callback) {
+			if (typeof(options) == 'function') {
+				callback = options;
+				options = null;
+			}
+			var p = new Packet(null, 'analytics.bulkRegisterPluginEvents', {events: events, options: options});
+			buildfire._sendPacket(p, callback);
+		},
 		unregisterEvent: function (key, callback) {
 			var p = new Packet(null, 'analytics.unregisterPluginEvent', {
 				key: key
+			});
+			buildfire._sendPacket(p, callback);
+		},
+		bulkUnregisterEvents: function(keys, callback) {
+			var p = new Packet(null, 'analytics.bulkUnregisterPluginEvents', {
+				keys: keys
 			});
 			buildfire._sendPacket(p, callback);
 		},
