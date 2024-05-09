@@ -457,14 +457,19 @@ var buildfire = {
 
 	//, _resendAttempts:0
 	, _sendPacket: function (packet, callback) {
-		if (typeof (callback) != 'function')// handels better on response
+		if (typeof (callback) != 'function')// handles better on response
 			callback = function (err, result) {
-				//console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
+				// don't do anything
 			};
 		if (buildfire.isWidget()) {
 			packet.source = 'widget';
 		} else {
 			packet.source = 'control';
+		}
+
+		// avoid using buildfire.getContext here, as it might cause an infinite loop
+		if (buildfire._context) {
+			packet._originInstanceId = buildfire._context.instanceId;
 		}
 
 		var retryInterval = 3000,
@@ -500,8 +505,6 @@ var buildfire = {
 			var timeout = setTimeout(resend,  retryInterval);
 		}
 
-		//packet.cmd.indexOf('getContext') == 0? 250 :
-
 		var wrapper = function (err, data) {
 			clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
 			callback(err, data);
@@ -510,9 +513,7 @@ var buildfire = {
 		buildfire._callbacks[packet.id] = wrapper;
 		packet.fid= buildfire.fid;
 
-
-		//console.info("BuildFire.js Send >> " , packet.cmd, buildfire.fid);
-		buildfire._parentPost(packet,callback);  //if (parent)parent.postMessage(p, "*");
+		buildfire._parentPost(packet,callback);
 	}
 	,_parentPost: function (packet) {
 
@@ -5216,7 +5217,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		const { classNames, paths } = injectCSS;
 		if (classNames && classNames.length && document.body) {
 			for (let i = 0; i < classNames.length; i++) {
-				document.body.classList.add(classNames[i]);					
+				document.body.classList.add(classNames[i]);
 			}
 		}
 		if (paths && paths.length && document.head) {
@@ -5228,7 +5229,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 					link.type = 'text/css';
 					link.href = cssPath;
 					document.head.appendChild(link);
-				}					
+				}
 			}
 		}
 	};
