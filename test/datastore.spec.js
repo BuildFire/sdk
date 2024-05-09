@@ -280,7 +280,7 @@ describe('buildfire.datastore', function () {
 				data: {salary: 1000}
 			};
 			buildfire.datastore.delete({salary:1000},'info',function(err, status) {
-				expect(err).toEqual(jasmine.any(Object));
+				expect(err).toEqual(jasmine.any(String));
 
 			});
 		});
@@ -305,7 +305,7 @@ describe('buildfire.datastore', function () {
 			expect(typeof buildfire.datastore.search).toEqual('function');
 		});
 
-		it('buildfire.datastore.search {$json.name:buildfire} on info tag should retrun this object', function () {
+		it('buildfire.datastore.search {$json.name:buildfire} on info tag should return this object', function () {
 			buildfire.datastore.search({'$json.name':'buildfire', page:0,pageSize:20}, 'info',function(err,result) {
 				expect(err).toBeNull();
 				expect(result.length).toBeGreaterThan(0);

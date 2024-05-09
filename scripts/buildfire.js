@@ -1394,9 +1394,23 @@ var buildfire = {
 			var p = new Packet(null, 'analytics.registerPluginEvent', {data: event, options: options});
 			buildfire._sendPacket(p, callback);
 		},
+		bulkRegisterEvents: function (events, options, callback) {
+			if (typeof(options) == 'function') {
+				callback = options;
+				options = null;
+			}
+			var p = new Packet(null, 'analytics.bulkRegisterPluginEvents', {events: events, options: options});
+			buildfire._sendPacket(p, callback);
+		},
 		unregisterEvent: function (key, callback) {
 			var p = new Packet(null, 'analytics.unregisterPluginEvent', {
 				key: key
+			});
+			buildfire._sendPacket(p, callback);
+		},
+		bulkUnregisterEvents: function(keys, callback) {
+			var p = new Packet(null, 'analytics.bulkUnregisterPluginEvents', {
+				keys: keys
 			});
 			buildfire._sendPacket(p, callback);
 		},
@@ -1566,6 +1580,30 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'datastore.delete', {tag: tag, id: id});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.datastore.triggerOnUpdate(result);
+				if (callback)callback(err, result);
+			});
+		}
+		, bulkDelete: function ( ids, tag, callback) {
+
+			let tagType = typeof(tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof(callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'datastore.bulkDelete', {tag: tag, ids: ids});
 			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.datastore.triggerOnUpdate(result);
 				if (callback)callback(err, result);
@@ -1842,6 +1880,37 @@ var buildfire = {
 			}
 
 			var p = new Packet(null, 'userData.delete', { tag: tag, userToken: userToken, id: id });
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.userData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
+		, bulkDelete: function (ids, tag, userToken, callback) {
+
+			let userTokenType = typeof (userToken);
+			if (userTokenType == 'undefined')
+				userToken = '';
+			else if (userTokenType == 'function' && typeof (callback) == 'undefined') {
+				callback = userToken;
+				userToken = '';
+			}
+			let tagType = typeof (tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof (callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'userData.bulkDelete', { tag: tag, userToken: userToken, ids: ids});
 			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.userData.triggerOnUpdate(result);
 				if (callback) callback(err, result);
@@ -2209,6 +2278,30 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 		}
+		, bulkDelete: function (ids, tag, callback) {
+
+			let tagType = typeof (tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof (callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'publicData.bulkDelete', {tag: tag, ids: ids});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.publicData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
 		///
 		, search: function (options, tag, callback) {
 
@@ -2509,6 +2602,23 @@ var buildfire = {
 			if (!this._isTagValid(tag, callback)) return;
 
 			var p = new Packet(null, 'appData.delete', {tag: tag, id: id});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.appData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
+		, bulkDelete: function (ids, tag, callback) {
+			if (!this._isTagValid(tag, callback)) return;
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'appData.bulkDelete', {tag: tag, ids: ids});
 			buildfire._sendPacket(p, function (err, result) {
 				if (result)buildfire.appData.triggerOnUpdate(result);
 				if (callback) callback(err, result);
@@ -5128,6 +5238,16 @@ var buildfire = {
 		},
 		getAppRecipe: function (options = {}, callback) {
 			var p = new Packet(null, 'ai.getAppRecipe', options);
+			buildfire._sendPacket(p, callback);
+		}
+	},
+	diagnostics: {
+		checkFeature: function (options = {}, callback) {
+			var p = new Packet(null, 'diagnostics.checkFeature', options);
+			buildfire._sendPacket(p, callback);
+		},
+		requestFeaturePermission: function (options = {}, callback) {
+			var p = new Packet(null, 'diagnostics.requestFeaturePermission', options);
 			buildfire._sendPacket(p, callback);
 		}
 	},

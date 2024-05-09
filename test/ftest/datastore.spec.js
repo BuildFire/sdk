@@ -123,7 +123,7 @@ describe('buildfire.datastore', function () {
 
 		it('buildfire.datastore.delete {salary:1000} should return an error', function (done) {
 			buildfire.datastore.delete({salary:1000},'info',function(err, status) {
-				expect(err).to.an('object');
+				expect(err).to.a('string');
 				done();
 			});
 		});
