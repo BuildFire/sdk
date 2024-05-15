@@ -469,7 +469,7 @@ var buildfire = {
 
 		// avoid using buildfire.getContext here, as it might cause an infinite loop
 		if (buildfire._context) {
-			packet._originInstanceId = buildfire._context.instanceId;
+			packet.originInstanceId = buildfire._context.instanceId;
 		}
 
 		var retryInterval = 3000,
