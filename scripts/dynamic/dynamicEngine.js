@@ -40,7 +40,7 @@ const dynamicEngine = {
 		*/
 		evaluate(options, callback) {
 			options = options || {};
-			const { id } = options; 
+			const { id } = options;
 			const evaluationRequest = {
 				callback,
 				options,
@@ -127,7 +127,7 @@ const dynamicEngine = {
 				htmlEncode: function(expression) {
 					let divElement = document.createElement('div');
 					divElement.innerText = expression;
-					return divElement.innerHTML;	
+					return divElement.innerHTML;
 				},
 				htmlDecode: function(expression) {
 					let divElement = document.createElement('div');
@@ -162,7 +162,7 @@ const dynamicEngine = {
 			});
 		},
 		repeater: {
-			_exposeRepeaterStructure: false, // change it to false to show the repeater structure for development purposes 
+			_exposeRepeaterStructure: false, // change it to false to show the repeater structure for development purposes
 			/**
 			* @desc Handle all the repeaters functionality; so the content of the repeaters could be evaluated
 			* @param {Object} options.expression - The expression to be evaluated
@@ -192,14 +192,14 @@ const dynamicEngine = {
 				if (repeatElement) {
 					// remove the reference of the scope property
 					scope = JSON.parse(JSON.stringify(scope));
-			
+
 					const repeatAttr = repeatElement.getAttribute('buildfire-repeat');
-					
+
 					repeatElement.removeAttribute('buildfire-repeat');
-				
+
 					// Extract the loop variable and array name from the (buildfire-repeat) attribute
 					let [scopeVariableName, qualifiedArrayPath] = repeatAttr.split(' in ').map(item => item.trim());
-				
+
 					// handle arrays that are not starting with (context); so they can be evaluated
 					// For example, (order.items) will be converted to something like (context.datasource.orders[0].items); so it can be evaluated
 					qualifiedArrayPath = qualifiedArrayPath.replace(/(^(?! *context\.).*)/, (match, expr) => {
@@ -209,7 +209,7 @@ const dynamicEngine = {
 						// check if the path to the array (order) is existing
 						return expr.replace(propertyName, scope[propertyName]);
 					});
-				
+
 					try {
 						// Get the array to loop over
 						const array = Function(`"use strict"; const context = this;return (${qualifiedArrayPath})`).bind(context)();
@@ -217,13 +217,13 @@ const dynamicEngine = {
 						if (array) {
 							array.forEach((item, index) => {
 								scope[scopeVariableName] = `${qualifiedArrayPath}[${index}]`;
-						
+
 								// Create a new element based on the container
 								const newItem = repeatElement.cloneNode(true);
-								
+
 								// check for any elements that contains the (buildfire-repeat) attribute and handle them
 								dynamicEngine.expressions.repeater._replaceRepeaterTree({container: newItem, context, scope});
-						
+
 								// select all template literals that is not starting with (context) and handle them
 								newItem.innerHTML = newItem.innerHTML.replace(/\${((?! *context\.)[^{}]*)}/g, (match, expr) => {
 									// Evaluate the expression in the loop scope
@@ -233,10 +233,10 @@ const dynamicEngine = {
 									}
 									return '${' + updatedExpr + '}';
 								});
-							
+
 								// Append the new element to the container's parent
 								repeatElement.parentNode.insertBefore(newItem, repeatElement);
-							});	
+							});
 						}
 						repeatElement.remove();
 					} catch (err) {
@@ -329,9 +329,9 @@ const dynamicEngine = {
 		fetchDatasource({ datasource }, callback) {
 			datasource.lastTimeFetched = new Date();
 			this.requestedDatasources[datasource.id] = datasource;
-		
+
 			switch (datasource.type) {
-			case 'api': 
+			case 'api':
 				dynamicEngine.datasources._fetchApi({ datasource }, callback);
 				break;
 			}
@@ -351,14 +351,14 @@ const dynamicEngine = {
 				datasourceConfiguration?.body,
 				datasourceConfiguration?.params,
 			]);
-		
+
 			Promise.all(promises)
 				.then(([url, method, headers, body, params]) => {
 					const options = {};
 					url = new URL(url);
 					if (method) options.method = method;
 					if (headers) options.headers = JSON.parse(headers);
-					if (body) options.body = JSON.parse(body);
+					if (body) options.body = body;
 					if (params) {
 						params = JSON.parse(params);
 						Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
@@ -389,7 +389,7 @@ const dynamicEngine = {
 						})
 						.catch((err) => {
 							callback({message: 'Failed to fetch \'' + datasource.id + '\'', details: err.cause}, null);
-						});	
+						});
 				})
 				.catch((error) => {
 					callback(error, null);
