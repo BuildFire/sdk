@@ -4833,6 +4833,7 @@ var buildfire = {
 
 
 		}
+		// might be used by old plugins to manipulate look through JS
 		, onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('cssInjectionOnUpdate', callback, allowMultipleHandlers);
 		}
