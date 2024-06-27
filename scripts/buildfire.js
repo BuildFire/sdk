@@ -17,6 +17,9 @@ var buildfire = {
 	, isWidget: function() {
 		return window.location.href.indexOf('/widget/') > 0;
 	}
+	, isWidgetService: function() {
+		return buildfire.isWidget() && window.location.href.indexOf('/widget/index.html') < 0;
+	}
 	, isWeb: function(callback){
 		var isWebFromContext = function (context) {
 			if (context && context.device && context.device.platform) {
@@ -365,6 +368,7 @@ var buildfire = {
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
+		, 'messaging.onReceivedBroadcast'
 		, 'dynamic.triggerContextChange'
 		, 'dynamic.onReceivedWidgetContextRequest'
 		, 'dynamic.expressions.onReceivedCustomExpressionsRequest'
@@ -3507,6 +3511,28 @@ var buildfire = {
 		, sendMessageToService: function (data) {
 			var p = new Packet(null, 'messaging.sendMessageToService', data);
 			buildfire._sendPacket(p);
+		}
+		, broadcast: function (options) {
+			if (!options || !options.message) {
+				throw new Error('options.message is required');
+			}
+			if (options.source) {
+				throw new Error('options.source is not allowed');
+			}
+			buildfire.getContext(function (err, context) {
+				let source = {
+					instanceId: context.instanceId,
+					pluginId: context.pluginId,
+					title: context.title,
+					isWidgetService: buildfire.isWidgetService()
+				}
+				let data = { source: source, message: options.message };
+				let p = new Packet(null, 'messaging.broadcast', data);
+				buildfire._sendPacket(p);
+			});
+		}
+		, onReceivedBroadcast: function (broadcast) {
+			/* do not log anything as it will be too noisy */
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Instances
