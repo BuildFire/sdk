@@ -25,7 +25,11 @@ living in one space (pluginTester)
 	}
 
 	postMaster.widgetPluginAPI.auth = { ...authAPI };
+	postMaster.widgetPluginAPI.auth.searchUsers = authAPI.appSearchUsers;
+	postMaster.controlPluginAPI.auth = { ...authAPI };
+	postMaster.controlPluginAPI.auth.searchUsers = authAPI.cpSearchUsers;
 	postMaster.servicePluginAPIs.service.auth = { ...authAPI };
+	postMaster.servicePluginAPIs.service.auth.searchUsers = authAPI.appSearchUsers;
 	forceOriginationFromAppOverride(postMaster.widgetPluginAPI.auth);
 	forceOriginationFromAppOverride(postMaster.servicePluginAPIs.service.auth);
 })();
