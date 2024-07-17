@@ -95,7 +95,6 @@ buildfire.components.control.listView = class ControlListView {
             Object.assign(this.options.addButtonOptions, options.addButtonOptions) : this.options.addButtonOptions;
         this.options.settings.paginationOptions = options.settings && options.settings.paginationOptions ?
         Object.assign(this._state.paginationOptions, options.settings.paginationOptions) : this._state.paginationOptions;
-		this._state.newBehavior = options?.settings?.newBehavior || null; // TODO: delete after plugins deploy
         this.items = [];
         this.init();
         this._reservedOptions = JSON.stringify(this.options);
@@ -681,46 +680,34 @@ buildfire.components.control.listView = class ControlListView {
     }
 
     refresh() {
-        if (this._state.newBehavior) { // TODO: delete after plugins deploy
-            this._initializeHeader(true);
-            this._initializeSearchBar(true);
-            this._initializeActions(true);
-            this._state.itemsContainer.innerHTML = "";
-            if (this.onDataRequest){
-                if (this.options.settings.paginationEnabled){
-                    this._state.page = 0;
-                }
-                this._triggerOnDataRequested();
-            } else {
-                setTimeout(() => {
-                    this.items.forEach((item, index) => this._renderItem(item, index));
-                });
+        this._initializeHeader(true);
+        this._initializeSearchBar(true);
+        this._initializeActions(true);
+        this._state.itemsContainer.innerHTML = "";
+        if (this.onDataRequest){
+            if (this.options.settings.paginationEnabled){
+                this._state.page = 0;
             }
+            this._triggerOnDataRequested();
         } else {
-            this._initializeHeader(true);
-            this._initializeSearchBar(true);
-            this._initializeActions(true);
+            setTimeout(() => {
+                this.items.forEach((item, index) => this._renderItem(item, index));
+            });
         }
     }
 
     reset() {
         this.options = JSON.parse(this._reservedOptions);
-        if (this._state.newBehavior) { // TODO: delete after plugins deploy
-            this.clear();
-            this._initializeHeader(true);
-            this._initializeSearchBar(true);
-            this._initializeActions(true);
-            if (this.onDataRequest){
-                if (this.options.settings.paginationEnabled){
-                    this._state.page = 0;
-                }
-                this._state.searchValue = null;
-                this._triggerOnDataRequested();
+        this.clear();
+        this._initializeHeader(true);
+        this._initializeSearchBar(true);
+        this._initializeActions(true);
+        if (this.onDataRequest){
+            if (this.options.settings.paginationEnabled){
+                this._state.page = 0;
             }
-        } else {
-            this.refresh();
-            this._state.itemsContainer.innerHTML = "";
-            this.items.forEach((item, index) => this._renderItem(item, index));
+            this._state.searchValue = null;
+            this._triggerOnDataRequested();
         }
     }
 
