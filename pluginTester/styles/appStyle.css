@@ -131,6 +131,11 @@ textarea{
 	top:4px;
 	font-weight:100;
 }
+
+#pluginNav.title-with-bookmark h4,
+#pluginNav.title-with-bookmark h5{
+	max-width: calc(75% - 20px);
+}
 /* Target Webkit browsers for alignment */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
 	#pluginNav h4,
@@ -257,14 +262,14 @@ html[ios="true"] #navbarContainer{
 }
 
 /* Menu Toggle */
-#menu-location span.icon{
+.menu-location span.icon, .menu-location span.title-bookmark-icon { 
 	padding: 1em !important; /* increase clickable area */
 	margin: -1em !important;/* increase clickable area */
 	font-size:21px;
 	vertical-align:top;
 	color:#fff;
 }
-#menu-location .notification-circle{
+.menu-location .notification-circle{
 	position: absolute;
 	top: 3px;
 	right: 30px;
@@ -273,14 +278,24 @@ html[ios="true"] #navbarContainer{
 	text-align: center;
 	border-radius: 100%;
 }
-#menu-location.menu-left-align .notification-circle{
+.menu-location.menu-left-align .notification-circle{
 	left:30px;
 }
-#menu-location .notification-circle span{
+.menu-location .notification-circle span{
 	font-size:10px;
 	position:relative;
 	top:-2px;
 	text-align:center;
+}
+
+.menu-location.title-bookmark{
+	right: 40px;
+}
+.menu-location.title-bookmark .title-bookmark-icon{
+	font-size: 16px;
+	line-height: 18px;
+	vertical-align: unset;
+	color:#fff;
 }
 
 /* Menu */
@@ -1148,7 +1163,7 @@ html[ios="true"][view="app"] #pluginNav h4,
 html[ios="true"][view="app"] #pluginNav h5{
 	padding-bottom:8px !important;
 }
-html[ios="true"][view="app"] #menu-location{
+html[ios="true"][view="app"] .menu-location{
 	top:23px !important;
 }
 html[ios="true"][view="app"] iframe.pluginFrame.noTitleBar {
@@ -1204,7 +1219,7 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 	}
 
 	/* Menu and Back */
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #menu-location{
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .menu-location{
 		top: calc(47px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon{
@@ -3530,6 +3545,11 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 @media(min-width:1200px){
 	.onboarding{
 		z-index: 9999999999;
+	}
+
+	.menu-location.title-bookmark {
+		right: 17px;
+		position: absolute;
 	}
 }
 @media(max-height: 600px){
