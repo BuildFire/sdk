@@ -37,6 +37,7 @@ buildfire.components.control.tagsInput = class TagsInput {
 			sourceType: _sourceType,
 			allowAutoComplete: typeof (data.settings?.allowAutoComplete) === 'undefined' ? true : data.settings.allowAutoComplete,
 			allowUserInput: typeof (data.settings?.allowUserInput) === 'undefined' ? true : data.settings.allowUserInput,
+			maxTags: data.settings?.maxTags || null
 		}
 		// languageSettings = strings
 		this.languageSettings = {
@@ -62,7 +63,7 @@ buildfire.components.control.tagsInput = class TagsInput {
 	}
 
 	_tagify(input) {
-		const tagifyOptions = {
+		let  tagifyOptions = {
 			whitelist: this.settings.sourceType === 'list' ? this.settings.source : [],
 			autoComplete: {
 				enabled: this.settings.allowAutoComplete,
@@ -71,6 +72,8 @@ buildfire.components.control.tagsInput = class TagsInput {
 			enforceWhitelist: false,
 			userInput: this.settings.allowUserInput
 		}
+
+		if(this.settings.maxTags) tagifyOptions = {...tagifyOptions, maxTags: this.settings.maxTags}
 
 		this._tagifyTags = new Tagify(input, tagifyOptions);
 
@@ -132,7 +135,9 @@ buildfire.components.control.tagsInput = class TagsInput {
 			}
 		}
 		for (let i = 0; i < _tags.length; i++) {
-			this.activeTags.push(_tags[i]);
+			if (!this.settings.maxTags || this.activeTags.length < this.settings.maxTags) {
+				this.activeTags.push(_tags[i]);
+			}
 		}
 		this._tagifyTags.addTags(_tags);
 	}
@@ -167,7 +172,7 @@ buildfire.components.control.userTagsInput = class UserTagsInput extends buildfi
 		let _data = {
 			settings: {
 				source: (options, callback) => {
-					buildfire.auth.showTagsSearchDialog(null, (err, result) => {
+					buildfire.auth.showTagsSearchDialog({ maxTags: data.settings?.maxTags }, (err, result) => {
 						if (err) return console.error(err);
 						if (result) {
 							let _currentTags = this.get();
@@ -190,7 +195,8 @@ buildfire.components.control.userTagsInput = class UserTagsInput extends buildfi
 					});
 				},
 				allowAutoComplete: false,
-				allowUserInput: false
+				allowUserInput: false,
+				maxTags: data.settings?.maxTags || null
 			},
 			languageSettings: data.languageSettings,
 		}
