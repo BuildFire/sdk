@@ -1620,5 +1620,9 @@ buildfire.components.reactions = (() => {
         }
     }
 
+    ReactionsTypes.getReactionsGroups({}, (err, res) => {
+        //do nothing only to initiate and get reactions groups for all items once.
+    });
+    
     return ReactionComponent
 })();
