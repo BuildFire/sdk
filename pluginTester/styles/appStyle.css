@@ -2827,6 +2827,10 @@ html:not([type="app"]) .snackbar-hero{
 		padding-left: 280px;
 	}
 
+	[type="app"] .copy-holder.iap-safe-padding {
+		padding-left: 280px;
+	}
+	
 	[type="app"] .screen-overlay {
 		display: block;
     position: absolute;
@@ -4378,6 +4382,7 @@ html[ios="true"] .profile-overlay .profile-content{
 .profile-overlay .caption{
 	font-size: 12px;
 	opacity: .5;
+	text-transform: capitalize;
 }
 .profile-content .item{
 	margin-bottom: 24px;
