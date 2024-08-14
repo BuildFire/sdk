@@ -735,7 +735,7 @@ buildfire.components.reactions = (() => {
                         })
                     }
                 }
-                State._totalSentIds.push(...requestedIds);
+                State._totalSentIds = State._totalSentIds.concat(requestedIds);
             }, 300)
         }
 
