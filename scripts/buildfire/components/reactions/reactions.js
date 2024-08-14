@@ -682,6 +682,7 @@ buildfire.components.reactions = (() => {
         static longPressPeriod = 500; //  500 ms
         static userListLimit = 250; // 250 users maximum
         static userListPageSize = 50; // 50 records per page
+        static _totalSentIds = [];
 
         // options = {itemId, getUsersData, getSummariesData}
         static debounce(options) {
@@ -698,7 +699,9 @@ buildfire.components.reactions = (() => {
             State._timer = setTimeout(() => {
                 let requestedIds = [...State._itemIds];
                 State._itemIds = []; // if the user send new itemIds after the delay and before getting the res from db
-
+                //check if the requested ids are already sent to the server, so we don't need to send them again
+                requestedIds = requestedIds.filter(id => State._totalSentIds.indexOf(id) < 0);
+                
                 if (getSummariesData) {
                     ReactionsSummaries.get(requestedIds, (err, res) => {
                         if (err) console.error(err)
@@ -732,6 +735,7 @@ buildfire.components.reactions = (() => {
                         })
                     }
                 }
+                State._totalSentIds.push(...requestedIds);
             }, 300)
         }
 
