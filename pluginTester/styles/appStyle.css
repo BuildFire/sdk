@@ -2789,6 +2789,14 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar .btn.dismiss .icon{
 	font-size: 14px !important;
 }
+
+.snackbar .btn.btn-text span {
+	max-width: 66vw;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
 .snackbar .btn.dismiss:not(:only-of-type):last-of-type{
 	margin-left: 0px;
 }
@@ -3355,6 +3363,9 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] .snackbar{
 		max-width: 400px;
+	}
+	[type="app"] .snackbar .btn.btn-text span {
+		max-width: 275px;
 	}
 	[type="app"] .onboarding .bg-img img{
 		object-fit: contain;
