@@ -32,11 +32,11 @@ buildfire.services.firebase = {
 			case 'app':
 				break;
 			case 'plugin':
-				rootPath = rootPath + buildfire.services.firebase._context.pluginId + '/';
+				rootPath = rootPath + (options.pluginId || buildfire.services.firebase._context.pluginId) + '/';
 				break;
 			case 'instance':
 			default:
-				rootPath = rootPath + buildfire.services.firebase._context.pluginId + '/' + buildfire.services.firebase._context.instanceId + '/';
+				rootPath = rootPath + (options.pluginId || buildfire.services.firebase._context.pluginId) + '/' + (options.instanceId || buildfire.services.firebase._context.instanceId) + '/';
 				break;
 			}
 			callback(null, rootPath);
@@ -66,6 +66,11 @@ buildfire.services.firebase = {
 		}
 		if (!options)
 			options = {};
+
+		if ((options.pluginId && !options.instanceId) || (!options.pluginId && options.instanceId)) {
+			return callback({message: 'pluginId and instanceId must be provided together'});
+		}
+
 		buildfire.services.firebase.getRootPath(options, function (err, rootPath) {
 			if (err) {
 				if (callback)
