@@ -1591,6 +1591,15 @@ html[buildfire] body.no-scroll .scrollable{
 	overflow-wrap: break-word;
 }
 
+#richModal.fullScreen .detail-modal h1 {
+	margin-top: env(safe-area-inset-top);
+}
+
+#richModal.fullScreen .detail-modal .button-container {
+	padding-bottom: env(safe-area-inset-bottom);
+}
+
+
 #richModal .detail-modal .dialog-title {
 	font-size: 1.5em;
 	margin-top: .75em;
@@ -2789,6 +2798,14 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar .btn.dismiss .icon{
 	font-size: 14px !important;
 }
+
+.snackbar .btn.btn-text span {
+	max-width: 66vw;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
 .snackbar .btn.dismiss:not(:only-of-type):last-of-type{
 	margin-left: 0px;
 }
@@ -2827,6 +2844,10 @@ html:not([type="app"]) .snackbar-hero{
 		padding-left: 280px;
 	}
 
+	[type="app"] .copy-holder.iap-safe-padding {
+		padding-left: 280px;
+	}
+	
 	[type="app"] .screen-overlay {
 		display: block;
     position: absolute;
@@ -3351,6 +3372,9 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] .snackbar{
 		max-width: 400px;
+	}
+	[type="app"] .snackbar .btn.btn-text span {
+		max-width: 275px;
 	}
 	[type="app"] .onboarding .bg-img img{
 		object-fit: contain;
@@ -4378,6 +4402,7 @@ html[ios="true"] .profile-overlay .profile-content{
 .profile-overlay .caption{
 	font-size: 12px;
 	opacity: .5;
+	text-transform: capitalize;
 }
 .profile-content .item{
 	margin-bottom: 24px;

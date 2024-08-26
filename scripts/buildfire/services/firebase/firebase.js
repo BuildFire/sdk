@@ -36,6 +36,9 @@ buildfire.services.firebase = {
 				break;
 			case 'instance':
 			default:
+				if ((options.pluginId && !options.instanceId) || (!options.pluginId && options.instanceId)) {
+					return callback({message: 'pluginId and instanceId must be provided together'});
+				}
 				rootPath = rootPath + (options.pluginId || buildfire.services.firebase._context.pluginId) + '/' + (options.instanceId || buildfire.services.firebase._context.instanceId) + '/';
 				break;
 			}
@@ -66,10 +69,6 @@ buildfire.services.firebase = {
 		}
 		if (!options)
 			options = {};
-
-		if ((options.pluginId && !options.instanceId) || (!options.pluginId && options.instanceId)) {
-			return callback({message: 'pluginId and instanceId must be provided together'});
-		}
 
 		buildfire.services.firebase.getRootPath(options, function (err, rootPath) {
 			if (err) {
