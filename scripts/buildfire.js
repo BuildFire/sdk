@@ -3278,7 +3278,12 @@ var buildfire = {
 				'http://s3-us-west-2.amazonaws.com/imagelibserver': 'https://buildfire-uat.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net',
 				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://bfimageserver.imgix.net',
-				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net'
+				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
+				
+				//uat urls
+				'https://d1q5x1plk9guz6.cloudfront.net': 'https://buildfire-uat.imgix.net',
+				'https://d3lkxgii6udy4q.cloudfront.net': 'https://buildfire-uat.imgix.net',
+				'https://d26kqod42fnsx0.cloudfront.net': 'https://buildfire-uat.imgix.net'
 			},
 			_transformToImgix: function(url) {
 				url = url.replace(/^https:\/\//i, 'http://');
