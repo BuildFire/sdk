@@ -2895,8 +2895,18 @@ var buildfire = {
 		, resizeImage: function (url, options, element, callback) {
 			if (!url) return null;
 			const forceImgix = buildfire.getContext()?.forceImgix;
-			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
-			if (!imageCdnHandler.isSupportedUrl(url)){
+			
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+			
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for resizeImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
 				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
 				return url;
 			}
@@ -2966,9 +2976,18 @@ var buildfire = {
 		, cropImage: function (url, options, element, callback) {
 			if (!url) return null;
 			const forceImgix = buildfire.getContext()?.forceImgix;
-			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
-			if (!imageCdnHandler.isSupportedUrl(url)){
-				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+			
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for cropImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
+				console.warn('URL is not supported by cropImage. Returning original URL: ' + url);
 				return url;
 			}
 
