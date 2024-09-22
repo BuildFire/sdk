@@ -3277,6 +3277,8 @@ var buildfire = {
 				'http://s3.amazonaws.com/Kaleo.DevBucket': 'https://bflegacy.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/imagelibserver': 'https://buildfire-uat.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat2': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat3': 'https://bfplugins-uat.imgix.net',
 				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://bfimageserver.imgix.net',
 				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
 				
