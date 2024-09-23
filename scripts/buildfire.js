@@ -3298,7 +3298,7 @@ var buildfire = {
 				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/pluginserver.uat2': 'https://bfplugins-uat.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/pluginserver.uat3': 'https://bfplugins-uat.imgix.net',
-				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://bfimageserver.imgix.net',
+				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
 				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
 				
 				//uat urls
