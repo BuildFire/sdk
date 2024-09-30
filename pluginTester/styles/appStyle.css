@@ -1188,13 +1188,22 @@ screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-dev
 		--extra-padding: 11px;
 	}
 }
+@media only
+screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
+	:root {
+		--extra-padding: 15px;
+	}
+}
 
 /* iPhone X, Xr, Xs and Xs Max*/
 @media only
 screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
 screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
+screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
 
 	/* iOS Transparent Nav */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
@@ -1222,7 +1231,8 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .menu-location{
 		top: calc(47px + var(--extra-padding)) !important;
 	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon{
+	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon,
+	html[ios="true"][view="app"][storyboard-launch-images="true"] #launcherIap .iap-subscriptions {
 		top: calc(37px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .search-container{
