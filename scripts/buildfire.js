@@ -1299,6 +1299,10 @@ var buildfire = {
 				var p = new Packet(null, 'appearance.titlebar.isVisible');
 				buildfire._sendPacket(p, callback);
 			},
+			setText: function(options, callback) {
+				var p = new Packet(null, 'appearance.titlebar.setText', options);
+				buildfire._sendPacket(p, callback);
+			}
 		}, navbar: {
 			show: function(options, callback) {
 				var p = new Packet(null, 'appearance.navbar.show');
