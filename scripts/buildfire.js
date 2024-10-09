@@ -2899,8 +2899,18 @@ var buildfire = {
 		, resizeImage: function (url, options, element, callback) {
 			if (!url) return null;
 			const forceImgix = buildfire.getContext()?.forceImgix;
-			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
-			if (!imageCdnHandler.isSupportedUrl(url)){
+			
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+			
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for resizeImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
 				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
 				return url;
 			}
@@ -2970,9 +2980,18 @@ var buildfire = {
 		, cropImage: function (url, options, element, callback) {
 			if (!url) return null;
 			const forceImgix = buildfire.getContext()?.forceImgix;
-			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
-			if (!imageCdnHandler.isSupportedUrl(url)){
-				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+			
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for cropImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
+				console.warn('URL is not supported by cropImage. Returning original URL: ' + url);
 				return url;
 			}
 
@@ -3264,12 +3283,12 @@ var buildfire = {
 				const isSupportedExtension =  !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
 				if (!isSupportedExtension) return false;
 				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
-			},
-			constructUrl: function({width, height, url, method}) {
+			}, 
+			constructUrl: function({width, height, url, blur, method}) {
 				const baseImgUrl = this._transformToImgix(url);
 				const hasQueryString = url.indexOf('?') !== -1;
 				if (width || height) {
-					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop' : '' ) + '&width=' + width + '&height=' + height;
+					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop&' : '' ) + 'width=' + width + '&height=' + height + (blur ? '&blur=' + blur : '');
 				}
 				return url;
 			},
@@ -3280,7 +3299,17 @@ var buildfire = {
 				'http://pluginserver.buildfire.com': 'https://bfplugins.imgix.net',
 				'http://s3.amazonaws.com/Kaleo.DevBucket': 'https://bflegacy.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/imagelibserver': 'https://buildfire-uat.imgix.net',
-				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net'
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat2': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat3': 'https://bfplugins-uat.imgix.net',
+				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
+				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
+				
+				//uat urls
+				'http://d1q5x1plk9guz6.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+				'http://d3lkxgii6udy4q.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+				'http://d26kqod42fnsx0.cloudfront.net': 'https://bfplugins-uat.imgix.net'
 			},
 			_transformToImgix: function(url) {
 				url = url.replace(/^https:\/\//i, 'http://');
