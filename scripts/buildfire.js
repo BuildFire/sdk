@@ -3283,12 +3283,12 @@ var buildfire = {
 				const isSupportedExtension =  !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
 				if (!isSupportedExtension) return false;
 				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
-			},
-			constructUrl: function({width, height, url, method}) {
+			}, 
+			constructUrl: function({width, height, url, blur, method}) {
 				const baseImgUrl = this._transformToImgix(url);
 				const hasQueryString = url.indexOf('?') !== -1;
 				if (width || height) {
-					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop' : '' ) + '&width=' + width + '&height=' + height;
+					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop&' : '' ) + 'width=' + width + '&height=' + height + (blur ? '&blur=' + blur : '');
 				}
 				return url;
 			},
