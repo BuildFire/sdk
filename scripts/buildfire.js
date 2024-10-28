@@ -3309,7 +3309,10 @@ var buildfire = {
 				//uat urls
 				'http://d1q5x1plk9guz6.cloudfront.net': 'https://bfplugins-uat.imgix.net',
 				'http://d3lkxgii6udy4q.cloudfront.net': 'https://bfplugins-uat.imgix.net',
-				'http://d26kqod42fnsx0.cloudfront.net': 'https://bfplugins-uat.imgix.net'
+				'http://d26kqod42fnsx0.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+
+				// support Unsplash images
+				'http://images.unsplash.com': 'https://images.unsplash.com',
 			},
 			_transformToImgix: function(url) {
 				url = url.replace(/^https:\/\//i, 'http://');
