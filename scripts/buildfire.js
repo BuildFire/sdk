@@ -357,6 +357,10 @@ var buildfire = {
 		}
 		//init logger
 		buildfire.logger.init();
+
+		// signal plugin loading
+		var p = new Packet(null, 'diagnostics.signal', { pluginLoadingAt: new Date() });
+		buildfire._sendPacket(p);
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -2899,10 +2903,10 @@ var buildfire = {
 		, resizeImage: function (url, options, element, callback) {
 			if (!url) return null;
 			const forceImgix = buildfire.getContext()?.forceImgix;
-			
+
 			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
 			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
-			
+
 			let imageCdnHandler = primaryHandler;
 
 			if (primaryHandler.isSupportedUrl(url)) {
@@ -2982,7 +2986,7 @@ var buildfire = {
 			const forceImgix = buildfire.getContext()?.forceImgix;
 			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
 			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
-			
+
 			let imageCdnHandler = primaryHandler;
 
 			if (primaryHandler.isSupportedUrl(url)) {
@@ -3283,7 +3287,7 @@ var buildfire = {
 				const isSupportedExtension =  !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
 				if (!isSupportedExtension) return false;
 				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
-			}, 
+			},
 			constructUrl: function({width, height, url, blur, method}) {
 				const baseImgUrl = this._transformToImgix(url);
 				const hasQueryString = url.indexOf('?') !== -1;
@@ -3305,7 +3309,7 @@ var buildfire = {
 				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
 				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
-				
+
 				//uat urls
 				'http://d1q5x1plk9guz6.cloudfront.net': 'https://bfplugins-uat.imgix.net',
 				'http://d3lkxgii6udy4q.cloudfront.net': 'https://bfplugins-uat.imgix.net',
