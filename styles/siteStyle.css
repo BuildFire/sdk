@@ -54,16 +54,8 @@ html body {
 }
 body h1,h2,h3,h4,h5,h6 {
 	font-family: 'Inter_Medium','Helvetica','Sans-Serif','Arial' !important;
-	margin-bottom: .5em;
-	color: var(--c-info);
 }
 body .section-title, h1{
-	font-size: 1.125rem;
-	font-weight: bold;
-	color: var(--c-info);
-	padding-top: .875rem;
-	margin-bottom: 1.5rem;
-	margin-top: 0;
 	font-family: 'Inter_Medium','Helvetica','Sans-Serif','Arial' !important;
 }
 img,
