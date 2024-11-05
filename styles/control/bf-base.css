@@ -61,15 +61,7 @@ h1,h2,h3,h4,h5,h6 {
   margin-top: 0;
   font-family: 'Inter_Medium','Helvetica','Sans-Serif','Arial';
 }
-.section-title::before,
-h1::before {
-  display: block;
-  content: '';
-  height: .25rem;
-  width: 3.5rem;
-  margin-bottom: .875rem;
-  background-color: var(--c-info);
-}
+
 p.info-note {
   background-color: var(--c-gray2);
   line-height: 1.33;

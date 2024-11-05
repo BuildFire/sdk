@@ -33,16 +33,6 @@
     font-family: 'Inter_Medium', 'Helvetica', 'Sans-Serif', 'Arial';
 }
 
-.sortable-list-header>h1.section-title::before,
-h1::before {
-    display: block;
-    content: '';
-    height: 0.25rem;
-    width: 3.5rem;
-    margin-bottom: 0.875rem;
-    background-color: var(--c-info);
-}
-
 .sortable-list-header>p.info-note {
     background-color: var(--c-gray2);
     line-height: 1.33;
