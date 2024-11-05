@@ -767,16 +767,6 @@ justify-content: center;
 	margin-bottom: 32px;
 	position: relative;
 }
-.section-title::before{
-	content: '';
-	display: block;
-	width: 40px;
-	height: 4px;
-	background-color: #000;
-	left: 0;
-	top: 0;
-	position: absolute;
-}
 .info-note{
 	background-color: #f9f9f9;
 	font-family: 'Inter_Regular';
