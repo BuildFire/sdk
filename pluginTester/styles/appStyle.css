@@ -4061,10 +4061,13 @@ html:not([type="app"]) .bottom-drawer{
 	margin-left: 1em;
 }
 .action-list li:hover, .action-list li:active, .action-list li:focus {
-  background-color: rgba(150,150,150,.05);
+  	background-color: rgba(150,150,150,.1);
 }
 .action-list li.divider-top{
-  border-top: 1px solid rgba(50,50,50,.1);
+  	border-top: 1px solid rgba(50,50,50,.1);
+}
+.action-list li.pre-selected{
+	background-color: rgba(150, 150, 150, .2)
 }
 /* Buttons */
 .btn-icon, button.btn-icon, .btn.btn-icon {
