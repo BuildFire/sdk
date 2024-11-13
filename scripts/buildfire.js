@@ -3336,12 +3336,14 @@ var buildfire = {
 			_sanitizeUnsplashImage: function(url) {
 				const urlObj = new URL(url);
 				const allowedParams = ['ixid', 'ixlib', 'fm'];
-				const params = urlObj.searchParams;
-				for (let key of params.keys()) {
-					if (!allowedParams.includes(key)) {
-						params.delete(key);
-					}
-				}
+				
+				Array.from(urlObj.searchParams.keys())
+					.forEach(key => {
+						if (!allowedParams.includes(key)) {
+							urlObj.searchParams.delete(key);
+						}
+					});
+			
 				return urlObj.toString();
 			}
 		},
