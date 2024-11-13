@@ -3285,7 +3285,10 @@ var buildfire = {
 		_imgix: {
 			isSupportedUrl: function(url) {
 				const isSupportedExtension =  !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
-				if (!isSupportedExtension) return false;
+
+				const isUnsplashImage = url.indexOf('images.unsplash.com') !== -1;
+
+				if (!isSupportedExtension && !isUnsplashImage) return false;
 				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
 			},
 			constructUrl: function({width, height, url, blur, method}) {
@@ -3322,14 +3325,31 @@ var buildfire = {
 				url = url.replace(/^https:\/\//i, 'http://');
 				for (let whitelistedUrl in this._imgixWhitelistedUrls) {
 					if (url.indexOf(whitelistedUrl) === 0) {
+						if (url.indexOf('images.unsplash.com') !== -1) { //sanitize unsplash images
+							url = this._sanitizeUnsplashImage(url);
+						}
 						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
 					}
 				}
 				return null; // return nothing if the url wasn't supported in imgix
+			},
+			_sanitizeUnsplashImage: function(url) {
+				const urlObj = new URL(url);
+				const allowedParams = ['ixid', 'ixlib', 'fm'];
+				const params = urlObj.searchParams;
+				for (let key of params.keys()) {
+					if (!allowedParams.includes(key)) {
+						params.delete(key);
+					}
+				}
+				return urlObj.toString();
 			}
 		},
 		_cloudImg: {
 			isSupportedUrl: function(url) {
+				if (url.indexOf('images.unsplash.com') !== -1) { //force unsplash images to use imgix
+					return false;
+				}
 				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg|webp)(?!.)/gi.test(url)));
 			},
 			constructUrl: function({width, height, url, blur, method}) {
