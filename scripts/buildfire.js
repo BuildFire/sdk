@@ -155,7 +155,7 @@ var buildfire = {
 
 			var header = document.querySelector('head');
 			var script = document.createElement('script');
-			script.src='http://debug.buildfire.com/target/target-script-min.js#' + tag;
+			script.src='https://debug.buildfire.com/target/target-script-min.js#' + tag;
 			script.id = 'BuildFireAppDebuggerScript';
 			header.appendChild(script);
 
