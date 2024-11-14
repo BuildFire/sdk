@@ -3758,15 +3758,15 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 .toggle-item .checkbox label::after{
 	left: 5px !important;
 }
-.dev-mode-code-popup{
+.dev-mode-code-popup, .ship-logs-popup {
 	position: relative;
 	padding-bottom: 24px;
 }
-.dev-mode-code-popup .textfield{
+.dev-mode-code-popup .textfield, .ship-logs-popup .textfield{
 	position: relative;
 	font-size: 16px;
 }
-.dev-mode-code-popup .textfield label{
+.dev-mode-code-popup .textfield label, .ship-logs-popup .textfield label{
 	position: absolute;
 	display: block;
 	font-size: 12px;
@@ -3775,7 +3775,7 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 	transform: translateY(0.625em);
 	padding: 0 12px;
 }
-.dev-mode-code-popup .textfield input{
+.dev-mode-code-popup .textfield input, .ship-logs-popup .textfield input{
 	display: block;
 	width: 100%;
 	background-color: rgba(128, 128, 128, 0.1);
@@ -3789,8 +3789,13 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 	cursor: text;
 	border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 }
-.dev-mode-code-popup .textfield input::placeholder{
+.dev-mode-code-popup .textfield input::placeholder, .ship-logs-popup .textfield input::placeholder{
 	opacity: .5;
+}
+
+.ship-logs-popup .ship-logs-enable-features {
+	display:flex;
+	justify-content: space-between;
 }
 
 #overrideCodeWidgetMessage {
