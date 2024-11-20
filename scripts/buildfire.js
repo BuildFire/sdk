@@ -1857,17 +1857,17 @@ var buildfire = {
 			});
 
 			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
-				const hasIndex = this._checkForIndex(search, 0);
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
 					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
 				}
 			}
 			if (search.sort && Object.keys(search.sort).length > 0) {
-				const hasIndex = this._checkForIndex(search.sort, 0);
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on sort filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search.sort));
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -1946,15 +1946,15 @@ var buildfire = {
 			});
 
 			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
-				const hasIndex = this._checkForIndex(options.filter, 0);
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 				if (!hasIndex) {
 					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
 				}
 			}
 			if (options.sort && Object.keys(options.sort).length > 0) {
-				const hasIndex = this._checkForIndex(options.sort, 0);
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
 				if (!hasIndex) {
-					console.warn('WARNING: no index on sort filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.sort));
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 		}
@@ -2094,62 +2094,6 @@ var buildfire = {
 		, disableRefresh: function () {
 			var p = new Packet(null, 'userData.disableRefresh');
 			buildfire._sendPacket(p);
-		}
-		, _checkForIndex: function(filter, indexDepth) {
-			if (indexDepth >= 10) {
-				console.error('Max index check limit reached');
-				return false;
-			}
-			if (Array.isArray(filter)) {
-				if (!filter.length) {
-					return null;
-				}
-				let onlyEmptyObjects = true;
-				for (const item of filter) {
-					let checkResult = this._checkForIndex(item, indexDepth + 1);
-					if (checkResult) {
-						return true;
-					} else if (checkResult === false) {
-						onlyEmptyObjects = false;
-					} else if (checkResult === null && onlyEmptyObjects !== false) {
-						onlyEmptyObjects = true;
-					}
-				}
-				return onlyEmptyObjects;
-			} else if (typeof filter === 'object') {
-				if (!filter) {
-					return false;
-				}
-				if (!Object.keys(filter).length) {
-					return null;
-				}
-				let onlyEmptyObjects = false;
-				for (const key in filter) {
-					if (filter.hasOwnProperty(key)) {
-						if (key === '_buildfire' && typeof filter[key] === 'object') {
-							if (filter[key].index) {
-								return true;
-							} else {
-								return false;
-							}
-						} else if (key.indexOf('_buildfire.index') > -1 && filter[key]) {
-							return true;
-						} else if (typeof filter[key] === 'object') {
-							const checkResult = this._checkForIndex(filter[key], indexDepth + 1);
-							if (checkResult) {
-								return true;
-							} else if (checkResult === false) {
-								onlyEmptyObjects = false;
-							} else if (checkResult === null) {
-								onlyEmptyObjects = true;
-							}
-						}
-					}
-				}
-				return onlyEmptyObjects;
-			} else {
-				return false;
-			}
 		}
 	}
 	, publicData: {
@@ -2306,17 +2250,17 @@ var buildfire = {
 			});
 
 			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
-				const hasIndex = this._checkForIndex(search, 0);
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
 					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
 				}
 			}
 			if (search.sort && Object.keys(search.sort).length > 0) {
-				const hasIndex = this._checkForIndex(search.sort, 0);
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on sort filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search.sort));
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -2381,17 +2325,17 @@ var buildfire = {
 			});
 
 			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
-				const hasIndex = this._checkForIndex(options.filter, 0);
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 
 				if (!hasIndex) {
 					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
 				}
 			}
 			if (options.sort && Object.keys(options.sort).length > 0) {
-				const hasIndex = this._checkForIndex(options.sort, 0);
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on sort filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.sort));
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 		}
@@ -2533,62 +2477,6 @@ var buildfire = {
 			var p = new Packet(null, 'publicData.disableRefresh');
 			buildfire._sendPacket(p);
 		}
-		, _checkForIndex: function(filter, indexDepth) {
-			if (indexDepth >= 10) {
-				console.error('Max index check limit reached');
-				return false;
-			}
-			if (Array.isArray(filter)) {
-				if (!filter.length) {
-					return null;
-				}
-				let onlyEmptyObjects = true;
-				for (const item of filter) {
-					let checkResult = this._checkForIndex(item, indexDepth + 1);
-					if (checkResult) {
-						return true;
-					} else if (checkResult === false) {
-						onlyEmptyObjects = false;
-					} else if (checkResult === null && onlyEmptyObjects !== false) {
-						onlyEmptyObjects = true;
-					}
-				}
-				return onlyEmptyObjects;
-			} else if (typeof filter === 'object') {
-				if (!filter) {
-					return false;
-				}
-				if (!Object.keys(filter).length) {
-					return null;
-				}
-				let onlyEmptyObjects = false;
-				for (const key in filter) {
-					if (filter.hasOwnProperty(key)) {
-						if (key === '_buildfire' && typeof filter[key] === 'object') {
-							if (filter[key].index) {
-								return true;
-							} else {
-								return false;
-							}
-						} else if (key.indexOf('_buildfire.index') > -1 && filter[key]) {
-							return true;
-						} else if (typeof filter[key] === 'object') {
-							const checkResult = this._checkForIndex(filter[key], indexDepth + 1);
-							if (checkResult) {
-								return true;
-							} else if (checkResult === false) {
-								onlyEmptyObjects = false;
-							} else if (checkResult === null) {
-								onlyEmptyObjects = true;
-							}
-						}
-					}
-				}
-				return onlyEmptyObjects;
-			} else {
-				return false;
-			}
-		}
 	}
 	, appData: {
 		get: function (tag, callback) {
@@ -2691,17 +2579,17 @@ var buildfire = {
 			});
 
 			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
-				const hasIndex = this._checkForIndex(search, 0);
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
 					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
 				}
 			}
 			if (search.sort && Object.keys(search.sort).length > 0) {
-				const hasIndex = this._checkForIndex(search.sort, 0);
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on sort filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search.sort));
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -2739,14 +2627,14 @@ var buildfire = {
 			if (!options.filter) options.filter = {};
 
 			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
-				const hasIndex = this._checkForIndex(options.filter, 0);
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 
 				if (!hasIndex) {
 					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
 				}
 			}
 			if (options.sort && Object.keys(options.sort).length > 0) {
-				const hasIndex = this._checkForIndex(options.sort, 0);
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
 
 				if (!hasIndex) {
 					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
@@ -2908,7 +2796,9 @@ var buildfire = {
 
 			return isTagValid;
 		}
-		, _checkForIndex: function(filter, indexDepth) {
+	}
+	, _data: {
+		_checkForIndex: function(filter, indexDepth) {
 			if (indexDepth >= 10) {
 				console.error('Max index check limit reached');
 				return false;
@@ -2919,7 +2809,7 @@ var buildfire = {
 				}
 				let onlyEmptyObjects = true;
 				for (const item of filter) {
-					let checkResult = this._checkForIndex(item, indexDepth + 1);
+					let checkResult = buildfire._data._checkForIndex(item, indexDepth + 1);
 					if (checkResult) {
 						return true;
 					} else if (checkResult === false) {
@@ -2948,7 +2838,7 @@ var buildfire = {
 						} else if (key.indexOf('_buildfire.index') > -1 && filter[key]) {
 							return true;
 						} else if (typeof filter[key] === 'object') {
-							const checkResult = this._checkForIndex(filter[key], indexDepth + 1);
+							const checkResult = buildfire._data._checkForIndex(filter[key], indexDepth + 1);
 							if (checkResult) {
 								return true;
 							} else if (checkResult === false) {
