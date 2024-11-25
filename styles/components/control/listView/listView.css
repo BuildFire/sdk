@@ -25,7 +25,6 @@
 /* Header */
 .sortable-list-header>h1.section-title {
     font-size: 1.125rem;
-    font-weight: bold;
     color: var(--c-info);
     padding-top: 0.875rem;
     margin-bottom: 1rem;
