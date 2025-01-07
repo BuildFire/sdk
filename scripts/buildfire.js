@@ -3332,11 +3332,29 @@ var buildfire = {
 			},
 			constructUrl: function({width, height, url, blur, method}) {
 				const baseImgUrl = this._transformToImgix(url);
-				const hasQueryString = url.indexOf('?') !== -1;
-				if (width || height) {
-					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop&' : '' ) + 'width=' + width + '&height=' + height + (blur ? '&blur=' + blur : '');
+				if (!baseImgUrl) return url;
+			
+				const paramsToRemove = ['width', 'height', 'fit'];
+				
+				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
+				
+				const urlObj = new URL(cleanedUrl);
+				
+				if (method === 'crop' && (width || height)) { //allow crop only if width or height provided
+					urlObj.searchParams.set('fit', 'crop');
 				}
-				return url;
+				if (width) {
+					urlObj.searchParams.set('width', width);
+				}
+				if (height) {
+					urlObj.searchParams.set('height', height);
+				}
+				if (blur) {
+					urlObj.searchParams.set('blur', blur);
+				}
+				
+				return urlObj.toString();
+				
 			},
 			// consists of whitelisted AWS urls in imgix as keys and the corresponding imgix urls as values
 			_imgixWhitelistedUrls: {
@@ -3359,6 +3377,13 @@ var buildfire = {
 
 				// support Unsplash images
 				'http://images.unsplash.com': 'https://images.unsplash.com',
+
+				// support imgix images themselves
+				'http://buildfire.imgix.net': 'https://buildfire.imgix.net',
+				'http://bfplugins.imgix.net': 'https://bfplugins.imgix.net',
+				'http://bflegacy.imgix.net': 'https://bflegacy.imgix.net',
+				'http://buildfire-uat.imgix.net': 'https://buildfire-uat.imgix.net',
+				'http://bfplugins-uat.imgix.net': 'https://bfplugins-uat.imgix.net',
 			},
 			_transformToImgix: function(url) {
 				url = url.replace(/^https:\/\//i, 'http://');
@@ -3384,7 +3409,22 @@ var buildfire = {
 					});
 			
 				return urlObj.toString();
-			}
+			},
+			_removeImageParams: function(url, paramsToRemove) {
+				try {
+					const urlObj = new URL(url);
+					const params = urlObj.searchParams;
+					
+					paramsToRemove.forEach(param => {
+						params.delete(param);
+					});
+					
+					return urlObj.toString();
+				} catch (e) {
+					console.warn('Invalid URL provided to _removeImageParams:', url);
+					return url;
+				}
+			},
 		},
 		_cloudImg: {
 			isSupportedUrl: function(url) {
@@ -3394,15 +3434,59 @@ var buildfire = {
 				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg|webp)(?!.)/gi.test(url)));
 			},
 			constructUrl: function({width, height, url, blur, method}) {
-				const baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
-				const hasQueryString = url.indexOf('?') !== -1;
-				if (width || height) {
-					const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'func=crop': 'func=bound') + '&width=' + width + '&height=' + height + (blur ? '&blur=' + blur : '') + (isDevMode ? '&ci_info=1' : '');
+
+				let baseImgUrl;
+				
+				const isCloudImgUrl = url.startsWith('https://alnnibitpo.cloudimg.io/v7/');
+				if (isCloudImgUrl) {
+					baseImgUrl = url; //prevent having nested cloudimg urls.
+				} else {
+					baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
 				}
-				return url;
+				
+				const paramsToRemove = ['width', 'height', 'func', 'ci_info'];
+				
+				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
+				
+				const urlObj = new URL(cleanedUrl);
+				
+				if (width || height) { //allow crop or bound only if width or height provided
+					urlObj.searchParams.set('func', method === 'crop' ? 'crop' : 'bound');
+				}
+				
+				if (width) {
+					urlObj.searchParams.set('width', width);
+				}
+				if (height) {
+					urlObj.searchParams.set('height', height);
+				}
+				if (blur) {
+					urlObj.searchParams.set('blur', blur);
+				}
+				
+				const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
+				if (isDevMode) {
+					urlObj.searchParams.set('ci_info', '1');
+				}
+				
+				return urlObj.toString();
 			},
-		}
+			_removeImageParams: function(url, paramsToRemove) {
+				try {
+					const urlObj = new URL(url);
+					const params = urlObj.searchParams;
+					
+					paramsToRemove.forEach(param => {
+						params.delete(param);
+					});
+					
+					return urlObj.toString();
+				} catch (e) {
+					console.warn('Invalid URL provided to _removeImageParams:', url);
+					return url;
+				}
+			},
+		},
 	}
 	, colorLib: {
 		showDialog: function (data, options, onchange, callback) {
