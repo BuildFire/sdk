@@ -3333,13 +3333,13 @@ var buildfire = {
 			constructUrl: function({width, height, url, blur, method}) {
 				const baseImgUrl = this._transformToImgix(url);
 				if (!baseImgUrl) return url;
-			
+
 				const paramsToRemove = ['width', 'height', 'fit'];
-				
+
 				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
-				
+
 				const urlObj = new URL(cleanedUrl);
-				
+
 				if (method === 'crop' && (width || height)) { //allow crop only if width or height provided
 					urlObj.searchParams.set('fit', 'crop');
 				}
@@ -3352,9 +3352,9 @@ var buildfire = {
 				if (blur) {
 					urlObj.searchParams.set('blur', blur);
 				}
-				
+
 				return urlObj.toString();
-				
+
 			},
 			// consists of whitelisted AWS urls in imgix as keys and the corresponding imgix urls as values
 			_imgixWhitelistedUrls: {
@@ -3387,6 +3387,7 @@ var buildfire = {
 			},
 			_transformToImgix: function(url) {
 				url = url.replace(/^https:\/\//i, 'http://');
+				url = url.replace(/^https:\//i, 'http://'); // for bad urls with one '/', ex: https:/s3.amazonaws.com/...
 				for (let whitelistedUrl in this._imgixWhitelistedUrls) {
 					if (url.indexOf(whitelistedUrl) === 0) {
 						if (url.indexOf('images.unsplash.com') !== -1) { //sanitize unsplash images
@@ -3400,25 +3401,25 @@ var buildfire = {
 			_sanitizeUnsplashImage: function(url) {
 				const urlObj = new URL(url);
 				const allowedParams = ['ixid', 'ixlib', 'fm'];
-				
+
 				Array.from(urlObj.searchParams.keys())
 					.forEach(key => {
 						if (!allowedParams.includes(key)) {
 							urlObj.searchParams.delete(key);
 						}
 					});
-			
+
 				return urlObj.toString();
 			},
 			_removeImageParams: function(url, paramsToRemove) {
 				try {
 					const urlObj = new URL(url);
 					const params = urlObj.searchParams;
-					
+
 					paramsToRemove.forEach(param => {
 						params.delete(param);
 					});
-					
+
 					return urlObj.toString();
 				} catch (e) {
 					console.warn('Invalid URL provided to _removeImageParams:', url);
@@ -3436,24 +3437,24 @@ var buildfire = {
 			constructUrl: function({width, height, url, blur, method}) {
 
 				let baseImgUrl;
-				
+
 				const isCloudImgUrl = url.startsWith('https://alnnibitpo.cloudimg.io/v7/');
 				if (isCloudImgUrl) {
 					baseImgUrl = url; //prevent having nested cloudimg urls.
 				} else {
 					baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
 				}
-				
+
 				const paramsToRemove = ['width', 'height', 'func', 'ci_info'];
-				
+
 				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
-				
+
 				const urlObj = new URL(cleanedUrl);
-				
+
 				if (width || height) { //allow crop or bound only if width or height provided
 					urlObj.searchParams.set('func', method === 'crop' ? 'crop' : 'bound');
 				}
-				
+
 				if (width) {
 					urlObj.searchParams.set('width', width);
 				}
@@ -3463,23 +3464,23 @@ var buildfire = {
 				if (blur) {
 					urlObj.searchParams.set('blur', blur);
 				}
-				
+
 				const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
 				if (isDevMode) {
 					urlObj.searchParams.set('ci_info', '1');
 				}
-				
+
 				return urlObj.toString();
 			},
 			_removeImageParams: function(url, paramsToRemove) {
 				try {
 					const urlObj = new URL(url);
 					const params = urlObj.searchParams;
-					
+
 					paramsToRemove.forEach(param => {
 						params.delete(param);
 					});
-					
+
 					return urlObj.toString();
 				} catch (e) {
 					console.warn('Invalid URL provided to _removeImageParams:', url);
