@@ -160,68 +160,66 @@ buildfire.components.carousel.editor.prototype = {
 	_appendItem: function (item) {
 		var me = this,
 			// Create the required DOM elements
-			wrapper = document.createElement('div'),
-			moveHandle = document.createElement('span'),
-			mediaHolder = document.createElement('div'),
+			listItem = document.createElement('div'),
+			listItemDetails = document.createElement('div'),
+			dragDropIcon = document.createElement('span'),
+			listItemImageContainer = document.createElement('div'),
 			image = document.createElement('img'),
-			details = document.createElement('div'),
-			title = document.createElement('span'),
-			actionsWrapper = document.createElement('div'),
-			editButton = document.createElement('a'),
-			deleteButton = document.createElement('span');
+			listItemTitle = document.createElement('span'),
+			listItemActions = document.createElement('div'),
+			addEditButton = document.createElement('div'),
+			deleteButton = document.createElement('div');
 
 		// Add the required classes to the elements
-		wrapper.className = 'd-item';
-		moveHandle.className = 'icon icon-menu pull-left';
-		mediaHolder.className = 'media-holder pull-left';
-		details.className = 'copy pull-right';
-		title.className = 'title ellipsis';
-		actionsWrapper.className = 'pull-right';
-		editButton.className = 'text-primary text';
-		deleteButton.className = 'btn-icon btn-delete-icon btn-danger transition-third';
+		listItem.className = 'd-item border-grey';
+		listItemDetails.className = 'list-item-details';
+		dragDropIcon.className = 'icon sdk-icon-drag';
+		listItemImageContainer.className = 'media-holder';
+		listItemTitle.className = 'title ellipsis';
+		listItemActions.className = 'list-item-actions';
+		addEditButton.className = (item.action && item.action != 'noAction') ? 'sdk-icon-edit' : 'sdk-icon-primary-add';
+		deleteButton.className = 'sdk-icon-close';
 
-		image.src = buildfire.components.carousel._resizeImage(item.iconUrl, {width: 80, height: 40});
-		title.innerHTML = item.title;
-		editButton.innerHTML = (item.action && item.action != 'noAction') ? 'Edit Action/Link' : 'Add Action/Link';
+		image.src = buildfire.components.carousel._resizeImage(item.iconUrl, {width: 48, height: 29});
+		listItemTitle.innerHTML = item.title;
 
 		// Append elements to the DOM
-		wrapper.appendChild(moveHandle);
-		wrapper.appendChild(mediaHolder);
-		mediaHolder.appendChild(image);
-		details.appendChild(title);
+		listItemDetails.appendChild(dragDropIcon);
+		listItemImageContainer.appendChild(image);
+		listItemDetails.appendChild(listItemImageContainer);
+		listItemDetails.appendChild(listItemTitle);
 
-		actionsWrapper.appendChild(editButton);
-		actionsWrapper.appendChild(deleteButton);
+		listItemActions.appendChild(addEditButton);
+		listItemActions.appendChild(deleteButton);
 
-		details.appendChild(actionsWrapper);
-
-		wrapper.appendChild(details);
-		me.itemsContainer.appendChild(wrapper);
+		listItem.appendChild(listItemDetails);
+		listItem.appendChild(listItemActions);
+		me.itemsContainer.appendChild(listItem);
 
 		// initialize the required events on the current item
 		(function () {
-			editButton.addEventListener('click', function (e) {
+			addEditButton.addEventListener('click', function (e) {
 				e.preventDefault();
 				var itemIndex = me._getItemIndex(item);
 				var currentTarget = e.target;
-				var parentElement = currentTarget.parentNode.parentNode.parentNode;
+				var parentElement = currentTarget.parentNode.parentNode;
 				me._openActionItem(item, function (actionItem) {
 					me.items[itemIndex] = actionItem;
 					item = actionItem;
 					me.onItemChange(actionItem, itemIndex);
 					parentElement.querySelector('img').src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, {
-						width: 80,
-						height: 40
+						width: 48,
+						height: 29
 					});
 					parentElement.querySelector('.title').innerHTML = actionItem.title;
-					currentTarget.innerHTML = actionItem.action && actionItem.action != 'noAction' ? 'Edit Action' : 'Add Action';
+					currentTarget.className = actionItem.action && actionItem.action != 'noAction' ? 'sdk-icon-edit' : 'sdk-icon-primary-add';
 				});
 			});
 
 			deleteButton.addEventListener('click', function (e) {
 				e.preventDefault();
 				var itemIndex = me._getItemIndex(item),
-					parent = this.parentNode.parentNode.parentNode;
+					parent = this.parentNode.parentNode;
 				if (itemIndex != -1) {
 					me.items.splice(itemIndex, 1);
 					parent.parentNode.removeChild(parent);
@@ -249,13 +247,13 @@ buildfire.components.carousel.editor.prototype = {
 
 		var speedDropDown = document.createElement('div');// added
 		var speedDropDownLabel = document.createElement('span');//added
-		var selector =  document.createElement('select');//added
+		var speedSelector =  document.createElement('select');//added
 
 		me.speedArray.forEach(el=>{//added
 			var opt = document.createElement('option');//added
 			opt.value = el.value;//added
 			opt.innerHTML = el.text;//added
-			selector.appendChild(opt);//added
+			speedSelector.appendChild(opt);//added
 		});
 
 		var orderDropDown = document.createElement('div');// added
@@ -280,28 +278,20 @@ buildfire.components.carousel.editor.prototype = {
 			displaySelector.appendChild(opt);//added
 		});
 
-		speedDropDown.className='screen layouticon pull-left';//added
-		selector.className='form-control dropdown margin-left-zero change-speed';//added
-		speedDropDownLabel.className='labels pull-left medium';//added
+		speedDropDown.className='screen layouticon';//added
+		speedSelector.className='form-control dropdown margin-left-zero change-speed';//added
+		speedDropDownLabel.className='labels medium';//added
 
-		editContainer.setAttribute('style','margin-left:94px;');//added
-		speedDropDownLabel.setAttribute('style','font-size:13px!important; margin-right:4px; margin-left: 1px; margin-top:7px;');//added
-		selector.setAttribute('style','padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:62px ; -moz-appearance: menulist; -webkit-appearance: menulist;');//added
-
-		orderDropDown.className='screen layouticon pull-left';//added
+		orderDropDown.className='screen layouticon';//added
 		orderSelector.className='form-control dropdown margin-left-zero change-random';//added
-		orderDropDownLabel.className='labels pull-left medium';//added
-
-		orderDropDownLabel.setAttribute('style','font-size:13px!important; margin-right:4px; margin-left:4px; margin-top:7px;');//added
-		orderSelector.setAttribute('style','padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:70px; -moz-appearance: menulist; -webkit-appearance: menulist;');//added
+		orderDropDownLabel.className='labels medium';//added
 
 
-		displayDropDown.className='screen layouticon pull-left';//added
+
+		displayDropDown.className='screen layouticon';//added
 		displaySelector.className='form-control dropdown margin-left-zero change-display';//added
-		displayDropDownLabel.className='labels pull-left medium';//added
+		displayDropDownLabel.className='labels medium';//added
 
-		displayDropDownLabel.setAttribute('style','font-size:13px!important; margin-right:4px; margin-left:4px; margin-top:7px;');//added
-		displaySelector.setAttribute('style','padding-left:0px; padding-right:0px; appearance:auto; font-size: 12px; width:84px; -moz-appearance: menulist; -webkit-appearance: menulist;');//added
 
 		displayDropDownLabel.innerHTML = 'Display';//added
 
@@ -312,15 +302,15 @@ buildfire.components.carousel.editor.prototype = {
 		var container = me.selector.querySelector('.settings-container');
 		container.appendChild(editContainer);//added
 
-		editContainer.appendChild(speedDropDownLabel);//added
+		speedDropDown.appendChild(speedDropDownLabel);//added
 		editContainer.appendChild(speedDropDown);//added
-		speedDropDown.appendChild(selector);//added
+		speedDropDown.appendChild(speedSelector);//added
 
-		editContainer.appendChild(orderDropDownLabel);//added
+		orderDropDown.appendChild(orderDropDownLabel);//added
 		editContainer.appendChild(orderDropDown);//added
 		orderDropDown.appendChild(orderSelector);//added
 
-		editContainer.appendChild(displayDropDownLabel);//added
+		displayDropDown.appendChild(displayDropDownLabel);//added
 		editContainer.appendChild(displayDropDown);//added
 		displayDropDown.appendChild(displaySelector);//added
         
@@ -341,31 +331,29 @@ buildfire.components.carousel.editor.prototype = {
 	,
 	// render the basic template HTML
 	_renderTemplate: function () {
-		var componentContainer = document.createElement('div');
-		var componentName = document.createElement('span');
-		var contentContainer = document.createElement('div');
-		var buttonContainer = document.createElement('div');
-		var button = document.createElement('a');
-		var sliderContainer = document.createElement('div');
+		var carouselEditor = document.createElement('div');
+		var carouselEditorTitle = document.createElement('span');
+		var carouselEditorContent = document.createElement('div');
+		var carouselEditorSettings = document.createElement('div');
+		var addImageButton = document.createElement('a');
+		var listItems = document.createElement('div');
 
-		componentContainer.className = 'item clearfix row';
-		componentName.className = 'labels col-md-3 padding-right-zero pull-left';
-		componentName.innerHTML = 'Image Carousel';
-		contentContainer.className = 'main col-md-9 pull-right';
-		buttonContainer.className = 'clearfix settings-container';
-		button.className = 'btn btn-success pull-left add-new-carousel';
-		sliderContainer.className = 'carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey';
+		carouselEditor.className = 'item carousel-editor';
+		carouselEditorTitle.innerHTML = 'Image Carousel';
+		carouselEditorContent.className = 'main';
+		carouselEditorSettings.className = 'settings-container';
+		addImageButton.className = 'btn btn-success add-new-carousel btn-plus-icon-with-text';
+		listItems.className = 'carousel-items hide-empty draggable-list-view margin-top-twenty margin-bottom-twenty border-radius-four';
 
-		button.innerHTML = 'Add Image';
-		button.classList.add('btn-plus-icon-with-text');
+		addImageButton.innerHTML = '+ Add Image';
         
-		componentContainer.appendChild(componentName);
-		buttonContainer.appendChild(button);
-		contentContainer.appendChild(buttonContainer);
-		contentContainer.appendChild(sliderContainer);
-		componentContainer.appendChild(contentContainer);
+		carouselEditor.appendChild(carouselEditorTitle);
+		carouselEditorSettings.appendChild(addImageButton);
+		carouselEditorContent.appendChild(carouselEditorSettings);
+		carouselEditorContent.appendChild(listItems);
+		carouselEditor.appendChild(carouselEditorContent);
 
-		this.selector.appendChild(componentContainer);
+		this.selector.appendChild(carouselEditor);
 	},
 	// initialize the generic events
 	_initEvents: function () {
