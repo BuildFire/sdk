@@ -3102,9 +3102,6 @@ p.ai-seeder-banner {
 	padding-right: 12px;
 }
 
-.carousel-editor .layouticon span {
-	width: 150px;
-}
 
 .carousel-editor .btn-plus-icon-with-text {
 	width: 268px;
@@ -3163,12 +3160,30 @@ p.ai-seeder-banner {
 	line-height: normal;
 } 
 
+.carousel-editor .dropdown-menu {
+	top: 100% !important;
+}
+
+.dropdown-toggle.dropdown-button {
+	display: flex;
+	justify-content: space-between;
+	text-align: left;
+}
+
+.carousel-editor .labels.medium {
+	width: 25%;
+}
+
 .carousel-editor .change-speed, 
 .carousel-editor .change-random, 
 .carousel-editor .change-display {
-	appearance: menulist; 
-	-moz-appearance: menulist; 
-	-webkit-appearance: menulist;
+	width: 75%;
+}
+
+.carousel-editor .change-speed div, 
+.carousel-editor .change-random div, 
+.carousel-editor .change-display div {
+	width: 100%;
 }
 
 .sdk-icon-drag {

@@ -40,10 +40,10 @@ buildfire.components.carousel._getDomSelector = function (selector) {
 };
 
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.carousel.editor = function (selector, items, speed, order, display) {//added
+buildfire.components.carousel.editor = function (selector, items, speed, order, display) {
 	// carousel editor requires Sortable.js
 	if (typeof (Sortable) == 'undefined') throw ('please add Sortable first to use carousel components');
-	this.settings=(speed)?{speed:speed,order:order,display:display}:null;//added
+	this.settings=(speed)?{speed:speed,order:order,display:display}:null;
 	this.selector = selector;
 	this.items = [];
 	this.init(selector);
@@ -79,46 +79,34 @@ buildfire.components.carousel.editor.prototype = {
 	onAddItems: function (items) {
 		console.warn('please handle onAddItems', items);
 	},
-	onOptionSpeedChange:function (speed){//added
-		console.warn('please handle onOptionSpeedChange', speed);//added
-	},//added
-	onOptionOrderChange:function (order){//added
-		console.warn('please handle onOptionOrderChange', order);//added
-	},//added
-	onOptioDisplayChange:function (display){//added
-		console.warn('please handle onOptioDisplayChange', display);//added
-	},//added
+	onOptionSpeedChange:function (speed){
+		console.warn('please handle onOptionSpeedChange', speed);
+	},
+	onOptionOrderChange:function (order){
+		console.warn('please handle onOptionOrderChange', order);
+	},
+	onOptioDisplayChange:function (display){
+		console.warn('please handle onOptioDisplayChange', display);
+	},
 	// This will be triggered when you delete an item
 	onDeleteItem: function (item, index) {
 		console.warn('please handle onDeleteItem', item);
 	},
-	setOptionSpeed: function (speed) {//added
-		if(!this.settings)this._appendSettings();//added
-
-		speed=(this.speedArray.map(el=>{return el.text;}).includes(speed))?this.speedArray.find(el=>el.text==speed).value:speed;
-		this.settings.speed=(this.speedArray.map(el=>{return el.value;}).includes(Number(speed)))?speed:this.defaultSettings.speed;//added
-
-		var speedSelect=this.selector.querySelector('.change-speed');//added
-		speedSelect.value=Number(this.settings.speed);//added
-	},//added
-	setOptionOrder: function (order) {//added
-		if(!this.settings)this._appendSettings();
-
-		order=(this.orderArray.map(el=>{return el.text;}).includes(order))?this.orderArray.find(el=>el.text==order).value:order;
-		this.settings.order=(this.orderArray.map(el=>{return el.value;}).includes(Number(order)))?order:this.defaultSettings.order;//added
-
-		var orderSelect=this.selector.querySelector('.change-random');//added
-		orderSelect.value=Number(this.settings.order);//added
-	},//added
-	setOptionDisplay: function (display) {//added
-		if(!this.settings)this._appendSettings();
-
-		display=(this.displayArray.map(el=>{return el.text;}).includes(display))?this.displayArray.find(el=>el.text==display).value:display;
-		this.settings.display=(this.displayArray.map(el=>{return el.value;}).includes(Number(display)))?display:this.defaultSettings.display;//added
-
-		var displaySelect=this.selector.querySelector('.change-display');//added
-		displaySelect.value=Number(this.settings.display);//added
-	},//added
+	setOptionSpeed: function (speed) {
+		speed = (this.speedArray.map(el=>{return el.text;}).includes(speed))?this.speedArray.find(el=>el.text==speed).value:speed;
+		this.settings.speed = (this.speedArray.map(el=>{return el.value;}).includes(Number(speed)))?speed:this.defaultSettings.speed;
+		this.speedDropdownElements?._updateDropdownValue(Number(this.settings.speed));
+	},
+	setOptionOrder: function (order) {
+		order = (this.orderArray.map(el=>{return el.text;}).includes(order))?this.orderArray.find(el=>el.text==order).value:order;
+		this.settings.order = (this.orderArray.map(el=>{return el.value;}).includes(Number(order)))?order:this.defaultSettings.order;
+		this.orderDropdownElements?._updateDropdownValue(Number(this.settings.order));
+	},
+	setOptionDisplay: function (display) {
+		display = (this.displayArray.map(el=>{return el.text;}).includes(display))?this.displayArray.find(el=>el.text==display).value:display;
+		this.settings.display = (this.displayArray.map(el=>{return el.value;}).includes(Number(display)))?display:this.defaultSettings.display;
+		this.displayDropdownElements?._updateDropdownValue(Number(this.settings.display));
+	},
 	// this method allows you to replace the slider image or append to then if appendItems = true
 	loadItems: function (items, appendItems) {
 		if (items && items instanceof Array) {
@@ -232,8 +220,8 @@ buildfire.components.carousel.editor.prototype = {
 		var me=this;
 		me.speedArray = [{text:'Still',value:0},{text:'1 sec',value:1000},{text:'2 sec',value:2000},{text:'3 sec',value:3000},
 			{text:'4 sec',value:4000},{text:'5 sec',value:5000},{text:'7 sec',value:7000},{text:'10 sec',value:10000},{text:'15 sec',value:15000}];
-		me.orderArray = [{text:'In order',value:0},{text:'Random',value:1}];//added
-		me.displayArray = [{text:'All images',value:0},{text:'One image',value:1}];//added
+		me.orderArray = [{text:'In order',value:0},{text:'Random',value:1}];
+		me.displayArray = [{text:'All images',value:0},{text:'One image',value:1}];
 
 		me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value};
 
@@ -243,92 +231,58 @@ buildfire.components.carousel.editor.prototype = {
 		if(!me.settings.order)me.settings.order=me.defaultSettings.order;
 		if(!me.settings.display)me.settings.display=me.defaultSettings.display;
 
-		var editContainer = document.createElement('div');//added
+		let settingsContainer = me.selector.querySelector('.settings-container');
+		let dropdownsContainer = document.createElement('div');
+		settingsContainer.appendChild(dropdownsContainer);
 
-		var speedDropDown = document.createElement('div');// added
-		var speedDropDownLabel = document.createElement('span');//added
-		var speedSelector =  document.createElement('select');//added
+		let speedDropdown = document.createElement('div');
+		let speedDropdownLabel = document.createElement('span');
+		let speedSelector = document.createElement('div');
+		speedDropdown.appendChild(speedDropdownLabel);
+		dropdownsContainer.appendChild(speedDropdown);
+		speedDropdownLabel.innerHTML = 'Speed';
+		speedDropdown.className='screen layouticon';
+		speedDropdownLabel.className='labels medium';
+		speedSelector.className = 'change-speed';
+		speedDropdown.appendChild(speedSelector);
+		let speedOptions = { dropdownValue: this.settings.speed, dropdownOptions: me.speedArray };
+		this.speedDropdownElements = new carouselDropdown('.change-speed', speedOptions);
+		this.speedDropdownElements.onDropdownValueChange = (value) => {
+			me.onOptionSpeedChange(String(value)); // convert to string for backward compatibility
+		};
 
-		me.speedArray.forEach(el=>{//added
-			var opt = document.createElement('option');//added
-			opt.value = el.value;//added
-			opt.innerHTML = el.text;//added
-			speedSelector.appendChild(opt);//added
-		});
+		let orderDropdown = document.createElement('div');
+		let orderDropdownLabel = document.createElement('span');
+		let orderSelector = document.createElement('div');
+		orderDropdown.appendChild(orderDropdownLabel);
+		dropdownsContainer.appendChild(orderDropdown);
+		orderDropdownLabel.innerHTML = 'Order';
+		orderDropdown.className='screen layouticon';
+		orderDropdownLabel.className='labels medium';
+		orderSelector.className = 'change-random';
+		orderDropdown.appendChild(orderSelector);
+		let orderOptions = { dropdownValue: this.settings.order, dropdownOptions: me.orderArray };
+		this.orderDropdownElements = new carouselDropdown('.change-random', orderOptions);
+		this.orderDropdownElements.onDropdownValueChange = (value) => {
+			me.onOptionOrderChange(String(value)); // convert to string for backward compatibility
+		};
 
-		var orderDropDown = document.createElement('div');// added
-		var orderDropDownLabel = document.createElement('span');//added
-		var orderSelector =  document.createElement('select');//added
-        
-		me.orderArray.forEach(el=>{//added
-			var opt = document.createElement('option');//added
-			opt.value = el.value;//added
-			opt.innerHTML = el.text;//added
-			orderSelector.appendChild(opt);//added
-		});
-
-		var displayDropDown = document.createElement('div');// added
-		var displayDropDownLabel = document.createElement('span');//added
-		var displaySelector =  document.createElement('select');//added
-        
-		me.displayArray.forEach(el=>{//added
-			var opt = document.createElement('option');//added
-			opt.value = el.value;//added
-			opt.innerHTML = el.text;//added
-			displaySelector.appendChild(opt);//added
-		});
-
-		speedDropDown.className='screen layouticon';//added
-		speedSelector.className='form-control dropdown margin-left-zero change-speed';//added
-		speedDropDownLabel.className='labels medium';//added
-
-		orderDropDown.className='screen layouticon';//added
-		orderSelector.className='form-control dropdown margin-left-zero change-random';//added
-		orderDropDownLabel.className='labels medium';//added
-
-
-
-		displayDropDown.className='screen layouticon';//added
-		displaySelector.className='form-control dropdown margin-left-zero change-display';//added
-		displayDropDownLabel.className='labels medium';//added
-
-
-		displayDropDownLabel.innerHTML = 'Display';//added
-
-		orderDropDownLabel.innerHTML = 'Order';//added
-
-		speedDropDownLabel.innerHTML = 'Speed';//added
-
-		var container = me.selector.querySelector('.settings-container');
-		container.appendChild(editContainer);//added
-
-		speedDropDown.appendChild(speedDropDownLabel);//added
-		editContainer.appendChild(speedDropDown);//added
-		speedDropDown.appendChild(speedSelector);//added
-
-		orderDropDown.appendChild(orderDropDownLabel);//added
-		editContainer.appendChild(orderDropDown);//added
-		orderDropDown.appendChild(orderSelector);//added
-
-		displayDropDown.appendChild(displayDropDownLabel);//added
-		editContainer.appendChild(displayDropDown);//added
-		displayDropDown.appendChild(displaySelector);//added
-        
-		// initialize add new item button
-		var speedSelect=me.selector.querySelector('.change-speed');//added
-		speedSelect.addEventListener('change', function () {//added
-			me.onOptionSpeedChange(speedSelect.options[speedSelect.selectedIndex].value);//added
-		});//added
-		var randomSelect=me.selector.querySelector('.change-random');//added
-		randomSelect.addEventListener('change', function () {//added
-			me.onOptionOrderChange(randomSelect.options[randomSelect.selectedIndex].value);//added
-		});//added
-		var displaySelect=me.selector.querySelector('.change-display');//added
-		displaySelect.addEventListener('change', function () {//added
-			me.onOptionDisplayChange(displaySelect.options[displaySelect.selectedIndex].value);//added
-		});//added
-	}
-	,
+		let displayDropdown = document.createElement('div');
+		let displayDropdownLabel = document.createElement('span');
+		let displaySelector = document.createElement('div');
+		displayDropdown.appendChild(displayDropdownLabel);
+		dropdownsContainer.appendChild(displayDropdown);
+		displayDropdownLabel.innerHTML = 'Display';
+		displayDropdown.className='screen layouticon';
+		displayDropdownLabel.className='labels medium';
+		displaySelector.className = 'change-display';
+		displayDropdown.appendChild(displaySelector);
+		let displayOptions = { dropdownValue: this.settings.display, dropdownOptions: me.displayArray };
+		this.displayDropdownElements = new carouselDropdown('.change-display', displayOptions);
+		this.displayDropdownElements.onDropdownValueChange = (value) => {
+			me.onOptionDisplayChange(String(value)); // convert to string for backward compatibility
+		};
+	},
 	// render the basic template HTML
 	_renderTemplate: function () {
 		var carouselEditor = document.createElement('div');
@@ -437,5 +391,87 @@ buildfire.components.carousel.editor.prototype = {
 			index++;
 		}
 		return index;
+	}
+};
+
+let carouselDropdown = function(selector, options) {
+	this.selector = buildfire.components.carousel._getDomSelector(selector);
+	this.options = options;
+	this.init();
+};
+
+carouselDropdown.prototype = {
+	init: function() {
+		let self = this;
+		const { dropdownValue, dropdownOptions } = this.options;
+		const dropdown = document.createElement('div');
+		dropdown.className = 'btn-group margin-right-fifteen';
+
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'btn btn-default dropdown-toggle dropdown-button';
+		button.setAttribute('data-toggle', 'dropdown');
+		button.setAttribute('aria-haspopup', 'true');
+		button.setAttribute('aria-expanded', 'false');
+		button.onclick = (e) => {
+			e.stopPropagation();
+			self._toggleDropdown(dropdown);
+			document.body.addEventListener('click', function() {
+				self._toggleDropdown(dropdown, true);
+			}, { once: true });
+		};
+
+		const buttonText = document.createElement('span');
+		buttonText.className = 'dropdown-text';
+		const selectedOption = dropdownOptions.find(option => option.value === dropdownValue);
+		buttonText.textContent = selectedOption ? selectedOption.text : dropdownOptions[0].text;
+		const arrowContainer = document.createElement('span');
+		const caret = document.createElement('span');
+		caret.className = 'caret';
+		arrowContainer.appendChild(caret);
+
+		button.appendChild(buttonText);
+		button.appendChild(arrowContainer);
+
+		// Create the ul element
+		const ul = document.createElement('ul');
+		ul.className = 'dropdown-menu';
+		ul.setAttribute('role', 'menu');
+
+		dropdownOptions.forEach((option) => {
+			const li = document.createElement('li');
+			const a = document.createElement('a');
+			a.onclick = () => {
+				self.onDropdownValueChange(option.value);
+				buttonText.textContent = option.text;
+			};
+			a.textContent = option.text;
+			li.appendChild(a);
+			ul.appendChild(li);
+		});
+
+		dropdown.appendChild(button);
+		dropdown.appendChild(ul);
+
+		this.selector.appendChild(dropdown);
+	},
+	onDropdownValueChange: (value) => {
+		console.warn('please handle onDropdownValueChange', value);
+	},
+	_updateDropdownValue: function(dropdownValue) {
+		const selectedOption = this.options.dropdownOptions.find(option => option.value === dropdownValue);
+		this.selector.querySelector('.dropdown-text').textContent = selectedOption.text;
+	},
+	_toggleDropdown: function(dropdownElement, forceClose) {
+		if (!dropdownElement) {
+			return;
+		}
+		if (dropdownElement.classList.contains('open') || forceClose) {
+			dropdownElement.classList.remove('open');
+			dropdownElement.querySelector('button').blur(); // remove the focus effect on the button
+		} else {
+			document.body.click(); // close any other open dropdowns
+			dropdownElement.classList.add('open');
+		}
 	}
 };
