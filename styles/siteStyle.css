@@ -3104,12 +3104,14 @@ p.ai-seeder-banner {
 
 
 .carousel-editor .btn-plus-icon-with-text {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: 268px;
 	height: 48px;
 	color: #ffffff;
 	background-color: #101010;
 	border-radius: 10px;
-	align-content: center;
 	margin-top: 8px;
 	margin-bottom: 32px;
 	padding: 6px 12px !important;
