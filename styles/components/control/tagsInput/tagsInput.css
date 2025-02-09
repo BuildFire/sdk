@@ -44,6 +44,7 @@
 	box-sizing: border-box;
 	transition: .1s;
 	overflow: hidden;
+	min-height: 34px;
 	max-height: 54px;
 	overflow-y: auto;
 }
