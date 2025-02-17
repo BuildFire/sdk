@@ -3386,6 +3386,7 @@ var buildfire = {
 				'http://bfplugins-uat.imgix.net': 'https://bfplugins-uat.imgix.net',
 			},
 			_transformToImgix: function(url) {
+				const orgUrl = url;
 				url = url.replace(/^https:\/\//i, 'http://');
 				url = url.replace(/^https:\//i, 'http://'); // for bad urls with one '/', ex: https:/s3.amazonaws.com/...
 				for (let whitelistedUrl in this._imgixWhitelistedUrls) {
@@ -3396,7 +3397,8 @@ var buildfire = {
 						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
 					}
 				}
-				return null; // return nothing if the url wasn't supported in imgix
+				const _appId = buildfire?._context?.appId;
+				return `https://buidfire-proxy.imgix.net/${_appId ? 'app_' + _appId : 'unknown'}/` + encodeURIComponent(orgUrl);
 			},
 			_sanitizeUnsplashImage: function(url) {
 				const urlObj = new URL(url);
