@@ -35,6 +35,7 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 //{selector:selector, items:items, layout:layout, speed:speed}
 buildfire.components.carousel.view = function (options) {
 	let self = this;
+	let resizeTimeout;
 	this.config = this.mergeSettings(options);
 	this._initDimensions(self.config.layout);
 	this.selector = typeof this.config.selector === 'string' ? document.querySelector(this.config.selector) : this.config.selector;
@@ -60,6 +61,18 @@ buildfire.components.carousel.view = function (options) {
 			console.error('Selector element should be provided');
 		}
 	}
+	
+	window.addEventListener('resize', () => { // rerender items on window resize
+		if (resizeTimeout) {
+			clearTimeout(resizeTimeout);
+			resizeTimeout = null;
+		}
+		resizeTimeout = setTimeout(() => {
+			if (self.config.items && self.config.items.length) {
+				self.loadItems(self.config.items, false);
+			}
+		}, 500);
+	});
 };
 buildfire.components.carousel.view.lastCarouselTimer = null;
 // Carousel view methods
