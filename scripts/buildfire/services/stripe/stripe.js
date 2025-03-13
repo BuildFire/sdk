@@ -10,6 +10,8 @@ if (typeof (buildfire.services.stripe) == 'undefined') buildfire.services.stripe
 
 if (typeof (buildfire.services.stripe.connect) == 'undefined') buildfire.services.stripe.connect = {};
 
+if (typeof (buildfire.services.stripe.invoice) == 'undefined') buildfire.services.stripe.invoice = {};
+
 /**
  * charge dynamic products using stripe checkout.
  * @param {Object} options.
@@ -197,6 +199,7 @@ buildfire.services.stripe.capturePayment = function (options, cb) {
  * @param {Object} options.
  * @param {string} options.email - The email address of the account holder. This is only to make the account easier to identify to you. Stripe will never directly email Custom accounts.
  * @param {Object} options.metadata - Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value.
+ * @param {boolean} options.skipAccountCreation - Only check if user stripe connected or not, and don't show create account popup
  */
 
 /**
@@ -270,6 +273,134 @@ buildfire.services.stripe.cancelPayment = function (options, cb) {
 buildfire.services.stripe.refundPayment = function (options, cb) {
 	var packetId = null;
 	var command = 'stripe.refundPayment';
+
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * Create invoice.
+ * @param {Object} options.
+ * @param {Object} options.metadata - Metadata for invoice, like instanceId, pluginTypeId to be used in PN.
+ * @param {Array.<Object>} options.items - a list of items.
+ * 
+ * Required properties:
+ * @param {string} options.items[].itemId - Unique Id for item.
+ * @param {string} options.items[].itemName - Item name.
+ * @param {string} options.items[].itemType - Item type.
+ * @param {number} options.items[].unitAmount - Item price amount.
+ * 
+ * Optional properties:
+ * @param {string} options.items[].description - Item description.
+ * @param {number} options.items[].quantity - Quantity to be purchased.
+ * @param {string} options.items[].currency - "unitAmount" currency, default is "usd".
+ * @param {Object} options.items[].metadata - Item metadata.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.invoice.create = function (options, cb) {
+	var packetId = null;
+	var command = 'stripe.invoice.create';
+
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
+};
+
+
+/**
+ * Update invoice.
+ * @param {Object} options.
+ * @param {Object} options.metadata - Metadata for invoice, like instanceId, pluginTypeId to be used in PN.
+ * @param {string} options.invoiceId - Invoice id.
+ * @param {Array.<Object>} options.items - a list of items, this array of items will override the existed items array in db.
+ * 
+ * Required properties:
+ * @param {string} options.items[].itemId - Unique Id for item.
+ * @param {string} options.items[].itemName - Item name.
+ * @param {string} options.items[].itemType - Item type.
+ * @param {number} options.items[].unitAmount - Item price amount.
+ * 
+ * Optional properties:
+ * @param {string} options.items[].description - Item description.
+ * @param {number} options.items[].quantity - Quantity to be purchased.
+ * @param {string} options.items[].currency - "unitAmount" currency, default is "usd".
+ * @param {Object} options.items[].metadata - Item metadata.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.invoice.update = function (options, cb) {
+	var packetId = null;
+	var command = 'stripe.invoice.update';
+
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * Get invoice by invoiceId.
+ * @param {Object} options.
+ * @param {string} options.invoiceId - Invoice id.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.invoice.get = function (options, cb) {
+	var packetId = null;
+	var command = 'stripe.invoice.get';
+
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * Delete invoice.
+ * @param {Object} options.
+ * @param {string} options.invoiceId - Invoice id.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.invoice.delete = function (options, cb) {
+	var packetId = null;
+	var command = 'stripe.invoice.delete';
+
+	var packet = new Packet(packetId, command, options);
+	buildfire._sendPacket(packet, cb);
+};
+
+/**
+ * charge invoice using stripe checkout.
+ * @param {Object} options.
+ * @param {string} options.invoiceId - Invoice id.
+ * @param {string} [options.submitType] - Describes the type of transaction being performed by Checkout in order to customize relevant text on the page, such as the submit button. Supported values are "auto, book, donate, or pay".
+ * @param {string} [options.customerId] - ID of an existing customer, if one exists. If blank, Checkout will create a new customer object based on information provided during the session. The email stored on the customer will be used to prefill the email field on the Checkout page. If the customer changes their email on the Checkout page, the Customer object will be updated with the new email.
+ * @param {string} [options.customerEmail] - If provided, this value will be used when the Customer object is created. If not provided, customers will be asked to enter their email address. Use this parameter to prefill customer data if you already have an email on file. To access information about the customer once a session is complete, use the customer field.
+ * @param {string} [params.captureMethod=automatic] - Controls when the funds will be captured from the customer’s account. Possible enum values [automatic, manual].
+ * @param {boolean} [params.automaticTax=false] - Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions. Set it to automaticTax=true to enable automatic taxes.
+ */
+
+/**
+ * @callback cb
+ * @param {Object} error
+ * @param {Object} response
+ */
+buildfire.services.stripe.invoice.charge = function (options, cb) {
+	var packetId = null;
+	var command = 'stripe.invoice.chargeInvoice';
 
 	var packet = new Packet(packetId, command, options);
 	buildfire._sendPacket(packet, cb);

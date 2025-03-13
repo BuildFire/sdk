@@ -20,7 +20,6 @@ buildfire.social.reactions= (function(){
 				console.log(this.getAttribute('emotion'));
 				this.parentNode.classList.remove('activeBar');
 				buildfire.social.reactions.toggleEmotion(articleId,emotion,function(err,result){
-					debugger;
 				});
 			}
 			else {
@@ -129,7 +128,6 @@ buildfire.social.reactions= (function(){
 							,user: user
 						})
 					}).then(function(res) {
-						debugger;
 						if(res.status == 200){
 							res.json().then(function(b){
 								if(Array.isArray(b) && b.length > 0  )

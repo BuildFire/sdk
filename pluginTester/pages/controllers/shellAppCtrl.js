@@ -117,10 +117,7 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 					$scope.loadWebpackFrames(config);
 				} else {
 					$scope.loadFrames(pluginFolder, config);
-				}
-
-				// $scope.navToValue = $scope.pluginFolder = pluginFolder;
-				// keepTrackOfRecentPlugins(pluginFolder);
+				};
 
 				var hideEmulator = (config.widget && typeof config.widget.enabled != 'undefined') ? !config.widget.enabled : false;
 
@@ -134,8 +131,6 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 
 		xmlhttp.open('GET', url, true);
 		xmlhttp.send();
-
-
 	};
 
 
@@ -187,13 +182,6 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 		return;
 	};
 
-	postMaster.widgetPluginAPI.spinner = window.spinner;
-	postMaster.widgetPluginAPI.auth = { ...postMaster.widgetPluginAPI.auth };
-	postMaster.widgetPluginAPI.auth.secondaryUserLookup = function () { // prefer this
-		return null;
-	};
-
-	// loop services and override
 }]
 );
 

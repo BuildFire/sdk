@@ -4,6 +4,9 @@
 [ios="true"][view="browser"][is-pwa-or-html5-ios="true"] {
 	--full-app-height: 100%;
 }
+[is-pwa-android="true"] {
+	--full-app-height: -webkit-fill-available;
+}
 *{
 	outline:none;
 	-webkit-box-sizing: border-box;
@@ -87,6 +90,9 @@ textarea{
 .holder .btn.dropdown-toggle{
 	width:100%;
 }
+.transparent-background {
+	background-color:rgba(150,150,150, 0.2);
+}
 
 /* Plugin Nav */
 #pluginNav{
@@ -124,6 +130,11 @@ textarea{
 	position:relative;
 	top:4px;
 	font-weight:100;
+}
+
+#pluginNav.title-with-bookmark h4,
+#pluginNav.title-with-bookmark h5{
+	max-width: calc(75% - 20px);
 }
 /* Target Webkit browsers for alignment */
 @media screen and (-webkit-min-device-pixel-ratio:0) {
@@ -168,19 +179,21 @@ section.showNav #plugin, #plugin.access-code-visible{
 }
 
 /* Footer Menu */
-#footerMenuParent{
-	text-align:center;
+#navbarContainer{
 	position: absolute;
 	left: 0;
 	bottom: 0;
-	/*height: 40px;*/
 	min-height: 40px;
-	height: 7vh;
 	width: 100%;
 	z-index: 1;
 }
+#footerMenuParent{
+	text-align:center;
+	height: 7vh;
+	width: 100%;
+}
 
-html[ios="true"] #footerMenuParent{
+html[ios="true"] #navbarContainer{
 	position: fixed;
 }
 
@@ -215,6 +228,12 @@ html[ios="true"] #footerMenuParent{
 	/*padding-bottom: 43px;*/
 	padding-bottom: 7vh;
 }
+
+.has-footer-menu.navbar-with-addon,
+#plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+#plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
+	padding-bottom: 14vh;
+}
 .keyboard-visible .has-footer-menu,
 .has-footer-menu.notes-wrapper,
 .has-footer-menu.menu-body-container,
@@ -243,14 +262,14 @@ html[ios="true"] #footerMenuParent{
 }
 
 /* Menu Toggle */
-#menu-location span.icon{
+.menu-location span.icon, .menu-location span.title-bookmark-icon { 
 	padding: 1em !important; /* increase clickable area */
 	margin: -1em !important;/* increase clickable area */
 	font-size:21px;
 	vertical-align:top;
 	color:#fff;
 }
-#menu-location .notification-circle{
+.menu-location .notification-circle{
 	position: absolute;
 	top: 3px;
 	right: 30px;
@@ -259,14 +278,24 @@ html[ios="true"] #footerMenuParent{
 	text-align: center;
 	border-radius: 100%;
 }
-#menu-location.menu-left-align .notification-circle{
+.menu-location.menu-left-align .notification-circle{
 	left:30px;
 }
-#menu-location .notification-circle span{
+.menu-location .notification-circle span{
 	font-size:10px;
 	position:relative;
 	top:-2px;
 	text-align:center;
+}
+
+.menu-location.title-bookmark{
+	right: 40px;
+}
+.menu-location.title-bookmark .title-bookmark-icon{
+	font-size: 16px;
+	line-height: 18px;
+	vertical-align: unset;
+	color:#fff;
 }
 
 /* Menu */
@@ -1134,7 +1163,7 @@ html[ios="true"][view="app"] #pluginNav h4,
 html[ios="true"][view="app"] #pluginNav h5{
 	padding-bottom:8px !important;
 }
-html[ios="true"][view="app"] #menu-location{
+html[ios="true"][view="app"] .menu-location{
 	top:23px !important;
 }
 html[ios="true"][view="app"] iframe.pluginFrame.noTitleBar {
@@ -1156,7 +1185,14 @@ html[ios="true"][view="app"] nav.menu .menu-close-container{
 screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-device-height: 852px) and (-webkit-device-pixel-ratio: 3) {
 	:root {
-		--extra-padding: 12px;
+		--extra-padding: 11px;
+	}
+}
+@media only
+screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
+	:root {
+		--extra-padding: 15px;
 	}
 }
 
@@ -1165,7 +1201,9 @@ screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-dev
 screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
 screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
+screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
 
 	/* iOS Transparent Nav */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
@@ -1190,10 +1228,11 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 	}
 
 	/* Menu and Back */
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #menu-location{
+	html[ios="true"][view="app"][storyboard-launch-images="true"] .menu-location{
 		top: calc(47px + var(--extra-padding)) !important;
 	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon{
+	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon,
+	html[ios="true"][view="app"][storyboard-launch-images="true"] #launcherIap .iap-subscriptions {
 		top: calc(37px + var(--extra-padding)) !important;
 	}
 	html[ios="true"][view="app"][storyboard-launch-images="true"] .search-container{
@@ -1260,7 +1299,7 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 		padding-top: 25px; this is causing launcher plugin with BG images to appear they are cut from the top
 	} */
 
-	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent{
+	[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer{
 		min-height:10% !important;
 	}
 	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu,
@@ -1270,6 +1309,14 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
 	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
 		padding-bottom: 10vh !important;
+	}
+	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.navbar-with-addon,
+	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.navbar-with-addon,
+	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage,
+	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
+		padding-bottom: 17vh !important;
 	}
 	[ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
 	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
@@ -1297,15 +1344,16 @@ screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-dev
 
 }
 
-[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent, [ios="true"][view="browser"][is-pwa-ios="true"] #footerMenuParent {
+[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer,
+[ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
 	padding-bottom: constant(safe-area-inset-bottom) !important; /* iOS 11.0 */
 	padding-bottom: env(safe-area-inset-bottom) !important; /* iOS 11.2 */
 }
-[ios="true"][view="browser"][is-pwa-ios="true"] #footerMenuParent {
+[ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
 	min-height: 10vh !important;
 }
 
-.keyboard-visible #footerMenuParent {
+.keyboard-visible #navbarContainer {
 	display: none !important;
 }
 
@@ -1552,6 +1600,15 @@ html[buildfire] body.no-scroll .scrollable{
 	padding: 0 24px;
 	overflow-wrap: break-word;
 }
+
+#richModal.fullScreen .detail-modal h1 {
+	margin-top: env(safe-area-inset-top);
+}
+
+#richModal.fullScreen .detail-modal .button-container {
+	padding-bottom: env(safe-area-inset-bottom);
+}
+
 
 #richModal .detail-modal .dialog-title {
 	font-size: 1.5em;
@@ -1871,18 +1928,9 @@ textarea.md-input{
 	animation: .9s cubic-bezier(0.21, 1.74, 0.94, 1.04) load-appear;
 	animation-fill-mode: forwards;
 }
-.empty-state i{
-	position: absolute;
-	top: calc(10vh + 156px);
-	right: calc(50% - 27px);
-	font-size: 24px;
-	text-align: center;
-	width: 48px;
-	height: 48px;
-	opacity: .5;
-}
 .bookmarks-container .empty-state img,
-.notes-container .empty-state img{
+.notes-container .empty-state img,
+.notification-plugin .empty-state img {
 	margin: 0 auto;
 	display: block;
 	padding-top: 10vh;
@@ -2679,7 +2727,7 @@ nav.menu a.active .active-indicator,
 #footerMenuParent .action-item.active .active-indicator{
 	display: block;
 }
-#footerMenuParent .app-info{
+#navbarContainer .app-info{
 	display: none;
 }
 
@@ -2704,12 +2752,12 @@ html:not([type="app"]) .snackbar-hero{
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	flex-wrap: wrap;
 	opacity: 0;
 	transform: scale(.1);
 	pointer-events: auto;
 	transition: opacity .15s cubic-bezier(0,0,.2,1) 0ms,transform .15s cubic-bezier(0,0,.2,1) 0ms,-webkit-transform .15s cubic-bezier(0,0,.2,1) 0ms;
 	background-color: #222;
+	padding:7px 0;
 }
 .snackbar.open{
 	opacity: 1;
@@ -2719,10 +2767,14 @@ html:not([type="app"]) .snackbar-hero{
 	padding: 0 !important;
 	bottom: calc(16px + env(safe-area-inset-bottom) + 7vh);
 }
+.snackbar-hero.has-footer-menu.navbar-with-addon{
+	padding: 0 !important;
+	bottom: calc(16px + env(safe-area-inset-bottom) + 14vh);
+}
 .snackbar-message{
 	flex: auto;
 	word-break: break-word;
-	padding:14px 16px;
+	padding:7px 16px;
 	margin: 0;
 	color: #fff;
 }
@@ -2735,7 +2787,7 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar .btn{
 	background-color: transparent !important;
 	text-transform: uppercase;
-	height: 36px;
+	max-height: 36px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -2746,13 +2798,24 @@ html:not([type="app"]) .snackbar-hero{
 .snackbar .btn:active{
 	opacity: .5;
 }
-.snackbar .btn.dismiss{
+
+.snackbar .btn.btn-icon {
 	width: 36px;
-	padding: 9px;
+	padding: 4px;
+	height: 100%;
 }
+
 .snackbar .btn.dismiss .icon{
 	font-size: 14px !important;
 }
+
+.snackbar .btn.btn-text span {
+	max-width: 66vw;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
 .snackbar .btn.dismiss:not(:only-of-type):last-of-type{
 	margin-left: 0px;
 }
@@ -2767,6 +2830,11 @@ html:not([type="app"]) .snackbar-hero{
 	margin-left: auto;
 	padding-bottom: 8px;
 }
+
+.snackbar:not(:has(.snackbar-action.hide)) { 
+	flex-wrap: wrap; 
+}
+
 .gdpr-notice{
 	z-index: 9999999991;
 }
@@ -2786,6 +2854,10 @@ html:not([type="app"]) .snackbar-hero{
 		padding-left: 280px;
 	}
 
+	[type="app"] .copy-holder.iap-safe-padding {
+		padding-left: 280px;
+	}
+	
 	[type="app"] .screen-overlay {
 		display: block;
     position: absolute;
@@ -2799,14 +2871,18 @@ html:not([type="app"]) .snackbar-hero{
 		height: 100% !important;
 	}
 
-	[type="app"] #footerMenuParent:not(.ng-hide){
+	[type="app"] #navbarContainer:not(.ng-hide){
 		top: 0;
 		height: 68px;
 		z-index: 99999999;
 		display: block !important;
 		/* border-bottom: 1px solid rgba(150,150,150,.3); */
 	}
-	[type="app"] #footerMenuParent .app-info {
+
+	[type="app"] .navbar-playback-addon {
+		display: none;
+	}
+	[type="app"] #navbarContainer .app-info {
 		display: flex;
 		align-items: center;
 		position: absolute;
@@ -2815,10 +2891,10 @@ html:not([type="app"]) .snackbar-hero{
 		/* cursor: pointer; */
 		/* padding: 0 18px; */
 	}
-	[type="app"] #footerMenuParent .app-info:active {
+	[type="app"] #navbarContainer .app-info:active {
 		opacity: 0.7;
 	}
-	[type="app"] #footerMenuParent .app-info img{
+	[type="app"] #navbarContainer .app-info img{
 		width: 44px;
 		height: 44px;
 		border-radius: 4px;
@@ -2827,8 +2903,11 @@ html:not([type="app"]) .snackbar-hero{
 		flex-shrink: 0;
 		margin-right: 12px;
 	}
-	[type="app"] #footerMenuParent .app-info h3{
+	[type="app"] #navbarContainer .app-info h3{
 		margin: 0;
+	}
+	[type="app"] #footerMenuParent {
+		height: 68px;
 	}
 	[type="app"] #footerMenuParent .action-group{
 		justify-content: flex-end;
@@ -3304,6 +3383,9 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .snackbar{
 		max-width: 400px;
 	}
+	[type="app"] .snackbar .btn.btn-text span {
+		max-width: 275px;
+	}
 	[type="app"] .onboarding .bg-img img{
 		object-fit: contain;
 	}
@@ -3498,6 +3580,11 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 	.onboarding{
 		z-index: 9999999999;
 	}
+
+	.menu-location.title-bookmark {
+		right: 17px;
+		position: absolute;
+	}
 }
 @media(max-height: 600px){
 	.onboarding .img-container{
@@ -3549,6 +3636,9 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 }
 .dev-mode-actions.has-footer-menu, .preview-mode-actions.has-footer-menu {
 	bottom: calc( 7vh + env(safe-area-inset-bottom));
+}
+.dev-mode-actions.has-footer-menu.navbar-with-addon, .preview-mode-actions.has-footer-menu.navbar-with-addon {
+	bottom: calc( 14vh + env(safe-area-inset-bottom));
 }
 .dev-mode-actions.active, .preview-mode-actions.active {
 	transform: translateX(0);
@@ -3668,15 +3758,15 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 .toggle-item .checkbox label::after{
 	left: 5px !important;
 }
-.dev-mode-code-popup{
+.dev-mode-code-popup, .ship-logs-popup {
 	position: relative;
 	padding-bottom: 24px;
 }
-.dev-mode-code-popup .textfield{
+.dev-mode-code-popup .textfield, .ship-logs-popup .textfield{
 	position: relative;
 	font-size: 16px;
 }
-.dev-mode-code-popup .textfield label{
+.dev-mode-code-popup .textfield label, .ship-logs-popup .textfield label{
 	position: absolute;
 	display: block;
 	font-size: 12px;
@@ -3685,7 +3775,7 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 	transform: translateY(0.625em);
 	padding: 0 12px;
 }
-.dev-mode-code-popup .textfield input{
+.dev-mode-code-popup .textfield input, .ship-logs-popup .textfield input{
 	display: block;
 	width: 100%;
 	background-color: rgba(128, 128, 128, 0.1);
@@ -3699,8 +3789,13 @@ input[type="checkbox"].ios8-switch:checked + label:before {
 	cursor: text;
 	border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 }
-.dev-mode-code-popup .textfield input::placeholder{
+.dev-mode-code-popup .textfield input::placeholder, .ship-logs-popup .textfield input::placeholder{
 	opacity: .5;
+}
+
+.ship-logs-popup .ship-logs-enable-features {
+	display:flex;
+	justify-content: space-between;
 }
 
 #overrideCodeWidgetMessage {
@@ -3971,10 +4066,13 @@ html:not([type="app"]) .bottom-drawer{
 	margin-left: 1em;
 }
 .action-list li:hover, .action-list li:active, .action-list li:focus {
-  background-color: rgba(150,150,150,.05);
+  	background-color: rgba(150,150,150,.1);
 }
 .action-list li.divider-top{
-  border-top: 1px solid rgba(50,50,50,.1);
+  	border-top: 1px solid rgba(50,50,50,.1);
+}
+.action-list li.pre-selected{
+	background-color: rgba(150, 150, 150, .2)
 }
 /* Buttons */
 .btn-icon, button.btn-icon, .btn.btn-icon {
@@ -4322,6 +4420,7 @@ html[ios="true"] .profile-overlay .profile-content{
 .profile-overlay .caption{
 	font-size: 12px;
 	opacity: .5;
+	text-transform: capitalize;
 }
 .profile-content .item{
 	margin-bottom: 24px;
@@ -4662,7 +4761,7 @@ html[ios="true"] .profile-overlay .profile-content{
 	/* #appBody.blur-animation, */
 	body.blur-animation.has-menu #appBody,
 	body.blur-animation.has-menu #login,
-	body.blur-animation.has-menu #footerMenuParent{
+	body.blur-animation.has-menu #navbarContainer{
 		animation: plugin-blur-animation .4s ease-in-out forwards;
 	}
 	/* #appBody.blur-animation.closing, */
@@ -4945,7 +5044,6 @@ button.list-group-item {
 }
 .disabled-drawer-button {
 	opacity: 1 !important;
-	pointer-events: visible !important;
 	filter: grayscale(50%) !important;
 }
 .show-drawer-search {
@@ -5097,7 +5195,7 @@ button.list-group-item {
 	object-fit: contain;
 }
 
-.bf-pswp-close {
+.bf-pswp-close, .btn-close-theme-neutral {
 	top: 0;
 	right: 0;
 	font-weight: 900;
@@ -5112,5 +5210,88 @@ button.list-group-item {
 	display: block;
 	border: 0;
 	margin: 0;
+	color: #cccccc !important;
+	text-shadow: 0 1px 2px #999999;
+}
+
+.bf-pswp-close {
 	padding: 20px;
+}
+
+.bf-pswp-close:hover, .btn-close-theme-neutral:hover {
+	color: #cccccc !important;
+}
+
+/* 
+  ==============================
+  New Feature: Playback Bar
+  ==============================
+  The following CSS rules are specific to the new playback bar feature.
+*/
+.navbar-playback-addon {
+	max-width: 100%;
+	padding: 7px 14px;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: 7vh;
+	cursor: pointer;
+}
+.navbar-playback-addon .now-playing-img-equalizer {
+	position: relative;
+	margin-right: 1rem;
+	height: 80px;
+	max-height: calc(7vh - 14px);
+	overflow: hidden;
+}
+.navbar-playback-addon .now-playing-img-equalizer .equalizer {
+	margin-top: 7px;
+}
+.playback-addon-thumbnail {
+	border-radius: 4px;
+	border-style: none;
+	height: 80px;
+	max-height: calc(7vh - 14px);
+}
+.playback-addon-body {
+	overflow: hidden;
+	flex: 1;
+}
+.playback-addon-body h2 {
+	margin-bottom: 0;
+	margin-top: 0;
+	font-weight: bold;
+	font-size: 14px;
+}
+.playback-addon-body p {
+	font-size: 12px;
+}
+.playback-addon-body h2,
+.playback-addon-body p {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+} 
+.playback-addon-icon {
+	height: 80px;
+	margin-left: 1rem;
+	max-height: calc(7vh - 14px);
+}
+.playback-addon-close-icon {
+	height: 45px;
+	margin-left: 0;
+	padding-left: 1.75rem;
+	min-height: 18px;
+	max-height: calc(7vh - 30px);
+}
+.navbar-playback-addon .playback-progress-bar-container {
+	height: 2px;
+	position: absolute;
+	width: 100%;
+	left: 0;
+	top: 0;
+}
+.navbar-playback-addon .playback-progress-bar-container .playback-progress-bar{
+	height: 2px;
+	width: 0%;
 }

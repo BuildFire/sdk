@@ -1,0 +1,45 @@
+.swipeable-drawer {
+    position: absolute;
+    box-shadow: rgb(150 150 150 / 20%) 0px -0.25rem 0.125rem;
+    width: 100%;
+    overflow: hidden;
+    background-color: #ffffff;
+    transition: all 0.125s;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.swipeable-drawer-header {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    cursor: grab;
+}
+
+.swipeable-drawer-resizer-container {
+    padding: 15px 0;
+}
+
+.swipeable-drawer-resizer {
+    width: 50px;
+    height: 4px;
+    border-radius: 4px;
+    background: #e0e0e0;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.swipeable-drawer-content {
+    overflow: hidden;
+    overflow-y: scroll;
+    max-height: 100%;
+}
+
+.swipeable-drawer-hidden {
+    display: none;
+}

@@ -24,8 +24,7 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 	style.innerHTML += ' .lorySlides { display: inline-block;}';
 	style.innerHTML += ' .loryPercentage .lorySlides { display: block; padding: 0px;}';
 	style.innerHTML += ' .loryPercentage li { width: 100%;}';
-	style.innerHTML += ' .blurred-background-image { filter: blur(30px); position: absolute; top: 0 }';
-	style.innerHTML += ' .js_slide { text-align: center; position: relative; max-height: 380px; }';
+	style.innerHTML += ' .js_slide { text-align: center; position: relative; max-height: 380px; vertical-align: top; }';
 	style.innerHTML += ' .js_slide img { max-height: 380px; width: auto !important; margin: 0 auto }';
 	style.innerHTML += ' .js_slide.static_slide { display: none }';
 	style.innerHTML += ' .js_slide.static_slide.active { display: block }';
@@ -36,6 +35,7 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 //{selector:selector, items:items, layout:layout, speed:speed}
 buildfire.components.carousel.view = function (options) {
 	let self = this;
+	let resizeTimeout;
 	this.config = this.mergeSettings(options);
 	this._initDimensions(self.config.layout);
 	this.selector = typeof this.config.selector === 'string' ? document.querySelector(this.config.selector) : this.config.selector;
@@ -61,6 +61,18 @@ buildfire.components.carousel.view = function (options) {
 			console.error('Selector element should be provided');
 		}
 	}
+	
+	window.addEventListener('resize', () => { // rerender items on window resize
+		if (resizeTimeout) {
+			clearTimeout(resizeTimeout);
+			resizeTimeout = null;
+		}
+		resizeTimeout = setTimeout(() => {
+			if (self.config.items && self.config.items.length) {
+				self.loadItems(self.config.items, false);
+			}
+		}, 500);
+	});
 };
 buildfire.components.carousel.view.lastCarouselTimer = null;
 // Carousel view methods
@@ -195,10 +207,17 @@ buildfire.components.carousel.view.prototype = {
 				item: carouselImage,
 				slide: slide
 			}
-			self._cropImage(options, (err, result) => {
-				if (err)  console.error('Error occurred while cropping image: ', err);
-				self.selector.appendChild(slide);
-			});
+			if (self.layout == 'Fit') {
+				self._resizeImage(options, (err, result) => {
+					if (err)  console.error('Error occurred while resizing image: ', err);
+					self.selector.appendChild(slide);
+				});
+			} else {
+				self._cropImage(options, (err, result) => {
+					if (err)  console.error('Error occurred while cropping image: ', err);
+					self.selector.appendChild(slide);
+				});
+			}
 		});
 		let activeSlide = document.querySelector('.js_slide.static_slide.active');
 		if (!activeSlide) {
@@ -354,10 +373,17 @@ buildfire.components.carousel.view.prototype = {
 		});
 
 		let options = { item, slide }
-		this._cropImage(options, (err, result) => {
-			if (err)  console.error('Error occurred while cropping image: ', err);
-			callback(slide);
-		});
+		if (self.layout == 'Fit') {
+			this._resizeImage(options, (err, result) => {
+				if (err)  console.error('Error occurred while cropping image: ', err);
+				callback(slide);
+			});
+		} else {
+			this._cropImage(options, (err, result) => {
+				if (err)  console.error('Error occurred while cropping image: ', err);
+				callback(slide);
+			});
+		}
 	},
 	// allows you to append a single item or an array of items
 	append: function (items) {
@@ -423,6 +449,7 @@ buildfire.components.carousel.view.prototype = {
 	},
 	_initDimensions: function (layout) {
 		this.width = window.innerWidth;
+		this.layout = layout;
 		layout = layout || 'WideScreen';
 		if (layout == 'WideScreen') {
 			this.height = Math.ceil(9 * this.width / 16);
@@ -433,9 +460,11 @@ buildfire.components.carousel.view.prototype = {
 		} else if (layout == 'Cinema') {
 			this.height = Math.ceil(1 * this.width / 2.39);
 			this.aspect = '2.39:1';
-		} else if (layout == 'MobileScreen') {
+		} else if (layout == 'MobileScreen' || layout == 'Fit') {
 			this.height = (window.innerHeight / this.width) * this.width;
 			this.aspect = '9:16';
+		} else {
+			this.height = Math.ceil(9 * this.width / 16);
 		}
 
 		this.cssWidth = this.width + 'px';
@@ -460,15 +489,48 @@ buildfire.components.carousel.view.prototype = {
 			if (!err) {
 				let image = document.createElement('img');
 				let backgroundImage = document.createElement('img');
-				image.src = backgroundImage.src = result;
+				image.src = result;
+				backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+					height: Math.ceil(self.height / 20),
+					width: Math.ceil(self.width / 20),
+					blur: 40,
+				});
 				image.alt = backgroundImage.alt = item.title || '';
 				backgroundImage.className = 'blurred-background-image';
-				backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2) !important;`);
+				backgroundImage.setAttribute('style', `width: 100% !important; height: ${self.height}px; top: 50%; left: 50%; transform: translate(-50%, -50%);`);
 				slide.style.overflow = 'hidden';
 				image.style.transform = 'translateZ(0)';
 				if (self.height > 380) {
 					slide.appendChild(backgroundImage);
 				}
+				slide.appendChild(image);
+				callback(null, result);
+			} else {
+				callback(err, null);
+			}
+		});
+	},
+	_resizeImage: function(options, callback) {
+		let self = this;
+		let { item, slide } = options;
+		buildfire.imageLib.local.resizeImage(item.iconUrl, {
+			height: self.height,
+		}, function (err, result) {
+			if (!err) {
+				let image = document.createElement('img');
+				let backgroundImage = document.createElement('img');
+				image.src = result;
+				backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+					height: Math.ceil(self.height / 20),
+					width: Math.ceil(self.width / 20),
+					blur: 40,
+				});
+				image.alt = backgroundImage.alt = item.title || '';
+				backgroundImage.className = 'blurred-background-image';
+				backgroundImage.setAttribute('style', `width: 100% !important; height: ${self.height}px; top: 50%; left: 50%; transform: translate(-50%, -50%);`);
+				image.style.transform = 'translateZ(0)';
+				slide.setAttribute('style', `vertical-align: middle; overflow: visible;`);
+				slide.appendChild(backgroundImage);
 				slide.appendChild(image);
 				callback(null, result);
 			} else {

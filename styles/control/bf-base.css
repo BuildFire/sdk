@@ -1,18 +1,22 @@
 /* General */
 @font-face {
-  font-family: 'Conv_apercu_bold';
-  src: url('../../fonts/apercu_bold.eot');
-  src: local('☺'), url('../../fonts/apercu_bold.woff') format('woff'), url('../../fonts/apercu_bold.ttf') format('truetype'), url('../../fonts/apercu_bold.svg') format('svg');
+  font-family: 'Inter_Medium';
+  src: url('../../fonts/Inter-Medium.woff2') format('woff2'),
+  url('../../fonts/Inter-Medium.ttf') format('truetype'),
+  url('../../fonts/Inter-Medium.otf');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Conv_apercu_regular';
-  src: url('../../fonts/apercu_regular.eot');
-  src: local('☺'), url('../../fonts/apercu_regular.woff') format('woff'), url('../../fonts/apercu_regular.ttf') format('truetype'), url('../../fonts/apercu_regular.svg') format('svg');
+  font-family: 'Inter_Regular';
+  src: url('../../fonts/Inter-Regular.woff2') format('woff2'),
+  url('../../fonts/Inter-Regular.ttf') format('truetype'),
+  url('../../fonts/Inter-Regular.otf');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Variables */
@@ -43,31 +47,22 @@ html{
   font-size: 16px;
 }
 body{
-  font-family: 'Conv_apercu_regular','Helvetica','Sans-Serif','Arial';
+  font-family: 'Inter_Regular','Helvetica','Sans-Serif','Arial';
 }
 h1,h2,h3,h4,h5,h6 {
-  font-family: 'Conv_apercu_bold','Helvetica','Sans-Serif','Arial';
+  font-family: 'Inter_Medium','Helvetica','Sans-Serif','Arial';
   margin-bottom: .5em;
   color: var(--c-info);
 }
 .section-title, h1{
   font-size: 1.125rem;
-  font-weight: bold;
   color: var(--c-info);
   padding-top: .875rem;
   margin-bottom: 1.5rem;
   margin-top: 0;
-  font-family: 'Conv_apercu_bold','Helvetica','Sans-Serif','Arial';
+  font-family: 'Inter_Medium','Helvetica','Sans-Serif','Arial';
 }
-.section-title::before,
-h1::before {
-  display: block;
-  content: '';
-  height: .25rem;
-  width: 3.5rem;
-  margin-bottom: .875rem;
-  background-color: var(--c-info);
-}
+
 p.info-note {
   background-color: var(--c-gray2);
   line-height: 1.33;

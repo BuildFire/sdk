@@ -93,6 +93,7 @@ buildfire.services.searchEngine.update = function(options, cb){
  * Delete data in buildfire search engine.
  * @param {Object} options - delete options.
  * @param {string} options.id - An id for your document to delete it.
+ * @param {string} options.key - A unique key for your document to delete it.
  * @param {string} options.tag - A unique key for your data, this is important for categorizing your data.
  */
 

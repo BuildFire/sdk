@@ -34,7 +34,7 @@
 	};
 
 	const checkDefaultLayout = function () {
-		//create datastore api 
+		//create datastore api
 		const datastoreAPI = new DatastoreAPI({
             appId: window.appContext.currentApp.appId,
             pluginId: $routeParams.pluginFolder,
@@ -101,7 +101,7 @@
 					$scope.activeTab = 'content';
 				}
 			}
-			
+
 			if (config.control.cssInjection && config.control.cssInjection.enabled) {
 				$scope.layoutsSrc = 'pages/templates/pluginLayouts.html';
 				if (lastTabName === 'layouts' || !$scope.currentControl) {
@@ -245,8 +245,15 @@
 	}
 
 	$scope.init = function () {
+		var instanceId = window.appContext.currentPlugin.instanceId;
 		var pluginFolder = $routeParams.pluginFolder;
 		if (!pluginFolder) pluginFolder = window.appContext.currentPlugin.pluginPath;
+
+
+		if (!localStorage.getItem(`plugin-${instanceId}`)) {
+			window[`plugin-${instanceId}`] = { clientCreatedOn: new Date() };
+			localStorage.setItem(`plugin-${instanceId}`, JSON.stringify({ clientCreatedOn: new Date() }));
+		}
 
 		var xmlhttp = new XMLHttpRequest();
 		var url = '../plugins/' + pluginFolder + '/plugin.json';

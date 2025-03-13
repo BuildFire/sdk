@@ -51,12 +51,12 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 			postMaster.servicePluginAPIs.service.sendMessage(null, packet);
 	};
 	postMaster.controlPluginAPI.datastore.onUpdate = onUpdate;
-    
+
 	postMaster.controlPluginAPI.userData.onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
-    
+
 	postMaster.widgetPluginAPI.userData.onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'userData.triggerOnUpdate', updateObj);
 		postMaster.controlPluginAPI.sendMessage(null, packet);
@@ -71,7 +71,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		var packet = new Packet(null, 'publicData.triggerOnUpdate', updateObj);
 		postMaster.controlPluginAPI.sendMessage(null, packet);
 	};
-	
+
 	postMaster.controlPluginAPI.appData.onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
@@ -101,7 +101,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 			if (callback) callback('no service available for the current widget');
 		}
 	};
-	
+
 	postMaster.controlPluginAPI.navigation.navigateTo = postMaster.widgetPluginAPI.navigation.navigateTo = function () {
 		console.warn('supress navigation in shell');
 		alert('supress navigation in shell');
@@ -120,9 +120,11 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		iframeControl.style.height = height + 'px';
 	};
 
-	postMaster.widgetPluginAPI.appearance.navbar.isVisible = function(){ 
-		return false; 
+	postMaster.widgetPluginAPI.appearance.navbar.isVisible = function(){
+		return false;
 	};
+
+	postMaster.widgetPluginAPI.spinner = window.spinner;
 
 	postMaster.controlPluginAPI.analytics.trackAction = postMaster.widgetPluginAPI.analytics.trackAction = function (actionName, metadata) {
 		console.log('analytics mock track action [' + actionName + ']', metadata);
@@ -132,9 +134,31 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		console.log('analytics mock track view [' + viewName + ']', metadata);
 	};
 
+	postMaster.controlPluginAPI.ai.showGenerateTextDialog = (options, callback) =>{
+		const error = 'This feature not supported on plugin tester';
+		window.toast(error, 'warning');
+		callback(error);
+	};
+
+	postMaster.controlPluginAPI.appDatasources.showDialog = (options, callback) =>{
+		AppDatasourcesAPI.prototype.showDialog(options, callback);
+	};
+
+	if (typeof Dynamic != 'undefined') {
+		if (!Dynamic.expressions) {
+			Dynamic.expressions = {};
+		}
+		Dynamic.expressions.showDialog = (options, callback) =>{
+			ExpressionBuilderAPI.prototype.showDialog(options, callback);
+		};
+	}
 
 	///override the authAPI.getCurrentUser to return auth
 	authAPI.secondaryUserLookup = function () {
+		if (isOriginatingFromApp()) {
+			return null;
+		}
+
 		if(!window.currentUser || !window.currentUser.userToken || !window.currentUser.auth)
 			return null;
 
@@ -159,6 +183,18 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	};
 	///
 
+	let isOriginatingFromApp = function() {
+		const error = new Error();
+		const stackLines = error.stack.split('\n');
+
+		for (const line of stackLines) {
+			if (line.indexOf("appOverrides.js") > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	window.keyboardResize  = function() {}; // works for ios only
 
 	//override the imageLibTemplate url
@@ -167,12 +203,17 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	postMaster.widgetPluginAPI.actionItems.listTemplateUrl = 'https://app.buildfire.com/app/pages/templates/actionItemsListDialog.html';
 	postMaster.controlPluginAPI.pluginInstances.templateUrl = 'https://app.buildfire.com/pages/plugins/pluginInstanceDialog/pluginInstanceDialog.html';
 	window.appContext.currentPlugin.pluginAPI = postMaster.controlPluginAPI;
+
+	//override the imageLib options
+	imageLibCurrentApp.options = {
+		showAiImages: false
+	};
 })();
 
 
 /**
  * Created by Rami Hadi.
- * description : this is a Dummy secition just used to mock things to work like in the CP
+ * description : this is a Dummy section just used to mock things to work like in the CP
  */
 $app.service('$analytics', [ function () {
 

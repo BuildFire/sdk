@@ -1,26 +1,6 @@
 if (typeof buildfire == 'undefined') throw 'please add buildfire.js first to use buildfire components';
 if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
-function State() {
-	this.listViewSearchBarContainer = null;
-	this.listViewItemsContainer = null;
-	this.searchValue = null;
-	this.page = null;
-	this.fetchNextPage = true;
-	this.contentMappingDefault = {
-		idKey: 'id',
-		imageKey: 'imageUrl',
-		titleKey: 'title',
-		subtitleKey: 'subtitle',
-		descriptionKey: 'description'
-	};
-	this.paginationOptions = {
-		page: 0,
-		pageSize: 10
-	};
-	this.busy = false;
-}
-
 buildfire.components.listView = class ListView {
 	constructor(selector, options = {}) {
 		if (!document.querySelector(selector)) throw new Error('Element not found!');
@@ -36,7 +16,8 @@ buildfire.components.listView = class ListView {
 				contentMapping: null,
 				customListAction: null,
 				enableReadMore: true,
-				maxHeight: null
+				maxHeight: null,
+				enableSkeleton: true,
 			},
 			translations: {
 				readMore: 'Read More',
@@ -45,7 +26,25 @@ buildfire.components.listView = class ListView {
 				searchInputPlaceholder: 'Search'
 			},
 		};
-		this._state = new State();
+		this._state = {
+			listViewSearchBarContainer: null,
+			listViewItemsContainer: null,
+			searchValue: null,
+			page: null,
+			fetchNextPage: true,
+			contentMappingDefault: {
+				idKey: 'id',
+				imageKey: 'imageUrl',
+				titleKey: 'title',
+				subtitleKey: 'subtitle',
+				descriptionKey: 'description'
+			},
+			paginationOptions: {
+				page: 0,
+				pageSize: 10
+			},
+			busy: false,
+		};
 		this.options.settings = options.settings ? Object.assign(this.options.settings, options.settings) : this.options.settings;
 		this.options.translations = options.translations ? Object.assign(this.options.translations, options.translations) : this.options.translations;
 		this.options.settings.contentMapping = options.settings && options.settings.contentMapping ?
@@ -54,10 +53,10 @@ buildfire.components.listView = class ListView {
 			Object.assign(this._state.paginationOptions, options.settings.paginationOptions) : this._state.paginationOptions;
 		this.options.settings.customListAction = options.settings && options.settings.customListAction ?
 			options.settings.customListAction : null;
-
 		this.items = [];
 
 		this.init();
+        this._reservedOptions = JSON.stringify(this.options);
 	}
 	//================================================================================================            
 	init() {
@@ -110,7 +109,10 @@ buildfire.components.listView = class ListView {
 					this._state.searchValue = e.target.value && e.target.value !== '' ? e.target.value : null;
 					this._state.page = 0;
 					this._state.fetchNextPage = true;
-					this._triggerOnDataRequested();
+					if (this.onDataRequest) {
+						this._triggerOnDataRequested();
+					} else if (this.onSearchInput)
+						this.onSearchInput(this._state.searchValue);
 				}, 250))
 			);
 
@@ -130,6 +132,7 @@ buildfire.components.listView = class ListView {
 	}
 
 	_showSkeletons() {
+		if (!this.options.settings.enableSkeleton) return;
 		let skeletonContainer = this._createUIElement('div', 'bf-skeleton-container');
 		let squareImageClass = this.options.settings.itemImage == 'square' ? 'square' : '';
 
@@ -149,11 +152,13 @@ buildfire.components.listView = class ListView {
 	}
 
 	_hideSkeletons() {
+		if (!this.options.settings.enableSkeleton) return;
 		let node = this._state.listViewItemsContainer.querySelector('.bf-skeleton-container');
 		if (node) node.remove();
 	}
 
 	_triggerOnDataRequested() {
+		if (!this.onDataRequest) return;
 		if (!this._state.fetchNextPage) return;
 		if (this._state.busy) return;
 
@@ -195,10 +200,10 @@ buildfire.components.listView = class ListView {
 		this.onRenderEnd({ items: items, containers: containers });
 
 		this._toggleEmptyState();
-		if (this.options.settings.paginationEnabled) {
+		if (this.options.settings.paginationEnabled && this.items.length > 0 && this.onDataRequest) {
 			const observer = new IntersectionObserver((payload) => {
 				if (!payload[0].isIntersecting) return;
-				
+
 				observer.unobserve(this._state.listViewItemsContainer.lastElementChild);
 				this._state.page++;
 				this._triggerOnDataRequested();
@@ -241,7 +246,7 @@ buildfire.components.listView = class ListView {
 			itemHolder.innerHTML = '';
 		} else {
 			itemHolder = this._createUIElement('div', 'listView-item');
-			itemHolder.setAttribute("data-id", encodeURI(this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey)));
+			itemHolder.setAttribute('data-id', encodeURI(this._getMappingKeyValue(item, this.options.settings.contentMapping.idKey)));
 			shouldAppend = true;
 		}
 		//this is for image section===============================================================================================
@@ -372,7 +377,8 @@ buildfire.components.listView = class ListView {
 		let item = this.items.find(el => this._getMappingKeyValue(el, this.options.settings.contentMapping.idKey) === id);
 		let index = this.items.indexOf(item);
 		this.items[index] = data;
-		this._renderItem(this.items[index]);
+		let itemHolder = this._renderItem(this.items[index]);
+		this.onRenderEnd({ items: [item], containers: [itemHolder] });
 	}
 
 	remove(id) {
@@ -398,14 +404,37 @@ buildfire.components.listView = class ListView {
 		this._initializeSearchBar();
 		this._initializeHeaderContent();
 		this._toggleEmptyState();
+
+		if (this.onDataRequest){
+			if (this.options.settings.paginationEnabled){
+				this._state.page = 0;
+			}
+			this._state.fetchNextPage = true;
+
+			this._triggerOnDataRequested();
+		} else {
+			setTimeout(() => {
+				this._renderItems(this.items);
+			});
+		}
 	}
 
 	reset() {
-		let items = this.items;
-		this.refresh();
+		this.options = JSON.parse(this._reservedOptions);
 		this.clear();
-		this.items = items;
-		this._renderItems(items);
+		if (this._state.listViewHeaderContainer) this._state.listViewHeaderContainer.remove();
+		if (this._state.listViewSearchBarContainer) this._state.listViewSearchBarContainer.remove();
+		this._initializeSearchBar();
+		this._initializeHeaderContent();
+		this._toggleEmptyState();
+		if (this.onDataRequest){
+			if (this.options.settings.paginationEnabled){
+				this._state.page = 0;
+			}
+			this._state.fetchNextPage = true;
+			this._state.searchValue = null;
+			this._triggerOnDataRequested();
+		}
 	}
 
 	clear() {
@@ -442,6 +471,7 @@ buildfire.components.listView = class ListView {
 		}
 	}
 	_loadSkeletonScript(url) {
+		if (!this.options.settings.enableSkeleton) return;
 		if (!document.head)
 			throw new Error('please add head element to the document first to use Drawer component');
 

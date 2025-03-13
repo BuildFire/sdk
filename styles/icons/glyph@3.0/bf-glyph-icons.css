@@ -1,0 +1,48 @@
+/* in case bootstrap.css is not referenced in the plugin */
+@import url("./glyph-icons.css");
+
+.bf-icon,
+.bf-icon::before,
+[class^="bf-icon-"]::before,
+[class*=" bf-icon-"]::before{
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.bf-icon-search::before { content: "\e003"; }
+.bf-icon-add::before { content: "\2b"; }
+.bf-icon-arrow-down::before { content: "\e114"; }
+.bf-icon-arrow-left::before { content: "\e079"; }
+.bf-icon-arrow-right::before { content: "\e080"; }
+.bf-icon-arrow-up::before { content: "\e113"; }
+.bf-icon-calendar::before { content: "\e109"; }
+.bf-icon-star-fill::before { content: "\e006"; }
+.bf-icon-star::before { content: "\e007"; }
+.bf-icon-delete::before { content: "\e020"; }
+.bf-icon-tag::before { content: "\e041"; }
+.bf-icon-list::before { content: "\e055"; }
+.bf-icon-question-circle::before { content: "\e085"; }
+.bf-icon-geo-alt::before { content: "\e062"; }
+.bf-icon-log-out::before { content: "\e163"; }
+.bf-icon-log-in::before { content: "\e161"; }
+.bf-icon-mail::before { content: "\2709"; }
+.bf-icon-bell::before { content: "\e123"; }
+.bf-icon-option-vertical::before { content: "\e235"; }
+.bf-icon-option-horizontal::before { content: "\e234"; }
+.bf-icon-funnel::before { content: "\e138"; }
+.bf-icon-pencil-square::before { content: "\e065"; }
+.bf-icon-pencil::before { content: "\270f"; }
+.bf-icon-cross::before { content: "\e014"; }
+.bf-icon-link::before { content: "\e144"; }
+.bf-icon-globe::before { content: "\e135"; }
+.bf-icon-phone::before { content: "\e182"; }
+.bf-icon-user::before { content: "\e008"; }
+.bf-icon-home::before { content: "\e021"; }
+.bf-icon-copy::before { content: "\e205"; }

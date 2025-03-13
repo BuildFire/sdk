@@ -130,10 +130,10 @@
   font-weight: 400;
   transition: background-color .2s ease-out;
 }
-.login-holder input:not([type=submit]):active, 
+.login-holder input:not([type=submit]):active,
 .login-holder textarea:active{
   background-color: rgba(50, 50, 50, .1) !important;
-} 
+}
 .login-holder textarea:active,
 .login-holder textarea:focus{
   border-bottom: 1px solid rgba(50, 50, 50, .5);
@@ -273,10 +273,10 @@
     top: auto !important;
     transform: translateY(0);
   }
-  .login-holder 
-  .form.forgotpassword, 
-  .login-holder .form.login, 
-  .login-holder .form.registration, 
+  .login-holder
+  .form.forgotpassword,
+  .login-holder .form.login,
+  .login-holder .form.registration,
   .login-holder .form.resetpassword,
   .login-holder .register-options {
     max-width: 300px;
@@ -297,7 +297,7 @@
     padding-bottom: 20px;
     margin-top: 0px;
   }
-  
+
   #login .moreoptions {
     display: block;
   }
@@ -500,7 +500,7 @@ html[type='app'] .modal .modal-dialog {
   flex: auto;
   margin-right: 2.75em;
   margin-left: 0.5em;
-  padding: .5em 
+  padding: .5em
   0;
 }
 .register-options #buttonIconSpan, .register-options #customButtonIconSpan {
@@ -535,11 +535,11 @@ html[type='app'] .modal .modal-dialog {
   color: #fff !important;
 }
 .register-options .btn-twitter{
-  background-color: #78CDF0 !important;
-  color: #fff !important;
+  background-color: #fff !important;
+  color: #000 !important
 }
 .register-options .btn-twitter span{
-  color: #fff !important;
+  color: #000 !important;
 }
 .register-options.dark .btn-google{
   background-color: #fff;

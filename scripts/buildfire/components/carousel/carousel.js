@@ -118,65 +118,63 @@ buildfire.components.carousel.editor.prototype = {
 	_appendItem: function (item) {
 		var me = this,
 			// Create the required DOM elements
-			wrapper = document.createElement('div'),
-			moveHandle = document.createElement('span'),
-			mediaHolder = document.createElement('div'),
+			listItem = document.createElement('div'),
+			listItemDetails = document.createElement('div'),
+			dragDropIcon = document.createElement('span'),
+			listItemImageContainer = document.createElement('div'),
 			image = document.createElement('img'),
-			details = document.createElement('div'),
-			title = document.createElement('span'),
-			actionsWrapper = document.createElement('div'),
-			editButton = document.createElement('a'),
-			deleteButton = document.createElement('span');
+			listItemTitle = document.createElement('span'),
+			listItemActions = document.createElement('div'),
+			addEditButton = document.createElement('div'),
+			deleteButton = document.createElement('div');
 
 		// Add the required classes to the elements
-		wrapper.className = 'd-item';
-		moveHandle.className = 'icon icon-menu pull-left';
-		mediaHolder.className = 'media-holder pull-left';
-		details.className = 'copy pull-right';
-		title.className = 'title ellipsis';
-		actionsWrapper.className = 'pull-right';
-		editButton.className = 'text-primary text';
-		deleteButton.className = 'btn-icon btn-delete-icon btn-danger transition-third';
+		listItem.className = 'd-item border-grey';
+		listItemDetails.className = 'list-item-details';
+		dragDropIcon.className = 'icon sdk-icon-drag';
+		listItemImageContainer.className = 'media-holder';
+		listItemTitle.className = 'title ellipsis';
+		listItemActions.className = 'list-item-actions';
+		addEditButton.className = (item.action && item.action != 'noAction') ? 'sdk-icon-edit' : 'sdk-icon-primary-add';
+		deleteButton.className = 'sdk-icon-close';
 
-		image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 80, height: 40 });
-		title.innerHTML = item.title;
-		editButton.innerHTML = (item.action && item.action != 'noAction') ? 'Edit Action/Link' : 'Add Action/Link';
+		image.src = buildfire.components.carousel._resizeImage(item.iconUrl, { width: 48, height: 29 });
+		listItemTitle.innerHTML = item.title;
 
 		// Append elements to the DOM
-		wrapper.appendChild(moveHandle);
-		wrapper.appendChild(mediaHolder);
-		mediaHolder.appendChild(image);
-		details.appendChild(title);
+		listItemDetails.appendChild(dragDropIcon);
+		listItemImageContainer.appendChild(image);
+		listItemDetails.appendChild(listItemImageContainer);
+		listItemDetails.appendChild(listItemTitle);
 
-		actionsWrapper.appendChild(editButton);
-		actionsWrapper.appendChild(deleteButton);
+		listItemActions.appendChild(addEditButton);
+		listItemActions.appendChild(deleteButton);
 
-		details.appendChild(actionsWrapper);
-
-		wrapper.appendChild(details);
-		me.itemsContainer.appendChild(wrapper);
+		listItem.appendChild(listItemDetails);
+		listItem.appendChild(listItemActions);
+		me.itemsContainer.appendChild(listItem);
 
 		// initialize the required events on the current item
 		(function () {
-			editButton.addEventListener('click', function (e) {
+			addEditButton.addEventListener('click', function (e) {
 				e.preventDefault();
 				var itemIndex = me._getItemIndex(item);
 				var currentTarget = e.target;
-				var parentElement = currentTarget.parentNode.parentNode.parentNode;
+				var parentElement = currentTarget.parentNode.parentNode;
 				me._openActionItem(item, function (actionItem) {
 					me.items[itemIndex] = actionItem;
 					item = actionItem;
 					me.onItemChange(actionItem, itemIndex);
-					parentElement.querySelector('img').src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, { width: 80, height: 40 });
+					parentElement.querySelector('img').src = buildfire.components.carousel._resizeImage(actionItem.iconUrl, { width: 48, height: 29 });
 					parentElement.querySelector('.title').innerHTML = actionItem.title;
-					currentTarget.innerHTML = actionItem.action && actionItem.action != 'noAction' ? 'Edit Action' : 'Add Action';
+					currentTarget.className = actionItem.action && actionItem.action != 'noAction' ? 'sdk-icon-edit' : 'sdk-icon-primary-add';
 				});
 			});
 
 			deleteButton.addEventListener('click', function (e) {
 				e.preventDefault();
 				var itemIndex = me._getItemIndex(item),
-					parent = this.parentNode.parentNode.parentNode;
+					parent = this.parentNode.parentNode;
 				if (itemIndex != -1) {
 					me.items.splice(itemIndex, 1);
 					parent.parentNode.removeChild(parent);
@@ -187,31 +185,28 @@ buildfire.components.carousel.editor.prototype = {
 	},
 	// render the basic template HTML
 	_renderTemplate: function () {
-		var componentContainer = document.createElement('div');
-		var componentName = document.createElement('span');
-		var contentContainer = document.createElement('div');
-		var buttonContainer = document.createElement('div');
-		var button = document.createElement('a');
-		var sliderContainer = document.createElement('div');
+		var carouselEditor = document.createElement('div');
+		var carouselEditorTitle = document.createElement('span');
+		var carouselEditorContent = document.createElement('div');
+		var addImageButtonContainer = document.createElement('div');
+		var addImageButton = document.createElement('a');
+		var listItems = document.createElement('div');
 
-		componentContainer.className = 'item clearfix row';
-		componentName.className = 'labels col-md-3 padding-right-zero pull-left';
-		componentName.innerHTML = 'Image Carousel';
-		contentContainer.className = 'main col-md-9 pull-right';
-		buttonContainer.className = 'clearfix';
-		button.className = 'btn btn-success pull-left add-new-carousel';
-		sliderContainer.className = 'carousel-items hide-empty draggable-list-view margin-top-twenty border-radius-four border-grey';
+		carouselEditor.className = 'item carousel-editor';
+		carouselEditorTitle.innerHTML = 'Image Carousel';
+		carouselEditorContent.className = 'main';
+		addImageButtonContainer.className = 'clearfix';
+		addImageButton.className = 'btn btn-success pull-left add-new-carousel btn-plus-icon-with-text';
+		listItems.className = 'carousel-items hide-empty draggable-list-view margin-top-twenty margin-bottom-twenty border-radius-four';
 
-		button.innerHTML = 'Add Image';
-		button.classList.add('btn-plus-icon-with-text');
+		addImageButton.innerHTML = '+ Add Image';
+		carouselEditor.appendChild(carouselEditorTitle);
+		addImageButtonContainer.appendChild(addImageButton);
+		carouselEditorContent.appendChild(addImageButtonContainer);
+		carouselEditorContent.appendChild(listItems);
+		carouselEditor.appendChild(carouselEditorContent);
 
-		componentContainer.appendChild(componentName);
-		buttonContainer.appendChild(button);
-		contentContainer.appendChild(buttonContainer);
-		contentContainer.appendChild(sliderContainer);
-		componentContainer.appendChild(contentContainer);
-
-		this.selector.appendChild(componentContainer);
+		this.selector.appendChild(carouselEditor);
 	},
 	// initialize the generic events
 	_initEvents: function () {
@@ -303,13 +298,27 @@ buildfire.components.carousel.view = function (selector, items, layout, speed, d
 	if (typeof($.fn) != 'object' || !($.fn && $.fn.owlCarousel)) {
 		throw ('please add owlCarousel.js first to use carousel component');
 	}
+	let self = this;
+	let resizeTimeout;
 	this.selector = selector;
 	this.items = [];
 	this.responsive = disableResponsive ? false : true;
 	this._initDimensions(layout);
 	this._loadItems(items, false);
 	this.init(selector, speed);
+
 	window.dispatchEvent(new CustomEvent('resize'));
+	window.addEventListener('resize', () => { // rerender items on window resize
+		if (resizeTimeout) {
+			clearTimeout(resizeTimeout);
+			resizeTimeout = null;
+		}
+		resizeTimeout = setTimeout(() => {
+			if (self.items && self.items.length) {
+				self.loadItems(self.items, false);
+			}
+		}, 500);
+	});
 };
 
 // Carousel view methods
@@ -373,14 +382,17 @@ buildfire.components.carousel.view.prototype = {
 	_initDimensions: function (layout) {
 		this.width = window.innerWidth;
 		layout = layout || 'WideScreen';
+		this.layout = layout;
 		if (layout == 'WideScreen') {
 			this.height = Math.ceil(9 * this.width / 16);
 		} else if (layout == 'Square') {
 			this.height = this.width;
 		} else if (layout == 'Cinema') {
 			this.height = Math.ceil(1 * this.width / 2.39);
-		} else if (layout == 'MobileScreen'){
+		} else if (layout == 'MobileScreen' || layout == 'Fit'){
 			this.height = (window.innerHeight / this.width) * this.width;
+		} else {
+			this.height = Math.ceil(9 * this.width / 16);
 		}
 
 		this.cssWidth = this.width + 'px';
@@ -542,28 +554,64 @@ buildfire.components.carousel.view.prototype = {
 		var image = document.createElement('img');
 		var backgroundImage = document.createElement('img');
 		me.$slider = $(me.selector);
-
-		buildfire.imageLib.local.cropImage(item.iconUrl, {
-			width: this.width,
-			height: this.height
-		}, function (err, result) {
-			if (!err) {
-				image.src = backgroundImage.src = result;
-				image.alt = backgroundImage.alt = item.title || '';
-				backgroundImage.className = 'blurred-background-image';
-				backgroundImage.setAttribute('style', `width: 100% !important; transform: scale(1.2) !important;`);
-				image.style.transform = 'translateZ(0)';
-				slider.style.overflow = 'hidden';
-				if (me.height > 380) {
-					slider.appendChild(backgroundImage);
+		if (me.layout == 'Fit') {
+			buildfire.imageLib.local.resizeImage(item.iconUrl, {
+				height: me.height
+			}, function (err, result) {
+				if (!err) {
+					image.src = result;
+					backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+						height: Math.ceil(me.height / 20),
+						width: Math.ceil(me.width / 20),
+						blur: 40,
+					});
+					image.alt = backgroundImage.alt = item.title || '';
+					backgroundImage.className = 'blurred-background-image';
+					backgroundImage.setAttribute('style', `width: 100% !important; height: 100% !important;`);
+					image.style.transform = 'translateZ(0);';
+					image.setAttribute('style', 'transform: translateZ(0); max-height: 100vh; object-fit: contain;');
+					slider.setAttribute('style', `display: flex; align-items: center; justify-content: center; height: ${me.height}px; overflow: hidden;`);
+					let imagesContainer = document.createElement('div');
+					imagesContainer.style.display = 'inline-block';
+					imagesContainer.appendChild(backgroundImage);
+					imagesContainer.appendChild(image);
+					slider.appendChild(imagesContainer);
+					me.selector.appendChild(slider);
 				}
-				slider.appendChild(image);
-				me.selector.appendChild(slider);
-			}
-			else
-				console.log('Error occurred while cropping image: ', err);
+				else
+					console.log('Error occurred while resizing image: ', err);
+	
+				callback();
+			});
+		} else {
 
-			callback();
-		});
+			buildfire.imageLib.local.cropImage(item.iconUrl, {
+				width: this.width,
+				height: this.height
+			}, function (err, result) {
+				if (!err) {
+					image.src = result;
+					backgroundImage.src = buildfire.imageLib.cropImage(item.iconUrl, {
+						height: Math.ceil(me.height / 20),
+						width: Math.ceil(me.width / 20),
+						blur: 40,
+					});
+					image.alt = backgroundImage.alt = item.title || '';
+					backgroundImage.className = 'blurred-background-image';
+					backgroundImage.setAttribute('style', `width: 100% !important; height: 100% !important;`);
+					image.style.transform = 'translateZ(0)';
+					slider.style.overflow = 'hidden';
+					if (me.height > 380) {
+						slider.appendChild(backgroundImage);
+					}
+					slider.appendChild(image);
+					me.selector.appendChild(slider);
+				}
+				else
+					console.log('Error occurred while cropping image: ', err);
+
+				callback();
+			});
+		}
 	}
 };

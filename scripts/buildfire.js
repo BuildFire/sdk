@@ -14,6 +14,12 @@ var buildfire = {
 	isFileServer: function(url){
 		return (url.indexOf('s3.amazonaws.com') !== -1);
 	}
+	, isWidget: function() {
+		return window.location.href.indexOf('/widget/') > 0;
+	}
+	, isWidgetService: function() {
+		return buildfire.isWidget() && window.location.href.indexOf('/widget/index.html') < 0;
+	}
 	, isWeb: function(callback){
 		var isWebFromContext = function (context) {
 			if (context && context.device && context.device.platform) {
@@ -42,13 +48,41 @@ var buildfire = {
 			// don't return anything if context is not ready but we have a callback
 		}
 
-	}
-	, loadScript: function({ url, scriptId }, callback = Function()) {
+	},
+	_lazyScriptsQueues: {},
+	lazyLoadScript: function({ relativeScriptsUrl, scriptId }, readyCallback) {
+		if (!this._lazyScriptsQueues[scriptId]) {
+			this._lazyScriptsQueues[scriptId] = { loaded: false, queue:[] };
+		} else if (this._lazyScriptsQueues[scriptId].loaded && readyCallback) {
+			return readyCallback();
+		}
+
+
+		const lazyQueue = this._lazyScriptsQueues[scriptId];
+		lazyQueue.queue.push(readyCallback);
+
+		if (lazyQueue.queue.length > 1) {
+			return;
+		}
+		const url = buildfire.getContext().type === 'control' ?
+			`../../../../scripts/${relativeScriptsUrl}`
+			: `../../../scripts/${relativeScriptsUrl}`;
+
+		const _executeQueue = (err) => {
+			lazyQueue.queue.forEach((callback) => {
+				if (callback) callback(err);
+			});
+			lazyQueue.loaded = true;
+			lazyQueue.queue = []; // clear queue
+		};
+		buildfire.loadScript({ url, scriptId }, _executeQueue);
+	},
+	loadScript: function({ url, scriptId }, callback = Function()) {
 		let script = document.getElementById(scriptId);
 		const scripts = document.getElementsByTagName('script');
-	
+
 		// script exist
-		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url))) {
+		if (script ||  Array.from(scripts).some((s) =>  s.src.includes(url.replaceAll("../", "")))) {
 			return callback();
 		}
 
@@ -68,7 +102,7 @@ var buildfire = {
 			if (typeof buildfire === 'undefined') return;
 			if (typeof (buildfire.components) == 'undefined' || typeof (buildfire.components.ratingSystem) == 'undefined') {
 				loadScript('../../../scripts/buildfire/components/ratingSystem/index.min.js', function (err) {
-					var parentElement = (document.head || document.body || document);
+					var parentElement = (document.head || document.body);
 					var link = document.createElement('link');
 					link.rel = 'stylesheet';
 					link.type = 'text/css';
@@ -94,7 +128,7 @@ var buildfire = {
 
 			function loadScript(url, callback) {
 				if(hasScript(url)) return;
-				var parentElement = (document.head || document.body || document);
+				var parentElement = (document.head || document.body);
 				var script = document.createElement('script');
 				script.type = 'text/javascript';
 				script.src = url;
@@ -121,10 +155,62 @@ var buildfire = {
 
 			var header = document.querySelector('head');
 			var script = document.createElement('script');
-			script.src='http://debug.buildfire.com/target/target-script-min.js#' + tag;
+			script.src='https://debug.buildfire.com/target/target-script-min.js#' + tag;
 			script.id = 'BuildFireAppDebuggerScript';
 			header.appendChild(script);
 
+		},
+		init: function () {
+			const originalConsoleError = console.error;
+			console.error = function (...args) {
+				if (args && args[0]) {
+					buildfire.logger.log({
+						message: typeof args[0] == "string" ? args[0] : "no error message provided.",
+						data: args.length > 1 ? {...args} : undefined,
+						level: "error",
+						category: "ConsoleError"
+					});
+				}
+				originalConsoleError(...args);
+			};
+			window.addEventListener("error", (event) => {
+				// ignore 90% of errors to sample error reporting
+				if(Math.random() >= 0.9) {
+					buildfire.logger.log({
+						message: event.message,
+						level: "error",
+						category: "BrowserJsException",
+						exception: {
+							colno: event.colno,
+							lineno: event.lineno,
+							message: event.message,
+							stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
+							url: event.filename
+						}
+					});
+				}
+				originalConsoleError('Error: ' + event.message, ' Script: ' + event.filename, ' Line: ' + event.lineno
+					, ' Column: ' + event.colno, ' StackTrace: ' + event.error && event.error.stack ? event.error && event.error.stack : "n/a");
+			});
+		},
+		log: function (options, callback) {
+			if (!options || (options && typeof options != 'object')) {
+				options = {};
+			}
+			buildfire.getContext((err, context) => {
+				if (!options.context) {
+					options.context = {};
+				}
+				options.context.pluginId = context?.pluginId;
+				options.context.instanceId = context?.instanceId;
+				options.context.pluginTitle = context?.title;
+				if (!options.tags) {
+					options.tags = [];
+				}
+				options.tags.push('sdkAndPlugins');
+				const p = new Packet(null, 'logger.log', options);
+				buildfire._sendPacket(p, callback);
+			});
 		}
 	}
 	, _callbacks: {}
@@ -221,54 +307,60 @@ var buildfire = {
 		//attach plugin.js script that contains plugin.json content.
 		function attachPluginJsScript () {
 			document.write('<script src="plugin.js" type=\"text/javascript\"><\/script>');
-		};
-		
+		}
+
 		function getPluginJson(callback) {
 			const url = `../plugin.json?v=${(new Date()).getTime()}`;
 			fetch(url)
-			.then(response => response.json())
-			.then(res => {
-				callback(null,res);
-			})
-			.catch(error => {
-				callback(error, null);
-			});
+				.then(response => response.json())
+				.then(res => {
+					callback(null,res);
+				})
+				.catch(error => {
+					callback(error, null);
+				});
 		}
 
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
-			const context = buildfire.getContext();
-			if (context && context.scope === 'sdk') {
-				getPluginJson((err, pluginJson)=>{
-					if(err) console.error(err);
-					window.pluginJson = pluginJson;
-					buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
+			buildfire.getContext((err, context) => {
+				if (err) return console.error(err);
+				if (context && context.scope === 'sdk') {
+					getPluginJson((err, pluginJson)=>{
+						if(err) console.error(err);
+						window.pluginJson = pluginJson;
+						buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
 
-					if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
-						//handle language settings
-						function getPluginLanguageJson(callback) {
-							const url = `../${pluginJson.control.language.languageJsonPath}`;
-							fetch(url)
-							.then(response => response.json())
-							.then(res => {
-								callback(null, res);
-							})
-							.catch(error => {
-								callback(error, null);
+						if (pluginJson && pluginJson.control && pluginJson.control.language && pluginJson.control.language.enabled) {
+							//handle language settings
+							function getPluginLanguageJson(callback) {
+								const url = `../${pluginJson.control.language.languageJsonPath}`;
+								fetch(url)
+									.then(response => response.json())
+									.then(res => {
+										callback(null, res);
+									})
+									.catch(error => {
+										callback(error, null);
+									});
+							}
+							getPluginLanguageJson((err, pluginLanguageJson)=>{
+								if(err) console.error(err);
+								window.pluginLanguageJson = pluginLanguageJson;
+								buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
 							});
 						}
-						getPluginLanguageJson((err, pluginLanguageJson)=>{
-							if(err) console.error(err);
-							window.pluginLanguageJson = pluginLanguageJson;
-							buildfire.language.handleLanguageSettings(window.pluginJson, pluginLanguageJson);
-						});
-					}
-				});
-			}else{
-				attachPluginJsScript();
-			}
+					});
+				} else {
+					attachPluginJsScript();
+				}
+			});
 		}
+		//init logger
+		buildfire.logger.init();
 
-		
+		// signal plugin loading
+		var p = new Packet(null, 'diagnostics.signal', { pluginLoadingAt: new Date() });
+		buildfire._sendPacket(p);
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -280,7 +372,10 @@ var buildfire = {
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
 		, 'messaging.onReceivedMessage'
+		, 'messaging.onReceivedBroadcast'
+		, 'dynamic.triggerContextChange'
 		, 'dynamic.onReceivedWidgetContextRequest'
+		, 'dynamic.expressions.onReceivedCustomExpressionsRequest'
 		, 'history.triggerOnPop'
 		, 'navigation.onBackButtonClick'
 		, 'services.media.audioPlayer.triggerOnEvent'
@@ -288,6 +383,8 @@ var buildfire = {
 		, 'auth.triggerOnLogout'
 		, 'auth.triggerOnUpdate'
 		, 'logger.attachRemoteLogger'
+		, 'device.triggerKeyboardWillShow'
+		, 'device.triggerKeyboardWillHide'
 		, 'appearance.triggerOnUpdate'
 		, '_cssInjection.triggerOnUpdate'
 		, 'language.triggerOnUpdate'
@@ -307,17 +404,33 @@ var buildfire = {
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseRequested'
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 		, 'services.reportAbuse._triggerOnAdminResponse'
+		, 'geo.session._triggerOnSessionWatchChange'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
 			return;
-		}//e.origin != "null"
+		}
 
 		var packet;
-		if(typeof(e.data) == 'object')
+		if (typeof(e.data) === 'object') {
 			packet = e.data;
-		else
-			packet = JSON.parse(e.data);
+		} else {
+			try {
+				packet = JSON.parse(e.data);
+			} catch (error) {
+				buildfire.getContext(function (err, { pluginId, instanceId, title }) {
+					let data = {
+						origin: e.origin,
+						data: e.data,
+						pluginId,
+						instanceId,
+						title
+					};
+					console.warn('ignored malformed packet', data);
+				});
+				return;
+			}
+		}
 
 		if (packet.id && buildfire._callbacks[packet.id]) {
 			buildfire._callbacks[packet.id](packet.error, packet.data);
@@ -347,22 +460,26 @@ var buildfire = {
 		}
 		else {
 			console.warn(window.location.href + ' unhandled packet', packet);
-			//alert('parent sent: ' + packet.data);
 		}
 	}
+
 	//, _resendAttempts:0
 	, _sendPacket: function (packet, callback) {
-		if (typeof (callback) != 'function')// handels better on response
+		if (typeof (callback) != 'function')// handles better on response
 			callback = function (err, result) {
-				//console.info('buildfire.js ignored callback ' + JSON.stringify(arguments));
+				// don't do anything
 			};
-
-		if (buildfire.getContext().type == 'control') {
-			packet.source = 'control';
-		} else {
+		if (buildfire.isWidget()) {
 			packet.source = 'widget';
+		} else {
+			packet.source = 'control';
 		}
-			
+
+		// avoid using buildfire.getContext here, as it might cause an infinite loop
+		if (buildfire._context) {
+			packet.originInstanceId = buildfire._context.instanceId;
+		}
+
 		var retryInterval = 3000,
 			command = packet.cmd,
 			maxResendAttempts = 5,
@@ -396,8 +513,6 @@ var buildfire = {
 			var timeout = setTimeout(resend,  retryInterval);
 		}
 
-		//packet.cmd.indexOf('getContext') == 0? 250 :
-
 		var wrapper = function (err, data) {
 			clearTimeout(timeout); // commented this to remove the 'timeout is not defined' error.
 			callback(err, data);
@@ -406,9 +521,7 @@ var buildfire = {
 		buildfire._callbacks[packet.id] = wrapper;
 		packet.fid= buildfire.fid;
 
-
-		//console.info("BuildFire.js Send >> " , packet.cmd, buildfire.fid);
-		buildfire._parentPost(packet,callback);  //if (parent)parent.postMessage(p, "*");
+		buildfire._parentPost(packet,callback);
 	}
 	,_parentPost: function (packet) {
 
@@ -448,6 +561,13 @@ var buildfire = {
 		}
 		return buildfire._context;
 	}
+	, getGlobalSettings: function (options, callback) {
+		const p = new Packet(null, 'getGlobalSettings');
+		buildfire._sendPacket(p, function (err, data) {
+			if (err) return callback(err);
+			callback(null, data);
+		});
+	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Navigation
 	, navigation: {
 		/**
@@ -482,6 +602,17 @@ var buildfire = {
 				} else {
 					options.queryString = 'wid=' + wid;
 				}
+			}
+			if(options.headerContentHtml) {
+				var encodedHeaderContent = encodeURIComponent(options.headerContentHtml);
+				if(encodedHeaderContent.length < 4000) {
+					if(options.queryString) {
+						options.queryString += `&headerContentHtml=${encodedHeaderContent}`;
+					} else {
+						options.queryString = `headerContentHtml=${encodedHeaderContent}`;
+					}
+				}
+				delete options.headerContentHtml;
 			}
 			var predefinedPluginIds = {
 				'community': 'b15c62f2-7a99-48dc-a37a-e42d46bd3289',
@@ -809,6 +940,7 @@ var buildfire = {
 			var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
 			var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 			var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
+			var disableFontIcons = (buildfire.options && buildfire.options.disableFontIcons) ? buildfire.options.disableFontIcons  : false;
 
 			if (!disableTheme && !enableMDTheme) {
 				if(!disableTheme && !disableBootstrap){
@@ -847,14 +979,56 @@ var buildfire = {
 				}
 			}
 
+			const attachFontIcons = function(theme) {
+				const fontIconLinkId = 'bfFontIcons';
+
+				let iconPack;
+				if (theme && theme.icons && theme.icons.iconPack) {
+					iconPack = theme.icons.iconPack;
+				} else {
+					iconPack = 'glyph';
+				}
+
+				let fontFilePath = '';
+
+				switch (iconPack) {
+					case 'bootstrap':
+						if (buildfire.isWidget()) {
+							fontFilePath = '../../../styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
+						} else {
+							fontFilePath = '../../../../styles/icons/bootstrap@5.0/bf-bootstrap-icons.css';
+						}
+						break;
+					default:
+						if (buildfire.isWidget()) {
+							fontFilePath = '../../../styles/icons/glyph@3.0/bf-glyph-icons.css';
+						} else {
+							fontFilePath = '../../../../styles/icons/glyph@3.0/bf-glyph-icons.css';
+						}
+						break;
+				}
+
+				if (fontFilePath) {
+					buildfire.appearance._attachAppCSSFiles(fontFilePath, fontIconLinkId);
+	     		}
+			};
+
+
 			buildfire.appearance.getWidgetTheme(function(err, theme) {
 				if (err) return console.error(err);
 				var bfWidgetTheme = document.createElement('style');
 				bfWidgetTheme.id = 'bfWidgetTheme';
 				bfWidgetTheme.rel = 'stylesheet';
-				bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(theme);
-				(document.head || document.body || document).appendChild(bfWidgetTheme);
+				bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(theme);
+				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
+
+				if (!disableFontIcons &&
+					((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
+					|| window.location.pathname.indexOf('/control/'))) {
+					// if appTheme.css is loaded, common css will be referenced already
+					attachFontIcons(theme);
+				}
 			});
 
 			if (enableMDTheme) {
@@ -947,7 +1121,7 @@ var buildfire = {
 				}
 				buildfire.appearance.getAppTheme(function(err, appTheme) {
 					applyMDTheme(err, appTheme);
-					(document.head || document.body || document).appendChild(styleElement);
+					(document.head || document.body).appendChild(styleElement);
 				});
 				buildfire.appearance.onUpdate(function(appTheme){
 					buildfire.getContext((err, context) => {
@@ -987,7 +1161,7 @@ var buildfire = {
                     'scrollbar-width: none;' +
                     '}' +
                     '}';
-				(document.head || document.body || document).appendChild(_sharedStyle);
+				(document.head || document.body).appendChild(_sharedStyle);
 			}
 
 			for (var i = 0; i < files.length; i++)
@@ -1039,7 +1213,7 @@ var buildfire = {
 				FastClick.attach(element);
 		}
 		, attachAppThemeCSSFiles: function (appId, liveMode, appHost) {
-			const cssUrl = `${appHost}/api/app/styles/appTheme.css?appId=${appId}&liveMode=${liveMode}&v=${buildfire.appearance.CSSBusterCounter}`;
+			const cssUrl = `${appHost}/api/app/styles/appTheme.css?appId=${appId}&liveMode=${liveMode}&v=${buildfire.appearance.CSSBusterCounter}&isWeb=true`;
 			this._attachAppCSSFiles(cssUrl, 'appThemeCSS');
 		}
 		, attachLocalAppThemeCSSFiles: function (appId) {
@@ -1107,9 +1281,9 @@ var buildfire = {
 						if (err) console.error(err);
 						if (context) {
 							buildfire.appearance._setFontUrl(context, appTheme);
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						} else {
-							bfWidgetTheme.innerHTML = buildfire.appearance._getAppThemeCssVariables(appTheme);
+							bfWidgetTheme.innerHTML = buildfire.appearance._getCommonCss(appTheme);
 						}
 					});
 				}
@@ -1129,6 +1303,10 @@ var buildfire = {
 				var p = new Packet(null, 'appearance.titlebar.isVisible');
 				buildfire._sendPacket(p, callback);
 			},
+			setText: function(options, callback) {
+				var p = new Packet(null, 'appearance.titlebar.setText', options);
+				buildfire._sendPacket(p, callback);
+			}
 		}, navbar: {
 			show: function(options, callback) {
 				var p = new Packet(null, 'appearance.navbar.show');
@@ -1165,7 +1343,7 @@ var buildfire = {
 				buildfire._sendPacket(p, callback);
 			},
 		},
-		_getAppThemeCssVariables: function(appTheme) {
+		_getCommonCss: function(appTheme) {
 			var css = '';
 			if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
             && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
@@ -1176,7 +1354,11 @@ var buildfire = {
 					css += '@import url(\'' + appTheme.fontUrl + '\');';
 				}
 			}
-
+			let lightBodyText = appTheme.colors.bodyText;
+			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors
+				// create a new color, which is the bodyText's color with an opacity (33%)
+				lightBodyText = `${appTheme.colors.bodyText}54`;
+			}
 			css += ':root {'
                 + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
                 + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
@@ -1186,6 +1368,7 @@ var buildfire = {
                 + '--bf-theme-danger: ' + appTheme.colors.dangerTheme + ' !important;'
                 + '--bf-theme-background: ' + appTheme.colors.backgroundColor + ' !important;'
                 + '--bf-theme-body-text: ' + appTheme.colors.bodyText + ' !important;'
+				+ '--bf-theme-container-highlight: ' + lightBodyText + ' !important;'
                 + '--bf-theme-footer-background: ' + appTheme.colors.footerMenuBackgroundColor + ' !important;'
                 + '--bf-theme-footer-icon: ' + appTheme.colors.footerMenuIconColor + ' !important;'
                 + '--bf-theme-header-text: ' + appTheme.colors.headerText + ' !important;'
@@ -1223,9 +1406,23 @@ var buildfire = {
 			var p = new Packet(null, 'analytics.registerPluginEvent', {data: event, options: options});
 			buildfire._sendPacket(p, callback);
 		},
+		bulkRegisterEvents: function (events, options, callback) {
+			if (typeof(options) == 'function') {
+				callback = options;
+				options = null;
+			}
+			var p = new Packet(null, 'analytics.bulkRegisterPluginEvents', {events: events, options: options});
+			buildfire._sendPacket(p, callback);
+		},
 		unregisterEvent: function (key, callback) {
 			var p = new Packet(null, 'analytics.unregisterPluginEvent', {
 				key: key
+			});
+			buildfire._sendPacket(p, callback);
+		},
+		bulkUnregisterEvents: function(keys, callback) {
+			var p = new Packet(null, 'analytics.bulkUnregisterPluginEvents', {
+				keys: keys
 			});
 			buildfire._sendPacket(p, callback);
 		},
@@ -1400,6 +1597,30 @@ var buildfire = {
 				if (callback)callback(err, result);
 			});
 		}
+		, bulkDelete: function ( ids, tag, callback) {
+
+			let tagType = typeof(tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof(callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'datastore.bulkDelete', {tag: tag, ids: ids});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.datastore.triggerOnUpdate(result);
+				if (callback)callback(err, result);
+			});
+		}
 		/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore#buildfiredatastoresearchoptions-tag-optional-callback
 		, search: function (options, tag, callback) {
 
@@ -1556,7 +1777,7 @@ var buildfire = {
 			}
 
 			if (!hasIndex) {
-				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+				console.warn('WARNING: no index on inserted data! Please see https://sdk.buildfire.com/docs/indexed-fields');
 			}
 		}
 		/// ref:
@@ -1635,20 +1856,18 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 
-			if (!search.$text || !search.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(search);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
+				}
+			}
+			if (search.sort && Object.keys(search.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -1676,9 +1895,39 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 		}
+		, bulkDelete: function (ids, tag, userToken, callback) {
+
+			let userTokenType = typeof (userToken);
+			if (userTokenType == 'undefined')
+				userToken = '';
+			else if (userTokenType == 'function' && typeof (callback) == 'undefined') {
+				callback = userToken;
+				userToken = '';
+			}
+			let tagType = typeof (tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof (callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'userData.bulkDelete', { tag: tag, userToken: userToken, ids: ids});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.userData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
 		///
 		, search: function (options, tag, callback) {
-
 			var tagType = typeof (tag);
 			if (tagType == 'undefined')
 				tag = '';
@@ -1696,20 +1945,16 @@ var buildfire = {
 				callback(err, result);
 			});
 
-			if (!options.filter.$text || !options.filter.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(options.filter);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
-
+			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
+				}
+			}
+			if (options.sort && Object.keys(options.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 		}
@@ -1945,7 +2190,7 @@ var buildfire = {
 			}
 
 			if (!hasIndex) {
-				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+				console.warn('WARNING: no index on inserted data! Please see https://sdk.buildfire.com/docs/indexed-fields');
 			}
 		}
 		/// ref:
@@ -2004,20 +2249,18 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 
-			if (!search.$text || !search.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(search);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
+				}
+			}
+			if (search.sort && Object.keys(search.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -2038,9 +2281,32 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 		}
+		, bulkDelete: function (ids, tag, callback) {
+
+			let tagType = typeof (tag);
+			if (tagType == 'undefined')
+				tag = '';
+			else if (tagType == 'function' && typeof (callback) == 'undefined') {
+				callback = tag;
+				tag = '';
+			}
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'publicData.bulkDelete', {tag: tag, ids: ids});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.publicData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
 		///
 		, search: function (options, tag, callback) {
-
 			var tagType = typeof (tag);
 			if (tagType == 'undefined')
 				tag = '';
@@ -2053,28 +2319,23 @@ var buildfire = {
 			if (typeof (options) == 'undefined') options = {filter: {}};
 			if (!options.filter) options.filter = {};
 
-
-
 			var p = new Packet(null, 'publicData.search', {tag: tag, obj: options});
 			buildfire._sendPacket(p, function (err, result) {
 				callback(err, result);
 			});
 
-			if (!options.filter.$text || !options.filter.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(options.filter);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
-						// if (key.includes('_buildfire.index') && options.filter[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
+				}
+			}
+			if (options.sort && Object.keys(options.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 		}
@@ -2282,7 +2543,7 @@ var buildfire = {
 			}
 
 			if (!hasIndex) {
-				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+				console.warn('WARNING: no index on inserted data! Please see https://sdk.buildfire.com/docs/indexed-fields');
 			}
 		}
 		, bulkInsert: function (arrayObj, tag, callback) {
@@ -2317,20 +2578,18 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 
-			if (!search.$text || !search.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(search);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
+				}
+			}
+			if (search.sort && Object.keys(search.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -2343,6 +2602,23 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 		}
+		, bulkDelete: function (ids, tag, callback) {
+			if (!this._isTagValid(tag, callback)) return;
+			if (ids.constructor !== Array) {
+				callback({'code': 'error', 'message': 'the data should be an array'}, null);
+				return;
+			}
+			if (ids.length == 0) {
+				callback({'code': 'error', 'message': 'the data should not be empty'}, null);
+				return;
+			}
+
+			let p = new Packet(null, 'appData.bulkDelete', {tag: tag, ids: ids});
+			buildfire._sendPacket(p, function (err, result) {
+				if (result)buildfire.appData.triggerOnUpdate(result);
+				if (callback) callback(err, result);
+			});
+		}
 		, search: function (options, tag, callback) {
 			if (!this._isTagValid(tag, callback)) return;
 
@@ -2350,20 +2626,18 @@ var buildfire = {
 			if (typeof (options) == 'undefined') options = {filter: {}};
 			if (!options.filter) options.filter = {};
 
-			if (!options.filter.$text || !options.filter.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(options.filter);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
+				}
+			}
+			if (options.sort && Object.keys(options.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 
@@ -2523,6 +2797,64 @@ var buildfire = {
 			return isTagValid;
 		}
 	}
+	, _data: {
+		_checkForIndex: function(filter, indexDepth) {
+			if (indexDepth >= 10) {
+				console.error('Max index check limit reached');
+				return false;
+			}
+			if (Array.isArray(filter)) {
+				if (!filter.length) {
+					return null;
+				}
+				let onlyEmptyObjects = true;
+				for (const item of filter) {
+					let checkResult = buildfire._data._checkForIndex(item, indexDepth + 1);
+					if (checkResult) {
+						return true;
+					} else if (checkResult === false) {
+						onlyEmptyObjects = false;
+					} else if (checkResult === null && onlyEmptyObjects !== false) {
+						onlyEmptyObjects = true;
+					}
+				}
+				return onlyEmptyObjects;
+			} else if (typeof filter === 'object') {
+				if (!filter) {
+					return false;
+				}
+				if (!Object.keys(filter).length) {
+					return null;
+				}
+				let onlyEmptyObjects = false;
+				for (const key in filter) {
+					if (filter.hasOwnProperty(key)) {
+						if (key === '_buildfire' && typeof filter[key] === 'object') {
+							if (filter[key].index) {
+								return true;
+							} else {
+								return false;
+							}
+						} else if (key.indexOf('_buildfire.index') > -1 && filter[key]) {
+							return true;
+						} else if (typeof filter[key] === 'object') {
+							const checkResult = buildfire._data._checkForIndex(filter[key], indexDepth + 1);
+							if (checkResult) {
+								return true;
+							} else if (checkResult === false) {
+								onlyEmptyObjects = false;
+							} else if (checkResult === null) {
+								onlyEmptyObjects = true;
+							}
+						}
+					}
+				}
+				return onlyEmptyObjects;
+			} else {
+				return false;
+			}
+		}
+	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
 	, imageLib: {
 		get ENUMS() {
@@ -2552,6 +2884,9 @@ var buildfire = {
 					get fourth_width() {
 						return this.findNearest(4);
 					},
+					get quarter_width() {
+						return this.findNearest(4);
+					},
 					get fifth_width() {
 						return this.findNearest(5);
 					},
@@ -2560,7 +2895,7 @@ var buildfire = {
 					},
 					findNearest: function (ratio) {
 						var match = null;
-						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_' < -1));
+						const sizes = this.VALID_SIZES.filter(size => size.indexOf('_') == -1);
 
 						for (size of sizes) {
 							if ((window.innerWidth / ratio) < this[size]) {
@@ -2606,10 +2941,20 @@ var buildfire = {
 		// }
 		, resizeImage: function (url, options, element, callback) {
 			if (!url) return null;
-			// return unsupported file types
-			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
-				var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-				console.warn(filetype + ' files are not supported by resizeImage. Returning original URL: ' + url);
+			const forceImgix = buildfire.getContext()?.forceImgix;
+
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for resizeImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
+				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
 				return url;
 			}
 
@@ -2635,71 +2980,64 @@ var buildfire = {
 			if (options.width == 'full') options.width = window.innerWidth;
 			if (options.height == 'full') options.height = window.innerHeight;
 
-			var root;
-
-			{
-				//var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-				var root = 'https://alnnibitpo.cloudimg.io/v7';
-
-				// Check if there is query string
-				var hasQueryString = url.indexOf('?') !== -1;
-				var result = root + '/' + url + (hasQueryString ? '&' : '?') + 'func=bound';
-
-				var isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-				if (isDevMode) {
-					result += '&ci_info=1';
+			if (options.size && options.aspect) {
+				if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
+					var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
+					console.warn('Invalid size. Available options are ' + sizes + '. Returning original url');
+					return url;
 				}
-
-				if (options.size && options.aspect) {
-					if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
-						var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
-						console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
-						return url;
-					}
-					if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
-						var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
-						console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
-						return url;
-					}
-					//math.round
-					options.width = this.ENUMS.SIZES[options.size];
-					options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
+				if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
+					var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
+					console.warn('Invalid aspect ratio. Available options are ' + ratios + '. Returning original url');
+					return url;
 				}
-				// check for missing size or aspect
-				if (options.width && !options.height) {
-					var width = Math.floor(options.width * ratio);
-					result += '&width=' + width;
-				}
-				else if (!options.width && options.height) {
-					var height = Math.floor(options.height * ratio);
-					result += '&height=' + height;
-				}
-				else if (options.width && options.height) {
-					var width = Math.floor(options.width * ratio);
-					var height = Math.floor(options.height * ratio);
-					result += '&width=' + width + '&height=' + height;
-				} else {
-					result = url;
-				}
-
-				this._handleElement(element, result, callback);
-
-				return result;
+				//math.round
+				options.width = this.ENUMS.SIZES[options.size];
+				options.height = options.width * this.ENUMS.ASPECT_RATIOS[options.aspect];
 			}
+			let width;
+			let height;
+			let blur;
+			// check for missing size or aspect
+			if (options.width && !options.height) {
+				width = Math.floor(options.width * ratio);
+			}
+			else if (!options.width && options.height) {
+				height = Math.floor(options.height * ratio);
+			}
+			else if (options.width && options.height) {
+				width = Math.floor(options.width * ratio);
+				height = Math.floor(options.height * ratio);
+			}
+			if (options.blur) {
+				blur = options.blur;
+			}
+
+			let result = imageCdnHandler.constructUrl({width, height, url, blur, method: 'resize'});
+
+			this._handleElement(element, result, callback);
+
+			return result;
 		}
 
 		, cropImage: function (url, options, element, callback) {
 			if (!url) return null;
-			// return unsupported file types
-			if (/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg)(?!.)/gi.test(url))) {
-				var filetype = (/.{0,4}(?!.)/g.exec(url) || ['Selected'])[0];
-				console.warn(filetype + ' files are not supported by cropImage. Returning original URL: ' + url);
+			const forceImgix = buildfire.getContext()?.forceImgix;
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for cropImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
+				console.warn('URL is not supported by cropImage. Returning original URL: ' + url);
 				return url;
 			}
 
-			/*if (imageTools.isProdImageServer(url)) {
-                url = url.replace(/^https:\/\//i, 'http://');
-            }*/
 			if (!options) {
 				options = {};
 			}
@@ -2715,12 +3053,12 @@ var buildfire = {
 			if (options.size && options.aspect) {
 				if (this.ENUMS.SIZES.VALID_SIZES.indexOf(options.size) < 0) {
 					var sizes = this.ENUMS.SIZES.VALID_SIZES.join(', ');
-					console.warn('Inavlid size. Availible options are ' + sizes + '. Returning original url');
+					console.warn('Invalid size. Available options are ' + sizes + '. Returning original url');
 					return url;
 				}
 				if (this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.indexOf(options.aspect) < 0) {
 					var ratios = this.ENUMS.ASPECT_RATIOS.VALID_RATIOS.join(', ');
-					console.warn('Inavlid aspect ratio. Availible options are ' + ratios + '. Returning original url');
+					console.warn('Invalid aspect ratio. Available options are ' + ratios + '. Returning original url');
 					return url;
 				}
 
@@ -2737,8 +3075,8 @@ var buildfire = {
 				options.height = window.innerHeight;
 			}
 			if (!options.width || !options.height) {
-				console.warn('cropImage doenst have width or height please fix. returning original url');
-				return url + '?h=' + options.height + '&w=' + options.width;
+				console.warn('cropImage does not have width or height please fix. returning original url');
+				return url;
 			}
 
 			var ratio = window.devicePixelRatio;
@@ -2746,23 +3084,14 @@ var buildfire = {
 				ratio = options.disablePixelRatio;
 			}
 
-			//var protocol = window.location.protocol == "https:" ? "https:" : "http:";
-
-			var root = 'https://alnnibitpo.cloudimg.io/v7';
-
-			var hasQueryString = url.indexOf('?') !== -1;
-			var result = root + '/' + url + (hasQueryString ? '&' : '?')  + 'func=crop';
-
-			var isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-			if (isDevMode) {
-				result += '&ci_info=1';
+			let width = Math.floor(options.width * ratio);
+			let height = Math.floor(options.height * ratio);
+			let blur;
+			if (options.blur) {
+				blur = options.blur;
 			}
 
-			var width = Math.floor(options.width * ratio);
-			var height = Math.floor(options.height * ratio);
-
-			result += '&width=' + width + '&height=' + height;
-
+			let result = imageCdnHandler.constructUrl({width, height, url, blur, method: 'crop'});
 
 			this._handleElement(element, result, callback);
 
@@ -2830,7 +3159,7 @@ var buildfire = {
 			}
 
 			string = string.replace(/(http|https):\/\/\S{0,8}.cloudimg.io\//g, '');
-			var extension = string.match(/(png|jpg|jpeg)/g)[0] || '';
+			var extension = string.match(/(png|jpg|jpeg|gif|jfif|svg)/g)[0] || '';
 			extension = extension ? '.' + extension : '';
 
 			var hash = 0;
@@ -2991,7 +3320,176 @@ var buildfire = {
 					callback(null, buildfire.imageLib.cropImage(url, options));
 				}
 			}
-		}
+		},
+		_imgix: {
+			isSupportedUrl: function(url) {
+				const isSupportedExtension =  !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
+
+				const isUnsplashImage = url.indexOf('images.unsplash.com') !== -1;
+
+				if (!isSupportedExtension && !isUnsplashImage) return false;
+				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
+			},
+			constructUrl: function({width, height, url, blur, method}) {
+				const baseImgUrl = this._transformToImgix(url);
+				if (!baseImgUrl) return url;
+
+				const paramsToRemove = ['width', 'height', 'fit'];
+
+				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
+
+				const urlObj = new URL(cleanedUrl);
+
+				if (method === 'crop' && (width || height)) { //allow crop only if width or height provided
+					urlObj.searchParams.set('fit', 'crop');
+				}
+				if (width) {
+					urlObj.searchParams.set('width', width);
+				}
+				if (height) {
+					urlObj.searchParams.set('height', height);
+				}
+				if (blur) {
+					urlObj.searchParams.set('blur', blur);
+				}
+
+				return urlObj.toString();
+
+			},
+			// consists of whitelisted AWS urls in imgix as keys and the corresponding imgix urls as values
+			_imgixWhitelistedUrls: {
+				'http://imageserver.prod.s3.amazonaws.com': 'https://buildfire.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
+				'http://pluginserver.buildfire.com': 'https://bfplugins.imgix.net',
+				'http://s3.amazonaws.com/Kaleo.DevBucket': 'https://bflegacy.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/imagelibserver': 'https://buildfire-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat2': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat3': 'https://bfplugins-uat.imgix.net',
+				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
+				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
+
+				//uat urls
+				'http://d1q5x1plk9guz6.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+				'http://d3lkxgii6udy4q.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+				'http://d26kqod42fnsx0.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+
+				// support Unsplash images
+				'http://images.unsplash.com': 'https://images.unsplash.com',
+
+				// support imgix images themselves
+				'http://buildfire.imgix.net': 'https://buildfire.imgix.net',
+				'http://bfplugins.imgix.net': 'https://bfplugins.imgix.net',
+				'http://bflegacy.imgix.net': 'https://bflegacy.imgix.net',
+				'http://buildfire-uat.imgix.net': 'https://buildfire-uat.imgix.net',
+				'http://bfplugins-uat.imgix.net': 'https://bfplugins-uat.imgix.net',
+			},
+			_transformToImgix: function(url) {
+				const orgUrl = url;
+				url = url.replace(/^https:\/\//i, 'http://');
+				url = url.replace(/^https:\//i, 'http://'); // for bad urls with one '/', ex: https:/s3.amazonaws.com/...
+				for (let whitelistedUrl in this._imgixWhitelistedUrls) {
+					if (url.indexOf(whitelistedUrl) === 0) {
+						if (url.indexOf('images.unsplash.com') !== -1) { //sanitize unsplash images
+							url = this._sanitizeUnsplashImage(url);
+						}
+						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
+					}
+				}
+				const _appId = buildfire?._context?.appId;
+				return `https://buidfire-proxy.imgix.net/${_appId ? 'app_' + _appId : 'unknown'}/` + encodeURIComponent(orgUrl);
+			},
+			_sanitizeUnsplashImage: function(url) {
+				const urlObj = new URL(url);
+				const allowedParams = ['ixid', 'ixlib', 'fm'];
+
+				Array.from(urlObj.searchParams.keys())
+					.forEach(key => {
+						if (!allowedParams.includes(key)) {
+							urlObj.searchParams.delete(key);
+						}
+					});
+
+				return urlObj.toString();
+			},
+			_removeImageParams: function(url, paramsToRemove) {
+				try {
+					const urlObj = new URL(url);
+					const params = urlObj.searchParams;
+
+					paramsToRemove.forEach(param => {
+						params.delete(param);
+					});
+
+					return urlObj.toString();
+				} catch (e) {
+					console.warn('Invalid URL provided to _removeImageParams:', url);
+					return url;
+				}
+			},
+		},
+		_cloudImg: {
+			isSupportedUrl: function(url) {
+				if (url.indexOf('images.unsplash.com') !== -1) { //force unsplash images to use imgix
+					return false;
+				}
+				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg|webp)(?!.)/gi.test(url)));
+			},
+			constructUrl: function({width, height, url, blur, method}) {
+
+				let baseImgUrl;
+
+				const isCloudImgUrl = url.startsWith('https://alnnibitpo.cloudimg.io/v7/');
+				if (isCloudImgUrl) {
+					baseImgUrl = url; //prevent having nested cloudimg urls.
+				} else {
+					baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
+				}
+
+				const paramsToRemove = ['width', 'height', 'func', 'ci_info'];
+
+				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
+
+				const urlObj = new URL(cleanedUrl);
+
+				if (width || height) { //allow crop or bound only if width or height provided
+					urlObj.searchParams.set('func', method === 'crop' ? 'crop' : 'bound');
+				}
+
+				if (width) {
+					urlObj.searchParams.set('width', width);
+				}
+				if (height) {
+					urlObj.searchParams.set('height', height);
+				}
+				if (blur) {
+					urlObj.searchParams.set('blur', blur);
+				}
+
+				const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
+				if (isDevMode) {
+					urlObj.searchParams.set('ci_info', '1');
+				}
+
+				return urlObj.toString();
+			},
+			_removeImageParams: function(url, paramsToRemove) {
+				try {
+					const urlObj = new URL(url);
+					const params = urlObj.searchParams;
+
+					paramsToRemove.forEach(param => {
+						params.delete(param);
+					});
+
+					return urlObj.toString();
+				} catch (e) {
+					console.warn('Invalid URL provided to _removeImageParams:', url);
+					return url;
+				}
+			},
+		},
 	}
 	, colorLib: {
 		showDialog: function (data, options, onchange, callback) {
@@ -3201,6 +3699,28 @@ var buildfire = {
 		, sendMessageToService: function (data) {
 			var p = new Packet(null, 'messaging.sendMessageToService', data);
 			buildfire._sendPacket(p);
+		}
+		, broadcast: function (options) {
+			if (!options || !options.message) {
+				throw new Error('options.message is required');
+			}
+			if (options.source) {
+				throw new Error('options.source is not allowed');
+			}
+			buildfire.getContext(function (err, context) {
+				let source = {
+					instanceId: context.instanceId,
+					pluginId: context.pluginId,
+					title: context.title,
+					isWidgetService: buildfire.isWidgetService()
+				}
+				let data = { source: source, message: options.message };
+				let p = new Packet(null, 'messaging.broadcast', data);
+				buildfire._sendPacket(p);
+			});
+		}
+		, onReceivedBroadcast: function (broadcast) {
+			/* do not log anything as it will be too noisy */
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/Plugin-Instances
@@ -3581,6 +4101,27 @@ var buildfire = {
 		triggerOnAppResumed: function (data) {
 			return buildfire.eventManager.trigger('deviceAppResumed', data);
 		},
+		isKeyboardVisible: function(options, callback) {
+			const isVisible = document.documentElement.classList.contains('keyboard-visible');
+			if (callback) return callback(null, isVisible);
+		},
+		onKeyboardShow: function(callback, allowMultipleHandlers = true) {
+			buildfire.eventManager.add('keyboardWillShow', callback, allowMultipleHandlers);
+		},
+		onKeyboardHide: function(callback, allowMultipleHandlers = true) {
+			buildfire.eventManager.add('keyboardWillHide', callback, allowMultipleHandlers);
+		},
+		triggerKeyboardWillShow: function(options) {
+			const root = document.documentElement;
+			root.classList.add('keyboard-visible');
+			root.style.setProperty('--bf-keyboard-height', `${options.keyboardHeight}px`);
+			buildfire.eventManager.trigger('keyboardWillShow', {keyboardHeight: options.keyboardHeight});
+		},
+		triggerKeyboardWillHide: function() {
+			const root = document.documentElement;
+			root.classList.remove('keyboard-visible');
+			buildfire.eventManager.trigger('keyboardWillHide');
+		},
 		contacts: {
 			showDialog: function (options, callback) {
 				var p = new Packet(null, 'device.contacts.showDialog', options);
@@ -3629,6 +4170,124 @@ var buildfire = {
 		, degreesToRadians: function (degrees) {
 			return (degrees * Math.PI)/180;
 		},
+		startTracking: function(options, callback) {
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					(options || {}).instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.startTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
+		},
+		isTracking: function(options, callback) {
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					(options || {}).instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.isTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
+		},
+		stopTracking: function(options, callback) {
+			buildfire.getContext((err, res) => {
+				if (err){
+					return callback(err, null);
+				}
+				if (res && res.instanceId) {
+					(options || {}).instanceId = res.instanceId;
+					buildfire._sendPacket(new Packet(null,'geo.stopTracking', options), callback);
+				} else {
+					callback('instanceId not found', null);
+				}
+			});
+		}
+		, session: {
+			create: function(options, callback) {
+				buildfire.getContext((err, res) => {
+					if (err){
+						return callback(err, null);
+					}
+					if (res && res.instanceId) {
+						(options || {}).instanceId = res.instanceId;
+						buildfire._sendPacket(new Packet(null,'geo.session.create',options),callback);
+					} else {
+						callback('instanceId not found', null);
+					}
+				});
+			},
+			delete: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.delete',options),callback);
+			},
+			addUsers: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.addUsers',options),callback);
+			},
+			removeUsers: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.removeUsers',options),callback);
+			},
+			updateInfo: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.updateInfo',options),callback);
+			},
+			get: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.get',options),callback);
+			},
+			getCurrentUserSessions: function(options, callback) {
+				buildfire._sendPacket(new Packet(null, 'geo.session.getCurrentUserSessions', options), callback);
+			},
+			enableTrackability: function(options, callback) {
+				(options || {}).isTrackable = true;
+				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
+			},
+			disableTrackability: function(options, callback) {
+				(options || {}).isTrackable = false;
+				buildfire._sendPacket(new Packet(null,'geo.session.updateUser', options), callback);
+			},
+			startWatch: function(options, callback) {
+
+				buildfire.getContext((err, res) => {
+					if (err){
+						return callback(err, null);
+					}
+					if (!options || !options.sessionId) {
+						return callback('please provide a valid sessionId', null);
+					}
+					if (res && res.instanceId) {
+						const generatedWatchId = res.instanceId + '-' + options.sessionId + '-' + Date.now();
+						options.instanceId = res.instanceId;
+						options.watchId = generatedWatchId;
+						buildfire._sendPacket(new Packet(null,'geo.session.startSessionWatch', options), (err, res) => {
+							if (err) callback(err, null);
+						});
+
+						buildfire.eventManager.add('onSessionWatchChange', function ({watchId, session}) {
+							let sessionWatchId = generatedWatchId;
+							if (watchId == sessionWatchId) {
+								callback(null, {session: session, watchId: watchId});
+							}
+						}, true);
+					} else {
+						callback('instanceId not found', null);
+					}
+				});
+			},
+			_triggerOnSessionWatchChange: function(data) {
+				buildfire.eventManager.trigger('onSessionWatchChange', data);
+			},
+			stopWatch: function(options, callback) {
+				buildfire._sendPacket(new Packet(null,'geo.session.stopSessionWatch', options), callback);
+			},
+		},
+		// for testing only, to be removed, todo
+		_updateLastKnownLocation: function(options, callback) {
+			buildfire._sendPacket(new Packet(null,'geo._updateLastKnownLocation', options), callback);
+		}
 	}
 	, localStorage : {
 		setItem: function(key,value,callback) {
@@ -3762,9 +4421,9 @@ var buildfire = {
 	dynamicBlocks: {
 		// keep for backward compatability (old namespace)
 		// content will not be transformed but will be visible as is
-		execute: function(e){ 
-			document.querySelectorAll(".bf-wysiwyg-hide-app").forEach(function(e) {
-				e.classList.remove("bf-wysiwyg-hide-app");
+		execute: function(e){
+			document.querySelectorAll('.bf-wysiwyg-hide-app').forEach(function(e) {
+				e.classList.remove('bf-wysiwyg-hide-app');
 			});
 		},
 	},
@@ -3776,7 +4435,7 @@ var buildfire = {
 		onReceivedWidgetContextRequest(options, callback) {
 			buildfire.dynamic.expressions._prepareContext(null, (err, result) => {
 				if (err) return callback(err);
-				callback(null , result);
+				callback(null , buildfire.dynamic.expressions._cleanseContext(result));
 			});
 		},
 		triggerContextChange(options) {
@@ -3807,11 +4466,27 @@ var buildfire = {
 			});
 		},
 		expressions: {
+			requestPluginCustomExpressions(options, callback) {
+				var p = new Packet(null, 'dynamic.expressions.triggerRequestCustomExpressions', options);
+				buildfire._sendPacket(p, callback);
+			},
+			onReceivedCustomExpressionsRequest(options, callback) {
+				if (buildfire.dynamic.expressions.getCustomExpressions) {
+					buildfire.dynamic.expressions.getCustomExpressions(null, (err, res) => {
+						if (err) return callback(err);
+						callback(null, res);
+					});
+				} else {
+					callback(null, null);
+				}
+			},
 			_prepareContext(options, callback) {
 				if (buildfire.getContext().type == 'control') {
 					// get the widget's context to evaluate expressions against it rather than the control's context
 					let options = {
-						instanceId: buildfire.getContext().instanceId
+						request: {
+							instanceId: buildfire.getContext().instanceId
+						}
 					};
 					buildfire.dynamic.requestWidgetContext(options, (err, context) => {
 						if (err) return callback(err);
@@ -3821,8 +4496,9 @@ var buildfire = {
 					const { appId, appTheme, pluginId } = buildfire.getContext();
 					buildfire.auth.getCurrentUser((err, appUser) => {
 						if (err) return callback(err);
-						const context = { appUser, appId, appTheme, pluginId };
-						buildfire.dynamic.expressions._mergeContext({context}, callback);
+						const expressionsContext = { appUser, appId, appTheme, pluginId };
+
+						buildfire.dynamic.expressions._mergeContext({context: expressionsContext}, callback);
 					});
 				}
 			},
@@ -3835,6 +4511,16 @@ var buildfire = {
 					callback(null, context);
 				}
 			},
+			_cleanseContext(context) {
+				let cleansedContext = {};
+				Object.keys(context).forEach(key => {
+					if (typeof context[key] !== 'function' ) {
+						cleansedContext[key] = context[key];
+					}
+				});
+				cleansedContext.sdk = null;
+				return cleansedContext;
+			},
 			_dynamicEngineQueue: [],
 			_htmlContainers: {},
 			_getDynamicEngine(callback) {
@@ -3845,7 +4531,7 @@ var buildfire = {
 				} else {
 					let url;
 					this._dynamicEngineQueue.push(callback);
-					if (buildfire.getContext().type == 'control') { 
+					if (buildfire.getContext().type == 'control') {
 						url = '../../../../scripts/dynamic/dynamicEngine.min.js';
 					} else {
 						url = '../../../scripts/dynamic/dynamicEngine.min.js';
@@ -3853,6 +4539,7 @@ var buildfire = {
 					const scriptId = 'dynamicEngine';
 					buildfire.loadScript({ url, scriptId }, () => {
 						dynamicEngine.expressions.getContext = this._prepareContext; // overwrite the getContext to be suitable for the sdk environment
+						dynamicEngine.getGlobalSettings = buildfire.getGlobalSettings; // overwrite the getGlobalSettings to be suitable for the sdk environment
 						_executeDynamicEngineQueue(dynamicEngine);
 					});
 				}
@@ -3885,15 +4572,19 @@ var buildfire = {
 					: e.parentElement;
 
 				if (!container) return;
-				e.remove();
+				if (!e.parentElement.innerText && e.parentElement.children.length === 1) {
+					e.parentElement.remove();
+				} else {
+					e.remove();
+				}
 				let id = e.getAttribute('data-id');
 				let expressionHtmlContainers = buildfire.dynamic.expressions._htmlContainers;
-				expressionHtmlContainers[id] = expressionHtmlContainers[id] || []; 
+				expressionHtmlContainers[id] = expressionHtmlContainers[id] || [];
 				expressionHtmlContainers[id].push(container);
 
 				const content = container.innerHTML.replace(/bf-wysiwyg-hide-app/g, '');
 
-				this.evaluate({id: id, expression: content}, (err, result) => {
+				this.evaluate({id: id, expression: content}, (err, res) => {
 
 					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null );
 					if (!container) {
@@ -3905,13 +4596,46 @@ var buildfire = {
 							container.classList.add('bf-expression-error');
 							container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
 						} else {
-							container.innerHTML = result;
+							let tempElement = document.createElement('div');
+							tempElement.innerHTML = res.evaluatedExpression;
+							const elements = tempElement.querySelectorAll('*');
+							elements.forEach(element => {
+								Array.from(element.attributes).forEach(({name}) => {
+									if (name.startsWith('expr-') || name.startsWith('data-expr-')){
+										const cleanedName = name.replace('data-', '');
+										const attributeName = cleanedName.slice(5);
+										if (element.getAttribute(name) && !element.getAttribute(name).includes('undefined')) {
+											element.setAttribute(attributeName, element.getAttribute(name));
+											element.removeAttribute(name);
+										}
+									}
+								});
+							});
+							container.innerHTML = tempElement.innerHTML;
 							container.classList.remove('bf-expression-error');
 						}
 					}
 				});
 			},
+			showDialog: function (options, callback) {
+				if (typeof options === 'undefined' || !options) {
+					options = {};
+				}
+				buildfire.getContext(function(err, context){
+					if(context && context.instanceId) {
+						options.instanceId = context.instanceId;
+					}
+					const p = new Packet(null, 'dynamic.expressions.showDialog', {options: options});
+					buildfire._sendPacket(p, callback);
+				});
+			}
 		},
+		appDatasources: {
+			showDialog: function (options = {}, callback) {
+				const p = new Packet(null, 'appDatasources.showDialog', options);
+				buildfire._sendPacket(p, callback);
+			}
+		}
 	},
 	wysiwyg: {
 		injectPluginStyles: function(css) {
@@ -3923,14 +4647,14 @@ var buildfire = {
 				tinymcePluginStyles.id = 'tinymcePluginStyles';
 				tinymcePluginStyles.rel = 'stylesheet';
 				tinymcePluginStyles.innerHTML = css;
-				(document.head || document.body || document).appendChild(tinymcePluginStyles);
+				(document.head || document.body).appendChild(tinymcePluginStyles);
 			}
 		},
 		extend: function() {
 			if (typeof tinymce !== 'undefined' && tinymce.init && tinymce.isBuildfire) {
 				var appContext = buildfire.getContext();
 				if (appContext && appContext.endPoints) {
-					var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode;
+					var appTheme = appContext.endPoints.appHost + '/api/app/styles/appTheme.css?appId=' + appContext.appId + '&liveMode=' + appContext.liveMode + '&isWeb=true';
 					var originalTinymceInit = tinymce.init.bind(tinymce);
 
 					tinymce.init = function(options) {
@@ -3946,12 +4670,21 @@ var buildfire = {
 						if (originalSetup) {
 							options.setup = function (editor) {
 								let dynamicExpressionsActivated;
+								const originalSetContent = editor.setContent.bind(editor);
+								editor.setContent = (content, args) => {
+									originalSetContent(content, args);
+									if (content && typeof dynamicExpressionsActivated === 'undefined' && dynamicExpressionsEnabled) {
+										_syncExpressionButtonActivation();
+									}
+								};
 								const timestamp = new Date().getTime();
 								const EXPRESSION_HTML = `<img data-no-blob data-id="${timestamp}" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=" style="display: none;" onload="typeof buildfire !== \'undefined\' &amp;&amp; buildfire.dynamic.execute(this);" data-type="dynamic-expression" class="bf-wysiwyg-hide-app" />`;
 								const _injectExpressionNode = () => {
-									const currentContent = editor.getContent();
-									editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
-									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add('bf-wysiwyg-hide-app'); });
+									if (!editor.dom.doc.body.querySelector('[data-type="dynamic-expression"]')) {
+										const currentContent = editor.getContent();
+										editor.setContent(`${currentContent ? EXPRESSION_HTML : EXPRESSION_HTML + '&nbsp;'}${currentContent}`);
+										editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.add('bf-wysiwyg-hide-app'); });
+									}
 								};
 								const _removeExpressionNode = () => {
 									const div = document.createElement('div');
@@ -3960,22 +4693,47 @@ var buildfire = {
 									Array.from(elements).forEach((e) => {
 										if (e.parentElement && !e.parentElement.innerText && e.parentElement.children.length === 1) {
 											e.parentElement.remove();
+										} else {
+											e.remove();
 										}
-										e.remove();
 									});
 									editor.setContent(div.innerHTML);
 									editor.dom.doc.body.querySelectorAll('body > *').forEach(function(ele) { ele.classList.remove('bf-wysiwyg-hide-app'); });
 								};
-								const _syncExpressionNodes = () => {
+								const _syncExpressionButtonActivation = () => {
 									const div = document.createElement('div');
 									div.innerHTML = editor.getContent();
 									const expression = div.querySelector('[data-type="dynamic-expression"]');
 									if (typeof dynamicExpressionsActivated === 'undefined') {
 										dynamicExpressionsActivated = !!expression;
 									}
-									if (dynamicExpressionsActivated && !expression) {
+								};
+								const _restoreCursorPosition = () => { // This function works with sync functionality
+									editor.selection.collapse(); // to prevent content removal
+									editor.execCommand('mceInsertContent', false, '<span id="temp-cursor-position"></span>');
+									setTimeout(() => {
+										const tempElement = editor.dom.select('#temp-cursor-position')[0];
+										editor.selection.select(tempElement);
+										editor.dom.remove(tempElement);
+									}, 0);
+								};
+								const checkExpressionStatus = () => {
+									if (dynamicExpressionsEnabled && !dynamicExpressionsActivated && editor.getContent().search(/\${[^$]*}/) > -1) {
+										dynamicExpressionsActivated = true;
+										_restoreCursorPosition(); // This function works with sync functionality
 										_injectExpressionNode();
-									} else if (!dynamicExpressionsActivated && expression) {
+										editor.isNotDirty = false;
+										editor.fire('change');
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search('data-type="dynamic-expression"') === -1) {
+										setTimeout(() => {
+											_restoreCursorPosition();
+											_injectExpressionNode();
+											editor.isNotDirty = false;
+											editor.fire('change');
+										}, 0);
+									} else if (dynamicExpressionsEnabled && dynamicExpressionsActivated && editor.getContent().search(/\${[^$]*}/) === -1) {
+										dynamicExpressionsActivated = false;
+										_restoreCursorPosition(); // This function works with sync functionality
 										_removeExpressionNode();
 									}
 								};
@@ -4023,10 +4781,36 @@ var buildfire = {
 										}
 										ele.classList.add(...classes);
 									});
-
 									if (dynamicExpressionsEnabled) {
-										_syncExpressionNodes();
+										// check if the expressions evaluation should be turned on or off
+										checkExpressionStatus();
+										// Get the image that triggers the evaluation process
+										let expressionImage = editor.dom.doc.body.querySelectorAll('[data-type="dynamic-expression"]');
+										// check if there is any duplicate of the image that trigger the evaluation process and delete duplicates if exist
+										expressionImage.forEach((element, index) => {
+											if (index === 0) {
+												if (element.parentElement.className.indexOf('bf-wysiwyg-top') == -1) {
+													// add the expressionImage to an element at the body root if it wasn't
+													editor.dom.doc.body.children[0].prepend(element);
+												}
+											} else {
+												// if there multiple expressionImage, then delete the duplicates
+												if (element.parentElement && !element.parentElement.innerText && element.parentElement.children.length === 1) {
+													element.parentElement.remove();
+												} else {
+													element.remove();
+												}
+											}
+										});
 									}
+								});
+								let keyupListenerDelay = null;
+								editor.on('keyup', function() {
+									if (keyupListenerDelay) clearTimeout(keyupListenerDelay);
+									keyupListenerDelay = setTimeout(() => {
+										// check if the expressions evaluation should be turned on or off
+										checkExpressionStatus();
+									}, 500);
 								});
 								editor.ui.registry.addMenuItem('bf_clearContent', {
 									text: 'Delete all',
@@ -4064,21 +4848,25 @@ var buildfire = {
 										return element.dataset.bfLayout ? '' : 'cut copy paste bf_insertBefore bf_insertAfter | bf_delete';
 									}
 								});
-								editor.ui.registry.addToggleMenuItem('bf_toggleDynamicExpression', {
-									text: 'Expressions',
-									onAction: () => {
-										dynamicExpressionsActivated = !dynamicExpressionsActivated;
-										if (dynamicExpressionsActivated) {
-											_injectExpressionNode();
-										} else {
-											_removeExpressionNode();
-										}
-										editor.isNotDirty = false;
-										editor.fire('change');
-									},
-									onSetup: (api) => {
-										api.setActive(dynamicExpressionsActivated);
-										return () => {};
+
+								editor.ui.registry.addMenuItem('bf_insertExpression', {
+									text: 'Insert expression',
+									onAction: function() {
+										buildfire.dynamic.expressions.showDialog(null, (err, res) => {
+											if (err) return console.error(err);
+											if (res) {
+												editor.insertContent(res);
+											}
+										});
+									}
+								});
+
+								editor.ui.registry.addMenuItem('bf_datasources', {
+									text: 'Datasources',
+									onAction: function() {
+										buildfire.dynamic.appDatasources.showDialog(null, (err, res) => {
+											if (err) return console.error(err);
+										});
 									}
 								});
 								originalSetup(editor);
@@ -4088,9 +4876,9 @@ var buildfire = {
 						buildfire.appearance.getWidgetTheme(function(err, theme) {
 							if (err) return console.error(err);
 							if (options.content_style) {
-								options.content_style += buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style += buildfire.appearance._getCommonCss(theme);
 							} else {
-								options.content_style = buildfire.appearance._getAppThemeCssVariables(theme);
+								options.content_style = buildfire.appearance._getCommonCss(theme);
 							}
 						});
 						if (options.content_css) {
@@ -4105,21 +4893,22 @@ var buildfire = {
 							options.content_css = [appTheme , '../../../../styles/bfUIElements.css', '../../../../scripts/tinymce/bf_tinymce.css'];
 						}
 
-						options.menubar = options.menubar || 'edit insert view format tools';
+						options.menubar = options.menubar || 'edit insert view format tools ai';
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: 'bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout'},
+							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
-							tools: {title: 'Tools', items: `code ${dynamicExpressionsEnabled ? 'bf_toggleDynamicExpression' : ''}`},
+							tools: {title: 'Tools', items: 'code bf_datasources'},
+							ai: {title: 'AI Content (Beta)', items: 'bf_aiTextGenerator'},
 						};
 						if (userMenu) {
 							for (let item in userMenu) {
 								options.menu[item] = userMenu[item];
 							}
 						}
-						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts'];
+						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts', 'bf_ai'];
 						if (options.plugins) {
 							if (options.plugins instanceof Array) {
 								options.plugins = defaultPlugins.concat(options.plugins);
@@ -4130,7 +4919,7 @@ var buildfire = {
 						} else {
 							options.plugins = defaultPlugins;
 						}
-						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen';
+						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen | bf_ai';
 						if (options.toolbar) {
 							if (options.toolbar instanceof Array) {
 								if (!(options.toolbar[0] instanceof Object)) {
@@ -4146,13 +4935,21 @@ var buildfire = {
 						} else {
 							options.toolbar = defaultToolbar;
 						}
+						let extended_valid_elements = '';
+						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute)
+						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
+							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr','iframe'];
+						supportedElement.forEach((element, index) => {
+							extended_valid_elements += `${element}[*]`;
+							if (index != supportedElement.length - 1) extended_valid_elements += ',';
+						});
+						options.extended_valid_elements = extended_valid_elements;
 						options.toolbar_mode = 'floating';
 						options.theme = 'silver';
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.extended_valid_elements= 'a[href|onclick|class],img[src|style|onerror|onload|height|width|onclick|alt],button[style|class|onclick]';
-						options.height = options.height || 265;
+						options.height = options.height || 500;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
 						options._bfInitialize = true;
@@ -4187,10 +4984,10 @@ var buildfire = {
 						activeLayout = result.selectedLayout;
 					}
 				}
-		
+
 				if (activeLayout.cssPath) {
 					// so it's predefined
-		
+
 					let cssUrl;
 					//check if the cssPath from old instances that doesn't include `widget` in the path or not.
 					if (activeLayout.cssPath.startsWith('widget')) {
@@ -4203,7 +5000,7 @@ var buildfire = {
 					// so it's custom layout
 					_attachActiveLayoutCSSContent(activeLayout.css,'$$bf_layout_css');
 				}
-		
+
 			}
 
 			function _attachActiveLayoutCSSFile (url, id){
@@ -4220,11 +5017,10 @@ var buildfire = {
 					activeLayoutStyleElement.remove();
 				}
 			}
-			
 			function _attachActiveLayoutCSSContent (cssContent, id){
-			
+
 				let activeLayoutStyleElement = document.getElementById(id);
-			
+
 				let styleElement = document.createElement('style');
 				styleElement.id = id;
 				styleElement.innerHTML = cssContent;
@@ -4235,7 +5031,7 @@ var buildfire = {
 				}
 			}
 			buildfire.datastore.get(activeLayoutTag, (err, result) => {
-		
+
 				if (err) console.error('Error while retrieving active layout', err);
 				_handleDataStoreActiveLayoutResponse(result);
 			});
@@ -4248,9 +5044,10 @@ var buildfire = {
 					_handleDataStoreActiveLayoutResponse(data);
 				}
 			},true);
-			
-		
+
+
 		}
+		// might be used by old plugins to manipulate look through JS
 		, onUpdate: function (callback, allowMultipleHandlers) {
 			return buildfire.eventManager.add('cssInjectionOnUpdate', callback, allowMultipleHandlers);
 		}
@@ -4302,15 +5099,24 @@ var buildfire = {
 				if (!strings || !Object.keys(strings).length) {
 					return;
 				}
-				document.querySelectorAll('*[bfString]').forEach(e => {
-					buildfire.language._handleNode(e);
-					//trigger on string injected to this element.
-					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', e);
-					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', e);
+				//get instanceId
+				buildfire.getContext((err, context) => {
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					const bfElements = document.querySelectorAll('*[bfString]');
+					bfElements.forEach(e => {
+						buildfire.language._handleNode(e, instanceId);
+					});
+					//trigger on strings injected and ready.
+					buildfire.eventManager.trigger('languageSettingsOnStringsInjected', null);
+					buildfire.eventManager.trigger('_languageSettingsOnStringsInjected', null);
+
+					buildfire.language.watch(instanceId);
 				});
-				buildfire.language.watch();
 			};
-			
+
 			//merge updated default strings into datastore strings.
 			const mergeUpdatedDefaultStrings = (strings, pluginLanguageJson) => {
 				const sections = pluginLanguageJson.sections;
@@ -4322,7 +5128,7 @@ var buildfire = {
 					obj[sectionKey] = {};
 
 					for (const labelKey in defaultSection) {
-						if (dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty('value') || dbSection[labelKey].hasOwnProperty('defaultValue'))) {
+						if (dbSection && dbSection[labelKey] && (dbSection[labelKey].hasOwnProperty('value') || dbSection[labelKey].hasOwnProperty('defaultValue'))) {
 							//handle backward compatibility, cuz some plugins has it in "value" and the others in "defaultValue"
 							if (dbSection[labelKey].hasOwnProperty('value')) {
 								obj[sectionKey][labelKey] = {
@@ -4333,14 +5139,19 @@ var buildfire = {
 									defaultValue: dbSection[labelKey].defaultValue
 								};
 							}
-							
+
 						} else {
 							obj[sectionKey][labelKey] = {
 								defaultValue: defaultSection[labelKey].defaultValue
 							};
 						}
+
+						//check if we have `hasExpression` flag for each label.
+						if (dbSection && dbSection[labelKey] && dbSection[labelKey].hasOwnProperty('hasExpression')) {
+							obj[sectionKey][labelKey].hasExpression = dbSection[labelKey].hasExpression;
+						}
 					}
-					
+
 				}
 
 				return obj;
@@ -4380,6 +5191,16 @@ var buildfire = {
 			}, true);
 		}
 		,
+		/**
+		* get one language string.
+		* @param {Object} params - The needed elements to get the language string.
+		* @param {string} params.stringKey - The Section key and the label key separated by a dot. (required)
+		* @param {string} params.instanceId - Instance Id of the plugin. (optional)
+		* @param {Boolean} params.executeCallbackOnUpdate - To keep executing the callback on language string value update or not. (optional)
+		* @param {Object} params.node - DOM node element. (optional)
+		* @param {Function} callback - Returns the value of the language string or error if existed
+		* @public
+		*/
 		get: function (params, callback) {
 			let error;
 			if (!params) {
@@ -4403,63 +5224,165 @@ var buildfire = {
 				callback(error, null);
 				return;
 			}
-			const section = stringKeys[0];
-			const label = stringKeys[1];
 
-			function onStringsReady() {
+			function onStringsReady(instanceId) {
+				const section = stringKeys[0];
+				const label = stringKeys[1];
 				const strings = buildfire.language._strings;
 				if (!strings || !strings[section] || !strings[section][label] || (!strings[section][label].hasOwnProperty('value') && !strings[section][label].hasOwnProperty('defaultValue'))) {
 					error = 'String not found.';
 					callback(error, null);
 					return;
 				}
-	
-				const valueObj = strings[section][label];
-	
-				if (valueObj.hasOwnProperty('value')) {
-					callback(null, valueObj.value);
-					return;
-				} else if (valueObj.hasOwnProperty('defaultValue')) {
-					callback(null, valueObj.defaultValue);
-					return;
+
+
+				function getStringValue(stringObj) {
+					if (stringObj.hasOwnProperty('value')) {
+						return stringObj.value;
+					} else if (stringObj.hasOwnProperty('defaultValue')) {
+						return stringObj.defaultValue;
+					}
 				}
-	
-				callback(null, null);
-				return;
+
+				function checkExpression(str) {
+					let hasExpression = false;
+					if (str) hasExpression = str.search(/\${[^{}]*}/) > -1;
+					return hasExpression;
+				}
+
+				const valueObj = strings[section][label];
+				const stringHasExpression = valueObj.value ? checkExpression(valueObj.value) : checkExpression(valueObj.defaultValue);
+
+				if (stringHasExpression) {
+					const stringValue = getStringValue(valueObj);
+					const options = {
+						instanceId: instanceId,
+						expression: stringValue,
+						// don't pass "id" here. it must be unique id for each string. even if it's the same string, it must have a unique id.
+					};
+
+					//clean up previous request if it's existed. (should not be existed)
+					if (params.node && params.node.request && params.node.request.destroy) {
+						params.node.request.destroy();
+						console.warn('node.request has a value: ', params.node, params.node.request);
+						params.node.request = null;
+					}
+					//get evaluated expression
+					buildfire.dynamic.expressions.evaluate(options, (err, {evaluatedExpression, evaluationRequest}) => {
+						if (err) {
+							callback(null, stringValue);
+						} else {
+							callback(null, evaluatedExpression);
+						}
+						//attach the evaluationRequest to node object to be able to destroy it later.
+						if (params.node && typeof params.node === 'object' && evaluationRequest) {
+							params.node.request = evaluationRequest;
+						}
+						//stop listening for callbacks.
+						if (evaluationRequest && evaluationRequest.destroy && !params.executeCallbackOnUpdate) {
+							evaluationRequest.destroy();
+						}
+					});
+				} else {
+					const stringValue = getStringValue(valueObj);
+					callback(null, stringValue);
+				}
 			}
 
-			if (!buildfire.language._strings) {
-				buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
-					onStringsReady();
-				}, true);
+			if (params.instanceId) {
+				registerStringsReady(params.instanceId);
 			} else {
-				onStringsReady();
+				buildfire.getContext((err, context) => {
+					let instanceId = null;
+					if (context && context.instanceId) {
+						instanceId = context.instanceId;
+					}
+					registerStringsReady(instanceId);
+				});
+			}
+			function registerStringsReady (instanceId) {
+				if (!buildfire.language._strings) {
+					buildfire.eventManager.add('_languageSettingsOnStringsInjected', ()=>{
+						onStringsReady(instanceId);
+					}, true);
+				} else {
+					onStringsReady(instanceId);
+				}
 			}
 		}
 		,
-		watch: function () {
-			
+		watch: function (instanceId) {
+
+			const destroyRemovedNodeExpressionsCallbacks = (node) => {
+				//remove bfString attribute
+				node.removeAttribute('bfString');
+				//destroy expressions callbacks
+				if (node && node.request && node.request.destroy) {
+					node.request.destroy();
+					node.request = null;
+				}
+
+			};
+
 			// Callback function to execute when mutations are observed
 			const callback = (mutationList, observer) => {
 				for (const mutation of mutationList) {
+
+					//detect removed nodes
+					if (mutation && mutation.removedNodes && mutation.removedNodes.length > 0) {
+						for (let i = 0; i < mutation.removedNodes.length; i++) {
+
+							const removedNode = mutation.removedNodes[i];
+							if (removedNode && removedNode.tagName) {
+								destroyRemovedNodeExpressionsCallbacks(removedNode);
+
+								//get all child elements of removed that has "bfString" attribute to destroy their expressions callbacks
+								let childList = removedNode.querySelectorAll('*[bfString]');
+								for (let i = 0; i < childList.length; i++) {
+									destroyRemovedNodeExpressionsCallbacks(childList[i]);
+								}
+							}
+						}
+					}
+
 					if (mutation.type === 'childList' && mutation.target) {
-						buildfire.language._handleNode(mutation.target);
+						buildfire.language._handleNode(mutation.target, instanceId);
 						let childList = mutation.target.querySelectorAll('*[bfString]');
 						for (let i = 0; i < childList.length; i++) {
-							buildfire.language._handleNode(childList[i]);
+							buildfire.language._handleNode(childList[i], instanceId);
 						}
 					}
 				}
 			};
 
-			const targetNode = document.body;
-			// Options for the observer (which mutations to observe)
-			// attributes should be false >> performance issues
-			const config = { childList: true, subtree: true, attributes: false };
-			// Create an observer instance linked to the callback function
-			const observer = new MutationObserver(callback);
-			// Start observing the target node for configured mutations
-			observer.observe(targetNode, config);
+			let observe = function (targetNode) {
+				// Options for the observer (which mutations to observe)
+				// attributes should be false >> performance issues
+				const config = { childList: true, subtree: true, attributes: false };
+				// Create an observer instance linked to the callback function
+				const observer = new MutationObserver(callback);
+				// Start observing the target node for configured mutations
+				observer.observe(targetNode, config);
+			};
+
+			if (document.body != null) {
+				observe(document.body);
+			} else {
+				let currentTrial = 0;
+				function checkTargetNode() {
+					if (document.body) {
+						console.info(`document.body found at trial ${currentTrial + 1}`);
+						clearInterval(intervalId);
+						observe(document.body);
+					} else {
+						if (++currentTrial >= 10) {
+							clearInterval(intervalId);
+							console.warn("max trials reached. Unable to find document.body to observe.");
+						}
+					}
+				}
+				let intervalId = setInterval(checkTargetNode, 250);
+			}
 		}
 		,
 		onStringsReady: function (callback, allowMultipleHandlers) {
@@ -4476,10 +5399,23 @@ var buildfire = {
 			buildfire.eventManager.trigger('languageSettingsOnUpdate', obj);
 		}
 		,
-		_handleNode: function (node) { //inject strings for [bfString] elements. 
+		_handleNode: function (node, instanceId) { //inject strings for [bfString] elements.
+			const injectString = (string, attributes, node) => {
+				if (!(node && node.parentNode)) {
+					return;
+				}
+				if (attributes && attributes.length) {
+					attributes.forEach(attr => node.setAttribute(attr, string));
+				} else {
+					node.innerHTML = string;
+				}
+				//mark initialized elements.
+				node.setAttribute('bfString-initialized', '');
+			};
+
 			if (!node.tagName) {// not an element
 				return;
-			}  
+			}
 			if (!node.hasAttribute('bfString')) {
 				return;
 			}
@@ -4494,16 +5430,10 @@ var buildfire = {
 				attributes = injectAttributes.split(',');
 			}
 			const stringKey = node.getAttribute('bfString');
-			buildfire.language.get({stringKey}, (err, string) => {
-				//inject the string into the element.
+			buildfire.language.get({stringKey, instanceId, executeCallbackOnUpdate: true, node}, (err, string) => {
 				if (string) {
-					if (attributes && attributes.length) {
-						attributes.forEach(attr => node.setAttribute(attr, string));
-					} else {
-						node.innerHTML = string;
-					}
-					//mark initialized elements.
-					node.setAttribute('bfString-initialized', '');
+					//inject the string into the element.
+					injectString(string, attributes, node);
 				}
 			});
 		}
@@ -4513,6 +5443,28 @@ var buildfire = {
 		}
 		,
 		_strings: null
+	},
+	ai: {
+		content: {
+			showDialog: function (options = {}, callback) {
+				const p = new Packet(null, 'ai.showGenerateTextDialog', options);
+				buildfire._sendPacket(p, callback);
+			}
+		},
+		getAppRecipe: function (options = {}, callback) {
+			var p = new Packet(null, 'ai.getAppRecipe', options);
+			buildfire._sendPacket(p, callback);
+		}
+	},
+	diagnostics: {
+		checkFeature: function (options = {}, callback) {
+			var p = new Packet(null, 'diagnostics.checkFeature', options);
+			buildfire._sendPacket(p, callback);
+		},
+		requestFeaturePermission: function (options = {}, callback) {
+			var p = new Packet(null, 'diagnostics.requestFeaturePermission', options);
+			buildfire._sendPacket(p, callback);
+		}
 	},
 	onPluginJsonLoaded: function (pluginJson) {
 		//attach pluginLanguage.js script that contains languages.json content.
@@ -4587,6 +5539,37 @@ document.addEventListener('DOMContentLoaded', function (event) {
 		document.getElementsByTagName('body')[0].className += ' noSelect';
 	}
 
+	//attach plugin class names and css paths for highlighting and customization
+	const injectCSS = () => {
+		let injectCSS = buildfire.parseQueryString().injectCSS;
+		if (!injectCSS) return;
+		try {
+			injectCSS = JSON.parse(injectCSS);
+		} catch (error) {
+			console.error('Error parsing injectCSS', error);
+			return;
+		}
+		const { classNames, paths } = injectCSS;
+		if (classNames && classNames.length && document.body) {
+			for (let i = 0; i < classNames.length; i++) {
+				document.body.classList.add(classNames[i]);
+			}
+		}
+		if (paths && paths.length && document.head) {
+			for (let i = 0; i < paths.length; i++) {
+				 const cssPath = paths[i];
+				if (cssPath) {
+					const link = document.createElement('link');
+					link.rel = 'stylesheet';
+					link.type = 'text/css';
+					link.href = cssPath;
+					document.head.appendChild(link);
+				}
+			}
+		}
+	};
+	injectCSS();
+
 	buildfire.getContext(function (err, context) {
 		if (err) {
 			console.error(err);
@@ -4648,16 +5631,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
 			buildfire.appearance._forceCSSRender();
 	}, 1750);
 
+
+
 });
 
 document.addEventListener('resize', function (event) {
 	buildfire.appearance.autosizeContainer();
 });
-
-window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-	console.error('Error: ' + errorMsg, ' Script: ' + url, ' Line: ' + lineNumber
-		, ' Column: ' + column, ' StackTrace: ' + errorObj);
-};
 
 //IE and old Android Custom Event Fix
 if(typeof(CustomEvent) != 'function'){

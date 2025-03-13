@@ -1,10 +1,11 @@
 body {
     font-family: arial;
-    padding: 16px 8px;
-    font-weight: bold;
+    padding: 0 8px 16px 8px;
+    margin-top: 0px;
+    overflow-x: hidden;
 }
 #main {
-    padding: 16px 0px;
+    padding: 64px 0px 16px;
 }
 #main div div:nth-child(even) {
     margin-left: calc(12.5% - 6px - 24px);
@@ -23,4 +24,264 @@ img {
 }
 .imageDiv.active {
     border: 2px solid #05acf0;
+}
+#selectPresetDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 36px;
+    font-weight: bold;
+    padding: 16px 0px 8px;
+    background: white;
+    position: fixed;
+}
+.bf-border-primary {
+    margin-right: 2rem;
+    font-weight: normal;
+    border: 1px solid #05acf0;
+    border-radius: 0.5rem;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.bf-text-primary {
+    color: #05acf0;
+    font-size: 13px;
+    cursor: pointer;
+}
+p.info {
+    color: #9e9e9e;
+    background-color: #f9f9f9;
+    font-size: 12px;
+    line-height: 1.33;
+    text-align: left;
+    padding: 8px 16px;
+    margin-bottom: 0;
+    border-radius: 4px;
+}
+#linkDataPage {
+    display: none;
+}
+#layoutRepeater {
+    margin-top: 16px;
+}
+#layoutRepeater img {
+    width: 25%;
+}
+
+#layoutExpressionsContainer {
+    width: 72%;
+    margin-bottom: 16px;
+    float: right;
+}
+.layout-expr-field {
+    margin-bottom: 8px;
+}
+.layout-expr-field input {
+    width: 100%;
+    height: 34px;
+    padding-left: 8px;
+    font-size: 13px;
+    line-height: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+.layout-expr-field-label {
+    color: #5f5f5f;
+    margin-bottom: 8px; 
+}
+.layout-expr-field input:focus {
+    border-color: #66afe9;
+    outline: 0;
+}
+.layout-expr-field .input {
+    display: flex;
+    align-items: center;
+}
+
+@font-face {
+    font-family: 'icomoon';
+    src: url('../../../../fonticons/icomoon.eot?100cnt');
+    src: url('../../../../fonticons/icomoon.eot?100cnt#iefix') format('embedded-opentype'),
+            url('../../../../fonticons/icomoon.woff?100cnt') format('woff'),
+            url('../../../../fonticons/icomoon.woff2?100cnt') format('woff2'),
+            url('../../../../fonticons/icomoon.ttf?100cnt') format('truetype'),
+            url('../../../../fonticons/icomoon.svg?100cnt#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'icomoon' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.puzzle-box {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 24px;
+    border: 1px solid #05acf0;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    transition: all .35s;
+}
+.puzzle-box:hover {
+    background-color: #f2f2f2;
+}
+.icon-puzzle {
+    color: #05acf0;
+    font-family: 'icomoon' !important;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -moz-transition: all .35s;
+    -o-transition: all .35s;
+    -webkit-transition: all .35s;
+    transition: all .35s;
+}
+.icon-puzzle:before {
+    content: "\e609";
+}
+::selection {
+    background: #09a3ee;
+    color: #fff;
+}
+#linkDataButton {
+    display: none;
+    opacity: 0;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 34px;
+    transition: 0.3s;
+}
+#switchButtonDiv {
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+#switchButtonDiv>input[type=checkbox] {
+    display: none;
+}
+#switchButtonDiv>label {
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 0;
+    margin-right: 8px;
+    background-color: #14cb5d;
+    cursor: pointer;
+}
+#switchButtonDiv>input[type=checkbox]:checked+label::before {
+    background: inherit;
+    opacity: .5;
+    transition: all .4s ease-in-out;
+}
+#switchButtonDiv>label::before {
+    position: absolute;
+    content: '';
+    width: 40px;
+    height: 27px;
+    background: #909090;
+    margin-top: -13.5px;
+    border-radius: 18px;
+    opacity: .3;
+    transition: all .4s ease-in-out;
+}
+#switchButtonDiv>input[type=checkbox]+label::after {
+    left: 0px;
+    transition: all .3s ease-in-out;
+}
+#switchButtonDiv>input[type=checkbox]:checked+label::after {
+    background: inherit;
+    left: 20px;
+    transition: all .3s ease-in-out;
+}
+
+#switchButtonDiv>label::after {
+    position: absolute;
+    content: '';
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    margin-top: -8px;
+    top: -4px;
+    border-radius: 16px;
+    box-shadow: 0 0 5px rgba(0,0,0,.3);
+    transition: all .3s ease-in-out;
+}
+.layout-expr-field-label span {
+    font-size: 13px;
+}
+.tooltip-icon {
+    width: 1rem;
+    height: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    background-color: #05acf0;
+    font-size: .75rem;
+    line-height: 1.2;
+}
+.bf-tooltip {
+    display: inline-flex !important;
+    position: relative !important;
+    top: -1px;
+    margin-left: 10px !important;
+    cursor: default !important;
+}
+.tooltip-content {
+    position: absolute;
+    color: #fff;
+    padding: 0.75rem;
+    width: max-content;
+    max-width: 15rem !important;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, .7);
+    border-radius: 0.25rem;
+    top: 1rem;
+    left: calc(100% + 0.5rem);
+    transform: translateY(-50%);
+    opacity: 0;
+    z-index:1;
+    pointer-events: none;
+    transition: ease-in-out .2s;
+}
+.bf-tooltip:hover .tooltip-content {
+    opacity: 1;
+}
+.puzzle-box:hover .tooltip-content {
+    opacity: 1;
+}
+.puzzle-box .tooltip-content {
+    right: calc(100% + 0.5rem);
+    left: unset;
+}
+#errorMessageDiv {
+    display: none;
+    color: #EC971F;
+    margin-top: 16px;
+    font-size: 13px;
+    background: #F2F2F2;
+    padding: 8px 16px;
+    border-radius: 4px;
 }

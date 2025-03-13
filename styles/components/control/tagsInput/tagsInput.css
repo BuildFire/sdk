@@ -17,7 +17,7 @@
 	--tag-remove-btn-bg--hover: #ed4b4b;
 	--tag-error: #ed4b4b;
 	--tag-invalid-color: none;
-	--tag-invalid-bg: none;
+	--tag-invalid-bg: #ed4b4b;
 	--placeholder-color: #ddd;
 	--placeholder-color-focus: #ddd;
 	--tag-pad: 0.3em 0.5em;
@@ -44,6 +44,9 @@
 	box-sizing: border-box;
 	transition: .1s;
 	overflow: hidden;
+	min-height: 34px;
+	max-height: 54px;
+	overflow-y: auto;
 }
 
 @keyframes tags--bump {
@@ -413,7 +416,7 @@
 	pointer-events: none;
 	opacity: 0;
 	position: absolute;
-	font-family: 'Conv_apercu_regular', 'Helvetica', 'Sans-Serif', 'Arial' !important;
+	font-family: 'Inter_Regular', 'Helvetica', 'Sans-Serif', 'Arial' !important;
 	font-size: 14px;
 }
 

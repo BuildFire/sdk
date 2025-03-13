@@ -14,7 +14,8 @@ window.siteConfig = {
 		creditSystemHost : 'https://public.buildfire.com/1.0',
 		stripeHost: 'https://public.buildfire.com/1.0',
 		cloudImageHost: 'https://alnnibitpo.cloudimg.io/v7',
-		crmHost: 'https://crm.buildfire.com'
+		crmHost: 'https://crm.buildfire.com',
+		gatewayHost : 'https://public.buildfire.com/1.0',
 	}
 	, keys: {
 		datastoreKey: '123-ASD-TEST'
