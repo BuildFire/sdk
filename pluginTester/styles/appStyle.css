@@ -3326,13 +3326,13 @@ html:not([type="app"]) .snackbar-hero{
 		z-index: 99999999;
 		display: none;
 	}
-	[type="app"] #plugin.access-code-visible{
+	[type="app"] #pluginContainer #plugin.access-code-visible{
 		z-index: 9999999999;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    max-width: 100vw;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		max-width: 100vw;
 	}
 	[type="app"] .user-profile.edit .user-list-items{
 		max-width: 400px;
