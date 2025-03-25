@@ -62,16 +62,23 @@ buildfire.components.carousel.view = function (options) {
 		}
 	}
 	
+	let originalWidth = window.innerWidth;	
 	window.addEventListener('resize', () => { // rerender items on window resize
-		if (resizeTimeout) {
-			clearTimeout(resizeTimeout);
-			resizeTimeout = null;
-		}
-		resizeTimeout = setTimeout(() => {
-			if (self.config.items && self.config.items.length) {
-				self.loadItems(self.config.items, false);
+		const currentWidth = window.innerWidth;
+		// we just check for width change, where sometime height changes
+		// because of the title bar hide in launcher when navigating, which is not real resize
+		if (currentWidth !== originalWidth) {
+			if (resizeTimeout) {
+				clearTimeout(resizeTimeout);
+				resizeTimeout = null;
 			}
-		}, 500);
+			resizeTimeout = setTimeout(() => {
+				if (self.config.items && self.config.items.length) {
+					self.loadItems(self.config.items, false);
+				}
+				originalWidth = currentWidth;
+			}, 500);
+	  	}
 	});
 };
 buildfire.components.carousel.view.lastCarouselTimer = null;
