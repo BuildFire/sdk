@@ -918,7 +918,7 @@ var buildfire = {
 			html.setAttribute('fullVersion', fullVersion);
 
 			var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-			if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i) || (userAgent.match(/Macintosh/i) && navigator.maxTouchPoints > 1)) {
+			if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i) || userAgent.match(/Android/i) ||  (userAgent.match(/Macintosh/i) && navigator.maxTouchPoints > 1)) {
 				var p = new Packet(null, 'appearance.getFooterMenu');
 				buildfire._sendPacket(p, function (err, footerMenu) {
 					if (err) {
@@ -5531,6 +5531,14 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
 	});
 })();
 
+buildfire.getContext(function (err, context) {
+	if (err) {
+		console.error(err);
+	} else {
+		document.documentElement.style.setProperty('--bf-safe-area-inset-top', context.cssVariables?.safeAreaInsetTop || '0px');
+		document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', context.cssVariables?.safeAreaInsetBottom || '0px');
+	}
+});
 
 document.addEventListener('DOMContentLoaded', function (event) {
 	//buildfire.appearance.autosizeContainer();

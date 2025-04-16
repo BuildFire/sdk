@@ -1,11 +1,13 @@
 :root {
-	--full-app-height: 100vh;
+	--bf-full-app-height: 100vh;
+	--bf-safe-area-inset-top: env(safe-area-inset-top);
+	--bf-safe-area-inset-bottom: env(safe-area-inset-bottom);
 }
 [ios="true"][view="browser"][is-pwa-or-html5-ios="true"] {
-	--full-app-height: 100%;
+	--bf-full-app-height: 100%;
 }
 [is-pwa-android="true"] {
-	--full-app-height: -webkit-fill-available;
+	--bf-full-app-height: -webkit-fill-available;
 }
 *{
 	outline:none;
@@ -1177,177 +1179,141 @@ html[ios="true"][view="app"] nav.menu .menu-close-container{
 	padding-top: 30px!important;
 }
 
-:root {
-	--extra-padding: 0px;
+/* TODO: START */
+
+/* iOS Transparent Nav */
+html[view="app"][storyboard-launch-images="true"] #pluginNav{
+	padding-top:calc(2px + var(--bf-safe-area-inset-top)) !important;
+	height: calc(40px + var(--bf-safe-area-inset-top)) !important;
+}
+html[view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav,
+html[view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
+[view="app"][storyboard-launch-images="true"] .app-settings-plugin,
+[view="app"][storyboard-launch-images="true"] .notification-plugin,
+[view="app"][storyboard-launch-images="true"] .app-search-plugin,
+[view="app"][storyboard-launch-images="true"] .bookmarks-container,
+[view="app"][storyboard-launch-images="true"] .notes-container,
+[view="app"][storyboard-launch-images="true"] .push-notifications,
+[view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
+[view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
+	padding-top: calc(40px + var(--bf-safe-area-inset-top)) !important;
+}
+html[view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
+	padding-top:0px !important;
 }
 
-@media only
-screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-device-height: 852px) and (-webkit-device-pixel-ratio: 3) {
-	:root {
-		--extra-padding: 11px;
-	}
+/* Menu and Back */
+html[view="app"][storyboard-launch-images="true"] .menu-location{
+	top: calc(var(--bf-safe-area-inset-top) - 1px) !important;
 }
-@media only
-screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
-	:root {
-		--extra-padding: 15px;
-	}
+html[view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon,
+html[view="app"][storyboard-launch-images="true"] #launcherIap .iap-subscriptions {
+	top: calc(var(--bf-safe-area-inset-top) - 11px) !important;
+}
+html[view="app"][storyboard-launch-images="true"] .search-container{
+	/* margin: 30px 16px 8px 16px !important; */
+	position: relative;
 }
 
-/* iPhone X, Xr, Xs and Xs Max*/
-@media only
-screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
-screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
-
-	/* iOS Transparent Nav */
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
-		padding-top:calc(50px + var(--extra-padding)) !important;
-		height: calc(88px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .app-settings-plugin,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .notification-plugin,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .app-search-plugin,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
-	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
-		padding-top: calc(88px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
-		padding-top:0px !important;
-	}
-
-	/* Menu and Back */
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .menu-location{
-		top: calc(47px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #launcherIap .iap-subscriptions {
-		top: calc(37px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .search-container{
-		/* margin: 30px 16px 8px 16px !important; */
-		position: relative;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-close-container{
-		padding-top: env(safe-area-inset-top) !important;
-		padding-top: constant(safe-area-inset-top) !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container{
-		padding-top: 100px !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container.no-search{
-		padding-top: env(safe-area-inset-top) !important;
-		padding-top: constant(safe-area-inset-top) !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
-		top:calc(54px + var(--extra-padding)) !important;
-		padding-bottom:23px !important;
-	}
-
-	[ios="true"][view="app"][storyboard-launch-images="true"] .pushSubscriptions-holder{
-		height: 100% !important;
-	}
-	[ios=true][view=app][storyboard-launch-images=true] .notification-plugin{
-		padding-bottom: calc(env(safe-area-inset-bottom) + 30px);
-	}
-
-	[ios=true][view=app][storyboard-launch-images=true] #plugin.has-footer-menu .notification-plugin{
-		padding-bottom: 0px !important;
-	}
-
-	[ios="true"][view="app"][storyboard-launch-images="true"] .notification-item p:first-child{
-		padding-top: 10px !important;
-	}
-
-
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h4,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h5{
-		padding-bottom:18px !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
-	html[ios="true"][view="app"] .login-holder .sso-back.input {
-		top: calc(50px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu {
-		padding-top: calc(15px + var(--extra-padding)) !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .notificationHolder{
-		padding-top: 20px!important ;
-	}
-
-
-
-	/* html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin{
-		padding-top: 25px; this is causing launcher plugin with BG images to appear they are cut from the top
-	} */
-
-	[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer{
-		min-height:10% !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iapMessage,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
-		padding-bottom: 10vh !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.navbar-with-addon,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.navbar-with-addon,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
-		padding-bottom: 17vh !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.menu-body-container,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.search-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"].keyboard-visible  .has-footer-menu,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.menu-body-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.search-container{
-		padding-bottom: 0 !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .snackbar-hero.has-footer-menu,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
-		padding-bottom: 0px !important;
-	}
-	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent.has-footer-menu-border-right .action-group {
-		border-bottom: 	1px solid rgba(193, 193, 193, .47)
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe#launcherPlugin,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe.pluginFrame,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
-		padding-bottom: 0px;
-	}
-
+html[view="app"][storyboard-launch-images="true"] nav.menu .menu-close-container{
+	padding-top: var(--bf-safe-area-inset-top) !important;
 }
 
-[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer,
+html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container{
+	padding-top: 100px !important; /* TODO: check this */
+}
+
+html[view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container.no-search{
+	padding-top: var(--bf-safe-area-inset-top) !important;
+}
+
+html[view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
+	top:calc(6px + var(--bf-safe-area-inset-top)) !important;
+	padding-bottom:23px !important;
+}
+
+[ios="true"][view="app"][storyboard-launch-images="true"] .pushSubscriptions-holder{
+	height: 100% !important; /* TODO: check this */
+}
+[ios=true][storyboard-launch-images=true] .notification-plugin{
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 30px);
+}
+
+[ios=true][view=app][storyboard-launch-images=true] #plugin.has-footer-menu .notification-plugin{
+	padding-bottom: 0px !important;
+}
+
+[ios="true"][view="app"][storyboard-launch-images="true"] .notification-item p:first-child{
+	padding-top: 10px !important; /* TODO: check this */
+}
+
+
+
+html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h4,
+html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h5{
+	padding-bottom:18px !important; /* TODO: check this */
+}
+
+html[view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
+html[view="app"] .login-holder .sso-back.input {
+	top: calc(5px + var(--bf-safe-area-inset-top)) !important;
+}
+html[view="app"][storyboard-launch-images="true"] nav.menu {
+	padding-top: calc(var(--bf-safe-area-inset-top)) !important;
+}
+
+html[ios="true"][view="app"][storyboard-launch-images="true"] .notificationHolder{
+	padding-top: 20px!important ; /* TODO: check this */
+}
+
+[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer{
+	min-height:10% !important;
+}
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu,
+[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
+[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iapMessage,
+[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
+	padding-bottom: 10vh !important;
+}
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.navbar-with-addon,
+[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.navbar-with-addon,
+[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage,
+[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
+	padding-bottom: 17vh !important;
+}
+[ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.menu-body-container,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.search-container,
+[ios="true"][view="app"][storyboard-launch-images="true"].keyboard-visible  .has-footer-menu,
+[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
+[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.menu-body-container,
+[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.search-container{
+	padding-bottom: 0 !important;
+}
+[ios="true"][view="browser"][is-pwa-ios="true"] .snackbar-hero.has-footer-menu,
+[ios="true"][view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
+	padding-bottom: 0px !important;
+}
+[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent.has-footer-menu-border-right .action-group {
+	border-bottom: 	1px solid rgba(193, 193, 193, .47)
+}
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe#launcherPlugin,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe.pluginFrame,
+html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
+html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
+	padding-bottom: 0px;
+	}
+/* TODO: END */
+
+[view="app"][storyboard-launch-images="true"] #navbarContainer,
 [ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
-	padding-bottom: constant(safe-area-inset-bottom) !important; /* iOS 11.0 */
-	padding-bottom: env(safe-area-inset-bottom) !important; /* iOS 11.2 */
+	padding-bottom: var(--bf-safe-area-inset-bottom) !important;
 }
 [ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
 	min-height: 10vh !important;
@@ -1602,11 +1568,11 @@ html[buildfire] body.no-scroll .scrollable{
 }
 
 #richModal.fullScreen .detail-modal h1 {
-	margin-top: env(safe-area-inset-top);
+	margin-top: var(--bf-safe-area-inset-top);
 }
 
 #richModal.fullScreen .detail-modal .button-container {
-	padding-bottom: env(safe-area-inset-bottom);
+	padding-bottom: var(--bf-safe-area-inset-bottom);
 }
 
 
@@ -1855,7 +1821,7 @@ textarea.md-input{
 }
 
 #launcherIap .iap-subscriptions {
-	height: var(--full-app-height, 100vh) !important;
+	height: var(--bf-full-app-height, 100vh) !important;
 }
 
 /** Lory */
@@ -1868,8 +1834,7 @@ textarea.md-input{
 /* Bookmarks */
 .bookmarks-container {
 	padding-bottom: 80px;
-	padding-bottom: calc(constant(safe-area-inset-bottom) + 80px); /* iOS 11.0 */
-	padding-bottom: calc(env(safe-area-inset-bottom) + 80px); /* iOS 11.2 */
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 80px);
 }
 .bookmark-item-link {
 	padding: 0 0 0 16px;
@@ -1939,8 +1904,7 @@ textarea.md-input{
 /* Notes */
 .page-container{
 	padding-bottom: 120px;
-	padding-bottom: calc(constant(safe-area-inset-bottom) + 120px); /* iOS 11.0 */
-	padding-bottom: calc(env(safe-area-inset-bottom) + 120px); /* iOS 11.2 */
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 120px);
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -2191,7 +2155,7 @@ nav.menu a .media{
 	}
 }
 #notesDialog {
-	height: var(--full-app-height, 100vh);
+	height: var(--bf-full-app-height, 100vh);
 	background-color: #fff;
 	position: fixed;
 	top: 0;
@@ -2735,7 +2699,7 @@ nav.menu a.active .active-indicator,
 	position: fixed;
 	width: 100%;
 	z-index: 99999999999;
-	bottom: calc(16px + env(safe-area-inset-bottom));
+	bottom: calc(16px + var(--bf-safe-area-inset-bottom));
 	pointer-events: none;
 	left: 0;
 }
@@ -2765,11 +2729,11 @@ html:not([type="app"]) .snackbar-hero{
 }
 .snackbar-hero.has-footer-menu{
 	padding: 0 !important;
-	bottom: calc(16px + env(safe-area-inset-bottom) + 7vh);
+	bottom: calc(16px + var(--bf-safe-area-inset-bottom) + 7vh);
 }
 .snackbar-hero.has-footer-menu.navbar-with-addon{
 	padding: 0 !important;
-	bottom: calc(16px + env(safe-area-inset-bottom) + 14vh);
+	bottom: calc(16px + var(--bf-safe-area-inset-bottom) + 14vh);
 }
 .snackbar-message{
 	flex: auto;
@@ -3368,7 +3332,7 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] .snackbar-hero{
 		left: 0;
-		bottom: calc(16px + env(safe-area-inset-bottom));
+		bottom: calc(16px + var(--bf-safe-area-inset-bottom));
 		z-index: 99999999999;
 		padding: 0;
 	}
@@ -3401,7 +3365,7 @@ html:not([type="app"]) .snackbar-hero{
 	/**
      * (optional) wrapper width, specifies width of the slider frame.
      */
-	height: var(--full-app-height, 100vh);
+	height: var(--bf-full-app-height, 100vh);
 	width: 100vw;
 	position: relative;
 	font-size: 0;
@@ -3447,7 +3411,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 
 .onboarding .dots {
 	margin: 0;
-	margin-bottom: env(safe-area-inset-bottom) !important;
+	margin-bottom: var(--bf-safe-area-inset-bottom) !important;
 	padding: 0;
 	text-align: center;
 	position: fixed;
@@ -3459,7 +3423,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 	position: fixed;
 	width: 100%;
 	margin: 0 auto;
-	margin-bottom: env(safe-area-inset-bottom) !important;
+	margin-bottom: var(--bf-safe-area-inset-bottom) !important;
 	bottom: 24px;
 	z-index: 1;
 	display: flex;
@@ -3491,7 +3455,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 .onboarding{
 	top: 0;
 	left: 0;
-	height: var(--full-app-height, 100vh);
+	height: var(--bf-full-app-height, 100vh);
 	width: 100vw;
 	position: absolute;
 	overflow: hidden;
@@ -3525,8 +3489,8 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 	max-width: 750px;
 	margin: 0 auto;
 	text-align: center;
-	padding-top: calc(40px + env(safe-area-inset-top));
-	padding-bottom: calc(130px + env(safe-area-inset-bottom));
+	padding-top: calc(40px + var(--bf-safe-area-inset-top));
+	padding-bottom: calc(130px + var(--bf-safe-area-inset-bottom));
 }
 .onboarding .bg-img{
 	position: absolute;
@@ -3612,7 +3576,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 	left: 0;
 	opacity: 0;
 	width: 100vw;
-	height: var(--full-app-height, 100vh);
+	height: var(--bf-full-app-height, 100vh);
 	background-color: rgba(0, 0, 0, .5);
 	z-index: 99999;
 	transition: opacity ease-in-out .3s;
@@ -3628,17 +3592,17 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
 	z-index: 0;
 	left: 0;
 	transform: translateX(-64px);
-	bottom: calc(7vh + 24px + env(safe-area-inset-bottom));
+	bottom: calc(7vh + 24px + var(--bf-safe-area-inset-bottom));
 	padding: 24px;
 	padding-right: 88px;
 	pointer-events: none;
 	transition: transform ease-in-out .3s;
 }
 .dev-mode-actions.has-footer-menu, .preview-mode-actions.has-footer-menu {
-	bottom: calc( 7vh + env(safe-area-inset-bottom));
+	bottom: calc( 7vh + var(--bf-safe-area-inset-bottom));
 }
 .dev-mode-actions.has-footer-menu.navbar-with-addon, .preview-mode-actions.has-footer-menu.navbar-with-addon {
-	bottom: calc( 14vh + env(safe-area-inset-bottom));
+	bottom: calc( 14vh + var(--bf-safe-area-inset-bottom));
 }
 .dev-mode-actions.active, .preview-mode-actions.active {
 	transform: translateX(0);
@@ -3851,7 +3815,7 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   background-color: #fff;
   position: fixed;
   bottom: 0;
-  max-height: calc(90vh - 4em - env(safe-area-inset-top));
+  max-height: calc(90vh - 4em - var(--bf-safe-area-inset-top));
   animation: drawer-slide-up .3s ease-in-out forwards;
 }
 html:not([type="app"]) .bottom-drawer{
@@ -4096,7 +4060,7 @@ html:not([type="app"]) .bottom-drawer{
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: var(--full-app-height, 100vh) !important;
+	height: var(--bf-full-app-height, 100vh) !important;
 	overflow: hidden !important;
 	pointer-events: none;
 }
@@ -4120,7 +4084,7 @@ html:not([type="app"]) .bottom-drawer{
 	-webkit-overflow-scrolling: touch;
 }
 .profile-click-catcher{
-	height: calc(90px + env(safe-area-inset-top));
+	height: calc(90px + var(--bf-safe-area-inset-top));
 	pointer-events: all;
 }
 .profile-backdrop{
@@ -4145,7 +4109,7 @@ html:not([type="app"]) .bottom-drawer{
 	pointer-events: all;
 }
 html[view="app"] .profile-overlay {
-	height: calc(100% - 50px - 40px - env(safe-area-inset-top));
+	height: calc(100% - 50px - 40px - var(--bf-safe-area-inset-top));
 }
 .profile-overlay .close-btn{
 	position: absolute;
@@ -4324,8 +4288,8 @@ html[view="app"] .profile-overlay {
 	overflow-y: auto;
 	word-break: break-word;
 }
-html[ios="true"] .profile-overlay .profile-content{
-	padding-bottom: calc(32px + env(safe-area-inset-bottom)) !important;
+html .profile-overlay .profile-content{
+	padding-bottom: calc(32px + var(--bf-safe-area-inset-bottom)) !important;
 }
 .profile-overlay .profile-content.editing-profile{
 	flex: 0;
@@ -4480,7 +4444,7 @@ html[ios="true"] .profile-overlay .profile-content{
 }
 @media(min-width: 582px){
 	.pofile-header{
-		max-height: calc(var(--full-app-height, 100vh) - 300px - 169px);
+		max-height: calc(var(--bf-full-app-height, 100vh) - 300px - 169px);
 	}
 }
 
@@ -4520,7 +4484,7 @@ html[ios="true"] .profile-overlay .profile-content{
   grid-column-gap: .75rem;
   grid-row-gap: 1.5rem;
   padding: 1rem .5rem;
-  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(1rem + var(--bf-safe-area-inset-bottom));
 }
 .badges-grid .grid-item{
   display: flex;
@@ -4897,7 +4861,7 @@ html[ios="true"] .profile-overlay .profile-content{
 	}
 	/* Fade In Animation - Side Menu END*/
 	#pluginContainer{
-		height: var(--full-app-height, 100vh);
+		height: var(--bf-full-app-height, 100vh);
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -5016,7 +4980,7 @@ button.list-group-item {
 	position: absolute;
 	left: 0;
 	right: 0;
-	bottom: calc(16px + env(safe-area-inset-bottom));
+	bottom: calc(16px + var(--bf-safe-area-inset-bottom));
 }
 #drawerButton {
 	max-width: 90%;
@@ -5126,7 +5090,7 @@ button.list-group-item {
 	width: 50%;
 	margin: 0 auto;
 	margin-top: -4em;
-	padding-bottom: calc(16px + 5em + env(safe-area-inset-bottom));
+	padding-bottom: calc(16px + 5em + var(--bf-safe-area-inset-bottom));
 }
 #headerText, #headerText *, .action-item-texts, .action-item-texts *, #drawerButton *{
 	overflow: hidden;
@@ -5152,7 +5116,7 @@ button.list-group-item {
 }
 #webviewBackdrop {
 	z-index: 999999999;
-	min-height: var(--full-app-height, 100vh);
+	min-height: var(--bf-full-app-height, 100vh);
 	min-width: 100vw;
 	position: absolute;
 	top: 0;
@@ -5163,7 +5127,7 @@ button.list-group-item {
 	animation: bottom-drawer-fade-out .2s ease-in-out forwards;
 }
 #webviewBackdrop .webview-backdrop-wrapper {
-	height: var(--full-app-height, 100vh);
+	height: var(--bf-full-app-height, 100vh);
 	display: flex;
 	align-items: center;
 	justify-content: center;
