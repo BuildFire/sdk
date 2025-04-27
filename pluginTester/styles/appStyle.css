@@ -2512,134 +2512,49 @@ label.custom-checkbox{
 	overflow: hidden;
 	opacity: .6;
 }
-.i-amp-video-eq .-amp-video-eq-col {
+.-amp-video-eq-col {
 	flex: 1;
 	position: relative;
 	height: 100%;
 	margin-right: 1px;
 }
-.i-amp-video-eq .-amp-video-eq-col div{
-	height: 100%;
-	transition: all ease-in-out .3s;
-	transform: translateY(calc(100% - 2px));
-}
-.i-amp-video-eq.animate-eq .-amp-video-eq-col div {
-	animation-name: amp-video-eq-animation;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: infinite;
-	animation-direction: alternate;
-	background-color: #fff;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	transform: translateY(100%);
-	will-change: transform;
-}
-.-amp-video-eq-1-1,
-.-amp-video-eq-3-1 {
-  animation-duration: 0.3s;
-}
-.-amp-video-eq-6-1{
-	animation-duration: 0.28s;
-}
-.-amp-video-eq-1-2,
-.-amp-video-eq-5-2{
-  animation-duration: 0.46s;
-}
-.-amp-video-eq-2-1 {
-  animation-duration: 0.5s;
-}
-.-amp-video-eq-2-2,
-.-amp-video-eq-4-1 {
-  animation-duration: 0.4s;
-}
-.-amp-video-eq-3-2 {
-  animation-duration: 0.32s;
-}
-.-amp-video-eq-4-2,
-.-amp-video-eq-7-2{
-  animation-duration: 0.25s;
-}
-@keyframes amp-video-eq-animation {
-  0% {
-    transform: translateY(calc(100% - 2px));
-  }
-  100% {
-    transform: translateY(calc(2px));
-  }
-}
-.equalizer {
-	position: absolute;
-	width: calc(100% - 1px);
-	height: calc(100% - 8px);
-	margin-left: 1px;
-	margin-top: 8px;
-	z-index: 1;
-}
-.i-amp-video-eq {
-	align-items: flex-end;
-	display: flex;
+.-amp-video-eq-bar {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	opacity: .6;
 }
-.i-amp-video-eq .-amp-video-eq-col {
-	flex: 1;
-	position: relative;
+.-amp-video-eq-bar::before {
+  content: '';
+	position: absolute;
+	bottom: 0;
+	width: 100%;
 	height: 100%;
-	margin-right: 1px;
+	background-color: #fff;
+	transform-origin: bottom;
+	transform: scaleY(0);
 }
-.i-amp-video-eq .-amp-video-eq-col div{
-	height: 100%;
-	transition: all ease-in-out .3s;
-	transform: translateY(calc(100% - 2px));
-}
-.i-amp-video-eq.animate-eq .-amp-video-eq-col div {
-	animation-name: amp-video-eq-animation;
+.i-amp-video-eq.animate-eq .-amp-video-eq-bar::before {
+	animation-name: amp-video-eq-scale-animation;
 	animation-timing-function: ease-in-out;
 	animation-iteration-count: infinite;
 	animation-direction: alternate;
-	background-color: #fff;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	transform: translateY(100%);
-	will-change: transform;
 }
-.-amp-video-eq-1-1,
-.-amp-video-eq-3-1 {
-  animation-duration: 0.3s;
-}
-.-amp-video-eq-6-1{
-	animation-duration: 0.28s;
-}
-.-amp-video-eq-1-2,
-.-amp-video-eq-5-2{
-  animation-duration: 0.46s;
-}
-.-amp-video-eq-2-1 {
-  animation-duration: 0.5s;
-}
-.-amp-video-eq-2-2,
-.-amp-video-eq-4-1 {
-  animation-duration: 0.4s;
-}
-.-amp-video-eq-3-2 {
-  animation-duration: 0.32s;
-}
-.-amp-video-eq-4-2,
-.-amp-video-eq-7-2{
-  animation-duration: 0.25s;
-}
-@keyframes amp-video-eq-animation {
+@keyframes amp-video-eq-scale-animation {
   0% {
-    transform: translateY(calc(100% - 2px));
+    transform: scaleY(0.05);
   }
   100% {
-    transform: translateY(calc(2px));
+    transform: scaleY(1);
   }
 }
+.i-amp-video-eq.animate-eq .-amp-video-eq-1::before { animation-duration: 0.25s; }
+.i-amp-video-eq.animate-eq .-amp-video-eq-2::before { animation-duration: 0.45s; }
+.i-amp-video-eq.animate-eq .-amp-video-eq-3::before { animation-duration: 0.25s; }
+.i-amp-video-eq.animate-eq .-amp-video-eq-4::before { animation-duration: 0.35s; }
+.i-amp-video-eq.animate-eq .-amp-video-eq-5::before { animation-duration: 0.23s; }
+.i-amp-video-eq.animate-eq .-amp-video-eq-6::before { animation-duration: 0.41s; }
+.i-amp-video-eq.animate-eq .-amp-video-eq-7::before { animation-duration: 0.33s; }
 .pos-static {
 	position: static;
 }
@@ -5218,6 +5133,7 @@ button.list-group-item {
 	padding: 20px;
 }
 
+.pswp__top-bar .pswp__button span:hover,
 .bf-pswp-close:hover, .btn-close-theme-neutral:hover {
 	color: #cccccc !important;
 }
@@ -5294,4 +5210,20 @@ button.list-group-item {
 .navbar-playback-addon .playback-progress-bar-container .playback-progress-bar{
 	height: 2px;
 	width: 0%;
+}
+.pswp__top-bar {
+	background: transparent !important;
+	padding-top: env(safe-area-inset-top) !important;
+}
+.pswp__top-bar .pswp__preloader {
+	display: none;
+}
+.pswp__top-bar .pswp__button span {
+	color: #cccccc !important;
+	float: right;
+	font-size: 20px;
+	padding: 18px;
+	position: relative;
+	text-shadow: 0 1px 2px #999999;
+	top: 0;
 }
