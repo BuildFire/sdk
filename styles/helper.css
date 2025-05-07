@@ -688,43 +688,49 @@ justify-content: center;
 }
 
 .button-switch > label {
+	display: inline-block;
+	text-align: left;
+	vertical-align: middle;
+	width: 44px;
     cursor: pointer;
-    height: 0px;
     position: relative;
-    width: 40px;
-    text-align: left;
 }
+
 .button-switch > label::before {
-    background: #909090;
-    border-radius: 18px;
-    content: '';
-    height: 27px;
-    margin-top: -13.5px;
-    position: absolute;
-    opacity: 0.3;
-    transition: all 0.4s ease-in-out;
-    width: 40px;
+	background: #909090;
+	border-radius: 18px;
+	content: '';
+	height: 22px;
+	margin: 0;
+	opacity: 1;
+	position: absolute;
+	top: -8px;
+	transition: all 0.4s ease-in-out;
+	width: 44px;
 }
+
 .button-switch > label::after {
-    background: rgb(255, 255, 255);
-    border-radius: 16px;
-    box-shadow: 0px 0px 5px rgb(0 0 0 / 30%);
-    content: '';
-    height: 24px;
-    left: -4px;
-    margin-top: -8px;
-    position: absolute;
-    top: -4px;
-    transition: all 0.3s ease-in-out;
-    width: 24px;
+	background: rgb(255, 255, 255);
+	border-radius: 16px;
+	box-shadow: none;
+	content: '';
+	height: 18px;
+	left: 3px;
+	margin-top: -8px;
+	margin: 0;
+	position: absolute;
+	top: -6px;
+	transition: all 0.3s ease-in-out;
+	width: 18px;
 }
+
 .button-switch > input[type="checkbox"]:checked + label::before {
     background: inherit;
-    opacity: 0.5;
 }
+
 .button-switch > input[type="checkbox"]:checked + label::after {
-    background: inherit;
-    left: 20px;
+	background: #FFF;
+	left: 23px;
 }
 .relative-position {
     position: relative;
