@@ -4131,6 +4131,24 @@ var buildfire = {
 				var p = new Packet(null, 'device.contacts.search', options);
 				buildfire._sendPacket(p, callback);
 			}
+		},
+		media: {
+			savePicture: function (options, callback) {
+				let p = new Packet(null, 'device.media.save', options);
+				buildfire._sendPacket(p, callback);
+			},
+			saveVideo: function (options, callback) {
+				options = options || {};
+				options.isVideo = true;
+				let p = new Packet(null, 'device.media.save', options);
+				buildfire._sendPacket(p, callback);
+			}
+		},
+		downloads: {
+			save: function (options, callback) {
+				let p = new Packet(null, 'device.downloads.save', options);
+				buildfire._sendPacket(p, callback);
+			}
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
