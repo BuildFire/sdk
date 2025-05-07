@@ -4405,8 +4405,8 @@ var buildfire = {
 		},
 	},
 	mediaPreviewer: {
-		showMedia: function(options, callback) {
-			buildfire._sendPacket(new Packet(null, 'mediaPreviewer.showMedia', options), callback);
+		show: function(options, callback) {
+			buildfire._sendPacket(new Packet(null, 'mediaPreviewer.show', options), callback);
 		}
 	},
 	notes: {
