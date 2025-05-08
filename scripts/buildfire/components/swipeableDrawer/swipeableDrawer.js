@@ -203,7 +203,6 @@ const _swipeableDrawerEvents = {
 			_swipeableDrawerUtils.adjustDrawer(e);
 	},
 	stopTouchResize: (e) => {
-		e.preventDefault();
 		document.removeEventListener('touchmove', _swipeableDrawerUtils.resize);
 		document.removeEventListener('touchend', _swipeableDrawerEvents.stopTouchResize);
 		if (_swipeableDrawerState.mode !== 'free')

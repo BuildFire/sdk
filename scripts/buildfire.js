@@ -155,7 +155,7 @@ var buildfire = {
 
 			var header = document.querySelector('head');
 			var script = document.createElement('script');
-			script.src='http://debug.buildfire.com/target/target-script-min.js#' + tag;
+			script.src='https://debug.buildfire.com/target/target-script-min.js#' + tag;
 			script.id = 'BuildFireAppDebuggerScript';
 			header.appendChild(script);
 
@@ -357,6 +357,10 @@ var buildfire = {
 		}
 		//init logger
 		buildfire.logger.init();
+
+		// signal plugin loading
+		var p = new Packet(null, 'diagnostics.signal', { pluginLoadingAt: new Date() });
+		buildfire._sendPacket(p);
 	}
 	, _whitelistedCommands: [
 		'datastore.triggerOnUpdate'
@@ -1299,6 +1303,10 @@ var buildfire = {
 				var p = new Packet(null, 'appearance.titlebar.isVisible');
 				buildfire._sendPacket(p, callback);
 			},
+			setText: function(options, callback) {
+				var p = new Packet(null, 'appearance.titlebar.setText', options);
+				buildfire._sendPacket(p, callback);
+			}
 		}, navbar: {
 			show: function(options, callback) {
 				var p = new Packet(null, 'appearance.navbar.show');
@@ -1769,7 +1777,7 @@ var buildfire = {
 			}
 
 			if (!hasIndex) {
-				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+				console.warn('WARNING: no index on inserted data! Please see https://sdk.buildfire.com/docs/indexed-fields');
 			}
 		}
 		/// ref:
@@ -1848,20 +1856,18 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 
-			if (!search.$text || !search.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(search);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
+				}
+			}
+			if (search.sort && Object.keys(search.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -1922,7 +1928,6 @@ var buildfire = {
 		}
 		///
 		, search: function (options, tag, callback) {
-
 			var tagType = typeof (tag);
 			if (tagType == 'undefined')
 				tag = '';
@@ -1940,20 +1945,16 @@ var buildfire = {
 				callback(err, result);
 			});
 
-			if (!options.filter.$text || !options.filter.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(options.filter);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
-
+			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
+				}
+			}
+			if (options.sort && Object.keys(options.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 		}
@@ -2189,7 +2190,7 @@ var buildfire = {
 			}
 
 			if (!hasIndex) {
-				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+				console.warn('WARNING: no index on inserted data! Please see https://sdk.buildfire.com/docs/indexed-fields');
 			}
 		}
 		/// ref:
@@ -2248,20 +2249,18 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 
-			if (!search.$text || !search.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(search);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
+				}
+			}
+			if (search.sort && Object.keys(search.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -2308,7 +2307,6 @@ var buildfire = {
 		}
 		///
 		, search: function (options, tag, callback) {
-
 			var tagType = typeof (tag);
 			if (tagType == 'undefined')
 				tag = '';
@@ -2321,28 +2319,23 @@ var buildfire = {
 			if (typeof (options) == 'undefined') options = {filter: {}};
 			if (!options.filter) options.filter = {};
 
-
-
 			var p = new Packet(null, 'publicData.search', {tag: tag, obj: options});
 			buildfire._sendPacket(p, function (err, result) {
 				callback(err, result);
 			});
 
-			if (!options.filter.$text || !options.filter.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(options.filter);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
-						// if (key.includes('_buildfire.index') && options.filter[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
+				}
+			}
+			if (options.sort && Object.keys(options.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 		}
@@ -2550,7 +2543,7 @@ var buildfire = {
 			}
 
 			if (!hasIndex) {
-				console.warn('WARNING: no index on inserted data! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields');
+				console.warn('WARNING: no index on inserted data! Please see https://sdk.buildfire.com/docs/indexed-fields');
 			}
 		}
 		, bulkInsert: function (arrayObj, tag, callback) {
@@ -2585,20 +2578,18 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 
-			if (!search.$text || !search.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(search);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && search[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!search.$text || !search.$text.$search) && Object.keys(search).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(search));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(search));
+				}
+			}
+			if (search.sort && Object.keys(search.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(search.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(search.sort));
 				}
 			}
 		}
@@ -2635,20 +2626,18 @@ var buildfire = {
 			if (typeof (options) == 'undefined') options = {filter: {}};
 			if (!options.filter) options.filter = {};
 
-			if (!options.filter.$text || !options.filter.$text.$search) {
-				var hasIndex = false;
-				var filterKeys = Object.keys(options.filter);
-
-				for (var i = 0; i < filterKeys.length; i++) {
-					var key = filterKeys[i];
-					if ((key.indexOf('_buildfire.index') > -1) && options.filter[key]) {
-						hasIndex = true;
-						break;
-					}
-				}
+			if ((!options.filter.$text || !options.filter.$text.$search) && Object.keys(options.filter).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.filter, 0);
 
 				if (!hasIndex) {
-					console.warn('WARNING: no index on search filter! Please see https://github.com/BuildFire/sdk/wiki/User-Data-and-Public-Data-Indexed-Fields. Filter: ' + JSON.stringify(options.filter));
+					console.warn('WARNING: no index on search filter! Please see https://sdk.buildfire.com/docs/indexed-fields. Filter: ' + JSON.stringify(options.filter));
+				}
+			}
+			if (options.sort && Object.keys(options.sort).length > 0) {
+				const hasIndex = buildfire._data._checkForIndex(options.sort, 0);
+
+				if (!hasIndex) {
+					console.warn('WARNING: no index on sort expression! Please see https://sdk.buildfire.com/docs/indexed-fields. Sort: ' + JSON.stringify(options.sort));
 				}
 			}
 
@@ -2808,6 +2797,64 @@ var buildfire = {
 			return isTagValid;
 		}
 	}
+	, _data: {
+		_checkForIndex: function(filter, indexDepth) {
+			if (indexDepth >= 10) {
+				console.error('Max index check limit reached');
+				return false;
+			}
+			if (Array.isArray(filter)) {
+				if (!filter.length) {
+					return null;
+				}
+				let onlyEmptyObjects = true;
+				for (const item of filter) {
+					let checkResult = buildfire._data._checkForIndex(item, indexDepth + 1);
+					if (checkResult) {
+						return true;
+					} else if (checkResult === false) {
+						onlyEmptyObjects = false;
+					} else if (checkResult === null && onlyEmptyObjects !== false) {
+						onlyEmptyObjects = true;
+					}
+				}
+				return onlyEmptyObjects;
+			} else if (typeof filter === 'object') {
+				if (!filter) {
+					return false;
+				}
+				if (!Object.keys(filter).length) {
+					return null;
+				}
+				let onlyEmptyObjects = false;
+				for (const key in filter) {
+					if (filter.hasOwnProperty(key)) {
+						if (key === '_buildfire' && typeof filter[key] === 'object') {
+							if (filter[key].index) {
+								return true;
+							} else {
+								return false;
+							}
+						} else if (key.indexOf('_buildfire.index') > -1 && filter[key]) {
+							return true;
+						} else if (typeof filter[key] === 'object') {
+							const checkResult = buildfire._data._checkForIndex(filter[key], indexDepth + 1);
+							if (checkResult) {
+								return true;
+							} else if (checkResult === false) {
+								onlyEmptyObjects = false;
+							} else if (checkResult === null) {
+								onlyEmptyObjects = true;
+							}
+						}
+					}
+				}
+				return onlyEmptyObjects;
+			} else {
+				return false;
+			}
+		}
+	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-ImageLib
 	, imageLib: {
 		get ENUMS() {
@@ -2895,8 +2942,18 @@ var buildfire = {
 		, resizeImage: function (url, options, element, callback) {
 			if (!url) return null;
 			const forceImgix = buildfire.getContext()?.forceImgix;
-			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
-			if (!imageCdnHandler.isSupportedUrl(url)){
+
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for resizeImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
 				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
 				return url;
 			}
@@ -2966,9 +3023,18 @@ var buildfire = {
 		, cropImage: function (url, options, element, callback) {
 			if (!url) return null;
 			const forceImgix = buildfire.getContext()?.forceImgix;
-			const imageCdnHandler = forceImgix ? buildfire.imageLib._imgix: buildfire.imageLib._cloudImg;
-			if (!imageCdnHandler.isSupportedUrl(url)){
-				console.warn('URL is not supported by resizeImage. Returning original URL: ' + url);
+			const primaryHandler = forceImgix ? buildfire.imageLib._imgix : buildfire.imageLib._cloudImg;
+			const fallbackHandler = forceImgix ? buildfire.imageLib._cloudImg : buildfire.imageLib._imgix;
+
+			let imageCdnHandler = primaryHandler;
+
+			if (primaryHandler.isSupportedUrl(url)) {
+				imageCdnHandler = primaryHandler;
+			} else if (fallbackHandler.isSupportedUrl(url)) {
+				console.warn('Primary handler does not support URL for cropImage. Using fallback handler.');
+				imageCdnHandler = fallbackHandler;
+			} else {
+				console.warn('URL is not supported by cropImage. Returning original URL: ' + url);
 				return url;
 			}
 
@@ -3258,16 +3324,37 @@ var buildfire = {
 		_imgix: {
 			isSupportedUrl: function(url) {
 				const isSupportedExtension =  !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg)(?!.)/gi.test(url)));
-				if (!isSupportedExtension) return false;
+
+				const isUnsplashImage = url.indexOf('images.unsplash.com') !== -1;
+
+				if (!isSupportedExtension && !isUnsplashImage) return false;
 				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
 			},
-			constructUrl: function({width, height, url, method}) {
+			constructUrl: function({width, height, url, blur, method}) {
 				const baseImgUrl = this._transformToImgix(url);
-				const hasQueryString = url.indexOf('?') !== -1;
-				if (width || height) {
-					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'fit=crop' : '' ) + '&width=' + width + '&height=' + height;
+				if (!baseImgUrl) return url;
+
+				const paramsToRemove = ['width', 'height', 'fit'];
+
+				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
+
+				const urlObj = new URL(cleanedUrl);
+
+				if (method === 'crop' && (width || height)) { //allow crop only if width or height provided
+					urlObj.searchParams.set('fit', 'crop');
 				}
-				return url;
+				if (width) {
+					urlObj.searchParams.set('width', width);
+				}
+				if (height) {
+					urlObj.searchParams.set('height', height);
+				}
+				if (blur) {
+					urlObj.searchParams.set('blur', blur);
+				}
+
+				return urlObj.toString();
+
 			},
 			// consists of whitelisted AWS urls in imgix as keys and the corresponding imgix urls as values
 			_imgixWhitelistedUrls: {
@@ -3276,32 +3363,133 @@ var buildfire = {
 				'http://pluginserver.buildfire.com': 'https://bfplugins.imgix.net',
 				'http://s3.amazonaws.com/Kaleo.DevBucket': 'https://bflegacy.imgix.net',
 				'http://s3-us-west-2.amazonaws.com/imagelibserver': 'https://buildfire-uat.imgix.net',
-				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net'
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat2': 'https://bfplugins-uat.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.uat3': 'https://bfplugins-uat.imgix.net',
+				'http://s3.us-west-2.amazonaws.com/imageserver.prod': 'https://buildfire.imgix.net',
+				'http://s3.us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
+				'http://s3-us-west-2.amazonaws.com/pluginserver.prod': 'https://bfplugins.imgix.net',
+
+				//uat urls
+				'http://d1q5x1plk9guz6.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+				'http://d3lkxgii6udy4q.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+				'http://d26kqod42fnsx0.cloudfront.net': 'https://bfplugins-uat.imgix.net',
+
+				// support Unsplash images
+				'http://images.unsplash.com': 'https://images.unsplash.com',
+
+				// support imgix images themselves
+				'http://buildfire.imgix.net': 'https://buildfire.imgix.net',
+				'http://bfplugins.imgix.net': 'https://bfplugins.imgix.net',
+				'http://bflegacy.imgix.net': 'https://bflegacy.imgix.net',
+				'http://buildfire-uat.imgix.net': 'https://buildfire-uat.imgix.net',
+				'http://bfplugins-uat.imgix.net': 'https://bfplugins-uat.imgix.net',
 			},
 			_transformToImgix: function(url) {
+				const orgUrl = url;
 				url = url.replace(/^https:\/\//i, 'http://');
+				url = url.replace(/^https:\//i, 'http://'); // for bad urls with one '/', ex: https:/s3.amazonaws.com/...
 				for (let whitelistedUrl in this._imgixWhitelistedUrls) {
 					if (url.indexOf(whitelistedUrl) === 0) {
+						if (url.indexOf('images.unsplash.com') !== -1) { //sanitize unsplash images
+							url = this._sanitizeUnsplashImage(url);
+						}
 						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
 					}
 				}
-				return null; // return nothing if the url wasn't supported in imgix
-			}
+				const _appId = buildfire?._context?.appId;
+				return `https://buidfire-proxy.imgix.net/${_appId ? 'app_' + _appId : 'unknown'}/` + encodeURIComponent(orgUrl);
+			},
+			_sanitizeUnsplashImage: function(url) {
+				const urlObj = new URL(url);
+				const allowedParams = ['ixid', 'ixlib', 'fm'];
+
+				Array.from(urlObj.searchParams.keys())
+					.forEach(key => {
+						if (!allowedParams.includes(key)) {
+							urlObj.searchParams.delete(key);
+						}
+					});
+
+				return urlObj.toString();
+			},
+			_removeImageParams: function(url, paramsToRemove) {
+				try {
+					const urlObj = new URL(url);
+					const params = urlObj.searchParams;
+
+					paramsToRemove.forEach(param => {
+						params.delete(param);
+					});
+
+					return urlObj.toString();
+				} catch (e) {
+					console.warn('Invalid URL provided to _removeImageParams:', url);
+					return url;
+				}
+			},
 		},
 		_cloudImg: {
 			isSupportedUrl: function(url) {
+				if (url.indexOf('images.unsplash.com') !== -1) { //force unsplash images to use imgix
+					return false;
+				}
 				return !(/\..{3,4}(?!.)/g.test(url) && !(/.(png|jpg|jpeg|gif|jfif|svg|webp)(?!.)/gi.test(url)));
 			},
 			constructUrl: function({width, height, url, blur, method}) {
-				const baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
-				const hasQueryString = url.indexOf('?') !== -1;
-				if (width || height) {
-					const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
-					return baseImgUrl + (hasQueryString ? '&' : '?') + (method == 'crop' ? 'func=crop': 'func=bound') + '&width=' + width + '&height=' + height + (blur ? '&blur=' + blur : '') + (isDevMode ? '&ci_info=1' : '');
+
+				let baseImgUrl;
+
+				const isCloudImgUrl = url.startsWith('https://alnnibitpo.cloudimg.io/v7/');
+				if (isCloudImgUrl) {
+					baseImgUrl = url; //prevent having nested cloudimg urls.
+				} else {
+					baseImgUrl = 'https://alnnibitpo.cloudimg.io/v7/' + url;
 				}
-				return url;
+
+				const paramsToRemove = ['width', 'height', 'func', 'ci_info'];
+
+				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
+
+				const urlObj = new URL(cleanedUrl);
+
+				if (width || height) { //allow crop or bound only if width or height provided
+					urlObj.searchParams.set('func', method === 'crop' ? 'crop' : 'bound');
+				}
+
+				if (width) {
+					urlObj.searchParams.set('width', width);
+				}
+				if (height) {
+					urlObj.searchParams.set('height', height);
+				}
+				if (blur) {
+					urlObj.searchParams.set('blur', blur);
+				}
+
+				const isDevMode = window.location.pathname.indexOf('&devMode=true') !== -1;
+				if (isDevMode) {
+					urlObj.searchParams.set('ci_info', '1');
+				}
+
+				return urlObj.toString();
 			},
-		}
+			_removeImageParams: function(url, paramsToRemove) {
+				try {
+					const urlObj = new URL(url);
+					const params = urlObj.searchParams;
+
+					paramsToRemove.forEach(param => {
+						params.delete(param);
+					});
+
+					return urlObj.toString();
+				} catch (e) {
+					console.warn('Invalid URL provided to _removeImageParams:', url);
+					return url;
+				}
+			},
+		},
 	}
 	, colorLib: {
 		showDialog: function (data, options, onchange, callback) {
@@ -3943,6 +4131,24 @@ var buildfire = {
 				var p = new Packet(null, 'device.contacts.search', options);
 				buildfire._sendPacket(p, callback);
 			}
+		},
+		media: {
+			savePicture: function (options, callback) {
+				let p = new Packet(null, 'device.media.save', options);
+				buildfire._sendPacket(p, callback);
+			},
+			saveVideo: function (options, callback) {
+				options = options || {};
+				options.isVideo = true;
+				let p = new Packet(null, 'device.media.save', options);
+				buildfire._sendPacket(p, callback);
+			}
+		},
+		downloads: {
+			save: function (options, callback) {
+				let p = new Packet(null, 'device.downloads.save', options);
+				buildfire._sendPacket(p, callback);
+			}
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
@@ -4214,6 +4420,11 @@ var buildfire = {
 	imagePreviewer: {
 		show: function(options, callback) {
 			buildfire._sendPacket(new Packet(null, 'imagePreviewer.show', options), callback);
+		},
+	},
+	mediaPreviewer: {
+		show: function(options, callback) {
+			buildfire._sendPacket(new Packet(null, 'mediaPreviewer.show', options), callback);
 		}
 	},
 	notes: {
@@ -4750,7 +4961,7 @@ var buildfire = {
 						let extended_valid_elements = '';
 						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute)
 						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
-							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr'];
+							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr','iframe'];
 						supportedElement.forEach((element, index) => {
 							extended_valid_elements += `${element}[*]`;
 							if (index != supportedElement.length - 1) extended_valid_elements += ',';
@@ -4761,7 +4972,7 @@ var buildfire = {
 						options.skin = 'bf-skin';
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
-						options.height = options.height || 265;
+						options.height = options.height || 500;
 						options.custom_elements = 'style';
 						options.convert_urls = false;
 						options._bfInitialize = true;
