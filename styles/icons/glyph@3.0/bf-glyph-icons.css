@@ -46,3 +46,7 @@
 .bf-icon-user::before { content: "\e008"; }
 .bf-icon-home::before { content: "\e021"; }
 .bf-icon-copy::before { content: "\e205"; }
+.bf-icon-download::before { content: "\e025"; }
+.bf-icon-share::before { content: "\e095"; }
+.bf-close::before { content: "\e014";}
+.bf-check-mark::before { content: "\e013"; }
