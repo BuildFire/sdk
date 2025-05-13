@@ -573,20 +573,17 @@ buildfire.components.reactions = (() => {
     }
 
     class ReactionsTypes {
+        static isLoading = false;
         static itemsReactionsGroupName = {};
         static groups = null;
+        static getGroupsCallbacksQueue = [];
 
         static get TAG() {
             return "$$reactionsGroups";
         }
 
-        // options = saved to futuer use
-        static getReactionsGroups(options, callback) {
-            if (!callback || typeof callback !== 'function') {
-                return console.error("callback must be a function!");
-            }
-
-            buildfire.appData.get(this.TAG, (err, result) => {
+        static runCallbacksQueue(err, result) {
+            this.getGroupsCallbacksQueue.map((callback) => {
                 if (err) return callback(err)
 
                 if (!result.data || !result.data.groups || !result.data.groups.length) {
@@ -596,6 +593,23 @@ buildfire.components.reactions = (() => {
 
                 this.groups = result.data.groups;
                 return callback(null, this.groups);
+            })
+            this.getGroupsCallbacksQueue = [];
+        }
+
+        // options = saved to futuer use
+        static getReactionsGroups(options, callback) {
+            if (!callback || typeof callback !== 'function') {
+                return console.error("callback must be a function!");
+            }
+            this.getGroupsCallbacksQueue.push(callback);
+
+            if (this.isLoading) return;
+
+            this.isLoading = true;
+            buildfire.appData.get(this.TAG, (err, result) => {
+                this.isLoading = false;
+                this.runCallbacksQueue(err, result);
             });
         }
 
@@ -697,8 +711,8 @@ buildfire.components.reactions = (() => {
             clearTimeout(State._timer);
             State._timer = setTimeout(() => {
                 let requestedIds = [...State._itemIds];
-                State._itemIds = []; // if the user send new itemIds after the delay and before getting the res from db            
-                
+                State._itemIds = []; // if the user send new itemIds after the delay and before getting the res from db
+
                 if (getSummariesData) {
                     ReactionsSummaries.get(requestedIds, (err, res) => {
                         if (err) console.error(err)
@@ -968,15 +982,15 @@ buildfire.components.reactions = (() => {
             }
 
             this.itemType = data.itemType || '';
-			/**
-			 * itemId note:
-			 * we have two itemId related properties:
-			 * 1. this.itemId : which is the original item id provided by developper and used in the plugin level
-			 *
-			 * 2. this._itemId : which is a combination between actual item id and item type
-			 *    this property is used on component level to manage reactions and shouldn't be returned to user side
-			 *
-			*/
+            /**
+             * itemId note:
+             * we have two itemId related properties:
+             * 1. this.itemId : which is the original item id provided by developper and used in the plugin level
+             *
+             * 2. this._itemId : which is a combination between actual item id and item type
+             *    this property is used on component level to manage reactions and shouldn't be returned to user side
+             *
+            */
             this._itemId = this.itemType ? `${this.itemType}-${data.itemId}` : data.itemId;
             this.itemId = data.itemId;
             this.groupName = data.groupName || '';
@@ -1478,7 +1492,21 @@ buildfire.components.reactions = (() => {
 
         _showUsersList() {
             let listItems = [];
+            let usersArr = [];
             buildfire.spinner.show();
+
+            const _getReactionUsers = (userIds, callback) => {
+                buildfire.auth.getUserProfiles({ userIds: userIds.splice(0, 50) }, (err, users) => {
+                    if (err) return console.error(err);
+
+                    usersArr = usersArr.concat(users);
+                    if (userIds && userIds.length) {
+                        _getReactionUsers(userIds, callback)
+                    } else {
+                        callback();
+                    }
+                  });
+            }
 
             let _setUsersList = (reactions, index, callBack) => {
                 let reaction = reactions[index];
@@ -1487,8 +1515,7 @@ buildfire.components.reactions = (() => {
                 if (reactionObject) {
                     let url = reactionObject.selectedUrl;
 
-                    buildfire.auth.getUserProfile({ userId: reaction.data.userId }, (err, user) => {
-                        if (err) return console.error(err);
+                        let user = usersArr.find(user => user._id === reaction.data.userId);
                         if (!user) user = { // handle deleted user
                             displayName: 'User',
                             imageUrl: 'https://app.buildfire.com/app/media/avatar.png'
@@ -1537,7 +1564,6 @@ buildfire.components.reactions = (() => {
                         } else {
                             callBack(reactions, index + 1, _setUsersList)
                         }
-                    });
                 } else if (index == reactions.length - 1) {
                     this._openDrawer(listItems);
                 }
@@ -1564,10 +1590,16 @@ buildfire.components.reactions = (() => {
 
                     if (promiseArr.length >= 1) {
                         Promise.all(promiseArr).then(() => {
-                            _setUsersList(totalUsersReactions, 0, _setUsersList);
+                            const userIds = totalUsersReactions.map(reaction => reaction.data.userId);
+                            _getReactionUsers(userIds, () => {
+                                _setUsersList(totalUsersReactions, 0, _setUsersList);
+                            })
                         });
                     } else {
-                        _setUsersList(totalUsersReactions, 0, _setUsersList);
+                        const userIds = totalUsersReactions.map(reaction => reaction.data.userId);
+                        _getReactionUsers(userIds, () => {
+                            _setUsersList(totalUsersReactions, 0, _setUsersList);
+                        })
                     }
                 } else {
                     this._openDrawer([]);
@@ -1623,6 +1655,6 @@ buildfire.components.reactions = (() => {
     ReactionsTypes.getReactionsGroups({}, (err, res) => {
         //do nothing only to initiate and get reactions groups for all items once.
     });
-    
+
     return ReactionComponent
 })();
