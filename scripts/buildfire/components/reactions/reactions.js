@@ -346,18 +346,28 @@ buildfire.components.reactions = (() => {
 
             let inArray = itemIds.map(itemId => (itemId + '-' + userId))
             let searchOptions = {
-                filter: { "_buildfire.index.string1": { $in: inArray } }
+                filter: { "_buildfire.index.string1": { $in: inArray } },
+                recordCount: true, page: 0, pageSize: 50
             }
 
-            buildfire.appData.search(searchOptions, this.TAG, (err, result) => {
-                if (err) {
-                    return callback(err);
-                }
-                if (result) {
-                    return callback(null, result);
-                }
-                return callback(null, null);
-            })
+            let records = [];
+            const getRecordsPage = (page) => {
+                buildfire.appData.search({ ...searchOptions, page }, this.TAG, (err, result) => {
+                    if (err) {
+                        return callback(err);
+                    }
+                    if (result) {
+                        records = records.concat(result.result);
+                        if (result.totalRecord > records.length) {
+                            getRecordsPage(page + 1);
+                        } else {
+                            return callback(null, records);
+                        }
+                    }
+                    return callback(null, null);
+                })
+            }
+            getRecordsPage(0);
         }
 
         static _buildIndex(data = {}) {
@@ -425,23 +435,32 @@ buildfire.components.reactions = (() => {
                 return callback("Missing get itemIds!");
             }
 
-            buildfire.appData.search(
-                {
-                    filter: {
-                        "_buildfire.index.string1": { $in: itemIds }
-                    }
-                }, this.TAG,
-                (err, result) => {
-                    if (err) {
-                        return callback(err);
-                    }
 
-                    if (result) {
-                        return callback(null, result);
+            let records = [];
+            const getRecordsPage = (page) => {
+                buildfire.appData.search(
+                    {
+                        filter: { "_buildfire.index.string1": { $in: itemIds } },
+                        recordCount: true, pageSize: 50, page
+                    }, this.TAG,
+                    (err, result) => {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        if (result) {
+                            records = records.concat(result.result);
+                            if (result.totalRecord > records.length) {
+                                getRecordsPage(page + 1);
+                            } else {
+                                return callback(null, records);
+                            }
+                        }
+                        return callback(null, null);
                     }
-                    return callback(null, null);
-                }
-            );
+                );
+            }
+            getRecordsPage(0);
         }
         // options = { itemId, reactionType, userId }
         static increment(options, callback) {
