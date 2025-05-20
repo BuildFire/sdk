@@ -677,6 +677,19 @@ var buildfire = {
 			};
 			var p = new Packet(null, 'actionItems.executeOpenWebLink', actionItem, callback);
 			buildfire._sendPacket(p, callback);
+		},
+		openWindowWithOptions: function ({url, target, windowFeatures}, callback) {
+			if (!target) target = '_blank';
+			if (!callback) callback = function () {
+				console.info('openWindow:: completed');
+			};
+			let actionItem = {
+				url: url,
+				openIn: target,
+				windowFeatures: windowFeatures
+			};
+			var p = new Packet(null, 'actionItems.openWindowWithOptions', actionItem, callback);
+			buildfire._sendPacket(p, callback);
 		}
 		, _goBackOne: function () {
 			buildfire._sendPacket(new Packet(null, 'navigation.navigateBack'));
