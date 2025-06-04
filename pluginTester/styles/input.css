@@ -54,8 +54,7 @@
 
 html[ios='true'][view='app'][storyboard-launch-images='true'] #gifDialog .gifapi-nav,
 html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inputapi-nav {
-	padding-top: calc(env(safe-area-inset-top)) !important;
-	padding-top: calc(const(safe-area-inset-top)) !important;
+	padding-top: calc(var(--bf-safe-area-inset-top)) !important;
 }
 
 #gifDialog .gifapi-nav {
@@ -230,8 +229,7 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 	align-items: center;
 	padding: 0 30px;
 	justify-content: flex-end;
-	padding-bottom: env(safe-area-inset-bottom);
-	padding-bottom: const(safe-area-inset-bottom);
+	padding-bottom: var(--bf-safe-area-inset-bottom);
 }
 
 #inputDialog .inputapi-footer span {
@@ -313,15 +311,14 @@ html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inpu
 #gifDialog .powered-by-giphy img {
 	margin: 0 auto;
 	display: block;
-	padding-bottom: env(safe-area-inset-bottom);
-	padding-bottom: constant(safe-area-inset-bottom);
+	padding-bottom: var(--bf-safe-area-inset-bottom);
 }
 
 #input-backdrop,
 #gif-backdrop {
 	display: none;
 	position: absolute;
-	height: var(--full-app-height, 100vh);
+	height: var(--bf-full-app-height, 100vh);
 	width: 100vw;
 	top: 0;
 	left: 0;
