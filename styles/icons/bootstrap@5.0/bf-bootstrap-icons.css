@@ -55,3 +55,7 @@
 .bf-icon-user::before { content: "\f4da"; }
 .bf-icon-home::before { content: "\f422"; }
 .bf-icon-copy::before { content: "\f72d"; }
+.bf-icon-download::before { content: "\f30a"; }
+.bf-icon-share::before { content: "\f52e"; }
+.bf-close::before { content: "\f659"; }
+.bf-check-mark::before { content: "\f272"; }
