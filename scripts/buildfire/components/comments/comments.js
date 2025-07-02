@@ -1,19 +1,38 @@
 if (typeof buildfire == 'undefined') throw 'please add buildfire.js first to use buildfire components';
 if (typeof buildfire.components == 'undefined') buildfire.components = {};
+
+if (typeof buildfire.components.swipeableDrawer == 'undefined') {
+    throw 'please add swipeableDrawer component first to use comments component';
+}
+
+if (typeof buildfire.components.listView == 'undefined') {
+    throw 'please add listView component first to use comments component';
+}
+buildfire.lazyLoadScript(
+    { relativeScriptsUrl: 'moment.min.js', scriptId: 'bfMomentSDK' }, () => {
+        //TODO: handle moment.js loading
+    }
+)
 /**
- * we have to use two datastore (publicData) tags, one for comments and one for summary.
  * 
  */
 
 /************************************************************ THE ITEM ID IS NOT THE COMMENT ID, IT IS THE POST ID *************************************************************/
 
 /**TODO:
- * placeholder for profile image
- * Discuss state 
  * check for components/services used if the user included them or not, if not throw an error
  * remember to add support for messages like the header "Comments", look at list view for translations 
- * in SDK docs, mention that the body should not be scrollable, also mention that the component has z-index of 100.
+ * in SDK docs, mention that the component has z-index of 100.
  * add moment.js and load it dynamically, rename it's exposed API to bfMoment
+ * in delete, update UI then call the API
+ * get the user dynamically
+ * handle when the list is empty and adding a new comment 
+ * handle when user deletes the last comment
+ * scroll to top when adding a new comment
+ * get the current user in component
+ * make not exposed API functions private with _ prefix
+ * lazyLoadScript for moment.js
+ * to make add comment like delete (ui then api) use the current user to get the name and the profile image
  */
 
 /**
@@ -60,7 +79,22 @@ if (typeof buildfire.components == 'undefined') buildfire.components = {};
 /**
  * * @typedef {Object} translations
  * @property {string} commentsHeader - Header for the comments drawer
- * @property {string} noComments - Message to show when there are no comments
+ * @property {string} noCommentsTitle - Message title to show when there are no comments
+ * * @property {string} noCommentsMessage - Message to show when there are no comments
+ * * @property {string} addCommentPlaceholder - Placeholder for the comment input field
+ * * @property {string} readMore - Text for the read more link in the list view
+ * * @property {string} report - Text for the report action in the list view
+ * * @property {string} delete - Text for the delete action in the list view
+ * * @property {string} reportCommentSuccess - Success message for reporting a comment
+ * * @property {string} deleteCommentSuccess - Success message for deleting a comment
+ * * @property {string} addCommentSuccess - Success message for adding a comment
+ * * @property {string} commentDeleted - Message to show when a comment is deleted
+ * * @property {string} commentAdded - Message to show when a comment is added
+ * * @property {string} commentUpdated - Message to show when a comment is updated
+ * * @property {string} commentReported - Message to show when a comment is reported
+ * * @property {string} commentNotFound - Message to show when a comment is not found
+ * * @property {string} commentNotAuthorized - Message to show when a user is
+ * username
  * TODO: add more translations as needed
  
 */
@@ -101,101 +135,249 @@ buildfire.components.comments = (() => {
                 this.keyboardShown = false;
             });
 
+            // auth state change
+            buildfire.auth.onLogout(() => {
+                if (this.listView) {
+                    this.listView.reset();
+                }
+                this.user = null;
+                if (this.drawerOpened) {
+                    this._resetDrawer();
+                }
+            });
+
+            buildfire.auth.onLogin((user) => {
+                this.user = user;
+                if (this.drawerOpened) {
+                    this._resetDrawer();
+                }
+            });
+
         }
 
         openCommentsDrawer(options = {}, callback) {
             if (!options.itemId) {
                 return callback ? callback('Invalid options, Missing itemId!') : console.error('Invalid options, Missing itemId!');
             }
-            if (!options.userId) {
-                return callback ? callback('Invalid options, Missing userId!') : console.error('Invalid options, Missing userId!');
-            }
+            this.options = options;
+            buildfire.auth.getCurrentUser((err, user) => {
+                this.user = user;
+                this.getSummary({ itemId: this.options.itemId }, (err, summary) => {
+                    this.summary = summary;
+                    this.getComments(this.options, (err, comments) => {
+                        const drawerHeaderHtml = this._getDrawerHeaderHtml({ count: summary.count, commentsHeader: this.options.translations?.commentsHeader });
+                        let drawerContentHtml = `
+                            <div id="commentsListContainer">
+                                <div id="listViewContainer"></div>
+                                <div id="commentSafeArea"></div>
+                            </div>
+                            <div class="add-comment-section">
+                                <img src="${this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png'}" alt="Profile Image">
+                                <textarea name="commentInput" id="commentInput" maxlength="1000" placeholder="${this.options.translations?.addCommentPlaceholder ? this.options.translations.addCommentPlaceholder : 'Add comment'}"></textarea>
+                                <span id="addCommentIcon" class="add-comment bf-icon-arrow-right-tail"></span>
+                            </div>
+                            <div class="empty-state-container">
+                                <div class="empty-state-title">${this.options.translations?.noCommentsTitle || 'No comments yet.'}</div>
+                                <div class="empty-state-message">${this.options.translations?.noCommentsMessage || 'Be the first one to comment.'}</div>
+                            </div>
+                            `;
 
-            this.getSummary({ itemId: options.itemId }, (err, summary) => {
-                this.getComments(options, (err, comments) => {
-
-                    let commentHTML = '';
-                    if (comments && comments.length > 0) {
-                        commentHTML = comments.map(comment => {
-                            return `<div class="comment-item">
-                                        <div class="comment-user">
-                                            <img style="width: 50px; height: 50px; border-radius: 50%;" src="${comment.data.profileImage}" alt="${comment.data.username || 'User'}" class="comment-user-image">
-                                            <span class="comment-username">${comment.data.username || 'User'}</span>
-                                        </div>
-                                        <div class="comment-text">${comment.data.text || ''}</div>
-                                        <div class="comment-actions">
-                                            <!-- <span class="comment-date">moment(${comment.data.createdOn}).fromNow()</span> -->
-                                        </div>
-                                    </div>`;
-                        }).join('');
-                        commentHTML += `<div id="add-comment" style="position:fixed; bottom: 0; width: 100%; padding: 10px; background: #f9f9f9;">
-                                            <textarea id="newCommentText" placeholder="Add a comment..."></textarea>
-                                            <button id="addCommentBtn">Add Comment</button>
-                                        </div>`;
-                    } else {
-                        commentHTML = '<div class="no-comments">No comments yet. Be the first to comment!</div>';
-                    }
-                    buildfire.components.swipeableDrawer.initialize({
-                        startingStep: 'mid',
-                        header: `Comments ${summary.count ? `(${summary.count})` : ''}`,
-                        mode: 'steps',
-                        content: commentHTML,
-                        transitionDuration: 125,
-                    }, (err, res) => {
-                        this.drawerOpened = true;
-                        buildfire.components.swipeableDrawer.show();
-                        buildfire.components.swipeableDrawer.onStepChange = (step) => {
-                            if (this.keyboardShown && step !== 'max') {
-                                buildfire.components.swipeableDrawer.setStep('max');
-                            } else {
-                                if (step === 'min') {
-                                    buildfire.components.swipeableDrawer.hide();
-                                    this._destroy();
-                                }
-
+                        buildfire.components.swipeableDrawer.initialize({
+                            startingStep: 'max',
+                            header: drawerHeaderHtml,
+                            mode: 'steps',
+                            content: drawerContentHtml,
+                            transitionDuration: 125,
+                            backdropEnabled: true,
+                            backdropShadow: 'rgba(0, 0, 0, 0.50)'
+                        }, (err, res) => {
+                            if (!comments || comments.length == 0) {
+                                const commentsListContainer = document.getElementById('commentsListContainer');
+                                commentsListContainer.classList.add('d-none');
                             }
-                        };
+                            const paginationOptions = {
+                                pageSize: 50
+                            };
+                            const contentMapping = {
+                                idKey: 'id',
+                                imageKey: 'data.profileImage',
+                                titleKey: 'data.username',
+                                descriptionKey: 'data.text',
+                                subtitleKey: 'data.displayDate',
+                            };
+                            const listViewSettings = {
+                                showSearchBar: false,
+                                itemImage: 'circle',
+                                paginationEnabled: true,
+                                enableReadMore: true,
+                                contentMapping: contentMapping,
+                                paginationOptions: paginationOptions,
+                            };
+                            const listViewTranslations = {
+                                readMore: 'Read more',
 
-                    })
+                            };
+                            this.listView = new buildfire.components.listView('#listViewContainer', {
+                                settings: listViewSettings,
+                                translations: listViewTranslations
+                            });
+                            this.listView.onDataRequest = (listViewOptions, callback) => {
+                                this.getComments({
+                                    itemId: this.options.itemId,
+                                    userId: this.user?.userId,
+                                    skip: listViewOptions.page * listViewOptions.pageSize,
+                                    limit: listViewOptions.pageSize
+                                }, (err, comments) => {
+                                    if (err) return callback([]);
+                                    callback(comments);
+                                });
+                            };
+                            this.listView.onItemRender = (options) => {
+                                let actions = [
+                                    { actionId: 'report', text: 'Report' },
+                                ];
+                                if (this.user?.userId && options.item.data.userId === this.user.userId) {
+                                    actions = [{ actionId: 'delete', text: 'Delete' }];
+                                }
+                                return { actions };
+                            };
+                            this.listView.onItemActionClick = (event) => {
+                                if (event.action.actionId === 'report') {
+                                    this.reportComment({
+                                        comment: event.item,
+                                    }, (err, result) => {
+                                        if (err) {
+                                            console.error('Error reporting comment:', err);
+                                            buildfire.dialog.toast({
+                                                message: err || 'Error reporting comment. Please try again later.',
+                                                type: 'danger',
+                                            });
+                                            return;
+                                        }
+                                        buildfire.dialog.toast({
+                                            message: 'Comment reported successfully.',
+                                            type: 'success',
+                                        });
+                                    });
+                                } else if (event.action.actionId === 'delete') {
+                                    this.listView.remove(event.item.id);
+                                    this.summary.count = this.summary.count > 0 ? this.summary.count -= 1 : 0;
+                                    buildfire.components.swipeableDrawer.setHeaderContent(this._getDrawerHeaderHtml({
+                                        count: summary.count,
+                                        commentsHeader: this.options.translations?.commentsHeader
+                                    }));
+                                    this.deleteComment({
+                                        itemId: event.item.data.itemId,
+                                        commentId: event.item.id,
+                                        userId: this.user?.userId,
+                                    }, (err, res) => {
+                                        if (err) {
+                                            this.listView.append([event.item]);
+                                            this.listView.refresh();
+                                            this.summary.count += 1;
+                                            buildfire.components.swipeableDrawer.setHeaderContent(this._getDrawerHeaderHtml({
+                                                count: summary.count,
+                                                commentsHeader: this.options.translations?.commentsHeader
+                                            }));
+
+                                            console.error('Error deleting comment:', err);
+                                            buildfire.dialog.toast({
+                                                message: err || 'Error deleting comment. Please try again later.',
+                                                type: 'danger',
+                                            });
+                                            return;
+                                        }
+                                        buildfire.dialog.toast({
+                                            message: 'Comment deleted successfully.',
+                                            type: 'success',
+                                        });
+                                    });
+                                }
+                            }
+                            this._configureAddCommentSection();
+                            buildfire.components.swipeableDrawer.show();
+                            this.drawerOpened = true;
+                            buildfire.components.swipeableDrawer.onStepChange = (step) => {
+                                if (this.keyboardShown && step !== 'max') {
+                                    buildfire.components.swipeableDrawer.setStep('max');
+                                } else {
+                                    if (step === 'min') {
+                                        buildfire.components.swipeableDrawer.hide();
+                                        this._destroy();
+                                    }
+
+                                }
+                            };
+
+                        })
+                    });
                 });
-            });
+            })
 
         }
 
+        /**         
+         *  Add a new comment
+         * @param {Object} options - Options object
+         * @param {string} options.itemId - ID of the item to add the comment to
+         * @param {Object} options.comment - Comment object containing the comment text and other properties
+         * @param {function} callback - Callback function to handle the result
+         * @returns {void}
+         */
+
         addComment(options, callback) {
             if (!options) {
-                return callback('Invalid options. Options must be set and have at least item ID and userId!');
+                return callback('Invalid options');
             }
             if (typeof callback !== 'function') {
-                return console.error('callback must be a function!');
+                return console.error('callback must be a function');
             }
             if (!options.itemId) {
-                return callback('Invalid options, Missing itemId!');
-            }
-            if (!options.userId) {
-                return callback('Invalid options, Missing userId!');
+                return callback('Invalid options, Missing itemId');
             }
 
-            const newComment = {
-                _buildfire: {
-                    index: {
-                        string1: options.itemId,
-                    }
-                },
-                itemId: options.itemId,
-                userId: options.userId,
-                ...options.comment
-            };
-
-            buildfire.publicData.insert(
-                newComment,
-                CommentsComponent.TAG,
-                (err, result) => {
-                    if (err) return callback(err);
-                    options.incrementValue = 1; // increment by 1
-                    this._updateSummary(options, callback);
+            buildfire.auth.login({}, (err, user) => {
+                if (err || !user) {
+                    buildfire.dialog.toast({
+                        message: 'You must be logged in to add a comment.',
+                        type: 'danger',
+                    })
+                    return callback(err || 'User not logged in');
                 }
-            );
+
+                const newComment = {
+                    _buildfire: {
+                        index: {
+                            string1: options.itemId,
+                        }
+                    },
+                    itemId: options.itemId,
+                    userId: options.userId,
+                    ...options.comment
+                };
+
+                buildfire.publicData.insert(
+                    newComment,
+                    CommentsComponent.TAG,
+                    (err, result) => {
+                        if (err) return callback(err);
+                        options.incrementValue = 1; // increment by 1
+                        this._updateSummary(options, (err, res) => {
+                            if (err) return callback(err);
+                            buildfire.auth.getUserProfile({ userId: options.userId }, (err, user) => {
+                                if (err || !user) {
+                                    console.error('Error getting user profile:', err);
+                                    return callback(err);
+                                }
+                                result.data.profileImage = user.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
+                                result.data.username = this._getUsername(user);
+                                callback(null, result);
+                            });
+                        });
+                    }
+                );
+            });
+
         }
 
         // TODO: 
@@ -225,6 +407,15 @@ buildfire.components.comments = (() => {
             );
         }
 
+        /**
+         * Delete a comment
+         * @param {Object} options - Options object
+         * @param {string} options.itemId - ID of the item the comment belongs to
+         * @param {string} options.commentId - ID of the comment to delete
+         * @param {string} options.userId - ID of the user deleting the comment
+         * @param {function} callback - Callback function to handle the result
+         * @returns {void}
+         */
         deleteComment(options, callback) {
             if (!options) {
                 return callback('Invalid options parameter');
@@ -235,7 +426,7 @@ buildfire.components.comments = (() => {
 
             this._getComment(options, (err, comment) => {
                 if (err) return callback(err);
-                if (comment) {
+                if (comment && comment.data) {
                     if (comment.data.itemId !== options.itemId) {
                         return callback('Comment does not belong to this item');
                     }
@@ -255,9 +446,20 @@ buildfire.components.comments = (() => {
 
         }
 
+        /**         
+         * Get comments for a specific item
+         * @param {Object} options - Options object
+         * @param {string} options.itemId - ID of the item to get comments for
+         * @param {string} options.userId - ID of the user making the request
+         * @param {number} [options.skip=0] - Number of comments to skip
+         * @param {number} [options.limit=50] - Maximum number of comments to return
+         * @param {function} callback - Callback function to handle the result
+         * @returns {void}
+         */
+
         getComments(options, callback) {
-            if (!options.itemId || !options.userId) {
-                return callback('Invalid parameters');
+            if (!options.itemId) {
+                return callback('Invalid item ID');
             }
 
             buildfire.publicData.search(
@@ -288,9 +490,10 @@ buildfire.components.comments = (() => {
                                     const comment = comments[i];
                                     const user = users.find(u => u.userId == comment.data.userId);
                                     if (user) {
-                                        comment.data.profileImage = user.imageUrl;
+                                        comment.data.profileImage = user.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
                                         comment.data.username = this._getUsername(user);
                                     }
+                                    comment.data.displayDate = bfMomentSDK(comment.data.createdOn).fromNow();
                                     comments[i] = comment;
                                 }
                                 resolve(true);
@@ -334,25 +537,86 @@ buildfire.components.comments = (() => {
             });
         }
 
-        reportAbuse(options, callback) {
-            if (!options || !options.commentId || !options.userId) {
+        /**
+         * Report abuse for a comment
+         * @param {Object} options - Options object
+         * @param {Object} options.comment - Comment object containing the comment text and other properties
+         * @param {function} callback - Callback function to handle the result
+         * @returns {void}
+         */
+        reportComment(options, callback) {
+            if (!options || !options.comment || !options.comment.id || !options.comment.data || !options.comment.data.userId) {
                 return callback('Invalid options parameter');
             }
-
             buildfire.services.reportAbuse.report(
                 {
-                    itemId: options.commentId,
-                    reportedUserId: 'USER_ID',
+                    itemId: options.comment.id,
+                    reportedUserId: options.comment.data.userId,
                     deeplink: {
-                        itemId: '12345',
+                        itemId: options.comment.data.itemId,
+                        commentId: options.comment.id,
                     },
-                    itemType: "Post",
+                    itemType: "Comment",
                 },
                 callback
             );
         }
 
         /** Utilities */
+
+        _configureAddCommentSection() {
+            const commentInput = document.getElementById('commentInput');
+            const commentSafeArea = document.getElementById('commentSafeArea');
+            const addCommentIcon = document.getElementById('addCommentIcon');
+            commentInput.oninput = function () {
+                const lineHeight = 20;
+                this.style.height = '20px';
+                commentSafeArea.style.marginBottom = '80px';
+                const lines = Math.floor(this.scrollHeight / (lineHeight * 2));
+                const newHeight = Math.min((lines * lineHeight), 100);
+                commentSafeArea.style.marginBottom = `${newHeight + 60}px`;
+                this.style.height = `${newHeight}px`;
+            };
+
+            addCommentIcon.addEventListener('click', () => {
+                if (commentInput.value && commentInput.value.trim()) {
+                    const comment = {
+                        text: commentInput.value.trim(),
+                        createdOn: new Date().toISOString(),
+                        lastUpdatedOn: new Date().toISOString()
+                    }
+                    commentInput.value = '';
+                    commentInput.style.height = '20px';
+                    commentSafeArea.style.marginBottom = '80px';
+                    this.addComment({
+                        itemId: this.options.itemId,
+                        userId: this.user?.userId,
+                        comment: comment,
+                    }, (err, result) => {
+                        if (err) {
+                            console.error('Error adding comment:', err);
+                            return;
+                        }
+                        buildfire.dialog.toast({
+                            message: 'Comment added successfully.',
+                            type: 'success',
+                        });
+                        this.listView.append([result], true);
+                        this.summary.count += 1;
+                        const listViewContainer = document.getElementById('listViewContainer');
+                        listViewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        buildfire.components.swipeableDrawer.setHeaderContent(this._getDrawerHeaderHtml({
+                            count: this.summary.count,
+                            commentsHeader: this.options.translations?.commentsHeader
+                        }));
+                    })
+                } else { }
+            });
+        }
+
+        _resetDrawer() {
+            this.openCommentsDrawer(this.options);
+        }
         _updateSummary(options, callback) {
             if (!options) {
                 return callback('Invalid itemId parameter');
@@ -373,8 +637,10 @@ buildfire.components.comments = (() => {
         }
 
         _getUsername(user) {
-            let username = 'someone';
-            if (user.firstName) {
+            let username = 'Someone'; // TODO: add to translations
+            if (user.displayName && user.displayName.trim()) {
+                username = user.displayName;
+            } else if (user.firstName) {
                 username = user.firstName;
                 if (user.lastName) {
                     username += ` ${user.lastName}`;
@@ -383,9 +649,25 @@ buildfire.components.comments = (() => {
             return username;
         }
 
+        _getDrawerHeaderHtml(options) {
+            return `
+                <div class="comments-header-container">
+                    <div class="comments-header">${options.commentsHeader || 'Comments'}</div>
+                    <div class="comments-count">${options.count ? `${options.count}` : '0'}</div>
+                </div>
+                `;
+        }
+
+        _switchEmptyState() {
+
+        }
+
         _destroy() {
             this.drawerOpened = false;
             this.keyboardShown = false;
+            this.options = null;
+            this.summary = null;
+            this.listView = null;
         }
     }
 

@@ -50,3 +50,4 @@
 .bf-icon-share::before { content: "\e095"; }
 .bf-close::before { content: "\e014";}
 .bf-check-mark::before { content: "\e013"; }
+.bf-icon-arrow-right-tail::before { content: "\e092"; }
