@@ -712,6 +712,13 @@ buildfire.components.comments = {
                 });
             }
         }
+        this.listView.onItemClick = (event) => {
+            if (event?.target == 'title') {
+                if (event?.item?.data?.userId) {
+                    buildfire.auth.openProfile(event.item.data.userId);
+                }
+            }
+        };
         callback();
     },
 
@@ -756,7 +763,7 @@ buildfire.components.comments = {
                         type: 'success',
                     });
                 })
-            } else { 
+            } else {
                 // do nothing if the input is empty
             }
         });
@@ -829,19 +836,16 @@ buildfire.components.comments = {
             .replace(/"/g, '&quot;');
 
         // Process URLs in the comment text
-        const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(?:\/[^\s]*)*)/g;
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
         const processedText = comment.replace(urlRegex, (url) => {
             let fullUrl = url;
-            if (!url.match(/^(https?:\/\/|ftps?:\/\/)/i)) {
-                fullUrl = 'http://' + url;
-            }
             const maxDisplayLength = 30;
             let displayUrl = url;
 
             if (url.length > maxDisplayLength) {
                 displayUrl = url.substring(0, maxDisplayLength - 3) + '...';
             }
-            return `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${displayUrl}</a>`;
+            return `<a href="${fullUrl?.toLowerCase()}" target="_blank" rel="noopener noreferrer">${displayUrl}</a>`;
         });
         return processedText;
     },
