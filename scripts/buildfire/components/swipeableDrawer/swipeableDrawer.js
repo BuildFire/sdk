@@ -186,9 +186,9 @@ const _swipeableDrawerUtils = {
 			document.body.appendChild(backdrop);
 			_swipeableDrawerElements.drawerBackdrop = backdrop;
 			if (_swipeableDrawerState.backdropShadow) {
-				backdrop.style.backgroundColor = _swipeableDrawerState.backdropShadow;
+				_swipeableDrawerElements.drawerBackdrop.style.backgroundColor = _swipeableDrawerState.backdropShadow;
 			}
-			backdrop.addEventListener('click', () => {
+			_swipeableDrawerElements.drawerBackdrop.addEventListener('click', () => {
 				buildfire.components.swipeableDrawer.hide();
 
 			});
@@ -298,18 +298,22 @@ buildfire.components.swipeableDrawer = {
 	},
 	hide() {
 		_swipeableDrawerElements.drawerContainer.classList.add('swipeable-drawer-hidden');
-		if (_swipeableDrawerElements.drawerBackdrop) {
-			_swipeableDrawerElements.drawerBackdrop.remove();
-			_swipeableDrawerElements.drawerBackdrop = null;
+		buildfire.components.swipeableDrawer._removeBackdrop();
+		if (buildfire.components.swipeableDrawer.onDrawerHide) {
+			buildfire.components.swipeableDrawer.onDrawerHide();
 		}
 	},
 	destroy() {
 		_swipeableDrawerEvents.destroy();
 		_swipeableDrawerElements.drawerContainer.remove();
+		buildfire.components.swipeableDrawer._removeBackdrop();
+	},
+	_removeBackdrop() {
 		if (_swipeableDrawerElements.drawerBackdrop) {
 			_swipeableDrawerElements.drawerBackdrop.remove();
 			_swipeableDrawerElements.drawerBackdrop = null;
 		}
 	},
-	onStepChange() { }
+	onStepChange() { },
+	onDrawerHide() { }
 };

@@ -2,10 +2,16 @@
 	align-items: center;
 	color: #777;
 	display: flex;
-	font-family: Roboto;
+	font-family: "Roboto";
 	line-height: 20px;
-	padding: 15px 24px;
+	padding: 5px 24px;
+}
+
+.comments-header-hr {
 	border-bottom: 1px solid rgba(16, 16, 16, 0.1);
+	width: 100%;
+	position: relative;
+	bottom: -10px;
 }
 
 .comments-header {
@@ -44,7 +50,7 @@
 	border-radius: 2px;
 	border: none;
 	flex: 1;
-	font-family: Roboto;
+	font-family: "Roboto";
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 400;
@@ -58,7 +64,7 @@
 }
 
 .add-comment-section .add-comment {
-	bottom: 23px;
+	bottom: 20px;
 	color: rgba(16, 16, 16, 0.5);
 	cursor: pointer;
 	font-size: 22px;
@@ -74,11 +80,12 @@
 }
 
 .empty-state-container {
-	font-family: Roboto; /* TODO: ask about the font family **/
+	font-family: "Roboto"; /* TODO: ask about the font family **/
 	font-weight: 400;
 	justify-self: center;
 	line-height: 20px;
 	margin-top: 40px;
+	max-width: 90%;
 }
 
 .empty-state-title,
@@ -89,6 +96,7 @@
 .empty-state-title {
 	color: #000;
 	font-size: 16px;
+	margin-bottom: 5px;
 }
 
 .empty-state-message {
@@ -102,4 +110,11 @@
 
 .d-block {
 	display: block !important;
+}
+
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
 }
