@@ -18,6 +18,7 @@ buildfire.components.listView = class ListView {
 				enableReadMore: true,
 				maxHeight: null,
 				enableSkeleton: true,
+				paginationRootElementSelector: 'body',
 			},
 			translations: {
 				readMore: 'Read More',
@@ -208,7 +209,7 @@ buildfire.components.listView = class ListView {
 				this._state.page++;
 				this._triggerOnDataRequested();
 			}, {
-				root: document.body,
+				root: document.querySelector(this.options.settings?.paginationRootElementSelector) || document.body,
 				threshold: 1
 			});
 

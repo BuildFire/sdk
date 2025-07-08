@@ -1681,6 +1681,7 @@ html[buildfire] body.no-scroll .scrollable{
 	opacity: 0.4;
 }
 #pluginNav {
+	display: block;
 	user-select: none !important;
 }
 
