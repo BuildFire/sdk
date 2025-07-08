@@ -22,8 +22,7 @@ if (typeof buildfire.services == 'undefined' || typeof buildfire.services.report
  * @property {string} itemId - ID of the item this comment is for
  * @property {string} lastUpdatedOn - date object of when the comment was last updated
  * @property {string} commentId - unique ID of the comment, generated as itemId + userId + timestamp
- * 
- * 
+ * @property {Object} _buildfire - buildfire metadata
  * got from buildfire.auth.getUserProfiles
  * profileImage 
  * username
@@ -37,9 +36,7 @@ if (typeof buildfire.services == 'undefined' || typeof buildfire.services.report
  * @property {string} lastUpdatedBy - userId of the user who last updated the summary
  * @property {string} lastUpdatedOn - date object of when the summary was last updated
  * @property {string} createdOn - date object of when the summary was created
- * 
- * 
- * lastCommenters, 10 last unique commenters -- nice to have but not required
+ * @property {Object} _buildfire - buildfire metadata
  */
 
 /**
@@ -47,19 +44,16 @@ if (typeof buildfire.services == 'undefined' || typeof buildfire.services.report
  * @property {string} you - Text to show for the current user
  * @property {string} someone - Text to show for other users
  * @property {string} commentsHeader - Header for the comments drawer
- * @property {string} noCommentsTitle - Message title to show when there are no comments
- * @property {string} noCommentsMessage - Message to show when there are no comments
+ * @property {string} emptyStateTitle - Message title to show when there are no comments
+ * @property {string} emptyStateMessage - Message to show when there are no comments
  * @property {string} addCommentPlaceholder - Placeholder for the comment input field
  * @property {string} readMore - Text for the read more link in the list view
  * @property {string} readLess - Text for the read less link in the list view
  * @property {string} report - Text for the report action in the list view
  * @property {string} delete - Text for the delete action in the list view
- * @property {string} reportCommentSuccess - Success message for reporting a comment
- * @property {string} reportCommentFail - Fail message for reporting a comment
- * @property {string} deleteCommentSuccess - Success message for deleting a comment
- * @property {string} deleteCommentFail - Fail message for deleting a comment
- * @property {string} addCommentSuccess - Success message for adding a comment
- * @property {string} addCommentFail - Fail message for adding a comment
+ * @property {string} commentReported - Success message for reporting a comment
+ * @property {string} commentDeleted - Success message for deleting a comment
+ * @property {string} commentAdded - Success message for adding a comment
  * @property {string} loginRequired - Message to show when the user is not logged in and tries to add a comment
  * TODO: add more translations as needed
  
@@ -69,6 +63,7 @@ if (typeof buildfire.services == 'undefined' || typeof buildfire.services.report
  * nice to have:
  * component handles the comments element via a selector to display the icon + count (summary)
  * events for when a comment is added, deleted, updated, reported
+ * lastCommenters in summary, 10 last unique commenters -- nice to have but not required
  */
 
 class CommentsSummaries {
@@ -262,7 +257,7 @@ buildfire.components.comments = {
      * @param {string} options.itemId - ID of the item to get comments for
      * @param {number} [options.skip=0] - Number of comments to skip
      * @param {number} [options.limit=50] - Maximum number of comments to return
-     * @param {Array} [options.filter] - Array of comment IDs to filter by
+     * @param {object} options.filter - Filter object containing an array of comment IDs to filter by
      * @param {function} callback - Callback function to handle the result
      * @returns {void}
      */
@@ -275,9 +270,9 @@ buildfire.components.comments = {
         let filter = {
             '_buildfire.index.string1': options.itemId
         };
-        if (options.filter && Array.isArray(options.filter)) {
+        if (options.filter && options.filter.commentIds && Array.isArray(options.filter.commentIds)) {
             filter = {
-                "$json.commentId": { $in: options.filter },
+                "$json.commentId": { $in: options.filter.commentIds },
                 ...filter,
             }
         }
@@ -292,11 +287,10 @@ buildfire.components.comments = {
             (err, result) => {
                 if (err) return callback(err);
                 const comments = result || [];
-
                 // Get User Profiles for each comment
-                const chunkSize = 50; // maximum number of userIds to fetch at once
+                const chunkSize = 50;
                 let userIds = comments.map(c => c.data.userId);
-                userIds = [...new Set(userIds)]; // remove duplicates
+                userIds = [...new Set(userIds)];
                 let userDataPromises = [];
                 const loadUsersData = (userIds) => {
                     return new Promise((resolve, reject) => {
@@ -316,7 +310,8 @@ buildfire.components.comments = {
                                     comment.data.profileImage = 'https://app.buildfire.com/app/media/avatar.png'; // default avatar
                                     comment.data.username = this._getNameOfUser(null); // "Someone"
                                 }
-                                comment.data.displayDate = bfMomentSDK(comment.data.createdOn).fromNow();
+                                if (typeof bfMomentSDK !== 'undefined') comment.data.displayDate = bfMomentSDK(comment.data.createdOn).fromNow();
+                                comment.data.text = this._processComment(comment.data.text);
                                 comments[i] = comment;
                             }
                             resolve(true);
@@ -350,8 +345,8 @@ buildfire.components.comments = {
         if (!options.commentId) {
             return callback('Invalid commentId');
         }
-        options.limit = 1; // limit to 1 comment
-        options.filter = [options.commentId]; // filter by commentId
+        options.limit = 1;
+        options.filter = { commentIds: [options.commentId] };
         this.getComments(options, (err, comments) => {
             if (err) return callback(err);
             if (comments && comments[0] && comments[0].data) {
@@ -427,7 +422,7 @@ buildfire.components.comments = {
         const createdOn = new Date();
         let comment = {
             itemId: options.itemId,
-            text: this._processComment(options.commentText),
+            text: options.commentText,
             createdOn: createdOn,
             lastUpdatedOn: createdOn,
             _buildfire: {
@@ -492,10 +487,12 @@ buildfire.components.comments = {
     },
 
     _addCommentToList(comment) {
-        comment.profileImage = this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
-        comment.username = this._getNameOfUser({ user: this.user, isOwner: true });
-        comment.displayDate = bfMomentSDK(comment.createdOn).fromNow();
-        this.listView.append([{ data: comment }], true);
+        const commentToDisplay = JSON.parse(JSON.stringify(comment));
+        commentToDisplay.profileImage = this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
+        commentToDisplay.username = this._getNameOfUser({ user: this.user, isOwner: true });
+        commentToDisplay.displayDate = bfMomentSDK(commentToDisplay.createdOn).fromNow();
+        commentToDisplay.text = this._processComment(commentToDisplay.text);
+        this.listView.append([{ data: commentToDisplay }], true);
         this._switchEmptyState(false);
         this.summary.count += 1;
         const listViewContainer = document.querySelector('#listViewContainer');
@@ -564,7 +561,6 @@ buildfire.components.comments = {
     /** Utilities */
 
     _initializeDrawer(callback) {
-
         const drawerHeaderHtml = this._getDrawerHeaderHtml({ count: this.summary.count, commentsHeader: this.options.translations?.commentsHeader });
         const drawerContentHtml = `
             <div id="commentsListContainer">
@@ -577,8 +573,8 @@ buildfire.components.comments = {
                 <span id="addCommentIcon" class="add-comment bf-icon-arrow-right-tail"></span>
             </div>
             <div id="commentsEmptyStateContainer" class="empty-state-container">
-                <div class="empty-state-title ellipsis">${this.options.translations?.noCommentsTitle || 'No comments yet.'}</div>
-                <div class="empty-state-message ellipsis">${this.options.translations?.noCommentsMessage || 'Be the first one to comment.'}</div>
+                <div class="empty-state-title ellipsis">${this.options.translations?.emptyStateTitle || 'No comments yet.'}</div>
+                <div class="empty-state-message ellipsis">${this.options.translations?.emptyStateMessage || 'Be the first one to comment.'}</div>
             </div>
             `;
 
@@ -591,7 +587,7 @@ buildfire.components.comments = {
             backdropEnabled: true,
             backdropShadow: 'rgba(245, 39, 39, 0.4)'
         }, callback);
-        buildfire.components.swipeableDrawer.onDrawerHide = () => {
+        buildfire.components.swipeableDrawer.onHide = () => {
             this._destroy();
             if (this.onClose) {
                 this.onClose();
@@ -671,13 +667,13 @@ buildfire.components.comments = {
                     if (err) {
                         console.error('Error reporting comment:', err);
                         buildfire.dialog.toast({
-                            message: this.options.translations?.reportCommentFail || 'Error reporting comment. Please try again later.',
+                            message: 'Error reporting comment. Please try again later.',
                             type: 'danger',
                         });
                         return;
                     }
                     buildfire.dialog.toast({
-                        message: this.options.translations?.reportCommentSuccess || 'Comment reported successfully.',
+                        message: this.options.translations?.commentReported || 'Comment reported successfully.',
                         type: 'success',
                     });
                 });
@@ -703,14 +699,14 @@ buildfire.components.comments = {
 
                         console.error('Error deleting comment:', err);
                         buildfire.dialog.toast({
-                            message: this.options.translations?.deleteCommentFail || 'Error deleting comment. Please try again later.',
+                            message: 'Error deleting comment. Please try again later.',
                             type: 'danger',
                         });
                         return;
                     }
                     this.listView.refresh();
                     buildfire.dialog.toast({
-                        message: this.options.translations?.deleteCommentSuccess || 'Comment deleted successfully.',
+                        message: this.options.translations?.commentDeleted || 'Comment deleted successfully.',
                         type: 'success',
                     });
                 });
@@ -749,18 +745,20 @@ buildfire.components.comments = {
                     if (this._addingCommentDone) this._addingCommentDone();
                     if (err) {
                         buildfire.dialog.toast({
-                            message: this.options.translations?.addCommentFail || 'Error adding comment. Please try again later.',
+                            message: 'Error adding comment. Please try again later.',
                             type: 'danger',
                         });
                         console.error('Error adding comment:', err);
                         return;
                     }
                     buildfire.dialog.toast({
-                        message: this.options.translations?.addCommentSuccess || 'Comment added successfully.',
+                        message: this.options.translations?.commentAdded || 'Comment added successfully.',
                         type: 'success',
                     });
                 })
-            } else { }
+            } else { 
+                // do nothing if the input is empty
+            }
         });
     },
 
@@ -824,34 +822,27 @@ buildfire.components.comments = {
     },
 
     _processComment(comment) {
-        // Regular expression to detect URLs.
-        // It looks for http(s)://, www., or a domain.tld pattern.
-        const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(?:\/[^\s]*)*)/g;
+        comment = comment
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
 
-        // Replace each detected URL with a clickable and "shortened" version.
+        // Process URLs in the comment text
+        const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(?:\/[^\s]*)*)/g;
         const processedText = comment.replace(urlRegex, (url) => {
             let fullUrl = url;
-
-            // Add http:// if the URL doesn't start with http(s)://
             if (!url.match(/^(https?:\/\/|ftps?:\/\/)/i)) {
                 fullUrl = 'http://' + url;
             }
-
-            // --- URL Shortening Logic (Conceptual) ---
             const maxDisplayLength = 30;
             let displayUrl = url;
 
             if (url.length > maxDisplayLength) {
-                // Option 1: Truncate the URL and add an ellipsis
                 displayUrl = url.substring(0, maxDisplayLength - 3) + '...';
-                // Option 2: Use a generic "Link" text (uncomment below to use this)
-                // displayUrl = '[Link]';
             }
-
-            // Return the HTML anchor tag with the full URL and the "shortened" display text
             return `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${displayUrl}</a>`;
         });
-
         return processedText;
     },
 

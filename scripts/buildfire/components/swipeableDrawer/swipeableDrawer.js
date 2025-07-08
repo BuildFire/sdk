@@ -299,8 +299,8 @@ buildfire.components.swipeableDrawer = {
 	hide() {
 		_swipeableDrawerElements.drawerContainer.classList.add('swipeable-drawer-hidden');
 		buildfire.components.swipeableDrawer._removeBackdrop();
-		if (buildfire.components.swipeableDrawer.onDrawerHide) {
-			buildfire.components.swipeableDrawer.onDrawerHide();
+		if (buildfire.components.swipeableDrawer.onHide) {
+			buildfire.components.swipeableDrawer.onHide();
 		}
 	},
 	destroy() {
@@ -315,5 +315,5 @@ buildfire.components.swipeableDrawer = {
 		}
 	},
 	onStepChange() { },
-	onDrawerHide() { }
+	onHide() { }
 };

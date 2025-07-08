@@ -32,9 +32,10 @@
 	display: flex;
 	gap: 10px;
 	left: 0;
-	padding: 15px 25px;
+	padding: 20px 25px;
 	position: fixed;
 	right: 0;
+	border-top: 1px solid rgba(16, 16, 16, 0.1);
 }
 
 .add-comment-section img {
@@ -64,7 +65,7 @@
 }
 
 .add-comment-section .add-comment {
-	bottom: 20px;
+	bottom: 25px;
 	color: rgba(16, 16, 16, 0.5);
 	cursor: pointer;
 	font-size: 22px;
