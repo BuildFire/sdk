@@ -104,7 +104,7 @@ class CommentsSummaries {
     }
 
     _getSummary(options, callback) {
-        if (!itemId) {
+        if (!options.itemId) {
             return callback('Invalid itemId parameter');
         }
 
@@ -585,7 +585,6 @@ buildfire.components.comments = {
             content: drawerContentHtml,
             transitionDuration: 125,
             backdropEnabled: true,
-            backdropShadow: 'rgba(245, 39, 39, 0.4)'
         }, callback);
         buildfire.components.swipeableDrawer.onHide = () => {
             this._destroy();
@@ -774,7 +773,7 @@ buildfire.components.comments = {
     },
 
     _updateSummary(options, callback) {
-        if (!options) {
+        if (!options?.itemId) {
             return callback('Invalid itemId parameter');
         }
 
