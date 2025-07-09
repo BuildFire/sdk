@@ -1,0 +1,121 @@
+.comments-header-container {
+	align-items: center;
+	color: #777;
+	display: flex;
+	font-family: "Roboto";
+	line-height: 20px;
+	padding: 5px 24px;
+}
+
+.comments-header-hr {
+	border-bottom: 1px solid rgba(16, 16, 16, 0.1);
+	width: 100%;
+	position: relative;
+	bottom: -10px;
+}
+
+.comments-header {
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.comments-count {
+	font-size: 14px;
+	font-weight: 400;
+	margin-left: 10px;
+}
+
+.add-comment-section {
+	align-items: center;
+	background-color: #fff;
+	bottom: 0;
+	display: flex;
+	gap: 10px;
+	left: 0;
+	padding: 20px 25px;
+	position: fixed;
+	right: 0;
+	border-top: 1px solid rgba(16, 16, 16, 0.1);
+}
+
+.add-comment-section img {
+	align-self: flex-start;
+	border-radius: 50%;
+	height: 27px;
+	margin-top: 5px;
+	width: 27px;
+}
+
+.add-comment-section textarea {
+	background: rgba(16, 16, 16, 0.05);
+	border-radius: 2px;
+	border: none;
+	flex: 1;
+	font-family: "Roboto";
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	height: 20px;
+	line-height: 20px;
+	max-height: 100px;
+	min-height: 20px;
+	outline: none;
+	padding: 10px 30px 10px 10px;
+	resize: none;
+}
+
+.add-comment-section .add-comment {
+	bottom: 25px;
+	color: rgba(16, 16, 16, 0.5);
+	cursor: pointer;
+	font-size: 22px;
+	position: absolute;
+	right: 35px;
+}
+
+#commentSafeArea {
+	margin-bottom: calc(
+		40px + 30px + 10px
+	); /* 40px calculated height of comment input, 30px padding of the comment section */
+	width: 100%;
+}
+
+.empty-state-container {
+	font-family: "Roboto"; /* TODO: ask about the font family **/
+	font-weight: 400;
+	justify-self: center;
+	line-height: 20px;
+	margin-top: 40px;
+	max-width: 90%;
+}
+
+.empty-state-title,
+.empty-state-message {
+	text-align: center;
+}
+
+.empty-state-title {
+	color: #000;
+	font-size: 16px;
+	margin-bottom: 5px;
+}
+
+.empty-state-message {
+	color: #777;
+	font-size: 14px;
+}
+
+.d-none {
+	display: none !important;
+}
+
+.d-block {
+	display: block !important;
+}
+
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
+}
