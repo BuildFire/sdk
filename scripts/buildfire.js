@@ -667,18 +667,24 @@ var buildfire = {
 			buildfire._sendPacket(p,callback);
 		}
 		, openWindow: function (url, target, callback) {
+			// If url is an object, delegate to _openWindowWithOptions
+			if (typeof url === 'object' && url !== null) {
+				// url (first parameter) is options and target (second parameter) is the callback
+				buildfire.navigation._openWindowWithOptions(url, target);
+				return;
+			}
 			if (!target) target = '_blank';
 			if (!callback) callback = function () {
 				console.info('openWindow:: completed');
 			};
 			var actionItem = {
-				url: url
-				, openIn: target
+				url: url,
+				openIn: target
 			};
 			var p = new Packet(null, 'actionItems.executeOpenWebLink', actionItem, callback);
 			buildfire._sendPacket(p, callback);
 		},
-		openWindowWithOptions: function ({url, target, windowFeatures}, callback) {
+		_openWindowWithOptions: function ({url, target, windowFeatures}, callback) {
 			if (!target) target = '_blank';
 			if (!callback) callback = function () {
 				console.info('openWindow:: completed');
