@@ -16,7 +16,7 @@
   left: 0;
   height: 100%;
   z-index: 9;
-  padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
+  padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 24px);
   overflow: auto;
 }
 .login-holder a:not(.input-icon){
@@ -102,9 +102,8 @@
 
 .login-holder .login-section {
   margin-top: 50px;
-  margin-top: calc(constant(safe-area-inset-top) + 40px); /* iOS 11.0 */
-  margin-top: calc(env(safe-area-inset-top) + 50px); /* iOS 11.2 */
-  height: calc(100% - env(safe-area-inset-top) - 50px);
+  margin-top: calc(var(--bf-safe-area-inset-top) + 50px); /* iOS 11.2 */
+  height: calc(100% - var(--bf-safe-area-inset-top) - 50px);
   /* overflow-y: auto; */
 }
 .login.login-no-img .logo-container-wrapper{
@@ -172,7 +171,7 @@
   width: 100%;
   padding-top: 20px;
   font-size: 14px;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  padding-bottom: calc(8px + var(--bf-safe-area-inset-bottom));
 }
 
 .login-holder .bottom-info  p {
@@ -256,7 +255,7 @@
   .login-holder .bottom-info {
     position: relative;
     padding: 8px;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    padding-bottom: calc(8px + var(--bf-safe-area-inset-bottom));
     /* margin-bottom: 16px; */
   }
   .login-holder .logo-container-wrapper{
@@ -339,8 +338,7 @@
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   z-index: 5;
-  top: env(safe-area-inset-top) !important;
-  top: const(safe-area-inset-top) !important;
+  top: var(--bf-safe-area-inset-top) !important;
 }
 .gdpr-notice .close-gdpr {
   position: absolute;
@@ -353,8 +351,7 @@
 }
 
 html[ios="true"][view="app"][storyboard-launch-images="true"] .gdpr-notice .close-gdpr {
-  padding-bottom: env(safe-area-inset-bottom) !important;
-  padding-bottom: const(safe-area-inset-bottom) !important;
+  padding-bottom: var(--bf-safe-area-inset-bottom) !important;
 }
 
 .vertical-padding {
@@ -434,7 +431,7 @@ html[type='app'] .modal .modal-dialog {
    left: 0;
  }
  .sso-iframe-holder{
-  padding-top: calc(50px + env(safe-area-inset-top));
+  padding-top: calc(50px + var(--bf-safe-area-inset-top));
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   height: 100% !important;
@@ -573,7 +570,7 @@ html[type='app'] .modal .modal-dialog {
   }
   [type="app"] .sso-iframe-holder{
     overflow: auto;
-    padding-top: calc(70px + env(safe-area-inset-top));
+    padding-top: calc(70px + var(--bf-safe-area-inset-top));
     height: 100vh;
   }
 }

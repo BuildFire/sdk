@@ -5554,6 +5554,14 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
 	});
 })();
 
+buildfire.getContext(function (err, context) {
+	if (err) {
+		console.error(err);
+	} else {
+		document.documentElement.style.setProperty('--bf-safe-area-inset-top', context.cssVariables?.safeAreaInsetTop || '0px');
+		document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', context.cssVariables?.safeAreaInsetBottom || '0px');
+	}
+});
 
 document.addEventListener('DOMContentLoaded', function (event) {
 	//buildfire.appearance.autosizeContainer();
