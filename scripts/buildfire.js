@@ -3397,8 +3397,7 @@ var buildfire = {
 						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
 					}
 				}
-				const _appId = buildfire?._context?.appId;
-				return `https://buidfire-proxy.imgix.net/${_appId ? 'app_' + _appId : 'unknown'}/` + encodeURIComponent(orgUrl);
+				return `https://buildfire-proxy.imgix.net/cdn/` + encodeURIComponent(orgUrl);
 			},
 			_sanitizeUnsplashImage: function(url) {
 				const urlObj = new URL(url);
