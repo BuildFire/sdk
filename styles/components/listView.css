@@ -9,7 +9,7 @@
 .listViewContainer.full-width {
   padding: 0;
   padding-top: 4rem;
-  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(1rem + var(--bf-safe-area-inset-bottom));
 }
 
 .listViewItem {

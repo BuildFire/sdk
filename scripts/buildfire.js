@@ -3416,8 +3416,7 @@ var buildfire = {
 						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
 					}
 				}
-				const _appId = buildfire?._context?.appId;
-				return `https://buidfire-proxy.imgix.net/${_appId ? 'app_' + _appId : 'unknown'}/` + encodeURIComponent(orgUrl);
+				return `https://buildfire-proxy.imgix.net/cdn/` + encodeURIComponent(orgUrl);
 			},
 			_sanitizeUnsplashImage: function(url) {
 				const urlObj = new URL(url);
@@ -5573,6 +5572,14 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
 	});
 })();
 
+buildfire.getContext(function (err, context) {
+	if (err) {
+		console.error(err);
+	} else {
+		document.documentElement.style.setProperty('--bf-safe-area-inset-top', context.cssVariables?.safeAreaInsetTop || '0px');
+		document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', context.cssVariables?.safeAreaInsetBottom || '0px');
+	}
+});
 
 document.addEventListener('DOMContentLoaded', function (event) {
 	//buildfire.appearance.autosizeContainer();

@@ -253,7 +253,7 @@ span.rating-time-ago {
 .ovarall-rating-container {
   padding: 0 20px 17px;
   position: relative;
-  padding-top: calc(env(safe-area-inset-top) + 10px) !important;
+  padding-top: calc(var(--bf-safe-area-inset-top) + 10px) !important;
 }
 
 .ovarall-rating-container.shadow {
@@ -456,7 +456,7 @@ span#closeButton {
 
 .ovarall-rating-container a.rating-cancel-btn {
   position: absolute;
-  top: calc(env(safe-area-inset-top) + 16px) !important;
+  top: calc(var(--bf-safe-area-inset-top) + 16px) !important;
   left: 16px;
   cursor: pointer;
 }
