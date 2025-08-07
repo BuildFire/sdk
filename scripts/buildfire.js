@@ -667,15 +667,34 @@ var buildfire = {
 			buildfire._sendPacket(p,callback);
 		}
 		, openWindow: function (url, target, callback) {
+			// If url is an object, delegate to _openWindowWithOptions
+			if (typeof url === 'object' && url !== null) {
+				// url (first parameter) is options and target (second parameter) is the callback
+				buildfire.navigation._openWindowWithOptions(url, target);
+				return;
+			}
 			if (!target) target = '_blank';
 			if (!callback) callback = function () {
 				console.info('openWindow:: completed');
 			};
 			var actionItem = {
-				url: url
-				, openIn: target
+				url: url,
+				openIn: target
 			};
 			var p = new Packet(null, 'actionItems.executeOpenWebLink', actionItem, callback);
+			buildfire._sendPacket(p, callback);
+		},
+		_openWindowWithOptions: function ({url, target, windowFeatures}, callback) {
+			if (!target) target = '_blank';
+			if (!callback) callback = function () {
+				console.info('openWindow:: completed');
+			};
+			let actionItem = {
+				url: url,
+				openIn: target,
+				windowFeatures: windowFeatures
+			};
+			var p = new Packet(null, 'actionItems.openWindowWithOptions', actionItem, callback);
 			buildfire._sendPacket(p, callback);
 		}
 		, _goBackOne: function () {
@@ -3397,8 +3416,7 @@ var buildfire = {
 						return this._imgixWhitelistedUrls[whitelistedUrl] + url.split(whitelistedUrl)[1];
 					}
 				}
-				const _appId = buildfire?._context?.appId;
-				return `https://buidfire-proxy.imgix.net/${_appId ? 'app_' + _appId : 'unknown'}/` + encodeURIComponent(orgUrl);
+				return `https://buildfire-proxy.imgix.net/cdn/` + encodeURIComponent(orgUrl);
 			},
 			_sanitizeUnsplashImage: function(url) {
 				const urlObj = new URL(url);
@@ -4131,6 +4149,24 @@ var buildfire = {
 				var p = new Packet(null, 'device.contacts.search', options);
 				buildfire._sendPacket(p, callback);
 			}
+		},
+		media: {
+			savePicture: function (options, callback) {
+				let p = new Packet(null, 'device.media.save', options);
+				buildfire._sendPacket(p, callback);
+			},
+			saveVideo: function (options, callback) {
+				options = options || {};
+				options.isVideo = true;
+				let p = new Packet(null, 'device.media.save', options);
+				buildfire._sendPacket(p, callback);
+			}
+		},
+		downloads: {
+			save: function (options, callback) {
+				let p = new Packet(null, 'device.downloads.save', options);
+				buildfire._sendPacket(p, callback);
+			}
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/BuildFire-Geo-Location-Feature
@@ -4402,6 +4438,11 @@ var buildfire = {
 	imagePreviewer: {
 		show: function(options, callback) {
 			buildfire._sendPacket(new Packet(null, 'imagePreviewer.show', options), callback);
+		},
+	},
+	mediaPreviewer: {
+		show: function(options, callback) {
+			buildfire._sendPacket(new Packet(null, 'mediaPreviewer.show', options), callback);
 		}
 	},
 	notes: {
@@ -5531,6 +5572,14 @@ buildfire.eventManager.add('deviceAppBackgrounded', function () {
 	});
 })();
 
+buildfire.getContext(function (err, context) {
+	if (err) {
+		console.error(err);
+	} else {
+		document.documentElement.style.setProperty('--bf-safe-area-inset-top', context.cssVariables?.safeAreaInsetTop || '0px');
+		document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', context.cssVariables?.safeAreaInsetBottom || '0px');
+	}
+});
 
 document.addEventListener('DOMContentLoaded', function (event) {
 	//buildfire.appearance.autosizeContainer();

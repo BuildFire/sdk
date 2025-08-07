@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 if (typeof (buildfire) == 'undefined') throw ('please add buildfire.js first to use carousel components');
 
@@ -308,16 +308,23 @@ buildfire.components.carousel.view = function (selector, items, layout, speed, d
 	this.init(selector, speed);
 
 	window.dispatchEvent(new CustomEvent('resize'));
+	let originalWidth = window.innerWidth; // Store the initial width	
 	window.addEventListener('resize', () => { // rerender items on window resize
-		if (resizeTimeout) {
-			clearTimeout(resizeTimeout);
-			resizeTimeout = null;
-		}
-		resizeTimeout = setTimeout(() => {
-			if (self.items && self.items.length) {
-				self.loadItems(self.items, false);
+		const currentWidth = window.innerWidth;
+		// we just check for width change, where sometime height changes
+		// because of the title bar hide in launcher when navigating, which is not real resize
+		if (currentWidth !== originalWidth) {
+			if (resizeTimeout) {
+		  		clearTimeout(resizeTimeout);
+		  		resizeTimeout = null;
 			}
-		}, 500);
+			resizeTimeout = setTimeout(() => {
+		  		if (self.items && self.items.length) {
+					self.loadItems(self.items, null, this.layout, this.speed);
+				}
+				originalWidth = currentWidth; // Update previous width
+			}, 500);
+	  	}
 	});
 };
 
@@ -326,6 +333,7 @@ buildfire.components.carousel.view.prototype = {
 	// will be called to initialize the setting in the constructor
 	init: function (selector,speed) {
 		this.selector = buildfire.components.carousel._getDomSelector(selector);
+		this.speed = speed;
 		this._renderSlider();
 
 		var that = this;

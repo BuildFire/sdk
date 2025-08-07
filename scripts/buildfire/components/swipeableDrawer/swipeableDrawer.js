@@ -11,7 +11,9 @@ let _swipeableDrawerState = {
 	transitionDuration: 125,
 	mode: 'free',
 	minHeight: null,
-	maxHeight: null
+	maxHeight: null,
+	backdropEnabled: false,
+	backdropShadow: null,
 };
 
 const _swipeableDrawerConstants = {
@@ -27,7 +29,8 @@ const _swipeableDrawerElements = {
 	drawerContainer: document.querySelector('.swipeable-drawer'),
 	drawerHeaderContent: document.querySelector('.swipeable-drawer-header'),
 	drawerContent: document.querySelector('.swipeable-drawer-content'),
-	drawerFooter: document.querySelector('.swipeable-drawer-footer')
+	drawerFooter: document.querySelector('.swipeable-drawer-footer'),
+	drawerBackdrop: document.querySelector('.swipeable-drawer-backdrop')
 };
 
 const _swipeableDrawerUtils = {
@@ -164,7 +167,8 @@ const _swipeableDrawerUtils = {
 			resizerHolder = _swipeableDrawerUtils.createUIElement('div', 'swipeable-drawer-resizer-container'),
 			resizer = _swipeableDrawerUtils.createUIElement('div', 'swipeable-drawer-resizer'),
 			drawerContent = _swipeableDrawerUtils.createUIElement('div', 'swipeable-drawer-content'),
-			drawerFooter = _swipeableDrawerUtils.createUIElement('div', 'swipeable-drawer-footer');
+			drawerFooter = _swipeableDrawerUtils.createUIElement('div', 'swipeable-drawer-footer'),
+			backdrop = _swipeableDrawerUtils.createUIElement('div', 'swipeable-drawer-backdrop');
 
 		_swipeableDrawerState.header ? _swipeableDrawerUtils.setContent(drawerHeaderContent, _swipeableDrawerState.header) : drawerHeaderContent.classList.add('swipeable-drawer-hidden');
 		_swipeableDrawerState.content ? _swipeableDrawerUtils.setContent(drawerContent, _swipeableDrawerState.content) : drawerContent.classList.add('swipeable-drawer-hidden');
@@ -177,6 +181,18 @@ const _swipeableDrawerUtils = {
 		drawerDiv.appendChild(drawerHeader);
 		drawerDiv.appendChild(drawerContent);
 		drawerDiv.appendChild(drawerFooter);
+
+		if (_swipeableDrawerState.backdropEnabled && !_swipeableDrawerElements.drawerBackdrop) {
+			document.body.appendChild(backdrop);
+			_swipeableDrawerElements.drawerBackdrop = backdrop;
+			if (_swipeableDrawerState.backdropShadow) {
+				_swipeableDrawerElements.drawerBackdrop.style.backgroundColor = _swipeableDrawerState.backdropShadow;
+			}
+			_swipeableDrawerElements.drawerBackdrop.addEventListener('click', () => {
+				buildfire.components.swipeableDrawer.hide();
+
+			});
+		}
 
 		document.body.appendChild(drawerDiv);
 
@@ -203,7 +219,6 @@ const _swipeableDrawerEvents = {
 			_swipeableDrawerUtils.adjustDrawer(e);
 	},
 	stopTouchResize: (e) => {
-		e.preventDefault();
 		document.removeEventListener('touchmove', _swipeableDrawerUtils.resize);
 		document.removeEventListener('touchend', _swipeableDrawerEvents.stopTouchResize);
 		if (_swipeableDrawerState.mode !== 'free')
@@ -283,10 +298,22 @@ buildfire.components.swipeableDrawer = {
 	},
 	hide() {
 		_swipeableDrawerElements.drawerContainer.classList.add('swipeable-drawer-hidden');
+		buildfire.components.swipeableDrawer._removeBackdrop();
+		if (buildfire.components.swipeableDrawer.onHide) {
+			buildfire.components.swipeableDrawer.onHide();
+		}
 	},
 	destroy() {
 		_swipeableDrawerEvents.destroy();
 		_swipeableDrawerElements.drawerContainer.remove();
+		buildfire.components.swipeableDrawer._removeBackdrop();
 	},
-	onStepChange() { }
+	_removeBackdrop() {
+		if (_swipeableDrawerElements.drawerBackdrop) {
+			_swipeableDrawerElements.drawerBackdrop.remove();
+			_swipeableDrawerElements.drawerBackdrop = null;
+		}
+	},
+	onStepChange() { },
+	onHide() { }
 };

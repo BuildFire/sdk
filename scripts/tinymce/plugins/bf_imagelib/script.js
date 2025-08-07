@@ -4,6 +4,7 @@ const data = urlParams.get('data');
 const parsedData = JSON.parse(data);
 const imageProperties = parsedData.imageProperties || {};
 const imageUrl = imageProperties.originalSrc || parsedData.imageUrl;
+const escapedImageUrl = imageUrl.replace(/(?<!\\)'/g, "\\'");
 let imageDescription = parsedData.imageDescription;
 
 let resizedImage = "";
@@ -33,7 +34,7 @@ const fixedOptions = {
 
 function onChangeResizeCrop(selectedValue) {
     cropAspectRatioButton.disabled = selectedValue === "resize" ? true : false;
-    getresizedImage();
+    getResizedImage();
 }
 
 resize.addEventListener("change", () => onChangeResizeCrop("resize"));
@@ -50,7 +51,7 @@ if (imageProperties.crop) {
 function onChangeFixedResponsive(selectedValue) {
     fixedDropdown.style.display = selectedValue === "fixed" ? "block" : "none";
     responsiveDropdown.style.display = selectedValue === "responsive" ? "block" : "none";
-    getresizedImage();
+    getResizedImage();
 }
 
 fixed.addEventListener("change", () => onChangeFixedResponsive("fixed"));
@@ -91,20 +92,20 @@ dropdowns.forEach((dropdown) => {
 
 document.getElementById('cropAspectRatios').onclick = (event) => {
     document.getElementById('cropDropDownValue').innerText = cropAspectRatio = event.target.innerText;
-    getresizedImage();
+    getResizedImage();
 }
 document.getElementById('fixedOptions').onclick = (event) => {
     fixedValue = event.target.id;
     document.getElementById('fixedValue').innerText = event.target.innerText;
-    getresizedImage();
+    getResizedImage();
 }
 document.getElementById('responsiveOptions').onclick = (event) => {
     responsiveValue = event.target.id;
     document.getElementById('responsiveValue').innerText = event.target.innerText;
-    getresizedImage();
+    getResizedImage();
 }
 
-function getresizedImage () {
+function getResizedImage () {
     let widgetImageExpression = '';
     const size = fixed.checked ? fixedValue : responsiveValue;
     const widgetImageClass = size.includes('_') && !fixed.checked ? size : '';
@@ -114,13 +115,13 @@ function getresizedImage () {
             size: size,
             aspect: "1:1",
         });
-         widgetImageExpression = '${buildfire.imageLib.resizeImage(\'' + imageUrl + '\', { size: \'' + size + '\', aspect: \'1:1\' })}';
+         widgetImageExpression = '${buildfire.imageLib.resizeImage(\'' + escapedImageUrl + '\', { size: \'' + size + '\', aspect: \'1:1\' })}';
     } else {
         resizedImage = window.parent.buildfire.imageLib.cropImage(imageUrl, {
             size: size,
             aspect: cropAspectRatio,
         });
-        widgetImageExpression = '${buildfire.imageLib.cropImage(\'' + imageUrl + '\', { size: \'' + size + '\', aspect: \'' + cropAspectRatio + '\'' + '})}';
+        widgetImageExpression = '${buildfire.imageLib.cropImage(\'' + escapedImageUrl + '\', { size: \'' + size + '\', aspect: \'' + cropAspectRatio + '\'' + '})}';
     }
     let img = `<img width="${
         fixed.checked ? fixedOptions[fixedValue] : ""
@@ -129,7 +130,7 @@ function getresizedImage () {
     document.getElementById('imageDiv').innerHTML= img;
 }
 
-getresizedImage();
+getResizedImage();
 
 
 window.addEventListener('message', function (event) {
@@ -153,9 +154,9 @@ window.addEventListener('message', function (event) {
     }
     const imageSize = fixed.checked ? fixedValue : responsiveValue;
     if (resize.checked) {
-        imageData.widgetImageExpression = '${buildfire.imageLib.resizeImage(\'' + imageUrl + '\', { size: \'' + imageSize + '\', aspect: \'1:1\' })}';
+        imageData.widgetImageExpression = '${buildfire.imageLib.resizeImage(\'' + escapedImageUrl + '\', { size: \'' + imageSize + '\', aspect: \'1:1\' })}';
     } else {
-        imageData.widgetImageExpression = '${buildfire.imageLib.cropImage(\'' + imageUrl + '\', { size: \'' + imageSize + '\', aspect: \'' + cropAspectRatio + '\'' +  '})}';
+        imageData.widgetImageExpression = '${buildfire.imageLib.cropImage(\'' + escapedImageUrl + '\', { size: \'' + imageSize + '\', aspect: \'' + cropAspectRatio + '\'' +  '})}';
     }
     imageData.widgetImageClass = imageSize.includes('_') && !fixed.checked ? imageSize : '';
     if (event.data.message === 'getImage') {

@@ -97,6 +97,7 @@
 
 .listView-items>.listView-item>.listView-item-info>.listView-item-description {
     color: var(--bf-theme-body-text);
+    white-space: pre-wrap;
 }
 
 .listView-items>.listView-item>.listView-item-info>.listView-item-description>a {
