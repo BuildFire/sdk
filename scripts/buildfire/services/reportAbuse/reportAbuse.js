@@ -424,7 +424,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 	 * @param {obj} data
 	 */
 	buildfire.services.reportAbuse.onReportAdded = function (data) {
-		const p = new Packet(null, 'triggerReportAbuseOnReportAdded', data);
+		const p = new Packet(null, 'reportAbuse.triggerOnReportAdded', data);
 		buildfire._sendPacket(p);
 	};
 
