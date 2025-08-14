@@ -218,7 +218,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 									abuse = new Abuse({ data: insertedData });
 									ReportsAbuse.add(abuse)
 										.then((data) => {
-											buildfire.services.reportAbuse.onReportAdded();
+											_onReportAdded();
 											return callback(null, data);
 										})
 										.catch(callback);
@@ -423,7 +423,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 	 * listing to new report added.
 	 * @param {obj} data
 	 */
-	buildfire.services.reportAbuse.onReportAdded = function (data) {
+	const _onReportAdded = function (data) {
 		const p = new Packet(null, 'reportAbuse.triggerOnReportAdded', data);
 		buildfire._sendPacket(p);
 	};
