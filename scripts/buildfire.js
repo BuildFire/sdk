@@ -4978,7 +4978,7 @@ var buildfire = {
 						}
 						let extended_valid_elements = '';
 						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute)
-						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
+						const supportedElement = ['a','article','aside','audio','video','button','code','details','div','textarea','fieldset','form',
 							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr','iframe'];
 						supportedElement.forEach((element, index) => {
 							extended_valid_elements += `${element}[*]`;
