@@ -667,15 +667,34 @@ var buildfire = {
 			buildfire._sendPacket(p,callback);
 		}
 		, openWindow: function (url, target, callback) {
+			// If url is an object, delegate to _openWindowWithOptions
+			if (typeof url === 'object' && url !== null) {
+				// url (first parameter) is options and target (second parameter) is the callback
+				buildfire.navigation._openWindowWithOptions(url, target);
+				return;
+			}
 			if (!target) target = '_blank';
 			if (!callback) callback = function () {
 				console.info('openWindow:: completed');
 			};
 			var actionItem = {
-				url: url
-				, openIn: target
+				url: url,
+				openIn: target
 			};
 			var p = new Packet(null, 'actionItems.executeOpenWebLink', actionItem, callback);
+			buildfire._sendPacket(p, callback);
+		},
+		_openWindowWithOptions: function ({url, target, windowFeatures}, callback) {
+			if (!target) target = '_blank';
+			if (!callback) callback = function () {
+				console.info('openWindow:: completed');
+			};
+			let actionItem = {
+				url: url,
+				openIn: target,
+				windowFeatures: windowFeatures
+			};
+			var p = new Packet(null, 'actionItems.openWindowWithOptions', actionItem, callback);
 			buildfire._sendPacket(p, callback);
 		}
 		, _goBackOne: function () {
@@ -4959,7 +4978,7 @@ var buildfire = {
 						}
 						let extended_valid_elements = '';
 						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute)
-						const supportedElement = ['a','article','aside','audio','button','code','details','div','textarea','fieldset','form',
+						const supportedElement = ['a','article','aside','audio','video','button','code','details','div','textarea','fieldset','form',
 							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr','iframe'];
 						supportedElement.forEach((element, index) => {
 							extended_valid_elements += `${element}[*]`;
