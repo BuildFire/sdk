@@ -1,6 +1,6 @@
 .comments-header-container {
 	align-items: center;
-	color: #777;
+	color: var(--bf-theme-header-text);
 	display: flex;
 	font-family: "Roboto";
 	line-height: 20px;
@@ -8,7 +8,7 @@
 }
 
 .comments-header-hr {
-	border-bottom: 1px solid rgba(16, 16, 16, 0.1);
+	border-bottom: 1px solid var(--bf-theme-container-highlight, rgba(100, 100, 100, 0.8));
 	width: 100%;
 	position: relative;
 	bottom: -10px;
@@ -27,7 +27,8 @@
 
 .add-comment-section {
 	align-items: center;
-	background-color: #fff;
+	background-color: var(--bf-theme-background);
+	border-top: 1px solid var(--bf-theme-container-highlight, rgba(100, 100, 100, 0.8));
 	bottom: 0;
 	display: flex;
 	gap: 10px;
@@ -35,7 +36,7 @@
 	padding: 20px 25px;
 	position: fixed;
 	right: 0;
-	border-top: 1px solid rgba(16, 16, 16, 0.1);
+	z-index: 1;
 }
 
 .add-comment-section img {
@@ -47,26 +48,33 @@
 }
 
 .add-comment-section textarea {
-	background: rgba(16, 16, 16, 0.05);
-	border-radius: 2px;
-	border: none;
-	flex: 1;
-	font-family: "Roboto";
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 400;
-	height: 20px;
-	line-height: 20px;
-	max-height: 100px;
-	min-height: 20px;
-	outline: none;
-	padding: 10px 30px 10px 10px;
-	resize: none;
+    background: rgba(100, 100, 100, 0.1);
+    border-radius: 2px;
+    border: none;
+    color: var(--bf-theme-body-text) !important;
+    flex: 1;
+    font-family: "Roboto";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    height: 40px;
+    line-height: 20px;
+    max-height: 100px;
+    min-height: 40px;
+    outline: none;
+    padding: 10px 35px 10px 10px;
+    resize: none;
+    box-sizing: border-box;
+    overflow-y: hidden;
+}
+
+.add-comment-section textarea::placeholder {
+	color: var(--bf-theme-body-text);
 }
 
 .add-comment-section .add-comment {
-	bottom: 25px;
-	color: rgba(16, 16, 16, 0.5);
+	bottom: 27px;
+	color: var(--bf-theme-body-text);
 	cursor: pointer;
 	font-size: 22px;
 	position: absolute;
@@ -75,13 +83,12 @@
 
 #commentSafeArea {
 	margin-bottom: calc(
-		40px + 30px + 10px
-	); /* 40px calculated height of comment input, 30px padding of the comment section */
+		40px + 40px
+	); /* 40px calculated height of comment input, 40px padding of the comment section */
 	width: 100%;
 }
 
 .empty-state-container {
-	font-family: "Roboto"; /* TODO: ask about the font family **/
 	font-weight: 400;
 	justify-self: center;
 	line-height: 20px;
@@ -95,13 +102,13 @@
 }
 
 .empty-state-title {
-	color: #000;
+	color: var(--bf-theme-header-text);
 	font-size: 16px;
 	margin-bottom: 5px;
 }
 
 .empty-state-message {
-	color: #777;
+	color: var(--bf-theme-body-text);
 	font-size: 14px;
 }
 

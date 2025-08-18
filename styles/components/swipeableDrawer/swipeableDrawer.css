@@ -1,9 +1,10 @@
 .swipeable-drawer {
+    color: var(--bf-theme-body-text) !important;
     position: fixed;
     box-shadow: rgb(150 150 150 / 20%) 0px -0.25rem 0.125rem;
     width: 100%;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: var(--bf-theme-background, #ffffff) !important;
     transition: all 0.125s;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -12,6 +13,10 @@
     flex-direction: column;
     gap: 10px;
     left: 0;
+}
+
+.swipeable-drawer:hover {
+    color: var(--bf-theme-body-text) !important;
 }
 
 .swipeable-drawer-header {
