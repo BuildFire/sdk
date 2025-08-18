@@ -379,8 +379,8 @@ buildfire.components.comments = {
     },
 
     onClose() { },
-    onCommentAdded() { },
-    onCommentDeleted() { },
+    onAdd() { },
+    onDelete() { },
 
     _openCommentsDrawer(options = {}, callback) {
         if (!options.itemId) {
@@ -717,8 +717,8 @@ buildfire.components.comments = {
                         return;
                     }
                     this.listView.refresh();
-                    if (this.onCommentDeleted && typeof this.onCommentDeleted === 'function') {
-                        this.onCommentDeleted();
+                    if (this.onDelete && typeof this.onDelete === 'function') {
+                        this.onDelete();
                     }
                     if (typeof this.options.translations?.commentDeleted == 'undefined' || (this.options.translations.commentDeleted !== null && (typeof this.options.translations.commentDeleted === 'string' && this.options.translations?.commentDeleted.trim() !== ''))) {
                         buildfire.dialog.toast({
@@ -772,8 +772,8 @@ buildfire.components.comments = {
                         console.error('Error adding comment:', err);
                         return;
                     }
-                    if (this.onCommentAdded && typeof this.onCommentAdded === 'function') {
-                        this.onCommentAdded();
+                    if (this.onAdd && typeof this.onAdd === 'function') {
+                        this.onAdd();
                     }
                     if (typeof this.options.translations?.commentAdded == 'undefined' || (this.options.translations.commentAdded !== null && (typeof this.options.translations.commentAdded === 'string' && this.options.translations?.commentAdded.trim() !== ''))) {
                         buildfire.dialog.toast({
