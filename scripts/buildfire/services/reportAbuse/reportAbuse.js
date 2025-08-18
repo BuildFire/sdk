@@ -218,7 +218,7 @@ if (typeof buildfire.services.reportAbuse == 'undefined') buildfire.services.rep
 									abuse = new Abuse({ data: insertedData });
 									ReportsAbuse.add(abuse)
 										.then((data) => {
-											_onReportAdded();
+											_onReportAdded(data);
 											return callback(null, data);
 										})
 										.catch(callback);
