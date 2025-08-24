@@ -294,13 +294,13 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 
 	smartShowEmptyState(options = null) {
 		if (buildfire.getContext().showAiSuggestions) {
-			const emptyStateOptions = {
-				selector: 'body',
-				isOverlay: true,
-				showBanner: true,
-			};
+		const emptyStateOptions = {
+			selector: 'body',
+			isOverlay: true,
+			showBanner: true,
+		};
 
-			return this.showEmptyState(emptyStateOptions);
+		return this.showEmptyState(emptyStateOptions);
 		}
 	}
 
@@ -345,13 +345,14 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 	static _createAIAnimationElement() {
 		const animationElement =  document.createElement('div');
 		animationElement.classList.add('ai-progress');
-		animationElement.innerHTML = `<div class="ai-animation">
-						<div class="blob"></div>
-						<div class="blob1"></div>
-						<div class="blob2"></div>
-						<div class="blob3">
-						</div>
-					</div>`;
+		animationElement.innerHTML = `<div id="loader">
+      <div class="ai-animation">
+				<div class="square sq1"></div>
+				<div class="square sq2"></div>
+				<div class="square sq3"></div>
+			</div>
+			<p class="ai-text">Generating content...</p>
+</div>`;
 		return animationElement;
 	}
 
