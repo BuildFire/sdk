@@ -345,14 +345,15 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 	static _createAIAnimationElement() {
 		const animationElement =  document.createElement('div');
 		animationElement.classList.add('ai-progress');
-		animationElement.innerHTML = `<div id="loader">
-      <div class="ai-animation">
-				<div class="square sq1"></div>
-				<div class="square sq2"></div>
-				<div class="square sq3"></div>
-			</div>
-			<p class="ai-text">Generating content...</p>
-</div>`;
+		animationElement.innerHTML =
+			`<div id="cp-container-loader">
+      	<div class="ai-animation">
+					<div class="square sq1"></div>
+					<div class="square sq2"></div>
+					<div class="square sq3"></div>
+				</div>
+				<p class="ai-text">Generating content...</p>
+			</div>`;
 		return animationElement;
 	}
 

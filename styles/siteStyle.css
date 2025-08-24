@@ -2736,7 +2736,7 @@ html.translated-ltr body{
 }
 /* ai loading animation container ends */
 
-#loader {
+#cp-container-loader {
 	z-index: 99;
 	display: flex;
 	width: 100%;
@@ -2749,20 +2749,20 @@ html.translated-ltr body{
 	justify-content: center;
 }
 
-.ai-animation {
+#cp-container-loader .ai-animation {
 	position: relative;
 	width: 75px;
 	height: 75px;
 }
-#loader .ai-text {
+#cp-container-loader .ai-text {
 	padding-top: 16px;
 	font-size: 15px;
 	color: #101010B2;
 	opacity: 0;
-	animation: fadeIn 0.5s forwards;
+	animation: aiTextFadeIn 0.5s forwards;
 	animation-delay: 1s;
 }
-@keyframes fadeIn {
+@keyframes aiTextFadeIn {
 	to {
 		opacity: 0.7;
 	}
