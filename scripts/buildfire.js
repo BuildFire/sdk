@@ -4563,7 +4563,6 @@ var buildfire = {
 				return cleansedContext;
 			},
 			_dynamicEngineQueue: [],
-			_htmlContainers: {},
 			_getDynamicEngine(callback) {
 				if (this._dynamicEngineQueue.length > 0) {
 					this._dynamicEngineQueue.push(callback);
@@ -4619,42 +4618,32 @@ var buildfire = {
 					e.remove();
 				}
 				let id = e.getAttribute('data-id');
-				let expressionHtmlContainers = buildfire.dynamic.expressions._htmlContainers;
-				expressionHtmlContainers[id] = expressionHtmlContainers[id] || [];
-				expressionHtmlContainers[id].push(container);
 
 				const content = container.innerHTML.replace(/bf-wysiwyg-hide-app/g, '');
 
 				this.evaluate({id: id, expression: content}, (err, res) => {
-
-					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null );
-					if (!container) {
-						expressionHtmlContainers[id] = []; // reset to cleanup in case of DOM elements being removed and added again
+					if (err) {
+						if (buildfire.getContext().liveMode) throw err;
+						container.classList.add('bf-expression-error');
+						container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
 					} else {
-						expressionHtmlContainers[id] = [container]; // reset to cleanup in case of DOM elements being removed and added again
-						if (err) {
-							if (buildfire.getContext().liveMode) throw err;
-							container.classList.add('bf-expression-error');
-							container.innerHTML = `<span style="color: #E36049">Error:</span><br><br>${err.message}`;
-						} else {
-							let tempElement = document.createElement('div');
-							tempElement.innerHTML = res.evaluatedExpression;
-							const elements = tempElement.querySelectorAll('*');
-							elements.forEach(element => {
-								Array.from(element.attributes).forEach(({name}) => {
-									if (name.startsWith('expr-') || name.startsWith('data-expr-')){
-										const cleanedName = name.replace('data-', '');
-										const attributeName = cleanedName.slice(5);
-										if (element.getAttribute(name) && !element.getAttribute(name).includes('undefined')) {
-											element.setAttribute(attributeName, element.getAttribute(name));
-											element.removeAttribute(name);
-										}
+						let tempElement = document.createElement('div');
+						tempElement.innerHTML = res.evaluatedExpression;
+						const elements = tempElement.querySelectorAll('*');
+						elements.forEach(element => {
+							Array.from(element.attributes).forEach(({name}) => {
+								if (name.startsWith('expr-') || name.startsWith('data-expr-')){
+									const cleanedName = name.replace('data-', '');
+									const attributeName = cleanedName.slice(5);
+									if (element.getAttribute(name) && !element.getAttribute(name).includes('undefined')) {
+										element.setAttribute(attributeName, element.getAttribute(name));
+										element.removeAttribute(name);
 									}
-								});
+								}
 							});
-							container.innerHTML = tempElement.innerHTML;
-							container.classList.remove('bf-expression-error');
-						}
+						});
+						container.innerHTML = tempElement.innerHTML;
+						container.classList.remove('bf-expression-error');
 					}
 				});
 			},
