@@ -4627,7 +4627,7 @@ var buildfire = {
 
 				this.evaluate({id: id, expression: content}, (err, res) => {
 
-					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null );
+					let container = expressionHtmlContainers[id].find((item) => item.parentElement !== null && item.isConnected);
 					if (!container) {
 						expressionHtmlContainers[id] = []; // reset to cleanup in case of DOM elements being removed and added again
 					} else {
