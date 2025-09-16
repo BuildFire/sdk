@@ -392,7 +392,7 @@ var buildfire = {
 		//init logger
 		buildfire.logger.init();
 
-		// signal plugin loading
+		// signal plugin loading, critical for detecting buildfire.js/buildfire.min.js loading
 		var p = new Packet(null, 'diagnostics.signal', { pluginLoadingAt: new Date() });
 		buildfire._sendPacket(p);
 	}
