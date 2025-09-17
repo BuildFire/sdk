@@ -325,25 +325,9 @@ var buildfire = {
 			buildfire.getContext((err, context) => {
 				if (err) return console.error(err);
 				if (context && context.liveMode === 0) {
-					buildfire.messaging.sendMessageToControl({ action: 'getAutoReload' });
 					buildfire.messaging.onReceivedMessage = function(message) {
-						if (message && message.action === 'reload') {
+						if (message && message.action === 'reloadUserCodePlugin') {
 							window.location.reload(true);
-						}
-						// Toggle auto reload listeners based on message value
-						if (message && message.action === 'autoReloadChanged') {
-							let autoReloadEnabled = !!message.value;
-							if (!autoReloadEnabled) {
-								buildfire.eventManager.clear('datastoreOnRefresh');
-								buildfire.eventManager.clear('datastoreOnUpdate');
-							} else {
-								buildfire.datastore.onRefresh(() => {
-									window.location.reload(true);
-								});
-								buildfire.datastore.onUpdate(function () {
-									window.location.reload(true);
-								});
-							}
 						}
 					};
 					window.onerror = function(message, source, lineno, colno, error) {
