@@ -1613,6 +1613,7 @@ html[buildfire] body.no-scroll .scrollable{
 	opacity: 0.4;
 }
 #pluginNav {
+	display: block;
 	user-select: none !important;
 }
 
@@ -5161,4 +5162,16 @@ button.list-group-item {
 	position: relative;
 	text-shadow: 0 1px 2px #777777;
 	top: 0;
+}
+
+body:not(.splash) #splashScreenPreview {
+	position: absolute;
+	z-index: 999999999999;
+	height: 100vh;
+	width: 100vw;
+	background-color: #fff;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center;
+	background-size: cover;
 }

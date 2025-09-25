@@ -1,0 +1,128 @@
+.comments-header-container {
+	align-items: center;
+	color: var(--bf-theme-header-text);
+	display: flex;
+	font-family: "Roboto";
+	line-height: 20px;
+	padding: 5px 24px;
+}
+
+.comments-header-hr {
+	border-bottom: 1px solid var(--bf-theme-container-highlight, rgba(100, 100, 100, 0.8));
+	width: 100%;
+	position: relative;
+	bottom: -10px;
+}
+
+.comments-header {
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.comments-count {
+	font-size: 14px;
+	font-weight: 400;
+	margin-left: 10px;
+}
+
+.add-comment-section {
+	align-items: center;
+	background-color: var(--bf-theme-background);
+	border-top: 1px solid var(--bf-theme-container-highlight, rgba(100, 100, 100, 0.8));
+	bottom: 0;
+	display: flex;
+	gap: 10px;
+	left: 0;
+	padding: 20px 25px;
+	position: fixed;
+	right: 0;
+	z-index: 1;
+}
+
+.add-comment-section img {
+	align-self: flex-start;
+	border-radius: 50%;
+	height: 27px;
+	margin-top: 5px;
+	width: 27px;
+}
+
+.add-comment-section textarea {
+    background: rgba(100, 100, 100, 0.1);
+    border-radius: 2px;
+    border: none;
+    color: var(--bf-theme-body-text) !important;
+    flex: 1;
+    font-family: "Roboto";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    height: 40px;
+    line-height: 20px;
+    max-height: 100px;
+    min-height: 40px;
+    outline: none;
+    padding: 10px 35px 10px 10px;
+    resize: none;
+    box-sizing: border-box;
+    overflow-y: hidden;
+}
+
+.add-comment-section textarea::placeholder {
+	color: var(--bf-theme-body-text);
+}
+
+.add-comment-section .add-comment {
+	bottom: 27px;
+	color: var(--bf-theme-body-text);
+	cursor: pointer;
+	font-size: 22px;
+	position: absolute;
+	right: 35px;
+}
+
+#commentSafeArea {
+	margin-bottom: calc(
+		40px + 40px
+	); /* 40px calculated height of comment input, 40px padding of the comment section */
+	width: 100%;
+}
+
+.empty-state-container {
+	font-weight: 400;
+	justify-self: center;
+	line-height: 20px;
+	margin-top: 40px;
+	max-width: 90%;
+}
+
+.empty-state-title,
+.empty-state-message {
+	text-align: center;
+}
+
+.empty-state-title {
+	color: var(--bf-theme-header-text);
+	font-size: 16px;
+	margin-bottom: 5px;
+}
+
+.empty-state-message {
+	color: var(--bf-theme-body-text);
+	font-size: 14px;
+}
+
+.d-none {
+	display: none !important;
+}
+
+.d-block {
+	display: block !important;
+}
+
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
+}
