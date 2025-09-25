@@ -321,6 +321,24 @@ var buildfire = {
 				});
 		}
 
+		if (window.parsedQuerystring.isUserCodePlugin === 'true') {
+			buildfire.getContext((err, context) => {
+				if (err) return console.error(err);
+				if (context && context.liveMode === 0) {
+					buildfire.messaging.onReceivedMessage = function(message) {
+						if (message && message.action === 'reloadUserCodePlugin') {
+							window.location.reload(true);
+						}
+					};
+					window.onerror = function(message, source, lineno, colno, error) {
+						buildfire.dialog.toast({
+							message: `${error && error.message ? error.message : message} \n line ${lineno}, col: ${colno}`
+						});
+					};
+				}
+			});
+		}
+
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
 			buildfire.getContext((err, context) => {
 				if (err) return console.error(err);
@@ -1042,8 +1060,8 @@ var buildfire = {
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 
-				if (!disableFontIcons &&
-					((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
+				if (!disableFontIcons && (window.parsedQuerystring.isUserCodePlugin !== 'true')
+					&& ((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
 					|| window.location.pathname.indexOf('/control/'))) {
 					// if appTheme.css is loaded, common css will be referenced already
 					attachFontIcons(theme);
