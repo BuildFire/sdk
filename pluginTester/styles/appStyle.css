@@ -2,6 +2,9 @@
 	--bf-full-app-height: 100vh;
 	--bf-safe-area-inset-top: env(safe-area-inset-top);
 	--bf-safe-area-inset-bottom: env(safe-area-inset-bottom);
+	--bf-full-app-height: 100vh;
+	--bf-safe-area-inset-top: env(safe-area-inset-top);
+	--bf-safe-area-inset-bottom: env(safe-area-inset-bottom);
 }
 [ios="true"][view="browser"][is-pwa-or-html5-ios="true"] {
 	--bf-full-app-height: 100%;
@@ -1230,18 +1233,12 @@ html[view="app"][android="true"] .powered-by {
 [ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer{
 	min-height:10% !important;
 }
-[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu,
-[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
-[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iapMessage,
-[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
-[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
-[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
-	padding-bottom: 10vh !important;
-}
-
-[android="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
-[android="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
-[android="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
+[view="browser"][is-pwa-ios="true"] .has-footer-menu,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu,
+[view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iapMessage,
+[view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
 	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 7vh) !important;
 }
 
@@ -1251,7 +1248,7 @@ html[view="app"][android="true"] .powered-by {
 [ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
 [view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
 [view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
-	padding-bottom: 17vh !important;
+		padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 14vh) !important;
 }
 [ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
 [ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
@@ -1949,6 +1946,35 @@ textarea.md-input{
 }
 
 /* Search Page */
+
+#appSearchDialog {
+	height: var(--bf-full-app-height, 100vh);
+	background-color: #fff;
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	transform: translateX(100%);
+	-webkit-transform: translateX(100%);
+	transition-duration: 300ms;
+	-webkit-transition-duration: 300ms;
+	-webkit-transition: all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+    z-index: 1;
+}
+html[type="app"][ios="true"][browser="Safari"][view="browser"] #appSearchDialog{
+  height: 100%;
+}
+
+#appSearchDialog.active {
+	transform: translateX(0%);
+	-webkit-transform: translateX(0%);
+	transition-duration: 300ms;
+	-webkit-transition-duration: 300ms;
+	-webkit-transition: all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
 .app-search-plugin {
 	height: 100%;
 	display: flex;
@@ -2840,6 +2866,7 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] body:not(.full) #appBody,
 	[type="app"] body:not(.full) #notesDialog .notes-wrapper,
+	[type="app"] body:not(.full) #appSearchDialog,
 	[type="app"] body:not(.full) #inputDialog,
 	[type="app"] body:not(.full) #gifDialog{
 		padding-left: 280px;
@@ -2847,6 +2874,21 @@ html:not([type="app"]) .snackbar-hero{
 		max-width: calc(280px + 900px) !important;
 		width: calc(280px + 900px) !important;
 	}
+
+    [type="app"] body:not(.full) #appSearchDialog {
+        z-index: 99999999;
+        background: transparent !important;
+        pointer-events: none;
+    }
+
+    [type="app"] body:not(.full) #appSearchDialog #pluginNav {
+        pointer-events: all;
+    }
+
+	[type="app"] body:not(.full) #appSearchDialog .holder {
+        max-width: 900px !important;
+        pointer-events: all;
+    }
 
 	[type="app"] .menu-disabled #appBody,
 	[type="app"] .menu-disabled #notesDialog .notes-wrapper,
@@ -4610,12 +4652,14 @@ html .profile-overlay .profile-content{
 	}
 
 	/* #appBody.blur-animation, */
+    #appSearchDialog.blur-animation,
 	body.blur-animation.has-menu #appBody,
 	body.blur-animation.has-menu #login,
 	body.blur-animation.has-menu #navbarContainer{
 		animation: plugin-blur-animation .4s ease-in-out forwards;
 	}
 	/* #appBody.blur-animation.closing, */
+    #appSearchDialog.blur-animation-closing,
 	body.blur-animation.closing #appBody {
 		animation: plugin-blur-animation-close .4s ease-in-out forwards;
 	}

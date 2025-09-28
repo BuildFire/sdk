@@ -54,7 +54,7 @@
 
 html[view='app'][storyboard-launch-images='true'] #gifDialog .gifapi-nav,
 html[view='app'][storyboard-launch-images='true'] #inputDialog .inputapi-nav {
-	padding-top: calc(var(--bf-safe-area-inset-top)) !important;
+	padding-top: var(--bf-safe-area-inset-top) !important;
 }
 
 #gifDialog .gifapi-nav {
