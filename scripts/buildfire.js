@@ -5613,7 +5613,10 @@ buildfire.getContext(function (err, context) {
 				document.getElementsByTagName('html')[0].removeAttribute('navbar-visible');
 				document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', (context.cssVariables?.safeAreaInsetBottom || '0px'));
 			}
-		}
+		} else {
+            document.getElementsByTagName('html')[0].removeAttribute('navbar-visible');
+            document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', (context.cssVariables?.safeAreaInsetBottom || '0px'));
+        }
 		if (context.titlebarVisible) {
 			document.getElementsByTagName('html')[0].setAttribute('titlebar-visible', 'true');
 			document.documentElement.style.setProperty('--bf-safe-area-inset-top', '0px');

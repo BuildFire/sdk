@@ -159,7 +159,7 @@ textarea{
 section.showNav.hideBack #btnBack{
 	display:none;
 }
-section.showNav #plugin, #plugin.access-code-visible{
+section.showNav #plugin {
 	z-index:9999999999;
 }
 /* To prevent launcher navbar from overlapping plugin navbar */
@@ -3214,7 +3214,7 @@ html:not([type="app"]) .snackbar-hero{
 		z-index: 99999999;
 		display: none;
 	}
-	[type="app"] #pluginContainer #plugin.access-code-visible{
+	[type="app"] #accessCode {
 		z-index: 9999999999;
 		position: fixed;
 		top: 0;
@@ -3383,7 +3383,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 	width: 100vw;
 	position: absolute;
 	overflow: hidden;
-	z-index: 9999;
+	z-index: 999999999;
 	background-color: #fff;
 }
 html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
