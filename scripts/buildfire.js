@@ -756,6 +756,14 @@ var buildfire = {
 			var p = new Packet(null, 'navigation.navigateToTab', options);
 			buildfire._sendPacket(p, callback);
 		}
+        , setNewHome: function(options, callback) {
+			var p = new Packet(null, 'navigation.setNewHome', options);
+			buildfire._sendPacket(p, callback);
+        }
+        , resetHome: function(options, callback) {
+			var p = new Packet(null, 'navigation.resetHome', options);
+			buildfire._sendPacket(p, callback);
+        }
 	},
 	//buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
 	// else it returns "controlIFrame"
