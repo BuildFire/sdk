@@ -156,7 +156,7 @@ textarea{
 section.showNav.hideBack #btnBack{
 	display:none;
 }
-section.showNav #plugin, #plugin.access-code-visible{
+section.showNav #plugin {
 	z-index:9999999999;
 }
 /* To prevent launcher navbar from overlapping plugin navbar */
@@ -1192,7 +1192,8 @@ screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-dev
 }
 @media only
 screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
+screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 420px) and (min-device-height: 912px) and (max-device-height: 912px) and (-webkit-device-pixel-ratio: 3) {
 	:root {
 		--extra-padding: 15px;
 	}
@@ -1205,7 +1206,8 @@ screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-dev
 screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
 screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
+screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3),
+screen and (min-device-width: 420px) and (min-device-height: 912px) and (max-device-height: 912px) and (-webkit-device-pixel-ratio: 3) {
 
 	/* iOS Transparent Nav */
 	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
@@ -2016,6 +2018,35 @@ textarea.md-input{
 }
 
 /* Search Page */
+
+#appSearchDialog {
+	height: var(--bf-full-app-height, 100vh);
+	background-color: #fff;
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	transform: translateX(100%);
+	-webkit-transform: translateX(100%);
+	transition-duration: 300ms;
+	-webkit-transition-duration: 300ms;
+	-webkit-transition: all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+    z-index: 1;
+}
+html[type="app"][ios="true"][browser="Safari"][view="browser"] #appSearchDialog{
+  height: 100%;
+}
+
+#appSearchDialog.active {
+	transform: translateX(0%);
+	-webkit-transform: translateX(0%);
+	transition-duration: 300ms;
+	-webkit-transition-duration: 300ms;
+	-webkit-transition: all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition:         all 300ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
 .app-search-plugin {
 	height: 100%;
 	display: flex;
@@ -2907,6 +2938,7 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] body:not(.full) #appBody,
 	[type="app"] body:not(.full) #notesDialog .notes-wrapper,
+	[type="app"] body:not(.full) #appSearchDialog,
 	[type="app"] body:not(.full) #inputDialog,
 	[type="app"] body:not(.full) #gifDialog{
 		padding-left: 280px;
@@ -2914,6 +2946,21 @@ html:not([type="app"]) .snackbar-hero{
 		max-width: calc(280px + 900px) !important;
 		width: calc(280px + 900px) !important;
 	}
+
+    [type="app"] body:not(.full) #appSearchDialog {
+        z-index: 99999999;
+        background: transparent !important;
+        pointer-events: none;
+    }
+
+    [type="app"] body:not(.full) #appSearchDialog #pluginNav {
+        pointer-events: all;
+    }
+
+	[type="app"] body:not(.full) #appSearchDialog .holder {
+        max-width: 900px !important;
+        pointer-events: all;
+    }
 
 	[type="app"] .menu-disabled #appBody,
 	[type="app"] .menu-disabled #notesDialog .notes-wrapper,
@@ -3239,7 +3286,7 @@ html:not([type="app"]) .snackbar-hero{
 		z-index: 99999999;
 		display: none;
 	}
-	[type="app"] #pluginContainer #plugin.access-code-visible{
+	[type="app"] #accessCode {
 		z-index: 9999999999;
 		position: fixed;
 		top: 0;
@@ -3408,7 +3455,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 	width: 100vw;
 	position: absolute;
 	overflow: hidden;
-	z-index: 9999;
+	z-index: 999999999;
 	background-color: #fff;
 }
 html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
@@ -4672,12 +4719,14 @@ html[ios="true"] .profile-overlay .profile-content{
 	}
 
 	/* #appBody.blur-animation, */
+    #appSearchDialog.blur-animation,
 	body.blur-animation.has-menu #appBody,
 	body.blur-animation.has-menu #login,
 	body.blur-animation.has-menu #navbarContainer{
 		animation: plugin-blur-animation .4s ease-in-out forwards;
 	}
 	/* #appBody.blur-animation.closing, */
+    #appSearchDialog.blur-animation-closing,
 	body.blur-animation.closing #appBody {
 		animation: plugin-blur-animation-close .4s ease-in-out forwards;
 	}
