@@ -170,6 +170,25 @@ class CommentsSummaries {
             }
         });
     }
+
+    _deleteSummary(options, callback) {
+        this._getSummary(options, (err, result) => {
+            if (err) return callback(err);
+            if (!result || !result.data) {
+                return callback('Summary not found', null);
+            } else {
+                buildfire.publicData.delete(
+                    result.id,
+                    CommentsSummaries.TAG,
+                    (err, result) => {
+                        if (err) return callback(err);
+                        callback(null);
+                    }
+                );
+            }
+        });
+    }
+
 }
 
 class CommentsSummary {
@@ -270,23 +289,8 @@ buildfire.components.comments = {
             return callback('Invalid item ID');
         }
 
-        let filter = {
-            '_buildfire.index.string1': options.itemId
-        };
-        if (options.filter && options.filter.commentIds && Array.isArray(options.filter.commentIds)) {
-            filter = {
-                "$json.commentId": { $in: options.filter.commentIds },
-                ...filter,
-            }
-        }
-        buildfire.publicData.search(
-            {
-                filter: filter,
-                sort: { '_buildfire.index.date1': -1 },
-                skip: options.skip || 0,
-                limit: options.limit || 50
-            },
-            this.TAG,
+        this._getComments(
+            options,
             (err, result) => {
                 if (err) return callback(err);
                 const comments = result || [];
@@ -328,6 +332,46 @@ buildfire.components.comments = {
                 Promise.all(userDataPromises).then(() => callback(null, comments)).catch(err => callback(err));
             }
         );
+    },
+
+    _getComments(options, callback) {
+        let filter = {
+            '_buildfire.index.string1': options.itemId
+        };
+        if (options.filter && options.filter.commentIds && Array.isArray(options.filter.commentIds)) {
+            filter = {
+                "$json.commentId": { $in: options.filter.commentIds },
+                ...filter,
+            }
+        }
+        buildfire.publicData.search(
+            {
+                filter: filter,
+                sort: { '_buildfire.index.date1': -1 },
+                skip: options.skip || 0,
+                limit: options.limit || 50
+            },
+            this.TAG,
+            callback
+        );
+    },
+
+    _getAllComments(options, callback) {
+        const limit = 40;
+        let allComments = [];
+        const fetchComments = (pageIndex) => {
+            this._getComments({ ...options, limit: limit, skip: pageIndex * limit }, (err, comments) => {
+                if (err) return callback(err);
+                if (comments && comments.length > 0) {
+                    allComments = allComments.concat(comments);
+                    pageIndex += 1;
+                    fetchComments(pageIndex);
+                } else {
+                    callback(null, allComments);
+                }
+            });
+        };
+        fetchComments(0);
     },
 
     /**
@@ -375,6 +419,41 @@ buildfire.components.comments = {
             callback && callback(null);
         } else {
             callback && callback('Drawer is not opened');
+        }
+    },
+
+    deleteSummary(options, callback) {
+        if (!options || !options.itemId) {
+            return callback('Invalid options, Missing itemId!');
+        }
+        if (options.clear) {
+            this._getAllComments({ itemId: options.itemId }, (err, comments) => {
+                if (err) return callback(err);
+                if (comments && comments.length > 0) {
+                    // If there are comments, we need to delete them first
+                    const commentIds = comments.map(comment => comment.id);
+                    buildfire.publicData.bulkDelete(
+                        commentIds,
+                        this.TAG,
+                        (err, result) => {
+                            if (err) return callback(err);
+                            this.commentsSummaries._deleteSummary(options, callback);
+                        }
+                    );
+                } else {
+                    this.commentsSummaries._deleteSummary(options, callback);
+                }
+            });
+        } else {
+            this._getComments({ itemId: options.itemId }, (err, comments) => {
+                if (err) return callback(err);
+
+                if (comments && comments.length > 0) {
+                    return callback('Cannot delete summary, there are existing comments for this item.');
+                } else {
+                    this.commentsSummaries._deleteSummary(options, callback);
+                }
+            });
         }
     },
 
