@@ -120,7 +120,7 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		iframeControl.style.height = height + 'px';
 	};
 
-	postMaster.widgetPluginAPI.appearance.navbar.isVisible = function(){
+	postMaster.widgetPluginAPI.appearance.navbar.isEnabled = function(){
 		return false;
 	};
 

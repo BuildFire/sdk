@@ -774,6 +774,14 @@ var buildfire = {
 			var p = new Packet(null, 'navigation.navigateToTab', options);
 			buildfire._sendPacket(p, callback);
 		}
+        , setNewHome: function(options, callback) {
+			var p = new Packet(null, 'navigation.setNewHome', options);
+			buildfire._sendPacket(p, callback);
+        }
+        , resetHome: function(options, callback) {
+			var p = new Packet(null, 'navigation.resetHome', options);
+			buildfire._sendPacket(p, callback);
+        }
 	},
 	//buildfire.getFrameType API returns string "launcherPluginv" if it is Home plugin
 	// else it returns "controlIFrame"
@@ -955,7 +963,7 @@ var buildfire = {
 			html.setAttribute('fullVersion', fullVersion);
 
 			var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-			if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i) || (userAgent.match(/Macintosh/i) && navigator.maxTouchPoints > 1)) {
+			if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i) || userAgent.match(/iPod/i) || userAgent.match(/Android/i) ||  (userAgent.match(/Macintosh/i) && navigator.maxTouchPoints > 1)) {
 				var p = new Packet(null, 'appearance.getFooterMenu');
 				buildfire._sendPacket(p, function (err, footerMenu) {
 					if (err) {
@@ -1331,10 +1339,21 @@ var buildfire = {
 			show: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.show');
 				buildfire._sendPacket(p, callback);
+				buildfire._context.titleBarVisible = true;
+				document.documentElement.style.setProperty('--bf-safe-area-inset-top', '0px');
+				document.getElementsByTagName('html')[0].setAttribute('titlebar-visible', 'true');
 			},
 			hide: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.hide');
 				buildfire._sendPacket(p, callback);
+				buildfire._context.titleBarVisible = false;
+				document.getElementsByTagName('html')[0].removeAttribute('titlebar-visible');
+				buildfire.getContext((err, context) => {
+					if (err) console.error(err);
+					if (context) {
+						document.documentElement.style.setProperty('--bf-safe-area-inset-top', ( context.cssVariables?.safeAreaInsetTop || '0px'));
+					}
+				});
 			},
 			isVisible: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.isVisible');
@@ -1348,10 +1367,28 @@ var buildfire = {
 			show: function(options, callback) {
 				var p = new Packet(null, 'appearance.navbar.show');
 				buildfire._sendPacket(p, callback);
+				buildfire.getContext((err, context) => {
+					if (err) console.error(err);
+					if (context) {
+						if (context.navbarEnabled) {
+							buildfire._context.navbarVisible = true;
+							document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', '0px');
+							document.getElementsByTagName('html')[0].setAttribute('navbar-visible', 'true');
+						}
+					}
+				});
 			},
 			hide: function(options, callback) {
 				var p = new Packet(null, 'appearance.navbar.hide');
 				buildfire._sendPacket(p, callback);
+				document.getElementsByTagName('html')[0].removeAttribute('navbar-visible');
+				buildfire._context.navbarVisible = false;
+				buildfire.getContext((err, context) => {
+					if (err) console.error(err);
+					if (context) {
+						document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', ( context.cssVariables?.safeAreaInsetBottom || '0px'));
+					}
+				});
 			}
 		}, sideMenu: {
 			show: function(options, callback) {
@@ -5594,8 +5631,25 @@ buildfire.getContext(function (err, context) {
 	if (err) {
 		console.error(err);
 	} else {
-		document.documentElement.style.setProperty('--bf-safe-area-inset-top', context.cssVariables?.safeAreaInsetTop || '0px');
-		document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', context.cssVariables?.safeAreaInsetBottom || '0px');
+		if (context.navbarEnabled) {
+			if (context.navbarVisible) {
+				document.getElementsByTagName('html')[0].setAttribute('navbar-visible', 'true');
+				document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', '0px');
+			} else {
+				document.getElementsByTagName('html')[0].removeAttribute('navbar-visible');
+				document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', (context.cssVariables?.safeAreaInsetBottom || '0px'));
+			}
+		} else {
+            document.getElementsByTagName('html')[0].removeAttribute('navbar-visible');
+            document.documentElement.style.setProperty('--bf-safe-area-inset-bottom', (context.cssVariables?.safeAreaInsetBottom || '0px'));
+        }
+		if (context.titlebarVisible) {
+			document.getElementsByTagName('html')[0].setAttribute('titlebar-visible', 'true');
+			document.documentElement.style.setProperty('--bf-safe-area-inset-top', '0px');
+		} else {
+			document.getElementsByTagName('html')[0].removeAttribute('titlebar-visible');
+			document.documentElement.style.setProperty('--bf-safe-area-inset-top', (context.cssVariables?.safeAreaInsetTop || '0px'));
+		}
 	}
 });
 

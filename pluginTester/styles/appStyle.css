@@ -2,6 +2,9 @@
 	--bf-full-app-height: 100vh;
 	--bf-safe-area-inset-top: env(safe-area-inset-top);
 	--bf-safe-area-inset-bottom: env(safe-area-inset-bottom);
+	--bf-full-app-height: 100vh;
+	--bf-safe-area-inset-top: env(safe-area-inset-top);
+	--bf-safe-area-inset-bottom: env(safe-area-inset-bottom);
 }
 [ios="true"][view="browser"][is-pwa-or-html5-ios="true"] {
 	--bf-full-app-height: 100%;
@@ -156,7 +159,7 @@ textarea{
 section.showNav.hideBack #btnBack{
 	display:none;
 }
-section.showNav #plugin, #plugin.access-code-visible{
+section.showNav #plugin {
 	z-index:9999999999;
 }
 /* To prevent launcher navbar from overlapping plugin navbar */
@@ -1136,219 +1139,146 @@ iframe.pluginFrame,
 iframe#frmExternalRegistrationForm {
 	padding-top: 50px;
 }
-/* iOS Transparent Nav */
-html[ios="true"][view="app"] iframe#launcherPlugin.showNav,
-html[ios="true"][view="app"] iframe.pluginFrame,
-html[ios="true"][view="app"] .app-settings-plugin,
-html[ios="true"][view="app"] .notification-plugin,
-html[ios="true"][view="app"] .app-search-plugin,
-html[ios="true"][view="app"] .bookmarks-container,
-html[ios="true"][view="app"] .page-container,
-html[ios="true"][view="app"] .push-notifications,
-html[ios="true"][view="app"] .isNavbarVisible .iap-subscriptions,
-html[ios="true"][view="app"] .isNavbarVisible .iapMessage,
-html[ios="true"][view="app"] #frmExternalRegistrationForm {
-	padding-top: 64px !important;
+
+/* Transparent Nav */
+html[view="app"][storyboard-launch-images="true"] #pluginNav{
+	padding-top:calc(2px + var(--bf-safe-area-inset-top)) !important;
+	height: calc(40px + var(--bf-safe-area-inset-top)) !important;
 }
-html[ios="true"][view="app"] #pluginNav{
-	padding-top:27px !important;
-	height:64px !important;
+html[view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav,
+html[view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
+[view="app"][storyboard-launch-images="true"] .app-settings-plugin,
+[view="app"][storyboard-launch-images="true"] .notification-plugin,
+[view="app"][storyboard-launch-images="true"] .app-search-plugin,
+[view="app"][storyboard-launch-images="true"] .bookmarks-container,
+[view="app"][storyboard-launch-images="true"] .notes-container,
+[view="app"][storyboard-launch-images="true"] .push-notifications,
+[view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
+[view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
+	padding-top: calc(40px + var(--bf-safe-area-inset-top)) !important;
 }
-html[ios="true"][view="app"] #pluginNav a.back-btn-icon{
-	top:32px !important;
-	padding-bottom:13px !important;
-}
-html[ios="true"][view="app"] #pluginNav a.menu-btn-icon{
-	top:27px !important;
-}
-html[ios="true"][view="app"] #pluginNav h4,
-html[ios="true"][view="app"] #pluginNav h5{
-	padding-bottom:8px !important;
-}
-html[ios="true"][view="app"] .menu-location{
-	top:23px !important;
-}
-html[ios="true"][view="app"] iframe.pluginFrame.noTitleBar {
+html[view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
 	padding-top:0px !important;
 }
-html[ios="true"][view="app"] .login-holder .cancel-link,
-html[ios="true"][view="app"] .login-holder .sso-back.input {
-	top:27px !important;
-}
-html[ios="true"][view="app"] nav.menu .menu-close-container{
-	padding-top: 30px!important;
-}
 
-:root {
-	--extra-padding: 0px;
+/* Menu and Back */
+html[view="app"][storyboard-launch-images="true"] .menu-location{
+	top: calc(var(--bf-safe-area-inset-top) - 1px) !important;
 }
-
-@media only
-screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 393px) and (min-device-height: 852px) and (max-device-height: 852px) and (-webkit-device-pixel-ratio: 3) {
-	:root {
-		--extra-padding: 11px;
-	}
+html[view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon,
+html[view="app"][storyboard-launch-images="true"] #launcherIap .iap-subscriptions {
+	top: calc(var(--bf-safe-area-inset-top) - 11px) !important;
 }
-@media only
-screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
-	:root {
-		--extra-padding: 15px;
-	}
+html[view="app"][storyboard-launch-images="true"] .search-container{
+	/* margin: 30px 16px 8px 16px !important; */
+	position: relative;
 }
 
-/* iPhone X, Xr, Xs and Xs Max*/
-@media only
-screen and (min-device-width: 375px) and (max-device-height: 896px) and (min-device-height: 812px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 896px) and (-webkit-device-pixel-ratio: 2),
-screen and (min-device-width: 428px) and (min-device-height: 926px) and (max-device-height: 926px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 440px) and (min-device-height: 956px) and (max-device-height: 956px) and (-webkit-device-pixel-ratio: 3),
-screen and (min-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px) and (-webkit-device-pixel-ratio: 3) {
-
-	/* iOS Transparent Nav */
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav{
-		padding-top:calc(50px + var(--extra-padding)) !important;
-		height: calc(88px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .app-settings-plugin,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .notification-plugin,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .app-search-plugin,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .bookmarks-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .notes-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .push-notifications,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
-	[ios="true"][view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
-		padding-top: calc(88px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
-		padding-top:0px !important;
-	}
-
-	/* Menu and Back */
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .menu-location{
-		top: calc(47px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.menu-btn-icon,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #launcherIap .iap-subscriptions {
-		top: calc(37px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .search-container{
-		/* margin: 30px 16px 8px 16px !important; */
-		position: relative;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-close-container{
-		padding-top: var(--bf-safe-area-inset-top) !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container{
-		padding-top: 100px !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container.no-search{
-		padding-top: var(--bf-safe-area-inset-top) !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
-		top:calc(54px + var(--extra-padding)) !important;
-		padding-bottom:23px !important;
-	}
-
-	[ios="true"][view="app"][storyboard-launch-images="true"] .pushSubscriptions-holder{
-		height: 100% !important;
-	}
-	[ios=true][view=app][storyboard-launch-images=true] .notification-plugin{
-		padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 30px);
-	}
-
-	[ios=true][view=app][storyboard-launch-images=true] #plugin.has-footer-menu .notification-plugin{
-		padding-bottom: 0px !important;
-	}
-
-	[ios="true"][view="app"][storyboard-launch-images="true"] .notification-item p:first-child{
-		padding-top: 10px !important;
-	}
-
-
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h4,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h5{
-		padding-bottom:18px !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
-	html[ios="true"][view="app"] .login-holder .sso-back.input {
-		top: calc(50px + var(--extra-padding)) !important;
-	}
-	html[ios="true"][view="app"][storyboard-launch-images="true"] nav.menu {
-		padding-top: calc(15px + var(--extra-padding)) !important;
-	}
-
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .notificationHolder{
-		padding-top: 20px!important ;
-	}
-
-
-
-	/* html[ios="true"][view="app"][storyboard-launch-images="true"] iframe#launcherPlugin{
-		padding-top: 25px; this is causing launcher plugin with BG images to appear they are cut from the top
-	} */
-
-	[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer{
-		min-height:10% !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iapMessage,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
-		padding-bottom: 10vh !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.navbar-with-addon,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.navbar-with-addon,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage,
-	[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
-	[ios="true"][view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
-		padding-bottom: 17vh !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.menu-body-container,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.search-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"].keyboard-visible  .has-footer-menu,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.menu-body-container,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu.search-container{
-		padding-bottom: 0 !important;
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .snackbar-hero.has-footer-menu,
-	[ios="true"][view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
-		padding-bottom: 0px !important;
-	}
-	[ios="true"][view="app"][storyboard-launch-images="true"] #footerMenuParent.has-footer-menu-border-right .action-group {
-		border-bottom: 	1px solid rgba(193, 193, 193, .47)
-	}
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe#launcherPlugin,
-	[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe.pluginFrame,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
-	html[ios="true"][view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
-		padding-bottom: 0px;
-	}
-
+html[view="app"][storyboard-launch-images="true"] nav.menu .menu-close-container{
+	padding-top: var(--bf-safe-area-inset-top) !important;
 }
 
-[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer,
-[ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
-	padding-bottom: var(--bf-safe-area-inset-bottom) !important; /* iOS 11.2 */
+html[view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container{
+	padding-top: calc(var(--bf-safe-area-inset-top) + 52px) !important;
 }
-[ios="true"][view="browser"][is-pwa-ios="true"] #navbarContainer {
+
+html[view="app"][storyboard-launch-images="true"] nav.menu .menu-body-container.no-search{
+	padding-top: var(--bf-safe-area-inset-top) !important;
+}
+
+html[view="app"][storyboard-launch-images="true"] #pluginNav a.back-btn-icon {
+	top:calc(6px + var(--bf-safe-area-inset-top)) !important;
+	padding-bottom:23px !important;
+}
+
+[view="app"][storyboard-launch-images="true"] .pushSubscriptions-holder{
+	height: 100% !important;
+}
+[view=app][storyboard-launch-images=true] .notification-plugin{
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 30px);
+}
+
+[view=app][storyboard-launch-images=true] #plugin.has-footer-menu .notification-plugin{
+	padding-bottom: 0px !important;
+}
+
+[view="app"][storyboard-launch-images="true"] .notification-item p:first-child{
+	padding-top: 10px !important;
+}
+
+
+
+html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h4,
+html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h5{
+	padding-bottom:18px !important;
+}
+
+html[view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
+html[view="app"] .login-holder .sso-back.input {
+	top: calc(5px + var(--bf-safe-area-inset-top)) !important;
+}
+html[view="app"][storyboard-launch-images="true"] nav.menu {
+	padding-top: calc(var(--bf-safe-area-inset-top)) !important;
+}
+
+html[ios="true"][view="app"][storyboard-launch-images="true"] .notificationHolder{
+	padding-top: 20px!important ;
+}
+
+html[view="app"][android="true"] .powered-by {
+	margin-bottom : calc(20px + var(--bf-safe-area-inset-bottom)) !important;
+}
+
+[ios="true"][view="app"][storyboard-launch-images="true"] #navbarContainer{
+	min-height:10% !important;
+}
+[view="browser"][is-pwa-ios="true"] .has-footer-menu,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu,
+[view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iapMessage,
+[view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu #pluginIap .iapMessage {
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 7vh) !important;
+}
+
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.navbar-with-addon,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu.navbar-with-addon,
+[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage,
+[ios="true"][view="browser"][is-pwa-ios="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iap-subscriptions,
+[view="app"][storyboard-launch-images="true"] #plugin.has-footer-menu.navbar-with-addon #pluginIap .iapMessage {
+		padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 14vh) !important;
+}
+[ios="true"][view="browser"][is-pwa-ios="true"].keyboard-visible  .has-footer-menu,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.notes-wrapper,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.menu-body-container,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu.search-container,
+[view="app"][storyboard-launch-images="true"].keyboard-visible  .has-footer-menu,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu.notes-wrapper,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu.menu-body-container,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu.search-container{
+	padding-bottom: 0 !important;
+}
+[ios="true"][view="browser"][is-pwa-ios="true"] .snackbar-hero.has-footer-menu,
+[view="app"][storyboard-launch-images="true"] .snackbar-hero.has-footer-menu {
+	padding-bottom: 0px !important;
+}
+[view="app"][storyboard-launch-images="true"] #footerMenuParent.has-footer-menu-border-right .action-group {
+	border-bottom: 	1px solid rgba(193, 193, 193, .47)
+}
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe#launcherPlugin,
+[ios="true"][view="browser"][is-pwa-ios="true"] .has-footer-menu iframe.pluginFrame,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu iframe#launcherPlugin,
+[view="app"][storyboard-launch-images="true"] .has-footer-menu iframe.pluginFrame {
+	padding-bottom: 0px;
+}
+
+[view="app"][storyboard-launch-images="true"] #navbarContainer,
+[view="browser"][is-pwa-ios="true"] #navbarContainer {
+	padding-bottom: var(--bf-safe-area-inset-bottom) !important;
+}
+[view="browser"][is-pwa-ios="true"] #navbarContainer {
 	min-height: 10vh !important;
 }
 
@@ -1868,7 +1798,7 @@ textarea.md-input{
 /* Bookmarks */
 .bookmarks-container {
 	padding-bottom: 80px;
-	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 80px); /* iOS 11.2 */
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 80px);
 }
 .bookmark-item-link {
 	padding: 0 0 0 16px;
@@ -1938,7 +1868,7 @@ textarea.md-input{
 /* Notes */
 .page-container{
 	padding-bottom: 120px;
-	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 120px); /* iOS 11.2 */
+	padding-bottom: calc(var(--bf-safe-area-inset-bottom) + 120px);
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -3188,7 +3118,7 @@ html:not([type="app"]) .snackbar-hero{
 	}
 	[type="app"] .menu-body-container .menu-scroll{
 		overflow-y: auto;
-    height: 100%;
+	height: 100%;
 		pointer-events: auto;
 		padding-top: 16px;
 	}
@@ -3284,7 +3214,7 @@ html:not([type="app"]) .snackbar-hero{
 		z-index: 99999999;
 		display: none;
 	}
-	[type="app"] #pluginContainer #plugin.access-code-visible{
+	[type="app"] #accessCode {
 		z-index: 9999999999;
 		position: fixed;
 		top: 0;
@@ -3453,7 +3383,7 @@ html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding .fram
 	width: 100vw;
 	position: absolute;
 	overflow: hidden;
-	z-index: 9999;
+	z-index: 999999999;
 	background-color: #fff;
 }
 html[type="app"][ios="true"][browser="Safari"][view="browser"] .onboarding{
@@ -3812,6 +3742,11 @@ input[type="checkbox"].ios8-switch:checked + label:before {
   max-height: calc(90vh - 4em - var(--bf-safe-area-inset-top));
   animation: drawer-slide-up .3s ease-in-out forwards;
 }
+
+html[android="true"][type="app"] .bottom-drawer {
+	padding-bottom: var(--bf-safe-area-inset-bottom);
+}
+
 html:not([type="app"]) .bottom-drawer{
 	position: absolute;
 	max-height: calc(80% - 4em - var(--bf-safe-area-inset-top));
@@ -4282,7 +4217,7 @@ html[view="app"] .profile-overlay {
 	overflow-y: auto;
 	word-break: break-word;
 }
-html[ios="true"] .profile-overlay .profile-content{
+html .profile-overlay .profile-content{
 	padding-bottom: calc(32px + var(--bf-safe-area-inset-bottom)) !important;
 }
 .profile-overlay .profile-content.editing-profile{

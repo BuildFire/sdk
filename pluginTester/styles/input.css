@@ -52,9 +52,9 @@
 	background-color: #09a3ee;
 }
 
-html[ios='true'][view='app'][storyboard-launch-images='true'] #gifDialog .gifapi-nav,
-html[ios='true'][view='app'][storyboard-launch-images='true'] #inputDialog .inputapi-nav {
-	padding-top: calc(var(--bf-safe-area-inset-top)) !important;
+html[view='app'][storyboard-launch-images='true'] #gifDialog .gifapi-nav,
+html[view='app'][storyboard-launch-images='true'] #inputDialog .inputapi-nav {
+	padding-top: var(--bf-safe-area-inset-top) !important;
 }
 
 #gifDialog .gifapi-nav {

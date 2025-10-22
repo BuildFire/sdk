@@ -102,7 +102,7 @@
 
 .login-holder .login-section {
   margin-top: 50px;
-  margin-top: calc(var(--bf-safe-area-inset-top) + 50px); /* iOS 11.2 */
+  margin-top: calc(var(--bf-safe-area-inset-top) + 50px);
   height: calc(100% - var(--bf-safe-area-inset-top) - 50px);
   /* overflow-y: auto; */
 }
