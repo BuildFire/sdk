@@ -5,7 +5,6 @@ if (typeof (buildfire.services.keyStore) === 'undefined') buildfire.services.key
 
 buildfire.services.keyStore = {
   
-  
   /**
    * /**
    *  * @param {Object} options Configuration options for the key pair setup.
@@ -13,6 +12,11 @@ buildfire.services.keyStore = {
    *  * @param {Function} Callback to handle the response.
    *  */
   get: function (options, callback) {
+    if (!callback || typeof(callback) !== 'function') {
+      callback({'code': 'error', 'message': 'callback is required'}, null);
+      return;
+    }
+    
     if (!options) {
       callback({'code': 'error', 'message': 'Options is required'}, null);
       return;
@@ -33,6 +37,11 @@ buildfire.services.keyStore = {
    *  * @param {Function} Callback to handle the response.
    *  */
   initiateSetup: function (options, callback) {
+    if (!callback || typeof(callback) !== 'function') {
+      callback({'code': 'error', 'message': 'callback is required'}, null);
+      return;
+    }
+    
     if (!options) {
       callback({'code': 'error', 'message': 'Options is required'}, null);
       return;
@@ -54,6 +63,11 @@ buildfire.services.keyStore = {
    *  * @param {Function} Callback to handle the response.
    *  */
   initiateRecovery: function (options, callback) {
+    if (!callback || typeof(callback) !== 'function') {
+      callback({'code': 'error', 'message': 'callback is required'}, null);
+      return;
+    }
+    
     if (!options) {
       callback({'code': 'error', 'message': 'Options is required'}, null);
       return;
@@ -75,6 +89,11 @@ buildfire.services.keyStore = {
    *  * @param {Function} Callback to handle the response.
    *  */
   initiatePinChange: function (options, callback) {
+    if (!callback || typeof(callback) !== 'function') {
+      callback({'code': 'error', 'message': 'callback is required'}, null);
+      return;
+    }
+    
     if (!options) {
       callback({'code': 'error', 'message': 'Options is required'}, null);
       return;
