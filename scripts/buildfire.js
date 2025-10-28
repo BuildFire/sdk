@@ -1068,8 +1068,7 @@ var buildfire = {
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 
-				if (!disableFontIcons && (window.parsedQuerystring.isUserCodePlugin !== 'true')
-					&& ((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
+				if (!disableFontIcons && ((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
 					|| window.location.pathname.indexOf('/control/'))) {
 					// if appTheme.css is loaded, common css will be referenced already
 					attachFontIcons(theme);
@@ -1261,8 +1260,8 @@ var buildfire = {
 			const cssUrl = `${appHost}/api/app/styles/appTheme.css?appId=${appId}&liveMode=${liveMode}&v=${buildfire.appearance.CSSBusterCounter}&isWeb=true`;
 			this._attachAppCSSFiles(cssUrl, 'appThemeCSS');
 		}
-		, attachLocalAppThemeCSSFiles: function (appId) {
-			const cssUrl = `../../../../app/scripts/offline/appTheme${appId}.css`;
+		, attachLocalAppThemeCSSFiles: function (appId, liveMode) { // pass liveMode for developer plugin redirection API
+			const cssUrl = `../../../../app/scripts/offline/appTheme${appId}.css?liveMode=${liveMode}`;
 			this._attachAppCSSFiles(cssUrl, 'appThemeCSS');
 		}
 		, attachCustomAppCSSUrl: function (appId, liveMode, appHost) {
@@ -5706,7 +5705,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 					if(buildfire.isWeb() || !context.liveMode)
 						buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
 					else
-						buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId);
+						buildfire.appearance.attachLocalAppThemeCSSFiles(context.appId, context.liveMode);
 				}
 
 				// Custom App CSS
