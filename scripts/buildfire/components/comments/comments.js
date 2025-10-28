@@ -426,7 +426,7 @@ buildfire.components.comments = {
         if (!options || !options.itemId) {
             return callback('Invalid options, Missing itemId!');
         }
-        if (options.clear) {
+        if (options.deleteComments) {
             this._getAllComments({ itemId: options.itemId }, (err, comments) => {
                 if (err) return callback(err);
                 if (comments && comments.length > 0) {
