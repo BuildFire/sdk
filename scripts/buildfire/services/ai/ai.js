@@ -30,21 +30,69 @@ buildfire.ai.conversation = class Conversation {
         const options = {
             messages: this.messages,
             jsonTemplate: params.jsonTemplate,
-            hideAiAnimation: params.hideAiAnimation
+            hideAiAnimation: true
         }
         const p = new Packet(null, 'ai.chat', options);
-        buildfire._sendPacket(p, callback);
+        if (!params.hideAiAnimation) {
+            this.startAIAnimation();
+        }
+        buildfire._sendPacket(p, (error, result) => {
+            if (!params.hideAiAnimation) {
+                this.stopAIAnimation();
+            }
+            if (callback) callback(error, result);
+        });
     }
 
     fetchTextResponse (params, callback) {
+        if (!params) {
+            params = {};
+        }
+
         const options = {
             messages: this.messages,
+            hideAiAnimation: true
         }
         const p = new Packet(null, 'ai.chat', options);
-        buildfire._sendPacket(p, callback);
+        if (!params.hideAiAnimation) {
+            this.startAIAnimation();
+        }
+        buildfire._sendPacket(p, (error, result) => {
+            if (!params.hideAiAnimation) {
+                this.stopAIAnimation();
+            }
+            if (callback) callback(error, result);
+        });
     }
 
     clear () {
         this.messages = [];
     }
+
+    startAIAnimation() {
+		const emptyStateElement = document.body;
+		const animationElement = this._createAIAnimationElement();
+		animationElement.classList.add('ai-progress-overlay');
+		emptyStateElement.prepend(animationElement);
+	}
+
+	_createAIAnimationElement() {
+		const animationElement = document.createElement('div');
+		animationElement.classList.add('ai-progress');
+		animationElement.innerHTML =
+			`<div id="cp-container-loader">
+				<div class="ai-animation">
+					<div class="square sq1"></div>
+					<div class="square sq2"></div>
+					<div class="square sq3"></div>
+				</div>
+				<p class="ai-text">Generating content...</p>
+			</div>`;
+		return animationElement;
+	}
+
+	 stopAIAnimation() {
+		const progressElement = document.querySelector('.ai-progress-overlay');
+		progressElement.parentElement.removeChild(progressElement);
+	}
 };

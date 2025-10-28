@@ -166,18 +166,18 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
 
 
-					AiStateSeeder._startAIAnimation();
+                    conversation.startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate, hideAiAnimation: true }, (err, response) => {
 						if (err) {
 							buildfire.dialog.toast({
 								type: 'danger',
 								message: err.message,
 							});
-							AiStateSeeder._stopAIAnimation();
+							conversation.stopAIAnimation();
 							return callback(err);
 						}
 
-						status.complete = AiStateSeeder._stopAIAnimation;
+                        status.complete = conversation.stopAIAnimation;
 						callback(err, response);
 					});
 				});
@@ -333,32 +333,5 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 		}
 
 		return banner;
-	}
-
-	static _startAIAnimation() {
-		const emptyStateElement = document.body;
-		const animationElement = AiStateSeeder._createAIAnimationElement();
-		animationElement.classList.add('ai-progress-overlay');
-		emptyStateElement.prepend(animationElement);
-	}
-
-	static _createAIAnimationElement() {
-		const animationElement =  document.createElement('div');
-		animationElement.classList.add('ai-progress');
-		animationElement.innerHTML =
-			`<div id="cp-container-loader">
-				<div class="ai-animation">
-					<div class="square sq1"></div>
-					<div class="square sq2"></div>
-					<div class="square sq3"></div>
-				</div>
-				<p class="ai-text">Generating content...</p>
-			</div>`;
-		return animationElement;
-	}
-
-	static _stopAIAnimation() {
-		const progressElement = document.querySelector('.ai-progress-overlay');
-		progressElement.parentElement.removeChild(progressElement);
 	}
 };
