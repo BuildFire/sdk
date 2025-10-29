@@ -16,7 +16,7 @@ window.siteConfig = {
 		cloudImageHost: 'https://alnnibitpo.cloudimg.io/v7',
 		crmHost: 'https://crm.buildfire.com',
 		gatewayHost : 'https://public.buildfire.com/1.0',
-		cmsHtmlHost : 'https://bfd2et6269.execute-api.us-east-1.amazonaws.com/production',
+		cmsHost : 'https://bfd2et6269.execute-api.us-east-1.amazonaws.com/production',
 	}
 	, keys: {
 		datastoreKey: '123-ASD-TEST'
