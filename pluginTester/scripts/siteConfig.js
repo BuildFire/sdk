@@ -5,8 +5,8 @@ window.siteConfig = {
 		appHost: 'https://app.buildfire.com',
 		auth: 'auth.buildfire.com',
 		authHost: 'https://auth.buildfire.com',
-		pluginHost : 'http://s3-us-west-2.amazonaws.com/pluginserver.prod/plugins',
-		pluginRootHost : 'http://s3-us-west-2.amazonaws.com/pluginserver.prod',
+		pluginHost : 'http://s3.us-west-2.amazonaws.com/pluginserver.prod/plugins',
+		pluginRootHost : 'http://s3.us-west-2.amazonaws.com/pluginserver.prod',
 		socialHost : 'https://social.buildfire.com',
 		pushV2: 'https://push2.buildfire.com',
 		publicFilesHost : 'https://publicfiles.appdocumentation.com',
@@ -16,6 +16,7 @@ window.siteConfig = {
 		cloudImageHost: 'https://alnnibitpo.cloudimg.io/v7',
 		crmHost: 'https://crm.buildfire.com',
 		gatewayHost : 'https://public.buildfire.com/1.0',
+		cmsHost : 'https://bfd2et6269.execute-api.us-east-1.amazonaws.com/production',
 	}
 	, keys: {
 		datastoreKey: '123-ASD-TEST'
