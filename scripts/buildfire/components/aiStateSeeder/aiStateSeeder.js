@@ -166,18 +166,18 @@ buildfire.components.aiStateSeeder = class AiStateSeeder {
 					if (options.systemMessage) conversation.systemSays(options.systemMessage);
 
 
-                    conversation.startAIAnimation();
+                    buildfire.ai.startAIAnimation();
 					conversation.fetchJsonResponse({ jsonTemplate: options.jsonTemplate, hideAiAnimation: true }, (err, response) => {
 						if (err) {
 							buildfire.dialog.toast({
 								type: 'danger',
 								message: err.message,
 							});
-							conversation.stopAIAnimation();
+							buildfire.ai.stopAIAnimation();
 							return callback(err);
 						}
 
-                        status.complete = conversation.stopAIAnimation;
+                        status.complete = buildfire.ai.stopAIAnimation;
 						callback(err, response);
 					});
 				});

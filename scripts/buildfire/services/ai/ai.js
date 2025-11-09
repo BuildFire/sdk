@@ -34,11 +34,11 @@ buildfire.ai.conversation = class Conversation {
         }
         const p = new Packet(null, 'ai.chat', options);
         if (!params.hideAiAnimation) {
-            this.startAIAnimation();
+            buildfire.ai.startAIAnimation();
         }
         buildfire._sendPacket(p, (error, result) => {
             if (!params.hideAiAnimation) {
-                this.stopAIAnimation();
+                buildfire.ai.stopAIAnimation();
             }
             if (callback) callback(error, result);
         });
@@ -55,11 +55,11 @@ buildfire.ai.conversation = class Conversation {
         }
         const p = new Packet(null, 'ai.chat', options);
         if (!params.hideAiAnimation) {
-            this.startAIAnimation();
+            buildfire.ai.startAIAnimation();
         }
         buildfire._sendPacket(p, (error, result) => {
             if (!params.hideAiAnimation) {
-                this.stopAIAnimation();
+                buildfire.ai.stopAIAnimation();
             }
             if (callback) callback(error, result);
         });
@@ -69,30 +69,71 @@ buildfire.ai.conversation = class Conversation {
         this.messages = [];
     }
 
-    startAIAnimation() {
-		const emptyStateElement = document.body;
-		const animationElement = this._createAIAnimationElement();
-		animationElement.classList.add('ai-progress-overlay');
-		emptyStateElement.prepend(animationElement);
-	}
-
-	_createAIAnimationElement() {
-		const animationElement = document.createElement('div');
-		animationElement.classList.add('ai-progress');
-		animationElement.innerHTML =
-			`<div id="cp-container-loader">
-				<div class="ai-animation">
-					<div class="square sq1"></div>
-					<div class="square sq2"></div>
-					<div class="square sq3"></div>
-				</div>
-				<p class="ai-text">Generating content...</p>
-			</div>`;
-		return animationElement;
-	}
-
-	 stopAIAnimation() {
-		const progressElement = document.querySelector('.ai-progress-overlay');
-		progressElement.parentElement.removeChild(progressElement);
-	}
 };
+
+buildfire.ai.persistentConversation = class PersistentConversation {
+    constructor (conversationId) {
+        this.conversationId = conversationId;
+    }
+    
+    fetchResponse(params, callback) {
+        if (!params || !params.message) {
+            callback('invalid parameters');
+            return;
+        }
+        const options = {
+            hideAiAnimation: true,
+            ...params
+        }
+
+        const p = new Packet(null, 'ai.persistentConversation', options);
+        if (!params.hideAiAnimation) {
+            buildfire.ai.startAIAnimation();
+        }
+        buildfire._sendPacket(p, (error, result) => {
+            if (!params.hideAiAnimation) {
+                buildfire.ai.stopAIAnimation();
+            }
+            if (callback) callback(error, result);
+        });
+    }
+
+    deleteConversation(params, callback) {
+        if ((!params || !params.conversationId) && !this.conversationId) {
+            callback('invalid parameters');
+            return;
+        }
+
+        const p = new Packet(null, 'ai.deleteConversation', params);
+        buildfire._sendPacket(p, (error, result) => {
+            if (callback) callback(error, result);
+        });
+    }
+}
+
+buildfire.ai.startAIAnimation = function() {
+    const emptyStateElement = document.body;
+    const animationElement = buildfire.ai._createAIAnimationElement();
+    animationElement.classList.add('ai-progress-overlay');
+    emptyStateElement.prepend(animationElement);
+}
+
+buildfire.ai._createAIAnimationElement = function() {
+    const animationElement = document.createElement('div');
+    animationElement.classList.add('ai-progress');
+    animationElement.innerHTML =
+        `<div id="cp-container-loader">
+            <div class="ai-animation">
+                <div class="square sq1"></div>
+                <div class="square sq2"></div>
+                <div class="square sq3"></div>
+            </div>
+            <p class="ai-text">Generating content...</p>
+        </div>`;
+    return animationElement;
+}
+
+buildfire.ai.stopAIAnimation = function() {
+    const progressElement = document.querySelector('.ai-progress-overlay');
+    progressElement.parentElement.removeChild(progressElement);
+}
