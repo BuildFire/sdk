@@ -76,19 +76,19 @@ buildfire.ai.persistentConversation = class PersistentConversation {
         this.conversationId = conversationId;
     }
     
-    fetchResponse(params, callback) {
-        if (!params || !params.message) {
+    fetchTextResponse(params, callback) {
+        if (!params || !params.message || typeof params != 'object') {
             callback('invalid parameters');
             return;
         }
         const options = {
+            ...params,
             hideAiAnimation: true,
-            ...params
         }
 
         const p = new Packet(null, 'ai.persistentConversation', options);
         if (!params.hideAiAnimation) {
-            buildfire.ai.startAIAnimation();
+            buildfire.ai.startAIAnimation(params);
         }
         buildfire._sendPacket(p, (error, result) => {
             if (!params.hideAiAnimation) {
@@ -111,14 +111,18 @@ buildfire.ai.persistentConversation = class PersistentConversation {
     }
 }
 
-buildfire.ai.startAIAnimation = function() {
+buildfire.ai.startAIAnimation = function(options) {
     const emptyStateElement = document.body;
-    const animationElement = buildfire.ai._createAIAnimationElement();
+    const animationElement = buildfire.ai._createAIAnimationElement(options);
     animationElement.classList.add('ai-progress-overlay');
     emptyStateElement.prepend(animationElement);
 }
 
-buildfire.ai._createAIAnimationElement = function() {
+buildfire.ai._createAIAnimationElement = function(options) {
+    let loadingMessage = 'Generating content...';
+    if (options && options.loadingMessage && typeof options.loadingMessage === 'string') {
+        loadingMessage = options.loadingMessage;
+    }
     const animationElement = document.createElement('div');
     animationElement.classList.add('ai-progress');
     animationElement.innerHTML =
@@ -128,7 +132,7 @@ buildfire.ai._createAIAnimationElement = function() {
                 <div class="square sq2"></div>
                 <div class="square sq3"></div>
             </div>
-            <p class="ai-text">Generating content...</p>
+            <p class="ai-text">${loadingMessage}</p>
         </div>`;
     return animationElement;
 }
