@@ -267,7 +267,7 @@ html[ios="true"] #navbarContainer{
 }
 
 /* Menu Toggle */
-.menu-location span.icon, .menu-location span.title-bookmark-icon { 
+.menu-location span.icon, .menu-location span.title-bookmark-icon {
 	padding: 1em !important; /* increase clickable area */
 	margin: -1em !important;/* increase clickable area */
 	font-size:21px;
@@ -1215,7 +1215,9 @@ html[ios="true"][view="app"][storyboard-launch-images="true"] #pluginNav h5{
 }
 
 html[view="app"][storyboard-launch-images="true"] .login-holder .cancel-link,
-html[view="app"] .login-holder .sso-back.input {
+html[view="app"] .login-holder .sso-back.input,
+html[view="app"][storyboard-launch-images="true"] .pin-holder .cancel-link
+{
 	top: calc(5px + var(--bf-safe-area-inset-top)) !important;
 }
 html[view="app"][storyboard-launch-images="true"] nav.menu {
@@ -2703,8 +2705,8 @@ html:not([type="app"]) .snackbar-hero{
 	padding-bottom: 8px;
 }
 
-.snackbar:not(:has(.snackbar-action.hide)) { 
-	flex-wrap: wrap; 
+.snackbar:not(:has(.snackbar-action.hide)) {
+	flex-wrap: wrap;
 }
 
 .gdpr-notice{
@@ -2729,7 +2731,7 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .copy-holder.iap-safe-padding {
 		padding-left: 280px;
 	}
-	
+
 	[type="app"] .screen-overlay {
 		display: block;
     position: absolute;
@@ -3103,10 +3105,10 @@ html:not([type="app"]) .snackbar-hero{
 	[type="app"] .menu-body-container.no-search{
 		padding-top: 67px;
 	}
-	[type="app"] .login-holder{
+	[type="app"] .login-holder, [type="app"] .pin-holder {
 		z-index: 999999999;
 	}
-	[type="app"] .login-holder::after{
+	[type="app"] .login-holder::after ,[type="app"] .pin-holder::after{
 		content: '';
 		display: block;
 		height: 100%;
@@ -5118,7 +5120,7 @@ button.list-group-item {
 	color: #cccccc !important;
 }
 
-/* 
+/*
   ==============================
   New Feature: Playback Bar
   ==============================
@@ -5167,7 +5169,7 @@ button.list-group-item {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-} 
+}
 .playback-addon-icon {
 	height: 80px;
 	margin-left: 1rem;
