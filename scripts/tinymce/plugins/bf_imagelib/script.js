@@ -17,6 +17,7 @@ let responsive = document.getElementById("responsive");
 let crop = document.getElementById("crop");
 let cropAspectRatioButton = document.getElementById("cropAspectRatioButton");
 let imageDescriptionInput = document.getElementById("imageDescription");
+let enablePreviewCheckbox = document.getElementById("enablePreview");
 let dropdowns = document.querySelectorAll('.dropdown');
 
 const fixedOptions = {
@@ -41,6 +42,10 @@ resize.addEventListener("change", () => onChangeResizeCrop("resize"));
 crop.addEventListener("change", () => onChangeResizeCrop("crop"));
 if (imageDescriptionInput) {
     imageDescriptionInput.value = imageDescription || '';
+}
+
+if (imageProperties.enablePreview) {
+    enablePreviewCheckbox.checked = true;
 }
 
 if (imageProperties.crop) {
@@ -141,6 +146,7 @@ window.addEventListener('message', function (event) {
         fixed: fixed.checked ? fixedValue : '',
         responsive: !fixed.checked ? responsiveValue : '',
         originalSrc: imageUrl,
+        enablePreview: enablePreviewCheckbox.checked
     }
     let stringifiedImageAspects = escape(JSON.stringify(imageAspects));
     let imageWidth = fixed.checked ? fixedOptions[fixedValue] : '';
@@ -150,7 +156,8 @@ window.addEventListener('message', function (event) {
         width: imageWidth,
         src: resizedImage,
         alt: imageDescription,
-        imageAspects: stringifiedImageAspects
+        imageAspects: stringifiedImageAspects,
+        enablePreview: enablePreviewCheckbox.checked
     }
     const imageSize = fixed.checked ? fixedValue : responsiveValue;
     if (resize.checked) {
