@@ -155,6 +155,7 @@ window.addEventListener('message', function (event) {
     let imageData = {
         width: imageWidth,
         src: resizedImage,
+        originalSrc: imageUrl,
         alt: imageDescription,
         imageAspects: stringifiedImageAspects,
         enablePreview: enablePreviewCheckbox.checked
