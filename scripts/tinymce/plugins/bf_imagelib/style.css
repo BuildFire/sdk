@@ -7,6 +7,10 @@ body {
     padding: 16px 16px 0px 16px;
     font-weight: bold;
 }
+#container .checkbox label {
+    font-weight: bold;
+    font-size: 14px !important;
+}
 #imageDiv img {
     max-width: 100%;
     max-height: 100%;
@@ -28,6 +32,9 @@ body {
 #fixedOptions, #responsiveOptions {
     top: auto;
     bottom: 100%
+}
+.margin-zero {
+    margin: 0 !important;
 }
 .margin-10-bottom {
     margin-bottom: 10px;
