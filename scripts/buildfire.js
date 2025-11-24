@@ -560,15 +560,12 @@ var buildfire = {
 	}
 
 	, getContext: function (callback) {
-		
 		if (buildfire._context) {
-			buildfire._context.forceImgix = true;
 			if(callback)callback(null, buildfire._context);
 		}
 		else {
 			if(window.parsedQuerystring.appcontext) {
 				buildfire._context = JSON.parse(window.parsedQuerystring.appcontext);
-				buildfire._context.forceImgix = true;
 				if(callback)callback(null, buildfire._context);
 			} else {
 				if(!callback) throw 'Context not ready. Use callback parameter instead of direct return';
@@ -576,7 +573,6 @@ var buildfire = {
 				buildfire._sendPacket(p, function (err, data) {
 					if (data)
 						buildfire._context = data;
-					buildfire._context.forceImgix = true;
 					if(callback)callback(err, data);
 				});
 			}
@@ -3567,42 +3563,6 @@ var buildfire = {
 			},
 		},
 	}
-	, videoLib: {
-		toCdnUrl: function ({ videoUrl, quality }) {
-			if (!videoUrl) return videoUrl;
-			
-			const forceImgix = buildfire.getContext()?.forceImgix;
-			if (!forceImgix) {
-				return videoUrl;
-			}
-			
-			const imgixUrl = `https://buildfire-proxy.imgix.net/cdn/${encodeURIComponent(videoUrl)}`;
-			const urlObj = new URL(imgixUrl);
-			
-			if (quality) {
-				urlObj.searchParams.set('q', quality);
-			}
-			urlObj.searchParams.set('fm', 'mp4');
-						
-			return urlObj.toString()
-		},
-		toThumbnailCdnUrl: function ({ videoUrl, atSecond = 'auto' }) {
-			if (!videoUrl) return '';
-			
-			const forceImgix = buildfire.getContext()?.forceImgix;
-			if (!forceImgix) {
-				return '';
-			}
-			
-			const imgixUrl = `https://buildfire-proxy.imgix.net/cdn/${encodeURIComponent(videoUrl)}`;
-			const urlObj = new URL(imgixUrl);
-			
-			urlObj.searchParams.set('video-thumbnail', atSecond === 'auto' ? 'auto' : atSecond);
-			urlObj.searchParams.set('auto', 'compress,format');
-			
-			return urlObj.toString();
-		}
-	}
 	, colorLib: {
 		showDialog: function (data, options, onchange, callback) {
 			buildfire.eventManager.clear('colorLibOnChange');
@@ -5032,7 +4992,7 @@ var buildfire = {
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: `bf_insertActionItem bf_videolib bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
+							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
 							tools: {title: 'Tools', items: 'code bf_datasources'},
@@ -5043,7 +5003,7 @@ var buildfire = {
 								options.menu[item] = userMenu[item];
 							}
 						}
-						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_videolib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts', 'bf_ai'];
+						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts', 'bf_ai'];
 						if (options.plugins) {
 							if (options.plugins instanceof Array) {
 								options.plugins = defaultPlugins.concat(options.plugins);
@@ -5054,7 +5014,7 @@ var buildfire = {
 						} else {
 							options.plugins = defaultPlugins;
 						}
-						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib bf_videolib | code | fullscreen | bf_ai';
+						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen | bf_ai';
 						if (options.toolbar) {
 							if (options.toolbar instanceof Array) {
 								if (!(options.toolbar[0] instanceof Object)) {
@@ -5073,7 +5033,7 @@ var buildfire = {
 						let extended_valid_elements = '';
 						// These are the elements that we want to support all of their attributes in tinymce (custom attributes in addition to the non-custom attribute)
 						const supportedElement = ['a','article','aside','audio','video','button','code','details','div','textarea','fieldset','form',
-							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr','iframe','source'];
+							'h1','h2','h3','h4','h5','h6','input','img','li','ol','ul','option','p','section','select','span','table','tr','iframe'];
 						supportedElement.forEach((element, index) => {
 							extended_valid_elements += `${element}[*]`;
 							if (index != supportedElement.length - 1) extended_valid_elements += ',';
@@ -5085,7 +5045,7 @@ var buildfire = {
 						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
 						options.height = options.height || 500;
-						options.custom_elements = 'style,source';
+						options.custom_elements = 'style';
 						options.convert_urls = false;
 						options._bfInitialize = true;
 						return originalTinymceInit(options);
