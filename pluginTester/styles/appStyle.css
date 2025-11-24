@@ -226,6 +226,14 @@ html[ios="true"] #navbarContainer{
 	font-size: 3.5vh;
 }
 
+#footerMenuParent .action-group .action-item .action-item-icon,
+#footerMenuParent .action-group .action-item .action-item-img  {
+	position: relative;
+}
+#footerMenuParent .action-group .action-item .action-item-img {
+	display: flex;
+}
+
 .has-footer-menu,
 #plugin.has-footer-menu #pluginIap .iap-subscriptions,
 #plugin.has-footer-menu #pluginIap .iapMessage {
@@ -282,6 +290,22 @@ html[ios="true"] #navbarContainer{
 	height: 7px;
 	text-align: center;
 	border-radius: 100%;
+}
+#navbarContainer #footerMenuParent .icon-notifications-badge {
+	position: absolute;
+	top: -0.7em;
+	right: -0.7em;
+	font-size: 2vh;
+}
+#navbarContainer #footerMenuParent .img-notifications-badge {
+	position: absolute;
+	font-size: 2vh;
+	top: -0.5em;
+	right: 0;
+}
+#navbarContainer #footerMenuParent .text-notifications-badge {
+	height: 100%;
+	font-size: 2vh;
 }
 .menu-location.menu-left-align .notification-circle{
 	left:30px;
@@ -2590,7 +2614,7 @@ nav.menu .core-content a.without-text .active-indicator,
 	transform: translateX(-50%);
 }
 
-#footerMenuParent .action-item-img {
+#footerMenuParent .action-item-img img {
 	max-height: 100%;
 }
 
