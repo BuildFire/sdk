@@ -232,6 +232,7 @@ html[ios="true"] #navbarContainer{
 }
 #footerMenuParent .action-group .action-item .action-item-img {
 	display: flex;
+	max-height: 100%;
 }
 
 .has-footer-menu,

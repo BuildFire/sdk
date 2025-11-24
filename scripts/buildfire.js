@@ -4839,7 +4839,8 @@ var buildfire = {
 										'var buildfire = {'
 										+   'actionItems: { execute: function() { console.log("ignore actionItems in tinymce")}},'
 										+   'dynamic: { execute: function() { console.log("ignore handleScriptExecution in tinymce")}},'
-										+   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}}'
+										+   'ratingSystem: {inject: function() { console.log("ignore rating in tinymce")}},'
+										+   'mediaPreviewer: {show: function() { console.log("ignore mediaPreviewer show in tinymce")}}'
 										+'};'
 									);
 									editor.getDoc().getElementsByTagName('head')[0].appendChild(scriptElm);
