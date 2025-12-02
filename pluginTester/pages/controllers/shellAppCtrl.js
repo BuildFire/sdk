@@ -46,6 +46,7 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 				if(context && window.siteConfig){
 					context.scope = window.siteConfig.scope;
 				}
+				context.forceImgix = true;
 			var widgetFrame = document.querySelector('#widget');
             	context.initialWidth = widgetFrame.clientWidth;
             	context.initialHeight = widgetFrame.clientHeight;
@@ -76,6 +77,7 @@ $app.controller('shellAppCtrl', ['$rootScope', '$scope', '$routeParams', '$sce',
 			if(context && window.siteConfig){
 				context.scope = window.siteConfig.scope;
 			}
+			context.forceImgix = true;
 			var widgetFrame = document.querySelector('#widget');
             	context.initialWidth = widgetFrame.clientWidth;
             	context.initialHeight = widgetFrame.clientHeight;

@@ -91,6 +91,7 @@
 			var context = JSON.parse(JSON.stringify(controlContext));
 			context.widgetTheme = controlContext.appTheme; // don't change the original context
 			context.appTheme = controlDefaultTheme;
+			context.forceImgix = true;
 			var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
 			let lastTabName = sessionStorage.getItem($routeParams.pluginFolder); // Get the last tab opened in a specific plugin
 
@@ -176,6 +177,7 @@
 			var context = JSON.parse(JSON.stringify(controlContext));
 			context.widgetTheme = controlContext.appTheme; // don't change the original context
 			context.appTheme = controlDefaultTheme;
+			context.forceImgix = true;
 			var contextQueryParameter = 'appcontext=' + encodeURIComponent(JSON.stringify(context));
 			$scope.currentControl = $scope.pluginConfig.webpack
 				?  window.location.protocol + '//' + window.location.hostname + ':' + config.webpack + '/control/' + section + '/index.html?fid=control&' + contextQueryParameter

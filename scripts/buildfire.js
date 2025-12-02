@@ -3563,6 +3563,43 @@ var buildfire = {
 			},
 		},
 	}
+	, videoLib: {
+		toCdnUrl: function ({ videoUrl, quality }) {
+			if (!videoUrl) return videoUrl;
+			
+			const forceImgix = buildfire.getContext()?.forceImgix;
+			if (!forceImgix) {
+				return videoUrl;
+			}
+			
+			const imgixUrl = `https://buildfire-proxy.imgix.net/cdn/${encodeURIComponent(videoUrl)}`;
+			const urlObj = new URL(imgixUrl);
+			
+			if (quality) {
+				urlObj.searchParams.set('q', quality);
+			}
+			urlObj.searchParams.set('fm', 'mp4');
+						
+			return urlObj.toString()
+		},
+		toThumbnailCdnUrl: function ({ videoUrl, atSecond = 'auto', quality }) {
+			if (!videoUrl) return '';
+			
+			const forceImgix = buildfire.getContext()?.forceImgix;
+			if (!forceImgix) {
+				return '';
+			}
+			
+			const imgixUrl = `https://buildfire-proxy.imgix.net/cdn/${encodeURIComponent(videoUrl)}`;
+			const urlObj = new URL(imgixUrl);
+			
+			urlObj.searchParams.set('video-thumbnail', atSecond === 'auto' ? 'auto' : atSecond);
+			urlObj.searchParams.set('q', quality);
+			urlObj.searchParams.set('auto', 'format');
+			
+			return urlObj.toString();
+		}
+	}
 	, colorLib: {
 		showDialog: function (data, options, onchange, callback) {
 			buildfire.eventManager.clear('colorLibOnChange');
@@ -4993,7 +5030,7 @@ var buildfire = {
 						var userMenu = options.menu ? JSON.parse(JSON.stringify(options.menu)) : null;
 						options.menu = {
 							edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall | bf_clearContent'},
-							insert: {title: 'Insert', items: `bf_insertActionItem media bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
+							insert: {title: 'Insert', items: `bf_insertActionItem bf_videolib bf_insertImage | bf_insertButtonOrLink | bf_insertRating bf_insertLayout ${dynamicExpressionsEnabled ? 'bf_insertExpression' : ''}`},
 							view: {title: 'View', items: 'visualaid | preview'},
 							format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
 							tools: {title: 'Tools', items: 'code bf_datasources'},
@@ -5004,7 +5041,7 @@ var buildfire = {
 								options.menu[item] = userMenu[item];
 							}
 						}
-						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts', 'bf_ai'];
+						var defaultPlugins = ['preview', 'code', 'media', 'textcolor', 'colorpicker', 'fullscreen', 'bf_actionitem', 'bf_imagelib', 'bf_videolib', 'bf_rating', 'bf_buttons', 'lists', 'paste', 'bf_layouts', 'bf_ai'];
 						if (options.plugins) {
 							if (options.plugins instanceof Array) {
 								options.plugins = defaultPlugins.concat(options.plugins);
@@ -5015,7 +5052,7 @@ var buildfire = {
 						} else {
 							options.plugins = defaultPlugins;
 						}
-						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib media | code | fullscreen | bf_ai';
+						var defaultToolbar = 'fontsizeselect forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | bf_actionitem bf_imagelib bf_videolib | code | fullscreen | bf_ai';
 						if (options.toolbar) {
 							if (options.toolbar instanceof Array) {
 								if (!(options.toolbar[0] instanceof Object)) {
@@ -5043,7 +5080,7 @@ var buildfire = {
 						options.toolbar_mode = 'floating';
 						options.theme = 'silver';
 						options.skin = 'bf-skin';
-						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
+						options.contextmenu = 'bf_buttonOrLinkContextMenu bf_imageContextMenu bf_videoContextMenu bf_actionItemContextMenu bf_customLayouts bf_defaultmenuItems';
 						options.fontsize_formats= '8px 10px 12px 14px 16px 18px 24px 36px';
 						options.height = options.height || 500;
 						options.custom_elements = 'style';
