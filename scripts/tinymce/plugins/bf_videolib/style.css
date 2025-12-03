@@ -1,15 +1,15 @@
 @font-face {
     font-family: 'Inter_Medium';
-    src: url('../../../../fonts/inter-medium.otf');
-    src: local('☺'), url('../../../../fonts/inter-medium.woff2') format('woff'), url('../../../../fonts/inter-medium.ttf') format('truetype');
+    src: url('../../../../fonts/Inter-Medium.otf');
+    src: local('☺'), url('../../../../fonts/Inter-Medium.woff2') format('woff2'), url('../../../../fonts/Inter-Medium.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: fallback;
 }
 @font-face {
     font-family: 'Inter_Regular';
-    src: url('../../../../fonts/inter-regular.otf');
-    src: local('☺'), url('../../../../fonts/inter-regular.woff2') format('woff'), url('../../../../fonts/inter-regular.ttf') format('truetype'), url('../../../../fonts/apercu_regular.svg') format('svg');
+    src: url('../../../../fonts/Inter-Regular.otf');
+    src: local('☺'), url('../../../../fonts/Inter-Regular.woff2') format('woff2'), url('../../../../fonts/Inter-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: fallback;
@@ -129,7 +129,7 @@ textarea::placeholder {
     background-color: #333;
 }
 .cdn-properties p {
-    font-size: 15px;
+    font-size: 14px;
     font-family: 'Inter_Regular';
     font-weight: 400;
     color: #101010;
@@ -187,19 +187,18 @@ textarea::placeholder {
     pointer-events: none;
 }
 .cdn-description {
-    top: 50%;
-    left: calc(100% + 15px);
-    transform: translateY(-50%);
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-25%);
     width: 200px;
 }
-.cdn-description::before {
-    content: "";
+.cdn-description::after {
+    content: '';
     position: absolute;
-    top: 50%;
-    right: 100%;
-    transform: translateY(-50%);
+    top: 100%;
+    left: 51px;
     border: 5px solid transparent;
-    border-right-color: #000000CC;
+    border-top-color: #000000CC;
 }
 /* Toggle Switch Styles */
 #cdnToggle + label {
@@ -304,7 +303,7 @@ textarea::placeholder {
     font-size: 12px;
     font-family: 'Inter_Regular';
     font-weight: 400;
-    color: #101010;
+    color: rgba(16, 16, 16, 0.70);
     margin-top: 5px;
 }
 #atSecond:disabled ~ .field-helper {

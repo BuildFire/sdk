@@ -267,9 +267,6 @@ function generateEmbedFromUrl() {
             if (atSecond) {
                 thumbnailParams += ', atSecond: \'' + atSecond + '\'';
             }
-            if (quality) {
-                thumbnailParams += ', quality: \'' + quality + '\'';
-            }
             thumbnailParams += ' }';
             var posterExpr = '${buildfire.videoLib.toThumbnailCdnUrl(' + thumbnailParams + ')}';
             html += ' expr-poster="' + posterExpr + '"';

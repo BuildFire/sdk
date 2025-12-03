@@ -3582,7 +3582,7 @@ var buildfire = {
 						
 			return urlObj.toString()
 		},
-		toThumbnailCdnUrl: function ({ videoUrl, atSecond = 'auto', quality }) {
+		toThumbnailCdnUrl: function ({ videoUrl, atSecond = 'auto' }) {
 			if (!videoUrl) return '';
 			
 			const forceImgix = buildfire.getContext()?.forceImgix;
@@ -3594,7 +3594,7 @@ var buildfire = {
 			const urlObj = new URL(imgixUrl);
 			
 			urlObj.searchParams.set('video-thumbnail', atSecond === 'auto' ? 'auto' : atSecond);
-			urlObj.searchParams.set('q', quality);
+			// urlObj.searchParams.set('q', quality); // uncomment this line and pass quality to set quality for thumbnail images
 			urlObj.searchParams.set('auto', 'format');
 			
 			return urlObj.toString();
