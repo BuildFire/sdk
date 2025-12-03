@@ -274,7 +274,7 @@ function generateEmbedFromUrl() {
             console.log('No poster - CDN is off and no custom poster provided');
         }
         
-        html += ' controls="controls">\n';
+        html += ' controls="controls" playsinline="playsinline">\n';
         
         // Main source
         if (useCdn) {
