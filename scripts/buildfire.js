@@ -1344,15 +1344,12 @@ var buildfire = {
 			},
 			hide: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.hide');
-				buildfire._sendPacket(p, callback);
-				buildfire._context.titleBarVisible = false;
-				document.getElementsByTagName('html')[0].removeAttribute('titlebar-visible');
-				buildfire.getContext((err, context) => {
-					if (err) console.error(err);
-					if (context) {
-						document.documentElement.style.setProperty('--bf-safe-area-inset-top', ( context.cssVariables?.safeAreaInsetTop || '0px'));
-					}
-				});
+                let hideCallback = function(err, data) {
+                    buildfire.appearance._updateSafeAreaInsetTop(function() {
+                        if (callback) callback(err, data);
+                    });
+                };
+				buildfire._sendPacket(p, hideCallback);
 			},
 			isVisible: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.isVisible');
@@ -1451,7 +1448,32 @@ var buildfire = {
                 + '--bf-font-family:' + appTheme.fontName + ', sans-serif !important'
             +'}';
 			return css;
-		}
+		},
+        _updateSafeAreaInsetTop: function(callback) {
+            document.documentElement.style.setProperty('--bf-safe-area-inset-top', '0px');
+            buildfire.appearance.titlebar.isVisible(null, (err, isVisible) => {
+                if (!err) {
+                    if (isVisible) {
+                        buildfire._context.titleBarVisible = true;
+                        document.documentElement.style.setProperty('--bf-safe-area-inset-top', '0px');
+                        document.getElementsByTagName('html')[0].setAttribute('titlebar-visible', 'true');
+                        if(callback) callback();
+                    } else {
+                        buildfire._context.titleBarVisible = false;
+                        document.getElementsByTagName('html')[0].removeAttribute('titlebar-visible');
+                        buildfire.getContext((err, context) => {
+                            if (err) console.error(err);
+                            if (context) {
+                                document.documentElement.style.setProperty('--bf-safe-area-inset-top', ( context.cssVariables?.safeAreaInsetTop || '0px'));
+                            }
+                            if(callback) callback();
+                        });
+                    }
+                } else {
+                    if(callback) callback();
+                }
+            });
+        }
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-capture-Analytics-for-your-plugin
 	, analytics: {
@@ -3775,17 +3797,32 @@ var buildfire = {
 	, history: {
 		push: function (label, options, callback) {
 			var p = new Packet(null, 'history.push', {label: label, options: options, source: 'plugin'});
-			buildfire._sendPacket(p, callback);
+            let pushCallback = function(err, result) {
+                buildfire.appearance._updateSafeAreaInsetTop(function() {
+                    if (callback) callback(err, result);
+                });
+            };
+			buildfire._sendPacket(p, pushCallback);
 		},
 		onPop: function (callback, allowMultipleHandlers) {
-			return buildfire.eventManager.add('historyOnPop', callback, allowMultipleHandlers);
+            let onPopCallback = function(result) {
+                buildfire.appearance._updateSafeAreaInsetTop(function() {
+                    if (callback) callback(result);
+                })
+            };
+			return buildfire.eventManager.add('historyOnPop', onPopCallback, allowMultipleHandlers);
 		},
 		triggerOnPop: function (obj) {
 			buildfire.eventManager.trigger('historyOnPop', obj);
 		},
 		pop: function (callback) {
 			var p = new Packet(null, 'history.pop');
-			buildfire._sendPacket(p, callback);
+            let popCallback = function(error, result) {
+                buildfire.appearance._updateSafeAreaInsetTop(function() {
+                    if (callback) callback(error, result);
+                });
+            };
+			buildfire._sendPacket(p, popCallback);
 		},
 		get: function (options, callback) {
 			var p = new Packet(null, 'history.get', options);
