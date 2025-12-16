@@ -1344,15 +1344,12 @@ var buildfire = {
 			},
 			hide: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.hide');
-				buildfire._sendPacket(p, callback);
-				buildfire._context.titleBarVisible = false;
-				document.getElementsByTagName('html')[0].removeAttribute('titlebar-visible');
-				buildfire.getContext((err, context) => {
-					if (err) console.error(err);
-					if (context) {
-						document.documentElement.style.setProperty('--bf-safe-area-inset-top', ( context.cssVariables?.safeAreaInsetTop || '0px'));
-					}
-				});
+                let hideCallback = function(err, data) {
+                    buildfire.appearance._updateSafeAreaInsetTop(function() {
+                        if (callback) callback(err, data);
+                    });
+                };
+				buildfire._sendPacket(p, hideCallback);
 			},
 			isVisible: function(options, callback) {
 				var p = new Packet(null, 'appearance.titlebar.isVisible');
@@ -1452,15 +1449,17 @@ var buildfire = {
             +'}';
 			return css;
 		},
-        _toggleSafeAreaInsetTop: function(callback) {
+        _updateSafeAreaInsetTop: function(callback) {
             document.documentElement.style.setProperty('--bf-safe-area-inset-top', '0px');
             buildfire.appearance.titlebar.isVisible(null, (err, isVisible) => {
                 if (!err) {
                     if (isVisible) {
+                        buildfire._context.titleBarVisible = true;
                         document.documentElement.style.setProperty('--bf-safe-area-inset-top', '0px');
                         document.getElementsByTagName('html')[0].setAttribute('titlebar-visible', 'true');
                         if(callback) callback();
                     } else {
+                        buildfire._context.titleBarVisible = false;
                         document.getElementsByTagName('html')[0].removeAttribute('titlebar-visible');
                         buildfire.getContext((err, context) => {
                             if (err) console.error(err);
@@ -3799,7 +3798,7 @@ var buildfire = {
 		push: function (label, options, callback) {
 			var p = new Packet(null, 'history.push', {label: label, options: options, source: 'plugin'});
             let pushCallback = function(err, result) {
-                buildfire.appearance._toggleSafeAreaInsetTop(function() {
+                buildfire.appearance._updateSafeAreaInsetTop(function() {
                     if (callback) callback(err, result);
                 });
             };
@@ -3807,7 +3806,7 @@ var buildfire = {
 		},
 		onPop: function (callback, allowMultipleHandlers) {
             let onPopCallback = function(result) {
-                buildfire.appearance._toggleSafeAreaInsetTop(function() {
+                buildfire.appearance._updateSafeAreaInsetTop(function() {
                     if (callback) callback(result);
                 })
             };
@@ -3819,7 +3818,7 @@ var buildfire = {
 		pop: function (callback) {
 			var p = new Packet(null, 'history.pop');
             let popCallback = function(error, result) {
-                buildfire.appearance._toggleSafeAreaInsetTop(function() {
+                buildfire.appearance._updateSafeAreaInsetTop(function() {
                     if (callback) callback(error, result);
                 });
             };
