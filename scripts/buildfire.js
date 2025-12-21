@@ -338,6 +338,15 @@ var buildfire = {
 				}
 			});
 		}
+        // Inject Amplitude if amplitudeData is present in querystring
+        try {
+            if (window.parsedQuerystring && window.parsedQuerystring.amplitudeData) {
+                const amplitudeData = JSON.parse(decodeURIComponent(window.parsedQuerystring.amplitudeData));
+                buildfire.analytics.injectAmplitude(amplitudeData);
+            }
+        } catch (error) {
+            console.error('Failed to parse amplitudeData or inject Amplitude: ', error);
+        }
 
 		if (window.location.pathname.indexOf('/widget/') >= 0 && buildfire.options.enablePluginJsonLoad) {
 			buildfire.getContext((err, context) => {
@@ -423,6 +432,7 @@ var buildfire = {
 		, 'services.commerce.inAppPurchase._triggerOnPurchaseResult'
 		, 'services.reportAbuse._triggerOnAdminResponse'
 		, 'geo.session._triggerOnSessionWatchChange'
+        , 'analytics.injectAmplitude'
 	]
 	, _postMessageHandler: function (e) {
 		if (e.source === window) {
@@ -1527,6 +1537,46 @@ var buildfire = {
 				params = {};
 			var p = new Packet(null, 'analytics.showReports', params);
 			buildfire._sendPacket(p, callback);
+		},
+        injectAmplitude: function (data) {
+            const html = document.getElementsByTagName('html')[0];
+            const amplitudeScript = document.createElement('script');
+            amplitudeScript.type = 'text/javascript';
+            amplitudeScript.src = 'https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz';
+            const amplitudeSessionReplayScript = document.createElement('script');
+            amplitudeSessionReplayScript.type = 'text/javascript';
+            amplitudeSessionReplayScript.src = 'https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz';
+
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+
+            amplitudeScript.onload = function() {
+                html.appendChild(amplitudeSessionReplayScript);
+                amplitudeSessionReplayScript.onload = function() {
+                    function initAmplitude() {
+                        const config = {
+                            deviceId: data.deviceId,
+                            sessionId: parseInt(data.sessionId),
+                            defaultTracking: true
+                        };
+
+                        const sessionReplayTracking = window.sessionReplay.plugin({
+                            sampleRate: 1
+                        });
+
+                        window.amplitude.add(sessionReplayTracking);
+                        amplitude.init(data.apiKey, null, config);
+                        amplitude.track('iFrame Injected and Session Linked');
+                    };
+
+                    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                        initAmplitude();
+                    } else {
+                        document.addEventListener('DOMContentLoaded', initAmplitude);
+                    }
+                };
+            };
+            html.appendChild(amplitudeScript);
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Datastore
@@ -4541,13 +4591,29 @@ var buildfire = {
 			});
 		}
 		,overrideNativeLocalStorage: function() {
+			const nativeGetItem = window.localStorage.getItem;
+			const nativeSetItem = window.localStorage.setItem;
+			const nativeRemoveItem = window.localStorage.removeItem;
+
 			localStorage.getItem = function (key) {
+                // bypass buildfire localStorage for Amplitude keys in web environment
+                if (key && (key.indexOf('AMP_') === 0 || key.toLowerCase().includes('amplitude')) && buildfire.isWeb()) {
+                    return nativeGetItem.call(window.localStorage, key);
+                }
 				return buildfire.localStorage.getItem(key);
 			};
 			localStorage.setItem = function (key, value) {
+                // bypass buildfire localStorage for Amplitude keys in web environment
+                if (key && (key.indexOf('AMP_') === 0 || key.toLowerCase().includes('amplitude')) && buildfire.isWeb()) {
+                    return nativeSetItem.call(window.localStorage, key, value);
+				}
 				return buildfire.localStorage.setItem(key, value);
 			};
 			localStorage.removeItem = function (key) {
+				// bypass buildfire localStorage for Amplitude keys in web environment
+				if (key && (key.indexOf('AMP_') === 0 || key.toLowerCase().includes('amplitude')) && buildfire.isWeb()) {
+					return nativeRemoveItem.call(window.localStorage, key);
+				}
 				return buildfire.localStorage.removeItem(key);
 			};
 			localStorage.clear = function () {
