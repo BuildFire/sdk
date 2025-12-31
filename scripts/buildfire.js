@@ -184,13 +184,13 @@ var buildfire = {
 							colno: event.colno,
 							lineno: event.lineno,
 							message: event.message,
-							stack: event.error && event.error.stack ? event.error && event.error.stack : "n/a",
+							stack: (event.error && event.error.stack) ? event.error.stack : "n/a",
 							url: event.filename
 						}
 					});
 				}
 				originalConsoleError('Error: ' + event.message, ' Script: ' + event.filename, ' Line: ' + event.lineno
-					, ' Column: ' + event.colno, ' StackTrace: ' + event.error && event.error.stack ? event.error && event.error.stack : "n/a");
+					, ' Column: ' + event.colno, ' StackTrace: ' + (event.error && event.error.stack) ? event.error.stack : "n/a");
 			});
 		},
 		log: function (options, callback) {
@@ -269,6 +269,8 @@ var buildfire = {
 			this.events[event] = [];
 		}
 		, trigger: function (event, data) {
+            const internalEvent = new CustomEvent(`_internal_${event}`, { detail: data });
+            window.dispatchEvent(internalEvent);
 			if (this.events[event])
 				for (var i = 0; i < this.events[event].length; i++) {
 					try {

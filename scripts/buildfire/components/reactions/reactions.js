@@ -974,15 +974,16 @@ buildfire.components.reactions = (() => {
                     this.user = user;
                 }
 
-                buildfire.auth.onLogin((loggedUser) => {
+                window.addEventListener('_internal_authOnLogin', (event) => {
+                    const loggedUser = event.detail;
                     this._onLoginLogoutHandler(loggedUser);
                     this.user = loggedUser;
-                }, true);
+                });
 
-                buildfire.auth.onLogout(() => {
+                window.addEventListener('_internal_authOnLogout', () => {
                     this._onLoginLogoutHandler(null);
                     this.user = {};
-                }, true);
+                });
 
                 return callback(err, this.user);
             })
