@@ -233,7 +233,7 @@ buildfire.components.comments = {
             if (this.drawerOpened) {
                 this._resetDrawer();
             }
-        });
+        }, true);
 
         buildfire.auth.onLogin((user) => {
             this.user = user;
@@ -247,7 +247,7 @@ buildfire.components.comments = {
                     this._resetDrawer();
                 }
             }
-        });
+        }, true);
     },
 
     open(options = {}, callback) {
@@ -301,27 +301,33 @@ buildfire.components.comments = {
                 let userDataPromises = [];
                 const loadUsersData = (userIds) => {
                     return new Promise((resolve, reject) => {
-                        buildfire.auth.getUserProfiles({ userIds }, (err, users) => {
-                            if (err) {
-                                console.error(err);
-                                return reject(err);
-                            }
-                            for (let i = 0; i < comments.length; i++) {
-                                const comment = comments[i];
-                                const user = users.find(u => u.userId == comment.data.userId);
-                                if (user) {
-                                    comment.data.profileImage = user.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
-                                    comment.data.username = this._getNameOfUser({ user: user, isOwner: comment.data.userId == this.user?.userId });
-                                } else {
-                                    // deleted user or user not found
-                                    comment.data.profileImage = 'https://app.buildfire.com/app/media/avatar.png'; // default avatar
-                                    comment.data.username = this._getNameOfUser(null); // "Someone"
+                        buildfire.getContext((err, context) => {
+                            if (err) console.error('Error getting context:', err);
+                            const locale = context?.localization?.appDateTimeLanguage;
+                            if (typeof bfMomentSDK !== 'undefined' && locale) bfMomentSDK.locale(locale);
+                            
+                            buildfire.auth.getUserProfiles({ userIds }, (err, users) => {
+                                if (err) {
+                                    console.error(err);
+                                    return reject(err);
                                 }
-                                if (typeof bfMomentSDK !== 'undefined') comment.data.displayDate = bfMomentSDK(comment.data.createdOn).fromNow();
-                                comment.data.text = this._processComment(comment.data.text);
-                                comments[i] = comment;
-                            }
-                            resolve(true);
+                                for (let i = 0; i < comments.length; i++) {
+                                    const comment = comments[i];
+                                    const user = users.find(u => u.userId == comment.data.userId);
+                                    if (user) {
+                                        comment.data.profileImage = user.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
+                                        comment.data.username = this._getNameOfUser({ user: user, isOwner: comment.data.userId == this.user?.userId });
+                                    } else {
+                                        // deleted user or user not found
+                                        comment.data.profileImage = 'https://app.buildfire.com/app/media/avatar.png'; // default avatar
+                                        comment.data.username = this._getNameOfUser(null); // "Someone"
+                                    }
+                                    if (typeof bfMomentSDK !== 'undefined') comment.data.displayDate = bfMomentSDK(comment.data.createdOn).fromNow();
+                                    comment.data.text = this._processComment(comment.data.text);
+                                    comments[i] = comment;
+                                }
+                                resolve(true);
+                            });
                         });
                     });
                 }
@@ -529,7 +535,24 @@ buildfire.components.comments = {
                 options.userId = user.userId;
                 comment = this._loadUserIdToComment({ comment: comment, userId: options.userId, itemId: options.itemId });
                 options.comment = comment;
-                commentToDisplay = this._addCommentToList(comment);
+                this._addCommentToList({ comment }, (err, commentToDisplay) => {
+                    if (err) return callback(err);
+                    this._createComment(options, (err, res) => {
+                        if (err) {
+                            this._removeCommentFromList(comment.commentId);
+                            callback(err);
+                            return;
+                        }
+                        this.comments.unshift({ data: commentToDisplay });
+                        callback(null, res);
+                    });
+                });
+            });
+        } else {
+            comment = this._loadUserIdToComment({ comment: comment, userId: options.userId, itemId: options.itemId });
+            options.comment = comment;
+            this._addCommentToList({ comment }, (err, commentToDisplay) => {
+                if (err) return callback(err);
                 this._createComment(options, (err, res) => {
                     if (err) {
                         this._removeCommentFromList(comment.commentId);
@@ -539,19 +562,6 @@ buildfire.components.comments = {
                     this.comments.unshift({ data: commentToDisplay });
                     callback(null, res);
                 });
-            });
-        } else {
-            comment = this._loadUserIdToComment({ comment: comment, userId: options.userId, itemId: options.itemId });
-            commentToDisplay = this._addCommentToList(comment);
-            options.comment = comment;
-            this._createComment(options, (err, res) => {
-                if (err) {
-                    this._removeCommentFromList(comment.commentId);
-                    callback(err);
-                    return;
-                }
-                this.comments.unshift({ data: commentToDisplay });
-                callback(null, res);
             });
         }
     },
@@ -573,22 +583,27 @@ buildfire.components.comments = {
         );
     },
 
-    _addCommentToList(comment) {
-        const commentToDisplay = JSON.parse(JSON.stringify(comment));
+    _addCommentToList(options, callback) {
+        const commentToDisplay = JSON.parse(JSON.stringify(options.comment));
         commentToDisplay.profileImage = this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
         commentToDisplay.username = this._getNameOfUser({ user: this.user, isOwner: true });
-        commentToDisplay.displayDate = bfMomentSDK(commentToDisplay.createdOn).fromNow();
-        commentToDisplay.text = this._processComment(commentToDisplay.text);
-        this.listView.append([{ data: commentToDisplay }], true);
-        this._switchEmptyState(false);
-        this.summary.count += 1;
-        const listViewContainer = document.querySelector('#listViewContainer');
-        listViewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        buildfire.components.swipeableDrawer.setHeaderContent(this._getDrawerHeaderHtml({
-            count: this.summary.count,
-            commentsHeader: this.options.translations?.commentsHeader
-        }));
-        return commentToDisplay;
+        buildfire.getContext((err, context) => {
+            if (err) console.error('Error getting context:', err);
+            const locale = context?.localization?.appDateTimeLanguage;
+            if (locale) bfMomentSDK.locale(locale);
+            commentToDisplay.displayDate = bfMomentSDK(commentToDisplay.createdOn).fromNow();
+            commentToDisplay.text = this._processComment(commentToDisplay.text);
+            this.listView.append([{ data: commentToDisplay }], true);
+            this._switchEmptyState(false);
+            this.summary.count += 1;
+            const listViewContainer = document.querySelector('#listViewContainer');
+            listViewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            buildfire.components.swipeableDrawer.setHeaderContent(this._getDrawerHeaderHtml({
+                count: this.summary.count,
+                commentsHeader: this.options.translations?.commentsHeader
+            }));
+            if (callback) callback(null, commentToDisplay);
+        });
     },
 
     _removeCommentFromList(commentId) {
@@ -873,6 +888,7 @@ buildfire.components.comments = {
 
 
     _onResize() {
+        if (!this.options) return; // might be destroyed already
         const currentWidth = window.innerWidth;
         if (this.originalWidth !== currentWidth) {
             const drawer = document.querySelector('.swipeable-drawer');
