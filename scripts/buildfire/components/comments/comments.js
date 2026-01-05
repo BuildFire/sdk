@@ -213,49 +213,24 @@ buildfire.components.comments = {
         this.drawerOpened = false;
         this.comments = [];
 
-        // keyboard events
-        buildfire.device.onKeyboardShow((data) => {
-            this.keyboardShown = true;
-            if (this.drawerOpened) {
-                buildfire.components.swipeableDrawer.setStep('max');
-            }
-        });
-        buildfire.device.onKeyboardHide(() => {
-            this.keyboardShown = false;
-        });
-
-        // auth state change
-        buildfire.auth.onLogout(() => {
-            if (this.listView) {
-                this.listView.reset();
-            }
-            this.user = null;
-            if (this.drawerOpened) {
-                this._resetDrawer();
-            }
-        }, true);
-
-        buildfire.auth.onLogin((user) => {
-            this.user = user;
-            if (this.drawerOpened) {
-                if (this.addingCommentInProgress) {
-                    this._addingCommentDone = () => {
-                        this._resetDrawer();
-                        this._addingCommentDone = null; // reset the function to avoid multiple calls
-                    }
-                } else {
-                    this._resetDrawer();
-                }
-            }
-        }, true);
     },
 
     open(options = {}, callback) {
+        this.isOpen = true;
 
         buildfire.lazyLoadScript(
             { relativeScriptsUrl: 'moment.min.js', scriptId: 'bfMomentSDK' }, () => {
-                this.originalWidth = window.innerWidth;
-                window.addEventListener('resize', this._onResize.bind(this), false);
+                // keyboard events
+                this._onKeyboardWillShowHandler = this._onKeyboardWillShow.bind(this);
+                this._onKeyboardWillHideHandler = this._onKeyboardWillHide.bind(this);
+                window.addEventListener('_internal_keyboardWillShow', this._onKeyboardWillShowHandler); 
+                window.addEventListener('_internal_keyboardWillHide', this._onKeyboardWillHideHandler);
+
+                // auth state change events
+                this._onAuthLogoutHandler = this._onAuthLogout.bind(this);
+                this._onAuthLoginHandler = this._onAuthLogin.bind(this);
+                window.addEventListener('_internal_authOnLogout', this._onAuthLogoutHandler);
+                window.addEventListener('_internal_authOnLogin', this._onAuthLoginHandler);
                 this._openCommentsDrawer(options, callback);
             }
         )
@@ -421,7 +396,7 @@ buildfire.components.comments = {
     close(callback) {
         if (this.drawerOpened) {
             buildfire.components.swipeableDrawer.hide();
-            this._destroy();
+            this._cleanup();
             callback && callback(null);
         } else {
             callback && callback('Drawer is not opened');
@@ -575,8 +550,10 @@ buildfire.components.comments = {
                 options.incrementValue = 1; // increment by 1
                 this._updateSummary(options, (err, res) => {
                     if (err) return callback(err);
-                    result.data.profileImage = this.user.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
-                    result.data.username = this._getNameOfUser({ user: this.user, isOwner: options.userId == this.user.userId });
+                    if (this.isOpen) {
+                        result.data.profileImage = this.user.imageUrl || 'https://app.buildfire.com/app/media/avatar.png';
+                        result.data.username = this._getNameOfUser({ user: this.user, isOwner: options.userId == this.user.userId });
+                    }
                     callback(null, result);
                 });
             }
@@ -598,10 +575,12 @@ buildfire.components.comments = {
             this.summary.count += 1;
             const listViewContainer = document.querySelector('#listViewContainer');
             listViewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            buildfire.components.swipeableDrawer.setHeaderContent(this._getDrawerHeaderHtml({
-                count: this.summary.count,
-                commentsHeader: this.options.translations?.commentsHeader
-            }));
+            if (this.isOpen) {
+                buildfire.components.swipeableDrawer.setHeaderContent(this._getDrawerHeaderHtml({
+                    count: this.summary.count,
+                    commentsHeader: this.options.translations?.commentsHeader
+                }));
+            }
             if (callback) callback(null, commentToDisplay);
         });
     },
@@ -673,7 +652,7 @@ buildfire.components.comments = {
                 <div id="commentSafeArea"></div>
             </div>
             <div class="add-comment-section">
-                <img src="${this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png'}" alt="Profile Image">
+                <img src="${buildfire.imageLib.cropImage(this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png', { size: 'xs', aspect: '1:1' })}" alt="Profile Image">
                 <textarea name="commentInput" id="commentInput" maxlength="1000" placeholder="${this.options.translations?.addCommentPlaceholder ? this.options.translations.addCommentPlaceholder : 'Add comment'}"></textarea>
                 <span id="addCommentIcon" class="add-comment bf-icon-arrow-right-tail"></span>
             </div>
@@ -692,7 +671,7 @@ buildfire.components.comments = {
             backdropEnabled: true,
         }, callback);
         buildfire.components.swipeableDrawer.onHide = () => {
-            this._destroy();
+            this._cleanup();
             if (this.onClose && typeof this.onClose === 'function') {
                 this.onClose();
             }
@@ -758,7 +737,7 @@ buildfire.components.comments = {
             let actions = [
                 { actionId: 'report', text: this.options.translations?.report || 'Report' },
             ];
-            if (this.user?.userId && options.item.data.userId === this.user.userId) {
+            if (this.user?.userId && options.item.data.userId === this.user?.userId) {
                 actions = [{ actionId: 'delete', text: this.options.translations?.delete || 'Delete' }];
             }
             return { actions };
@@ -791,6 +770,8 @@ buildfire.components.comments = {
                     count: this.summary.count,
                     commentsHeader: this.options.translations?.commentsHeader
                 }));
+                // take copy in case the drawer is closed and _cleanup is called
+                const options = this.options;
                 this.deleteComment({
                     itemId: event.item.data.itemId,
                     commentId: event.item.data.commentId,
@@ -810,13 +791,13 @@ buildfire.components.comments = {
                         });
                         return;
                     }
-                    this.listView.refresh();
+                    this.listView?.refresh();
                     if (this.onDelete && typeof this.onDelete === 'function') {
                         this.onDelete();
                     }
-                    if (typeof this.options.translations?.commentDeleted == 'undefined' || (this.options.translations.commentDeleted !== null && (typeof this.options.translations.commentDeleted === 'string' && this.options.translations?.commentDeleted.trim() !== ''))) {
+                    if (typeof options.translations?.commentDeleted == 'undefined' || (options.translations.commentDeleted !== null && (typeof options.translations.commentDeleted === 'string' && options.translations?.commentDeleted.trim() !== ''))) {
                         buildfire.dialog.toast({
-                            message: this.options.translations?.commentDeleted || 'Comment deleted successfully.',
+                            message: options.translations?.commentDeleted || 'Comment deleted successfully.',
                             type: 'success',
                         });
                     }
@@ -841,7 +822,7 @@ buildfire.components.comments = {
             this.style.height = '40px';
             const newHeight = Math.min(this.scrollHeight, 100);
             this.style.height = `${newHeight}px`;
-            commentSafeArea.style.marginBottom = `${newHeight + 80}px`;
+            commentSafeArea.style.marginBottom = `${newHeight + 50}px`;
         };
 
         addCommentIcon.addEventListener('click', () => {
@@ -851,6 +832,8 @@ buildfire.components.comments = {
                 commentInput.style.height = '40px';
                 commentSafeArea.style.marginBottom = '80px';
                 this.addingCommentInProgress = true;
+                // take copy in case the drawer is closed and _cleanup is called
+                const options = this.options;
                 this._addComment({
                     itemId: this.options.itemId,
                     userId: this.user?.userId,
@@ -869,9 +852,9 @@ buildfire.components.comments = {
                     if (this.onAdd && typeof this.onAdd === 'function') {
                         this.onAdd();
                     }
-                    if (typeof this.options.translations?.commentAdded == 'undefined' || (this.options.translations.commentAdded !== null && (typeof this.options.translations.commentAdded === 'string' && this.options.translations?.commentAdded.trim() !== ''))) {
+                    if (typeof options.translations?.commentAdded == 'undefined' || (options.translations.commentAdded !== null && (typeof options.translations.commentAdded === 'string' && options.translations?.commentAdded.trim() !== ''))) {
                         buildfire.dialog.toast({
-                            message: this.options.translations?.commentAdded || 'Comment added successfully.',
+                            message: options.translations?.commentAdded || 'Comment added successfully.',
                             type: 'success',
                         });
                     }
@@ -883,26 +866,43 @@ buildfire.components.comments = {
     },
 
     _resetDrawer() {
-        this._openCommentsDrawer(this.options);
+        if (this.drawerOpened) {
+            this._openCommentsDrawer(this.options);
+        }
     },
 
+    _onKeyboardWillShow() {
+        this.keyboardShown = true;
+        if (this.drawerOpened) {
+            buildfire.components.swipeableDrawer.setStep('max');
+        }
+    },
 
-    _onResize() {
-        if (!this.options) return; // might be destroyed already
-        const currentWidth = window.innerWidth;
-        if (this.originalWidth !== currentWidth) {
-            const drawer = document.querySelector('.swipeable-drawer');
-            if (drawer) drawer.style.height = '100%'; // reset height to 100% on resize
-            clearTimeout(this.resizeTimeout);
-            this.resizeTimeout = setTimeout(() => {
-                this._initializeDrawer((err, res) => {
-                    this._configureAddCommentSection();
-                    this._initializeListView(() => {
-                        buildfire.components.swipeableDrawer.show();
-                        this.resizeFromKeyboard = false;
-                    });
-                })
-            }, 200);
+    _onKeyboardWillHide() {
+        this.keyboardShown = false;
+    },
+
+    _onAuthLogout() {
+        if (this.listView) {
+            this.listView.reset();
+        }
+        this.user = null;
+        if (this.drawerOpened) {
+            this._resetDrawer();
+        }
+    },
+
+    _onAuthLogin(event) {
+        this.user = event.detail;
+        if (this.drawerOpened) {
+            if (this.addingCommentInProgress) {
+                this._addingCommentDone = () => {
+                    this._resetDrawer();
+                    this._addingCommentDone = null; // reset the function to avoid multiple calls
+                }
+            } else {
+                this._resetDrawer();
+            }
         }
     },
 
@@ -995,7 +995,8 @@ buildfire.components.comments = {
         }
     },
 
-    _destroy() {
+    _cleanup() {
+        this.isOpen = false;
         this.drawerOpened = false;
         this.keyboardShown = false;
         this.options = null;
@@ -1003,7 +1004,14 @@ buildfire.components.comments = {
         this.listView = null;
         this.user = null;
         this.comments = [];
-        window.removeEventListener('resize', this._onResize.bind(this), false);
+        window.removeEventListener('_internal_keyboardWillShow', this._onKeyboardWillShowHandler); 
+        window.removeEventListener('_internal_keyboardWillHide', this._onKeyboardWillHideHandler);
+        window.removeEventListener('_internal_authOnLogout', this._onAuthLogoutHandler);
+        window.removeEventListener('_internal_authOnLogin', this._onAuthLoginHandler);
+        this._onKeyboardWillShowHandler = null;
+        this._onKeyboardWillHideHandler = null;
+        this._onAuthLogoutHandler = null;
+        this._onAuthLoginHandler = null;
     },
 
     _addingCommentDone() { }

@@ -3,6 +3,8 @@ if (typeof buildfire == 'undefined')
 
 if (typeof buildfire.components == 'undefined') buildfire.components = {};
 
+let resizeTimeout;
+
 let _swipeableDrawerState = {
 	startingStep: 'min',
 	header: null,
@@ -242,8 +244,17 @@ const _swipeableDrawerEvents = {
 			document.addEventListener('touchmove', _swipeableDrawerUtils.resize);
 			document.addEventListener('touchend', _swipeableDrawerEvents.stopTouchResize);
 		});
+        window.addEventListener('resize', _swipeableDrawerEvents.onResize);
 	},
-	destroy: () => {
+    onResize: () => {
+        _swipeableDrawerElements.drawerContainer.style.height = '100%'; // prevent flicker
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            _swipeableDrawerConstants.screenHeight =  window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            _swipeableDrawerUtils.reset();
+        }, 100);
+    },
+	_cleanup: () => {
 		_swipeableDrawerElements.drawerContainer.removeEventListener('mousedown', () => { });
 		document.removeEventListener('mousemove', () => { });
 		document.removeEventListener('mouseup', () => { });
@@ -251,6 +262,7 @@ const _swipeableDrawerEvents = {
 		document.removeEventListener('touchstart', () => { });
 		document.removeEventListener('touchmove', () => { });
 		document.removeEventListener('touchend', () => { });
+        window.removeEventListener('resize', _swipeableDrawerEvents.onResize);
 	}
 };
 
@@ -258,7 +270,7 @@ buildfire.components.swipeableDrawer = {
 	initialize(options, callback) {
 		_swipeableDrawerState = options ? Object.assign(_swipeableDrawerState, options) : _swipeableDrawerState;
 		if (_swipeableDrawerElements.drawerContainer) {
-			this.destroy();
+			this._cleanup();
 		}
 		_swipeableDrawerConstants.screenHeight =  window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
 		_swipeableDrawerUtils.buildDrawer();
@@ -301,8 +313,8 @@ buildfire.components.swipeableDrawer = {
 			buildfire.components.swipeableDrawer.onHide();
 		}
 	},
-	destroy() {
-		_swipeableDrawerEvents.destroy();
+	_cleanup() {
+		_swipeableDrawerEvents._cleanup();
 		_swipeableDrawerElements.drawerContainer.remove();
 		buildfire.components.swipeableDrawer._removeBackdrop();
 	},
