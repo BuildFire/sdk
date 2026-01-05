@@ -652,7 +652,7 @@ buildfire.components.comments = {
                 <div id="commentSafeArea"></div>
             </div>
             <div class="add-comment-section">
-                <img src="${buildfire.imageLib.resizeImage(this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png', { width: 50, height: 50 })}" alt="Profile Image">
+                <img src="${buildfire.imageLib.cropImage(this.user?.imageUrl || 'https://app.buildfire.com/app/media/avatar.png', { size: 'xs', aspect: '1:1' })}" alt="Profile Image">
                 <textarea name="commentInput" id="commentInput" maxlength="1000" placeholder="${this.options.translations?.addCommentPlaceholder ? this.options.translations.addCommentPlaceholder : 'Add comment'}"></textarea>
                 <span id="addCommentIcon" class="add-comment bf-icon-arrow-right-tail"></span>
             </div>
