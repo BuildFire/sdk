@@ -462,12 +462,24 @@ var buildfire = {
 			}
 		}
 
+		if (!packet.cmd) {
+			return;
+		}
+
+		var cmd = packet.cmd;
+		if (cmd.startsWith('buildfire:')) {
+			cmd = cmd.substring(10);
+		} else {
+			// TODO: uncomment to force just accepting cmd with (buildfire:) prefix
+			// return;
+		}
+
 		if (packet.id && buildfire._callbacks[packet.id]) {
 			buildfire._callbacks[packet.id](packet.error, packet.data);
 			delete buildfire._callbacks[packet.id];
 		}
-		else if (buildfire._whitelistedCommands.indexOf(packet.cmd) + 1) {
-			var sequence = packet.cmd.split('.');
+		else if (buildfire._whitelistedCommands.indexOf(cmd) + 1) {
+			var sequence = cmd.split('.');
 
 			var obj = buildfire;
 			var parent = buildfire;
@@ -567,6 +579,10 @@ var buildfire = {
 
 		if (parent && packet) {
 			if(packet.data && typeof(angular) != 'undefined') packet.data= sanitize(packet.data);
+			// TODO: uncomment to send all cmds with (buildfire:) prefix
+			// if(packet.cmd && !packet.cmd.startsWith('buildfire:')) {
+			// 	packet.cmd = 'buildfire:' + packet.cmd;
+			// }
 			parent.postMessage(packet, '*');
 		}
 	}

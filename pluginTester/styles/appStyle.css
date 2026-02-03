@@ -2620,6 +2620,15 @@ nav.menu .core-content a.without-text .active-indicator,
 	max-height: 100%;
 }
 
+#footerMenuParent.has-labels .action-item-img img {
+	max-height: 4vh;
+	margin-bottom: 1.5vh;
+}
+
+#footerMenuParent.has-labels .action-item-icon {
+	margin-bottom: 1vh !important;
+}
+
 nav.menu a.active{
 	background-color: rgba(150,150,150,.1);
 }
@@ -5246,4 +5255,13 @@ body:not(.splash) #splashScreenPreview {
 	background-attachment: fixed;
 	background-position: center;
 	background-size: cover;
+}
+
+.action-item .action-item-label {
+	position: absolute !important;
+	display: block !important;
+	font-size: 1.5vh !important;
+	width: 100%;
+	bottom: 0;
+	right: 0;
 }
