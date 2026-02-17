@@ -579,10 +579,9 @@ var buildfire = {
 
 		if (parent && packet) {
 			if(packet.data && typeof(angular) != 'undefined') packet.data= sanitize(packet.data);
-			// TODO: uncomment to send all cmds with (buildfire:) prefix
-			// if(packet.cmd && !packet.cmd.startsWith('buildfire:')) {
-			// 	packet.cmd = 'buildfire:' + packet.cmd;
-			// }
+			if(packet.cmd && !packet.cmd.startsWith('buildfire:')) {
+				packet.cmd = 'buildfire:' + packet.cmd;
+			}
 			parent.postMessage(packet, '*');
 		}
 	}
