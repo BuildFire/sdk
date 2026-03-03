@@ -1458,7 +1458,6 @@ var buildfire = {
 				lightBodyText = `${appTheme.colors.bodyText}54`;
 			}
 			css += ':root {'
-				+ '--bf-theme-button-text: #fff !important;'
                 + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
                 + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
                 + '--bf-theme-warning: ' + appTheme.colors.warningTheme + ' !important;'
