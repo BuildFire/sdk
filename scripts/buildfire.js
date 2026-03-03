@@ -470,6 +470,7 @@ var buildfire = {
 		if (cmd.startsWith('buildfire:')) {
 			cmd = cmd.substring(10);
 		} else {
+			buildfire.logger.log({ level: 'warn', message: `sdk cmd missing buildfire: prefix: ${cmd}` });
 			// TODO: uncomment to force just accepting cmd with (buildfire:) prefix
 			// return;
 		}
