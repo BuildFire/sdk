@@ -327,11 +327,14 @@ var buildfire = {
 			buildfire.getContext((err, context) => {
 				if (err) return console.error(err);
 				if (context && context.liveMode === 0) {
-					buildfire.messaging.onReceivedMessage = function(message) {
-						if (message && message.action === 'reloadUserCodePlugin') {
+					window.addEventListener('_internal_messageReceived', function(e) {
+						if (e.detail && e.detail.action === 'reloadUserCodePlugin') {
 							window.location.reload(true);
+						} else if (e.detail && e.detail.action === 'changeUserCodePluginUrl' && e.detail.url) {
+							// Change to the provided URL
+							window.location.href = e.detail.url + window.location.search + '&isUserCodePlugin=true';
 						}
-					};
+					});
 					window.onerror = function(message, source, lineno, colno, error) {
 						buildfire.dialog.toast({
 							message: `${error && error.message ? error.message : message} \n line ${lineno}, col: ${colno}`
