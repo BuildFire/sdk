@@ -400,7 +400,8 @@ var buildfire = {
 		, 'publicData.triggerOnRefresh'
 		, 'appData.triggerOnUpdate'
 		, 'appData.triggerOnRefresh'
-		, 'messaging.onReceivedMessage'
+		, 'messaging.onReceivedMessage' // TODO: should be deleted later, kept for backward compatibility when deploying
+		, 'messaging.triggerOnReceivedMessage'
 		, 'messaging.onReceivedBroadcast'
 		, 'dynamic.triggerContextChange'
 		, 'dynamic.onReceivedWidgetContextRequest'
@@ -1454,10 +1455,11 @@ var buildfire = {
 			}
 			let lightBodyText = appTheme.colors.bodyText;
 			if (appTheme.colors.bodyText?.startsWith('#')) { // just support hex colors
-				// create a new color, which is the bodyText's color with an opacity (33%)
-				lightBodyText = `${appTheme.colors.bodyText}54`;
+				// create a new color, which is the bodyText's color with an opacity (20%)
+				lightBodyText = `${appTheme.colors.bodyText}34`;
 			}
 			css += ':root {'
+				+ '--bf-theme-button-text: #fff !important;'
                 + '--bf-theme-primary: ' + appTheme.colors.primaryTheme + ' !important;'
                 + '--bf-theme-success: ' + appTheme.colors.successTheme + ' !important;'
                 + '--bf-theme-warning: ' + appTheme.colors.warningTheme + ' !important;'
@@ -3909,6 +3911,10 @@ var buildfire = {
 		}
 		, onReceivedMessage: function (message) {
 			console.info('onReceivedMessage ignored', window.location);
+		},
+		triggerOnReceivedMessage: function (message) {
+			buildfire.eventManager.trigger('messageReceived', message);
+			buildfire.messaging.onReceivedMessage(message)
 		}
 		, sendMessageToService: function (data) {
 			var p = new Packet(null, 'messaging.sendMessageToService', data);
@@ -3973,6 +3979,16 @@ var buildfire = {
 		}
 		, clone: function (options, callback) {
 			var p = new Packet(null, 'pluginInstances.clone', options);
+			buildfire._sendPacket(p, callback);
+		}
+		, showInstallPluginInstanceDialog: function (options, callback) {
+			var p = new Packet(null, 'pluginInstances.showInstallPluginInstanceDialog', options);
+			buildfire._sendPacket(p, callback);
+		}
+	}
+	, developer: {
+		publish: function(options, callback) {
+			var p = new Packet(null, 'developer.publish', options);
 			buildfire._sendPacket(p, callback);
 		}
 	}
@@ -4152,10 +4168,45 @@ var buildfire = {
 	/// ref: https://github.com/BuildFire/sdk/wiki/Spinners
 	, spinner: {
 		show: function (options) {
-			buildfire._sendPacket(new Packet(null, 'spinner.show', options));
+			if (window.location.pathname.indexOf('/control/') >= 0) {
+				buildfire.spinner._showControlSpinner(options);
+			} else {
+				buildfire._sendPacket(new Packet(null, 'spinner.show', options));
+			}
 		}
 		, hide: function () {
-			buildfire._sendPacket(new Packet(null, 'spinner.hide'));
+			if (window.location.pathname.indexOf('/control/') >= 0) {
+				buildfire.spinner._hideControlSpinner();
+			} else {
+				buildfire._sendPacket(new Packet(null, 'spinner.hide'));
+			}
+		}
+		, _showControlSpinner: function (options) {
+			const animationElement = buildfire.spinner._createAnimationElement(options);
+			animationElement.classList.add('ai-progress-overlay');
+			document.body.prepend(animationElement);
+		}
+		, _hideControlSpinner: function () {
+			const progressElement = document.querySelector('.ai-progress-overlay');
+			if (progressElement) progressElement.parentElement.removeChild(progressElement);
+		}
+		, _createAnimationElement: function (options) {
+			let loadingMessage = 'Loading...';
+			if (options && options.loadingMessage && typeof options.loadingMessage === 'string') {
+				loadingMessage = options.loadingMessage;
+			}
+			const animationElement = document.createElement('div');
+			animationElement.classList.add('ai-progress');
+			animationElement.innerHTML =
+				`<div id="cp-container-loader">
+					<div class="ai-animation">
+						<div class="square sq1"></div>
+						<div class="square sq2"></div>
+						<div class="square sq3"></div>
+					</div>
+					<p class="ai-text">${loadingMessage}</p>
+				</div>`;
+			return animationElement;
 		}
 	}
 	/// ref: https://github.com/BuildFire/sdk/wiki/How-to-use-Auth
