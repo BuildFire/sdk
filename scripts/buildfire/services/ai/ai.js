@@ -112,32 +112,11 @@ buildfire.ai.persistentConversation = class PersistentConversation {
 }
 
 buildfire.ai.startAIAnimation = function(options) {
-    const emptyStateElement = document.body;
-    const animationElement = buildfire.ai._createAIAnimationElement(options);
-    animationElement.classList.add('ai-progress-overlay');
-    emptyStateElement.prepend(animationElement);
-}
-
-buildfire.ai._createAIAnimationElement = function(options) {
-    let loadingMessage = 'Generating content...';
-    if (options && options.loadingMessage && typeof options.loadingMessage === 'string') {
-        loadingMessage = options.loadingMessage;
-    }
-    const animationElement = document.createElement('div');
-    animationElement.classList.add('ai-progress');
-    animationElement.innerHTML =
-        `<div id="cp-container-loader">
-            <div class="ai-animation">
-                <div class="square sq1"></div>
-                <div class="square sq2"></div>
-                <div class="square sq3"></div>
-            </div>
-            <p class="ai-text">${loadingMessage}</p>
-        </div>`;
-    return animationElement;
+    if (!options) options = {};
+    if (!options.loadingMessage) options.loadingMessage = 'Generating content...';
+    buildfire.spinner.show(options);
 }
 
 buildfire.ai.stopAIAnimation = function() {
-    const progressElement = document.querySelector('.ai-progress-overlay');
-    progressElement.parentElement.removeChild(progressElement);
+    buildfire.spinner.hide();
 }

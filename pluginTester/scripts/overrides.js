@@ -83,17 +83,17 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 	};
 
 	PluginAPI.prototype.messaging.triggerOnNewWidgetMessage = function (message) {
-		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
+		var packet = new Packet(null, 'messaging.triggerOnReceivedMessage', message);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
 	};
 
 	PluginAPI.prototype.messaging.triggerOnNewControlMessage = function (message) {
-		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
+		var packet = new Packet(null, 'messaging.triggerOnReceivedMessage', message);
 		postMaster.controlPluginAPI.sendMessage(null, packet);
 	};
 
 	PluginAPI.prototype.messaging.sendMessageToService = function(message, callback) {
-		var packet = new Packet(null, 'messaging.onReceivedMessage', message);
+		var packet = new Packet(null, 'messaging.triggerOnReceivedMessage', message);
 		if (postMaster.servicePluginAPIs && postMaster.servicePluginAPIs.service) {
 			postMaster.servicePluginAPIs.service.sendMessage(null, packet);
 			if (callback) callback(null, true);
