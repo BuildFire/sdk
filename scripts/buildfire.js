@@ -3661,37 +3661,37 @@ var buildfire = {
 	, videoLib: {
 		toCdnUrl: function ({ videoUrl, quality }) {
 			if (!videoUrl) return videoUrl;
-			
+
 			const forceImgix = buildfire.getContext()?.forceImgix;
 			if (!forceImgix) {
 				return videoUrl;
 			}
-			
+
 			const imgixUrl = `https://buildfire-proxy.imgix.net/cdn/${encodeURIComponent(videoUrl)}`;
 			const urlObj = new URL(imgixUrl);
-			
+
 			if (quality) {
 				urlObj.searchParams.set('q', quality);
 			}
 			urlObj.searchParams.set('fm', 'mp4');
-						
+
 			return urlObj.toString()
 		},
 		toThumbnailCdnUrl: function ({ videoUrl, atSecond = 'auto' }) {
 			if (!videoUrl) return '';
-			
+
 			const forceImgix = buildfire.getContext()?.forceImgix;
 			if (!forceImgix) {
 				return '';
 			}
-			
+
 			const imgixUrl = `https://buildfire-proxy.imgix.net/cdn/${encodeURIComponent(videoUrl)}`;
 			const urlObj = new URL(imgixUrl);
-			
+
 			urlObj.searchParams.set('video-thumbnail', atSecond === 'auto' ? 'auto' : atSecond);
 			// urlObj.searchParams.set('q', quality); // uncomment this line and pass quality to set quality for thumbnail images
 			urlObj.searchParams.set('auto', 'format');
-			
+
 			return urlObj.toString();
 		}
 	}
@@ -4171,7 +4171,8 @@ var buildfire = {
 	/// ref: https://github.com/BuildFire/sdk/wiki/Spinners
 	, spinner: {
 		show: function (options) {
-			if (window.location.pathname.indexOf('/control/') >= 0) {
+			// TODO: long term fix for workaround to prevent existing plugins with un-intended control calls for spinner.show()
+			if (options && options.loadingMessage && window.location.pathname.indexOf('/control/') >= 0) {
 				buildfire.spinner._showControlSpinner(options);
 			} else {
 				buildfire._sendPacket(new Packet(null, 'spinner.show', options));
