@@ -7,14 +7,15 @@ if (typeof (buildfire.services) == 'undefined') buildfire.services = {};
 if (typeof (buildfire.services.commerce) == 'undefined') buildfire.services.commerce = {};
 
 buildfire.services.commerce.inAppPurchase = {
-	purchase: function (productId, callback) {
-		if (!productId) {
+	purchase: function (options, callback) {
+		if (!options && !options.productId) {
 			console.error('no product id');
+			return callback('no product id');
 		}
+		// in case the user just passed the product id as a string, we will convert it to the expected object format
+		if (typeof options === 'string') options = { productId: options };
 
-		var p = new Packet(null, 'inAppPurchase.purchase', {
-			productId: productId
-		});
+		var p = new Packet(null, 'inAppPurchase.purchase', options);
 		buildfire._sendPacket(p, callback);
 	},
 	getProducts: function (callback) {
