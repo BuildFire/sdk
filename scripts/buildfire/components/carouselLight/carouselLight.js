@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 if (typeof (buildfire) == 'undefined') throw ('please add buildfire.js first to use carousel components');
 
@@ -28,6 +28,9 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 	style.innerHTML += ' .js_slide img { max-height: 380px; width: auto !important; margin: 0 auto }';
 	style.innerHTML += ' .js_slide.static_slide { display: none }';
 	style.innerHTML += ' .js_slide.static_slide.active { display: block }';
+	style.innerHTML += ' .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; z-index: 10; list-style: none; margin: 0; padding: 0; }';
+	style.innerHTML += ' .carousel-dots li { display: inline-block; width: 12px; height: 12px; margin: 0 8px; border-radius: 50%; background-color: #cccd; cursor: pointer; transition: background-color ease-in-out .2s; }';
+	style.innerHTML += ' .carousel-dots li.active { background-color: #222b;}';
 
 	document.head.appendChild(style);
 })();
@@ -172,24 +175,31 @@ buildfire.components.carousel.view.prototype = {
         }
     },
 	_changeStaticSlides: function (carouselImages, random) {
-		let activeSlide = document.querySelector('.js_slide.static_slide.active');
-		let siblingSlide = activeSlide.nextSibling;
+		let self = this;
+		let slides = Array.from(this.selector.querySelectorAll('.js_slide.static_slide'));
+		let activeSlide = this.selector.querySelector('.js_slide.static_slide.active');
+		if (!activeSlide) return;
+		let activeIndex = slides.indexOf(activeSlide);
 		if (random) {
-			let nextSlide = document.querySelectorAll('.js_slide.static_slide')[Math.floor(Math.random() * carouselImages.length)];
-			if (nextSlide.children[0].src == activeSlide.children[0].src) {
+			let nextIndex = Math.floor(Math.random() * carouselImages.length);
+			if (slides[nextIndex].children[0].src == activeSlide.children[0].src) {
 				this._changeStaticSlides(carouselImages, true);
 			} else {
 				activeSlide.classList.remove('active');
-				nextSlide.classList.add('active');
+				slides[nextIndex].classList.add('active');
+				if (this.config.showIndicators) self._syncStaticDots(nextIndex);
 			}
 		} else {
+			let nextIndex = (activeIndex + 1 < slides.length) ? activeIndex + 1 : 0;
 			activeSlide.classList.remove('active');
-			if (siblingSlide) {
-				siblingSlide.classList.add('active');
-			} else {
-				document.querySelector('.js_slide.static_slide').classList.add('active');
-			}
+			slides[nextIndex].classList.add('active');
+			if (this.config.showIndicators) self._syncStaticDots(nextIndex);
 		}
+	},
+	_syncStaticDots: function (activeIndex) {
+		let dotContainer = this.selector.querySelector('.carousel-dots');
+		if (!dotContainer) return;
+		dotContainer.childNodes.forEach(function(d, i) { d.classList.toggle('active', i === activeIndex); });
 	},
 	_renderStaticSlides: function (carouselImages) {
 		let self = this;
@@ -230,6 +240,9 @@ buildfire.components.carousel.view.prototype = {
 		if (!activeSlide) {
 			document.querySelector('.js_slide.static_slide').classList.add('active');
 		}
+		if (this.config.showIndicators && carouselImages.length > 1) {
+			this._buildStaticDots(carouselImages);
+		}
 	},
 	mergeSettings: function (options) {
 		var settings = {
@@ -240,13 +253,67 @@ buildfire.components.carousel.view.prototype = {
 			loop: true,
 			autoInterval: 5 * 1000,
 			display: 0,
-			order: 0
+			order: 0,
+			showIndicators: false
 		};
 		var userSettings = options;
 		for (var attrName in userSettings) {
 			settings[attrName] = userSettings[attrName];
 		}
+		// save the original item count before we start duplicating items for the infinite loop
+		settings.originalItemCount = settings.items.length;
+		// don't show indicators if the order is random
+		if (settings.order == 1) settings.showIndicators = false;
 		return settings;
+	},
+	_buildStaticDots: function (carouselImages) {
+		let self = this;
+		let dotContainer = this.selector.querySelector('.carousel-dots');
+		if (!dotContainer) {
+			dotContainer = document.createElement('ul');
+			dotContainer.className = 'carousel-dots';
+			this.selector.style.position = 'relative';
+			this.selector.appendChild(dotContainer);
+		}
+		while (dotContainer.firstChild) dotContainer.removeChild(dotContainer.firstChild);
+		let slides = Array.from(this.selector.querySelectorAll('.js_slide.static_slide'));
+		let activeSlide = this.selector.querySelector('.js_slide.static_slide.active');
+		let activeIndex = activeSlide ? slides.indexOf(activeSlide) : 0;
+		if (activeIndex === -1) activeIndex = 0;
+		for (let i = 0; i < carouselImages.length; i++) {
+			let dot = document.createElement('li');
+			if (i === activeIndex) dot.classList.add('active');
+			dot.addEventListener('click', function () {
+				let idx = Array.prototype.indexOf.call(dotContainer.childNodes, this);
+				let slides = self.selector.querySelectorAll('.js_slide.static_slide');
+				slides.forEach(function(s) { s.classList.remove('active'); });
+				slides[idx].classList.add('active');
+				dotContainer.childNodes.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+			});
+			dotContainer.appendChild(dot);
+		}
+	},
+	_buildDots: function () {
+		let self = this;
+		let existing = this.selector.querySelector('.carousel-dots');
+		if (existing) this.selector.removeChild(existing);
+		let count = this.config.originalItemCount;
+		if (count <= 1) return;
+		let dot_container = document.createElement('ul');
+		dot_container.className = 'carousel-dots';
+		this.selector.style.position = 'relative';
+		this.selector.appendChild(dot_container);
+		for (let i = 0; i < count; i++) {
+			let dot = document.createElement('li');
+			if (i === 0) dot.classList.add('active');
+			dot.addEventListener('click', (function(index) {
+				return function () {
+					self.lorySlider.slideTo(index);
+				};
+			})(i));
+			dot_container.appendChild(dot);
+		}
+		this._dotContainer = dot_container;
 	},
 	init: function () {
 		if (!this.selector) {
@@ -275,6 +342,9 @@ buildfire.components.carousel.view.prototype = {
 			this._renderHTMLItems(function () {
 				self._applySlider();
 				validateLauncherCarousel();
+				if (self.config.showIndicators && self.config.items.length > 1) {
+					self._buildDots();
+				}
 			});
 		} else {
 			self._applySlider();
@@ -558,5 +628,18 @@ buildfire.components.carousel.view.prototype = {
 				self.preventClicks = false;
 			}, 0);
 		});
+		if (self.config.showIndicators) {
+			self.selector.addEventListener('after.lory.slide', function () {
+				if (!self._dotContainer) return;
+				let dotIndex = self.lorySlider.returnIndex() % self.config.originalItemCount;
+				self._dotContainer.childNodes.forEach(function (dot) { dot.classList.remove('active'); });
+				self._dotContainer.childNodes[dotIndex].classList.add('active');
+			});
+			self.selector.addEventListener('on.lory.resize', function () {
+				if (!self._dotContainer) return;
+				self._dotContainer.childNodes.forEach(function (dot) { dot.classList.remove('active'); });
+				self._dotContainer.childNodes[0].classList.add('active');
+			});
+		}
 	}
 };

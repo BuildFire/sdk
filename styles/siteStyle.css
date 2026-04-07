@@ -3092,6 +3092,12 @@ p.ai-seeder-banner {
 	padding-right: 12px;
 }
 
+.carousel-editor .carousel-dropdowns-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 16px;
+}
+
 
 .carousel-editor .btn-plus-icon-with-text {
 	display: flex;
@@ -3168,13 +3174,15 @@ p.ai-seeder-banner {
 
 .carousel-editor .change-speed,
 .carousel-editor .change-random,
-.carousel-editor .change-display {
+.carousel-editor .change-display,
+.carousel-editor .change-show-indicators {
 	width: 75%;
 }
 
 .carousel-editor .change-speed div,
 .carousel-editor .change-random div,
-.carousel-editor .change-display div {
+.carousel-editor .change-display div,
+.carousel-editor .change-show-indicators div {
 	width: 100%;
 }
 
