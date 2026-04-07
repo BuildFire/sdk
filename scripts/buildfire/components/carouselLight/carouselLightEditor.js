@@ -112,6 +112,7 @@ buildfire.components.carousel.editor.prototype = {
 		this.displayDropdownElements?._updateDropdownValue(Number(this.settings.display));
 	},
 	setOptionShowIndicators: function (showIndicators) {
+		if (showIndicators === undefined) return;
 		this.settings.showIndicators = !!showIndicators;
 		this.showIndicatorsDropdownElements?._updateDropdownValue(this.settings.showIndicators ? 1 : 0);
 	},
@@ -232,18 +233,17 @@ buildfire.components.carousel.editor.prototype = {
 		me.displayArray = [{text:'All images',value:0},{text:'One image',value:1}];
 		me.showIndicatorsArray = [{text:'Hide',value:0},{text:'Show',value:1}];
 
-		me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value,showIndicators:false};
+		me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value,showIndicators:undefined};
 
 		if(!me.settings)me.settings={speed:me.defaultSettings.speed,order:me.defaultSettings.order,display:me.defaultSettings.display,showIndicators:me.defaultSettings.showIndicators};
 
 		if(!me.settings.speed)me.settings.speed=me.defaultSettings.speed;
 		if(!me.settings.order)me.settings.order=me.defaultSettings.order;
 		if(!me.settings.display)me.settings.display=me.defaultSettings.display;
-		if(me.settings.showIndicators===undefined)me.settings.showIndicators=me.defaultSettings.showIndicators;
 
 		let settingsContainer = me.selector.querySelector('.settings-container');
 		let dropdownsContainer = document.createElement('div');
-		dropdownsContainer.className = 'carousel-dropdowns-container';
+		if (me.settings.showIndicators !== undefined) dropdownsContainer.className = 'carousel-dropdowns-container';
 		settingsContainer.appendChild(dropdownsContainer);
 
 		let speedDropdown = document.createElement('div');
@@ -294,21 +294,23 @@ buildfire.components.carousel.editor.prototype = {
 			me.onOptionDisplayChange(String(value)); // convert to string for backward compatibility
 		};
 
-		let showIndicatorsDropdown = document.createElement('div');
-		let showIndicatorsDropdownLabel = document.createElement('span');
-		let showIndicatorsSelector = document.createElement('div');
-		showIndicatorsDropdown.appendChild(showIndicatorsDropdownLabel);
-		dropdownsContainer.appendChild(showIndicatorsDropdown);
-		showIndicatorsDropdownLabel.innerHTML = 'Indicators';
-		showIndicatorsDropdown.className = 'screen layouticon';
-		showIndicatorsDropdownLabel.className = 'labels medium';
-		showIndicatorsSelector.className = 'change-show-indicators';
-		showIndicatorsDropdown.appendChild(showIndicatorsSelector);
-		let showIndicatorsOptions = { dropdownValue: me.settings.showIndicators ? 1 : 0, dropdownOptions: me.showIndicatorsArray };
-		this.showIndicatorsDropdownElements = new carouselDropdown('.change-show-indicators', showIndicatorsOptions);
-		this.showIndicatorsDropdownElements.onDropdownValueChange = (value) => {
-			me.onOptionShowIndicatorsChange(value);
-		};
+		if (me.settings.showIndicators !== undefined) {
+			let showIndicatorsDropdown = document.createElement('div');
+			let showIndicatorsDropdownLabel = document.createElement('span');
+			let showIndicatorsSelector = document.createElement('div');
+			showIndicatorsDropdown.appendChild(showIndicatorsDropdownLabel);
+			dropdownsContainer.appendChild(showIndicatorsDropdown);
+			showIndicatorsDropdownLabel.innerHTML = 'Indicators';
+			showIndicatorsDropdown.className = 'screen layouticon';
+			showIndicatorsDropdownLabel.className = 'labels medium';
+			showIndicatorsSelector.className = 'change-show-indicators';
+			showIndicatorsDropdown.appendChild(showIndicatorsSelector);
+			let showIndicatorsOptions = { dropdownValue: me.settings.showIndicators ? 1 : 0, dropdownOptions: me.showIndicatorsArray };
+			this.showIndicatorsDropdownElements = new carouselDropdown('.change-show-indicators', showIndicatorsOptions);
+			this.showIndicatorsDropdownElements.onDropdownValueChange = (value) => {
+				me.onOptionShowIndicatorsChange(value);
+			};
+		}
 	},
 	// render the basic template HTML
 	_renderTemplate: function () {
