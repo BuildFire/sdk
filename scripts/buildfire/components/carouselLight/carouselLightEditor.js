@@ -40,10 +40,10 @@ buildfire.components.carousel._getDomSelector = function (selector) {
 };
 
 // This is the class that will be used in the plugin content, design, or settings sections
-buildfire.components.carousel.editor = function (selector, items, speed, order, display) {
+buildfire.components.carousel.editor = function (selector, items, speed, order, display, showIndicators) {
 	// carousel editor requires Sortable.js
 	if (typeof (Sortable) == 'undefined') throw ('please add Sortable first to use carousel components');
-	this.settings=(speed)?{speed:speed,order:order,display:display}:null;
+	this.settings=(speed)?{speed:speed,order:order,display:display,showIndicators:showIndicators}:null;
 	this.selector = selector;
 	this.items = [];
 	this.init(selector);
@@ -62,6 +62,7 @@ buildfire.components.carousel.editor.prototype = {
 			this.setOptionSpeed(this.settings.speed);
 			this.setOptionOrder(this.settings.order);
 			this.setOptionDisplay(this.settings.display);
+			this.setOptionShowIndicators(this.settings.showIndicators);
 		}
 		this.itemsContainer = this.selector.querySelector('.carousel-items');
 		this._initEvents();
@@ -88,6 +89,9 @@ buildfire.components.carousel.editor.prototype = {
 	onOptioDisplayChange:function (display){
 		console.warn('please handle onOptioDisplayChange', display);
 	},
+	onOptionShowIndicatorsChange:function (showIndicators){
+		console.warn('please handle onOptionShowIndicatorsChange', showIndicators);
+	},
 	// This will be triggered when you delete an item
 	onDeleteItem: function (item, index) {
 		console.warn('please handle onDeleteItem', item);
@@ -106,6 +110,11 @@ buildfire.components.carousel.editor.prototype = {
 		display = (this.displayArray.map(el=>{return el.text;}).includes(display))?this.displayArray.find(el=>el.text==display).value:display;
 		this.settings.display = (this.displayArray.map(el=>{return el.value;}).includes(Number(display)))?display:this.defaultSettings.display;
 		this.displayDropdownElements?._updateDropdownValue(Number(this.settings.display));
+	},
+	setOptionShowIndicators: function (showIndicators) {
+		if (showIndicators === undefined) return;
+		this.settings.showIndicators = !!showIndicators;
+		this.showIndicatorsDropdownElements?._updateDropdownValue(!!this.settings.showIndicators);
 	},
 	// this method allows you to replace the slider image or append to then if appendItems = true
 	loadItems: function (items, appendItems) {
@@ -222,10 +231,11 @@ buildfire.components.carousel.editor.prototype = {
 			{text:'4 sec',value:4000},{text:'5 sec',value:5000},{text:'7 sec',value:7000},{text:'10 sec',value:10000},{text:'15 sec',value:15000}];
 		me.orderArray = [{text:'In order',value:0},{text:'Random',value:1}];
 		me.displayArray = [{text:'All images',value:0},{text:'One image',value:1}];
+		me.showIndicatorsArray = [{text:'Hide',value:false},{text:'Show',value:true}];
 
-		me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value};
+		me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value,showIndicators:undefined};
 
-		if(!me.settings)me.settings={speed:me.defaultSettings.speed,order:me.defaultSettings.order,display:me.defaultSettings.display};
+		if(!me.settings)me.settings={speed:me.defaultSettings.speed,order:me.defaultSettings.order,display:me.defaultSettings.display,showIndicators:me.defaultSettings.showIndicators};
 
 		if(!me.settings.speed)me.settings.speed=me.defaultSettings.speed;
 		if(!me.settings.order)me.settings.order=me.defaultSettings.order;
@@ -233,6 +243,7 @@ buildfire.components.carousel.editor.prototype = {
 
 		let settingsContainer = me.selector.querySelector('.settings-container');
 		let dropdownsContainer = document.createElement('div');
+		if (me.settings.showIndicators !== undefined) dropdownsContainer.className = 'carousel-dropdowns-container';
 		settingsContainer.appendChild(dropdownsContainer);
 
 		let speedDropdown = document.createElement('div');
@@ -282,6 +293,24 @@ buildfire.components.carousel.editor.prototype = {
 		this.displayDropdownElements.onDropdownValueChange = (value) => {
 			me.onOptionDisplayChange(String(value)); // convert to string for backward compatibility
 		};
+
+		if (me.settings.showIndicators !== undefined) {
+			let showIndicatorsDropdown = document.createElement('div');
+			let showIndicatorsDropdownLabel = document.createElement('span');
+			let showIndicatorsSelector = document.createElement('div');
+			showIndicatorsDropdown.appendChild(showIndicatorsDropdownLabel);
+			dropdownsContainer.appendChild(showIndicatorsDropdown);
+			showIndicatorsDropdownLabel.innerHTML = 'Indicators';
+			showIndicatorsDropdown.className = 'screen layouticon';
+			showIndicatorsDropdownLabel.className = 'labels medium';
+			showIndicatorsSelector.className = 'change-show-indicators';
+			showIndicatorsDropdown.appendChild(showIndicatorsSelector);
+			let showIndicatorsOptions = { dropdownValue: !!me.settings.showIndicators, dropdownOptions: me.showIndicatorsArray };
+			this.showIndicatorsDropdownElements = new carouselDropdown('.change-show-indicators', showIndicatorsOptions);
+			this.showIndicatorsDropdownElements.onDropdownValueChange = (value) => {
+				me.onOptionShowIndicatorsChange(value);
+			};
+		}
 	},
 	// render the basic template HTML
 	_renderTemplate: function () {

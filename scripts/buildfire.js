@@ -3258,8 +3258,9 @@ var buildfire = {
 			if (options.blur) {
 				blur = options.blur;
 			}
+			let mode = options.mode;
 
-			let result = imageCdnHandler.constructUrl({width, height, url, blur, method: 'crop'});
+			let result = imageCdnHandler.constructUrl({width, height, url, blur, method: 'crop', mode});
 
 			this._handleElement(element, result, callback);
 
@@ -3498,11 +3499,11 @@ var buildfire = {
 				if (!isSupportedExtension && !isUnsplashImage) return false;
 				return this._transformToImgix(url) != null; // return false if the url wasn't supported in imgix
 			},
-			constructUrl: function({width, height, url, blur, method}) {
+			constructUrl: function({width, height, url, blur, method, mode}) {
 				const baseImgUrl = this._transformToImgix(url);
 				if (!baseImgUrl) return url;
 
-				const paramsToRemove = ['width', 'height', 'fit'];
+				const paramsToRemove = ['width', 'height', 'fit', 'crop'];
 
 				const cleanedUrl = this._removeImageParams(baseImgUrl, paramsToRemove);
 
@@ -3510,6 +3511,9 @@ var buildfire = {
 
 				if (method === 'crop' && (width || height)) { //allow crop only if width or height provided
 					urlObj.searchParams.set('fit', 'crop');
+					if (mode === 'entropy') {
+						urlObj.searchParams.set('crop', 'entropy');
+					}
 				}
 				if (width) {
 					urlObj.searchParams.set('width', width);
