@@ -114,7 +114,7 @@ buildfire.components.carousel.editor.prototype = {
 	setOptionShowIndicators: function (showIndicators) {
 		if (showIndicators === undefined) return;
 		this.settings.showIndicators = !!showIndicators;
-		this.showIndicatorsDropdownElements?._updateDropdownValue(this.settings.showIndicators ? 1 : 0);
+		this.showIndicatorsDropdownElements?._updateDropdownValue(!!this.settings.showIndicators);
 	},
 	// this method allows you to replace the slider image or append to then if appendItems = true
 	loadItems: function (items, appendItems) {
@@ -231,7 +231,7 @@ buildfire.components.carousel.editor.prototype = {
 			{text:'4 sec',value:4000},{text:'5 sec',value:5000},{text:'7 sec',value:7000},{text:'10 sec',value:10000},{text:'15 sec',value:15000}];
 		me.orderArray = [{text:'In order',value:0},{text:'Random',value:1}];
 		me.displayArray = [{text:'All images',value:0},{text:'One image',value:1}];
-		me.showIndicatorsArray = [{text:'Hide',value:0},{text:'Show',value:1}];
+		me.showIndicatorsArray = [{text:'Hide',value:false},{text:'Show',value:true}];
 
 		me.defaultSettings={speed:me.speedArray[5].value,order:me.orderArray[0].value,display:me.displayArray[0].value,showIndicators:undefined};
 
@@ -305,7 +305,7 @@ buildfire.components.carousel.editor.prototype = {
 			showIndicatorsDropdownLabel.className = 'labels medium';
 			showIndicatorsSelector.className = 'change-show-indicators';
 			showIndicatorsDropdown.appendChild(showIndicatorsSelector);
-			let showIndicatorsOptions = { dropdownValue: me.settings.showIndicators ? 1 : 0, dropdownOptions: me.showIndicatorsArray };
+			let showIndicatorsOptions = { dropdownValue: !!me.settings.showIndicators, dropdownOptions: me.showIndicatorsArray };
 			this.showIndicatorsDropdownElements = new carouselDropdown('.change-show-indicators', showIndicatorsOptions);
 			this.showIndicatorsDropdownElements.onDropdownValueChange = (value) => {
 				me.onOptionShowIndicatorsChange(value);
