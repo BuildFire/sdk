@@ -476,6 +476,7 @@ buildfire.components.carousel.view.prototype = {
 			for (var i = 0; i < items.length; i++) {
 				this.config.items.push(items[i]);
 			}
+			this.config.originalItemCount = this.config.items.length;
 			var self = this;
 			if (this.config.display == 0) {
 				this.slideContainer.innerHTML = '';
@@ -486,6 +487,7 @@ buildfire.components.carousel.view.prototype = {
 					} else {
 						self.lorySlider.setup();
 					}
+					if (self.config.showIndicators) self._buildDots();
 				});
 			} else {
 				this._renderStaticSlides(this.config.items);
@@ -498,6 +500,7 @@ buildfire.components.carousel.view.prototype = {
 		} else {
 			let self = this;
 			this.config.items = items;
+			this.config.originalItemCount = items.length;
 			if (this.config.display == 0) {
 				if (this.config.order == 1) {
 					this._randomizeArray(items);
@@ -514,6 +517,7 @@ buildfire.components.carousel.view.prototype = {
 					} else {
 						self.lorySlider.setup();
 					}
+					if (self.config.showIndicators) self._buildDots();
 				});
 			} else {
 				if (buildfire.components.carousel.view.lastCarouselTimer) {
