@@ -28,9 +28,8 @@ if (typeof (buildfire.components.carousel) == 'undefined')
 	style.innerHTML += ' .js_slide img { max-height: 380px; width: auto !important; margin: 0 auto }';
 	style.innerHTML += ' .js_slide.static_slide { display: none }';
 	style.innerHTML += ' .js_slide.static_slide.active { display: block }';
-	style.innerHTML += ' .carousel-dots { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; z-index: 10; list-style: none; margin: 0; padding: 0; height: 12px; display: flex; align-items: center; justify-content: center; }';
-	style.innerHTML += ' .carousel-dots li { display: inline-block; width: 12px; height: 12px; margin: 0 8px; border-radius: 50%; background-color: #cccd; cursor: pointer; transition: background-color ease-in-out .2s; position: relative; }';
-	style.innerHTML += ' .carousel-dots li::before { content: \'\'; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; }';
+	style.innerHTML += ' .carousel-dots { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; z-index: 10; list-style: none; margin: 0; padding: 0;}';
+	style.innerHTML += ' .carousel-dots li { display: inline-block; width: 12px; height: 12px; margin: 0 8px; border-radius: 50%; background-color: #cccd; cursor: pointer; transition: background-color ease-in-out .2s; }';
 	style.innerHTML += ' .carousel-dots li.active { background-color: #222b;}';
 
 	document.head.appendChild(style);
@@ -297,15 +296,13 @@ buildfire.components.carousel.view.prototype = {
 	_buildDots: function () {
 		let self = this;
 		let existing = this.selector.querySelector('.carousel-dots');
-		if (existing) existing.parentNode.removeChild(existing);
+		if (existing) this.selector.removeChild(existing);
 		let count = this.config.originalItemCount;
 		if (count <= 1) return;
-		const sliderFrame = this.selector.querySelector('.js_frame');
-		const dotsParent = sliderFrame || this.selector;
 		let dot_container = document.createElement('ul');
 		dot_container.className = 'carousel-dots';
-		dotsParent.style.position = 'relative';
-		dotsParent.appendChild(dot_container);
+		this.selector.style.position = 'relative';
+		this.selector.appendChild(dot_container);
 		for (let i = 0; i < count; i++) {
 			let dot = document.createElement('li');
 			if (i === 0) dot.classList.add('active');
