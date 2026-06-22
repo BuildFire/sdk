@@ -1308,7 +1308,7 @@ var buildfire = {
                             + '  --md-sys-color-outline:' + appTheme.colors.bodyText + ';'
                             + '  --md-sys-color-outline-variant:' + appTheme.colors.bodyText + ';'
                             // Shadow & scrim
-                            + '  --md-sys-color-shadow: black;'
+                            + '  --md-sys-color-shadow: #888888;'
                             + '  --md-sys-color-scrim: black;'
                             + '}'
                             + '*:not(i):not(.material-icons):not(.mdc-icon):not([class*="material-symbols"]):not(md-icon)'
