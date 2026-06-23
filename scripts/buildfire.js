@@ -1017,9 +1017,10 @@ var buildfire = {
 			var disableBootstrap = (buildfire.options && buildfire.options.disableBootstrap) ? buildfire.options.disableBootstrap : false;
 			var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 			var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
+			var enableMD3Theme = (buildfire.options && buildfire.options.enableMD3Theme) ? buildfire.options.enableMD3Theme  : false;
 			var disableFontIcons = (buildfire.options && buildfire.options.disableFontIcons) ? buildfire.options.disableFontIcons  : false;
 
-			if (!disableTheme && !enableMDTheme) {
+			if (!disableTheme && !enableMDTheme && !enableMD3Theme) {
 				if(!disableTheme && !disableBootstrap){
 					files.push('styles/bootstrap.css');
 				}
@@ -1100,19 +1101,54 @@ var buildfire = {
 				(document.head || document.body).appendChild(bfWidgetTheme);
 				files.push('styles/bfUIElements.css');
 
-				if (!disableFontIcons && ((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme))
+				if (!disableFontIcons && ((window.location.pathname.indexOf('/widget/') >= 0 && (disableTheme || enableMDTheme || enableMD3Theme))
 					|| window.location.pathname.indexOf('/control/'))) {
 					// if appTheme.css is loaded, common css will be referenced already
 					attachFontIcons(theme);
 				}
 			});
 
-			if (enableMDTheme) {
+			if (enableMDTheme || enableMD3Theme) {
+				// Shared: a single style element carries the theme-token overrides
+				// for whichever Material flavor is enabled.
 				var styleElement = document.createElement('style');
-				styleElement.id = 'appMDTheme';
+				styleElement.id = enableMD3Theme ? 'appMD3Theme' : 'appMDTheme';
 				styleElement.type = 'text/css';
+
+				// MD3-only: alongside the token overrides it needs a base layout reset,
+				// the component bundle, the typescale stylesheet and the Material Symbols
+				// icon font (all served locally, no CDN).
+				if (enableMD3Theme) {
+					var md3BaseStyle = document.createElement('style');
+					md3BaseStyle.id = 'appMD3Base';
+					md3BaseStyle.type = 'text/css';
+					md3BaseStyle.innerHTML = 'html[buildfire]{width:100%;min-width:100%;max-width:100%;height:100%;background:none;overflow:hidden !important;}'
+						+ 'html[buildfire] body{height:100% !important;max-width:100% !important;overflow-y:auto !important;-webkit-overflow-scrolling:touch !important;}'
+						+ 'html[buildfire] body.no-scroll{overflow:hidden !important;-webkit-overflow-scrolling:inherit !important;}'
+						+ 'html[buildfire] body.no-scroll .scrollable{overflow-y:auto !important;overflow-x:hidden !important;-webkit-overflow-scrolling:touch !important;height:100% !important;width:100% !important;}';
+					(document.head || document.body).appendChild(md3BaseStyle);
+
+					var md3Loader = document.createElement('script');
+					md3Loader.src = base + '/scripts/materialDesign/material-components-web3@2.4.1.min.js';
+					(document.head || document.body).appendChild(md3Loader);
+
+					// Typography helper classes (.md-typescale-*).
+					var md3Typescale = document.createElement('link');
+					md3Typescale.rel = 'stylesheet';
+					md3Typescale.href = base + '/styles/materialDesign/material-components-web3@2.4.1.min.css';
+					(document.head || document.body).appendChild(md3Typescale);
+
+					// Material Symbols icon font for <md-icon> glyphs, served locally (no CDN)
+					// alongside the bundle above so icons work offline.
+					var md3Icons = document.createElement('style');
+					md3Icons.id = 'appMD3Icons';
+					md3Icons.textContent = "@font-face{font-family:'Material Symbols Outlined';font-style:normal;font-weight:400;font-display:block;src:url('" + base + "/fonticons/MaterialIcons3@2.4.1-outlined.woff2') format('woff2');}";
+					(document.head || document.body).appendChild(md3Icons);
+				}
+
 				function applyMDTheme(err, appTheme) {
 					var css = '';
+					// Shared: pull in the app's custom/Google font.
 					if ( typeof(appTheme.fontId) !== 'undefined' && appTheme.fontId !== 'Arial'
                     && appTheme.fontId !== 'Sans-Serif' && appTheme.fontId !== 'Helvetica'
                     && appTheme.fontId !== 'Shadows+into+Light' && appTheme.fontId !== 'Asap+condensed' && appTheme.fontUrl) {
@@ -1123,7 +1159,67 @@ var buildfire = {
 						}
 					}
 
-					css +=  ':root:root {'
+					if (enableMD3Theme) {
+						// MD3 uses a single scheme of "role" tokens (there is no on-light/on-dark
+						// concept like MDC/MD2). To keep every component on the app theme — and
+						// not fall back to Material's default purple baseline — we map the full
+						// set of role tokens, mirroring the MD2 decisions above (white text on the
+						// strong colors, bodyText on surfaces). appTheme carries no light/dark flag,
+						// so we can only theme a single scheme, exactly as MD2 does.
+						css +=  ':root:root {'
+                            + '  --md-ref-typeface-brand:' + appTheme.fontName + ', sans-serif;'
+                            + '  --md-ref-typeface-plain:' + appTheme.fontName + ', sans-serif;'
+                            // Primary
+                            + '  --md-sys-color-primary:' + appTheme.colors.primaryTheme + ';'
+                            + '  --md-sys-color-on-primary: white;'
+                            + '  --md-sys-color-primary-container:' + appTheme.colors.primaryTheme + ';'
+                            + '  --md-sys-color-on-primary-container: white;'
+                            + '  --md-sys-color-inverse-primary:' + appTheme.colors.primaryTheme + ';'
+                            // Secondary
+                            + '  --md-sys-color-secondary:' + appTheme.colors.successTheme + ';'
+                            + '  --md-sys-color-on-secondary: white;'
+                            + '  --md-sys-color-secondary-container:' + appTheme.colors.successTheme + ';'
+                            + '  --md-sys-color-on-secondary-container: white;'
+                            // Tertiary
+                            + '  --md-sys-color-tertiary:' + appTheme.colors.infoTheme + ';'
+                            + '  --md-sys-color-on-tertiary: white;'
+                            + '  --md-sys-color-tertiary-container:' + appTheme.colors.infoTheme + ';'
+                            + '  --md-sys-color-on-tertiary-container: white;'
+                            // Error
+                            + '  --md-sys-color-error:' + appTheme.colors.dangerTheme + ';'
+                            + '  --md-sys-color-on-error: white;'
+                            + '  --md-sys-color-error-container:' + appTheme.colors.dangerTheme + ';'
+                            + '  --md-sys-color-on-error-container: white;'
+                            // Background & surfaces
+                            + '  --md-sys-color-background:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-on-background:' + appTheme.colors.bodyText + ';'
+                            + '  --md-sys-color-surface:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-on-surface:' + appTheme.colors.bodyText + ';'
+                            + '  --md-sys-color-surface-variant:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-on-surface-variant:' + appTheme.colors.bodyText + ';'
+                            + '  --md-sys-color-surface-dim:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-bright:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-container-lowest:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-container-low:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-container:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-container-high:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-container-highest:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-tint:' + appTheme.colors.primaryTheme + ';'
+                            // Inverse surfaces (snackbars, etc.)
+                            + '  --md-sys-color-inverse-surface:' + appTheme.colors.bodyText + ';'
+                            + '  --md-sys-color-inverse-on-surface:' + appTheme.colors.backgroundColor + ';'
+                            // Outlines (borders, dividers, text-field strokes)
+                            + '  --md-sys-color-outline:' + appTheme.colors.bodyText + ';'
+                            + '  --md-sys-color-outline-variant:' + appTheme.colors.bodyText + ';'
+                            // Shadow & scrim
+                            + '  --md-sys-color-shadow: #888888;'
+                            + '  --md-sys-color-scrim: black;'
+                            + '}'
+                            + '*:not(i):not(.material-icons):not(.mdc-icon):not([class*="material-symbols"]):not(md-icon)'
+                            + '{ font-family: \'' + appTheme.fontName + '\', sans-serif !important '
+                            + '}';
+					} else if (enableMDTheme) {
+						css +=  ':root:root {'
                             + '  --mdc-typography-font-family: unquote("' + appTheme.fontName + ', sans-serif");'
                             + '  --mdc-theme-primary:' + appTheme.colors.primaryTheme +';'
                             + '  --mdc-theme-secondary:' + appTheme.colors.successTheme + ';'
@@ -1193,21 +1289,38 @@ var buildfire = {
                             + '.mdc-theme--text-icon-on-dark { color: rgba(255, 255, 255, 0.5) !important; color: var(--mdc-theme-text-icon-on-dark, rgba(255, 255, 255, 0.5)) !important;}'
                             + '.mdc-theme--primary-bg { background-color: #6200ee !important; background-color: var(--mdc-theme-primary, #6200ee) !important;}'
                             + '.mdc-theme--secondary-bg { background-color: #018786 !important; background-color: var(--mdc-theme-secondary, #018786) !important;}';
+					}
+
 					styleElement.innerHTML = css;
 				}
-				buildfire.appearance.getAppTheme(function(err, appTheme) {
-					applyMDTheme(err, appTheme);
+
+				if (enableMD3Theme) {
+					// Inject the tokens immediately using the default theme so every
+					// --md-sys-color-* exists at :root from first paint — even before the
+					// async app context resolves (getContext only answers when the widget
+					// runs inside the BuildFire host). Otherwise document-level CSS that
+					// references the tokens resolves to nothing until/unless context arrives.
+					// getAppTheme then refines them with the real app theme.
+					applyMDTheme(null, buildfire.appearance._defaultTheme);
 					(document.head || document.body).appendChild(styleElement);
-				});
+					buildfire.appearance.getAppTheme(function(err, appTheme) {
+						if (appTheme) applyMDTheme(err, appTheme);
+					});
+				} else {
+					buildfire.appearance.getAppTheme(function(err, appTheme) {
+						applyMDTheme(err, appTheme);
+						(document.head || document.body).appendChild(styleElement);
+					});
+				}
+
+				// Shared: re-apply the theme tokens whenever the app theme updates.
 				buildfire.appearance.onUpdate(function(appTheme){
 					buildfire.getContext((err, context) => {
 						if (err) console.error(err);
 						if (context) {
 							buildfire.appearance._setFontUrl(context, appTheme);
-							applyMDTheme(null, appTheme);
-						} else {
-							applyMDTheme(null, appTheme);
 						}
+						applyMDTheme(null, appTheme);
 					});
 				});
 			}
@@ -5918,8 +6031,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
 			if (window.location.pathname.indexOf('/widget/') >= 0) {
 				var disableTheme = (buildfire.options && buildfire.options.disableTheme) ? buildfire.options.disableTheme : false;
 				var enableMDTheme = (buildfire.options && buildfire.options.enableMDTheme) ? buildfire.options.enableMDTheme  : false;
+				var enableMD3Theme = (buildfire.options && buildfire.options.enableMD3Theme) ? buildfire.options.enableMD3Theme  : false;
 
-				if(!disableTheme && !enableMDTheme) {
+				if(!disableTheme && !enableMDTheme && !enableMD3Theme) {
 					if(buildfire.isWeb() || !context.liveMode)
 						buildfire.appearance.attachAppThemeCSSFiles(context.appId, context.liveMode, context.endPoints.appHost);
 					else

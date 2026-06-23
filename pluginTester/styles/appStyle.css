@@ -320,7 +320,7 @@ html[ios="true"] #navbarContainer{
 }
 
 .menu-location.title-bookmark{
-	right: 40px;
+	right: max(calc(5% + 2.5rem), 40px);
 }
 .menu-location.title-bookmark .title-bookmark-icon{
 	font-size: 16px;
@@ -1169,7 +1169,7 @@ iframe#frmExternalRegistrationForm {
 /* Transparent Nav */
 html[view="app"][storyboard-launch-images="true"] #pluginNav{
 	padding-top:calc(2px + var(--bf-safe-area-inset-top)) !important;
-	height: calc(40px + var(--bf-safe-area-inset-top)) !important;
+    min-height: calc(40px + var(--bf-safe-area-inset-top)) !important;
 }
 html[view="app"][storyboard-launch-images="true"] iframe#launcherPlugin.showNav,
 html[view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
@@ -1182,7 +1182,7 @@ html[view="app"][storyboard-launch-images="true"] iframe.pluginFrame,
 [view="app"][storyboard-launch-images="true"] .isNavbarVisible .iap-subscriptions,
 [view="app"][storyboard-launch-images="true"] .isNavbarVisible .iapMessage,
 [view="app"][storyboard-launch-images="true"] iframe#frmExternalRegistrationForm {
-	padding-top: calc(40px + var(--bf-safe-area-inset-top)) !important;
+	padding-top: max(calc(4rem + var(--bf-safe-area-inset-top)), calc(40px + var(--bf-safe-area-inset-top))) !important;
 }
 html[view="app"][storyboard-launch-images="true"] iframe.pluginFrame.noTitleBar{
 	padding-top:0px !important;
