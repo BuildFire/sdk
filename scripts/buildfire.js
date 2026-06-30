@@ -1115,9 +1115,6 @@ var buildfire = {
 				styleElement.id = enableMD3Theme ? 'appMD3Theme' : 'appMDTheme';
 				styleElement.type = 'text/css';
 
-				// MD3-only: alongside the token overrides it needs a base layout reset,
-				// the component bundle, the typescale stylesheet and the Material Symbols
-				// icon font (all served locally, no CDN).
 				if (enableMD3Theme) {
 					var md3BaseStyle = document.createElement('style');
 					md3BaseStyle.id = 'appMD3Base';
@@ -1127,23 +1124,6 @@ var buildfire = {
 						+ 'html[buildfire] body.no-scroll{overflow:hidden !important;-webkit-overflow-scrolling:inherit !important;}'
 						+ 'html[buildfire] body.no-scroll .scrollable{overflow-y:auto !important;overflow-x:hidden !important;-webkit-overflow-scrolling:touch !important;height:100% !important;width:100% !important;}';
 					(document.head || document.body).appendChild(md3BaseStyle);
-
-					var md3Loader = document.createElement('script');
-					md3Loader.src = base + '/scripts/materialDesign/material-components-web3@2.4.1.min.js';
-					(document.head || document.body).appendChild(md3Loader);
-
-					// Typography helper classes (.md-typescale-*).
-					var md3Typescale = document.createElement('link');
-					md3Typescale.rel = 'stylesheet';
-					md3Typescale.href = base + '/styles/materialDesign/material-components-web3@2.4.1.min.css';
-					(document.head || document.body).appendChild(md3Typescale);
-
-					// Material Symbols icon font for <md-icon> glyphs, served locally (no CDN)
-					// alongside the bundle above so icons work offline.
-					var md3Icons = document.createElement('style');
-					md3Icons.id = 'appMD3Icons';
-					md3Icons.textContent = "@font-face{font-family:'Material Symbols Outlined';font-style:normal;font-weight:400;font-display:block;src:url('" + base + "/fonticons/MaterialIcons3@2.4.1-outlined.woff2') format('woff2');}";
-					(document.head || document.body).appendChild(md3Icons);
 				}
 
 				function applyMDTheme(err, appTheme) {
@@ -1172,24 +1152,24 @@ var buildfire = {
                             // Primary
                             + '  --md-sys-color-primary:' + appTheme.colors.primaryTheme + ';'
                             + '  --md-sys-color-on-primary: white;'
-                            + '  --md-sys-color-primary-container:' + appTheme.colors.primaryTheme + ';'
-                            + '  --md-sys-color-on-primary-container: white;'
+                            + '  --md-sys-color-primary-container: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-on-primary-container: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 35%, #000);'
                             + '  --md-sys-color-inverse-primary:' + appTheme.colors.primaryTheme + ';'
                             // Secondary
                             + '  --md-sys-color-secondary:' + appTheme.colors.successTheme + ';'
                             + '  --md-sys-color-on-secondary: white;'
-                            + '  --md-sys-color-secondary-container:' + appTheme.colors.successTheme + ';'
-                            + '  --md-sys-color-on-secondary-container: white;'
+                            + '  --md-sys-color-secondary-container: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-on-secondary-container: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 35%, #000);'
                             // Tertiary
                             + '  --md-sys-color-tertiary:' + appTheme.colors.infoTheme + ';'
                             + '  --md-sys-color-on-tertiary: white;'
-                            + '  --md-sys-color-tertiary-container:' + appTheme.colors.infoTheme + ';'
-                            + '  --md-sys-color-on-tertiary-container: white;'
+                            + '  --md-sys-color-tertiary-container: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-on-tertiary-container: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 35%, #000);'
                             // Error
                             + '  --md-sys-color-error:' + appTheme.colors.dangerTheme + ';'
                             + '  --md-sys-color-on-error: white;'
-                            + '  --md-sys-color-error-container:' + appTheme.colors.dangerTheme + ';'
-                            + '  --md-sys-color-on-error-container: white;'
+                            + '  --md-sys-color-error-container: color-mix(in srgb, ' + appTheme.colors.dangerTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-on-error-container: color-mix(in srgb, ' + appTheme.colors.dangerTheme + ' 35%, #000);'
                             // Background & surfaces
                             + '  --md-sys-color-background:' + appTheme.colors.backgroundColor + ';'
                             + '  --md-sys-color-on-background:' + appTheme.colors.bodyText + ';'
@@ -1294,24 +1274,11 @@ var buildfire = {
 					styleElement.innerHTML = css;
 				}
 
-				if (enableMD3Theme) {
-					// Inject the tokens immediately using the default theme so every
-					// --md-sys-color-* exists at :root from first paint — even before the
-					// async app context resolves (getContext only answers when the widget
-					// runs inside the BuildFire host). Otherwise document-level CSS that
-					// references the tokens resolves to nothing until/unless context arrives.
-					// getAppTheme then refines them with the real app theme.
-					applyMDTheme(null, buildfire.appearance._defaultTheme);
+
+				buildfire.appearance.getAppTheme(function(err, appTheme) {
+					applyMDTheme(err, appTheme);
 					(document.head || document.body).appendChild(styleElement);
-					buildfire.appearance.getAppTheme(function(err, appTheme) {
-						if (appTheme) applyMDTheme(err, appTheme);
-					});
-				} else {
-					buildfire.appearance.getAppTheme(function(err, appTheme) {
-						applyMDTheme(err, appTheme);
-						(document.head || document.body).appendChild(styleElement);
-					});
-				}
+				});
 
 				// Shared: re-apply the theme tokens whenever the app theme updates.
 				buildfire.appearance.onUpdate(function(appTheme){
