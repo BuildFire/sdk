@@ -1140,36 +1140,63 @@ var buildfire = {
 					}
 
 					if (enableMD3Theme) {
-						// MD3 uses a single scheme of "role" tokens (there is no on-light/on-dark
-						// concept like MDC/MD2). To keep every component on the app theme — and
-						// not fall back to Material's default purple baseline — we map the full
-						// set of role tokens, mirroring the MD2 decisions above (white text on the
-						// strong colors, bodyText on surfaces). appTheme carries no light/dark flag,
-						// so we can only theme a single scheme, exactly as MD2 does.
+						// Map the full set of MD3 "role" tokens onto the app theme so no component
+						// falls back to Material's purple baseline. appTheme has no light/dark flag, so
+						// we derive legible "on" inks from each color's brightness (md3ReadableOn) rather
+						// than assuming white.
+						var md3ReadableOn = function (color) {
+                            try {
+                                var m = typeof color === 'string' && /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim());
+                                if (!m) return 'white'; // non-hex (rgb/named) -> keep the previous white default
+                                var h = m[1];
+                                if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+                                var r = parseInt(h.substr(0, 2), 16), g = parseInt(h.substr(2, 2), 16), b = parseInt(h.substr(4, 2), 16);
+                                return ((r * 299 + g * 587 + b * 114) / 1000) > 150 ? 'black' : 'white';
+                            } catch (e) {
+                                return 'white';
+                            }
+						};
+						// Dark ink on light backgrounds, light ink on dark backgrounds — blended into
+						// the *-container / *-fixed roles so their text keeps contrast in either scheme.
+						var md3ContainerInk = md3ReadableOn(appTheme.colors.backgroundColor) === 'white' ? '#fff' : '#000';
 						css +=  ':root:root {'
                             + '  --md-ref-typeface-brand:' + appTheme.fontName + ', sans-serif;'
                             + '  --md-ref-typeface-plain:' + appTheme.fontName + ', sans-serif;'
                             // Primary
                             + '  --md-sys-color-primary:' + appTheme.colors.primaryTheme + ';'
-                            + '  --md-sys-color-on-primary: white;'
+                            + '  --md-sys-color-on-primary: ' + md3ReadableOn(appTheme.colors.primaryTheme) + ';'
                             + '  --md-sys-color-primary-container: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
-                            + '  --md-sys-color-on-primary-container: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 35%, #000);'
+                            + '  --md-sys-color-on-primary-container: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 35%, ' + md3ContainerInk + ');'
                             + '  --md-sys-color-inverse-primary:' + appTheme.colors.primaryTheme + ';'
                             // Secondary
                             + '  --md-sys-color-secondary:' + appTheme.colors.successTheme + ';'
-                            + '  --md-sys-color-on-secondary: white;'
+                            + '  --md-sys-color-on-secondary: ' + md3ReadableOn(appTheme.colors.successTheme) + ';'
                             + '  --md-sys-color-secondary-container: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
-                            + '  --md-sys-color-on-secondary-container: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 35%, #000);'
+                            + '  --md-sys-color-on-secondary-container: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 35%, ' + md3ContainerInk + ');'
                             // Tertiary
                             + '  --md-sys-color-tertiary:' + appTheme.colors.infoTheme + ';'
-                            + '  --md-sys-color-on-tertiary: white;'
+                            + '  --md-sys-color-on-tertiary: ' + md3ReadableOn(appTheme.colors.infoTheme) + ';'
                             + '  --md-sys-color-tertiary-container: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
-                            + '  --md-sys-color-on-tertiary-container: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 35%, #000);'
+                            + '  --md-sys-color-on-tertiary-container: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 35%, ' + md3ContainerInk + ');'
                             // Error
                             + '  --md-sys-color-error:' + appTheme.colors.dangerTheme + ';'
-                            + '  --md-sys-color-on-error: white;'
+                            + '  --md-sys-color-on-error: ' + md3ReadableOn(appTheme.colors.dangerTheme) + ';'
                             + '  --md-sys-color-error-container: color-mix(in srgb, ' + appTheme.colors.dangerTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
-                            + '  --md-sys-color-on-error-container: color-mix(in srgb, ' + appTheme.colors.dangerTheme + ' 35%, #000);'
+                            + '  --md-sys-color-on-error-container: color-mix(in srgb, ' + appTheme.colors.dangerTheme + ' 35%, ' + md3ContainerInk + ');'
+                            // Fixed accent roles (kept on-theme so components using them don't
+                            // fall back to Material's default purple baseline).
+                            + '  --md-sys-color-primary-fixed: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-primary-fixed-dim: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 30%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-on-primary-fixed: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 35%, ' + md3ContainerInk + ');'
+                            + '  --md-sys-color-on-primary-fixed-variant: color-mix(in srgb, ' + appTheme.colors.primaryTheme + ' 55%, ' + md3ContainerInk + ');'
+                            + '  --md-sys-color-secondary-fixed: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-secondary-fixed-dim: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 30%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-on-secondary-fixed: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 35%, ' + md3ContainerInk + ');'
+                            + '  --md-sys-color-on-secondary-fixed-variant: color-mix(in srgb, ' + appTheme.colors.successTheme + ' 55%, ' + md3ContainerInk + ');'
+                            + '  --md-sys-color-tertiary-fixed: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 15%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-tertiary-fixed-dim: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 30%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-on-tertiary-fixed: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 35%, ' + md3ContainerInk + ');'
+                            + '  --md-sys-color-on-tertiary-fixed-variant: color-mix(in srgb, ' + appTheme.colors.infoTheme + ' 55%, ' + md3ContainerInk + ');'
                             // Background & surfaces
                             + '  --md-sys-color-background:' + appTheme.colors.backgroundColor + ';'
                             + '  --md-sys-color-on-background:' + appTheme.colors.bodyText + ';'
@@ -1177,27 +1204,116 @@ var buildfire = {
                             + '  --md-sys-color-on-surface:' + appTheme.colors.bodyText + ';'
                             + '  --md-sys-color-surface-variant:' + appTheme.colors.backgroundColor + ';'
                             + '  --md-sys-color-on-surface-variant:' + appTheme.colors.bodyText + ';'
-                            + '  --md-sys-color-surface-dim:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-dim: color-mix(in srgb, ' + md3ContainerInk + ' 6%, ' + appTheme.colors.backgroundColor + ');'
                             + '  --md-sys-color-surface-bright:' + appTheme.colors.backgroundColor + ';'
                             + '  --md-sys-color-surface-container-lowest:' + appTheme.colors.backgroundColor + ';'
-                            + '  --md-sys-color-surface-container-low:' + appTheme.colors.backgroundColor + ';'
-                            + '  --md-sys-color-surface-container:' + appTheme.colors.backgroundColor + ';'
-                            + '  --md-sys-color-surface-container-high:' + appTheme.colors.backgroundColor + ';'
-                            + '  --md-sys-color-surface-container-highest:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-sys-color-surface-container-low: color-mix(in srgb, ' + md3ContainerInk + ' 4%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-surface-container: color-mix(in srgb, ' + md3ContainerInk + ' 6%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-surface-container-high: color-mix(in srgb, ' + md3ContainerInk + ' 9%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-sys-color-surface-container-highest: color-mix(in srgb, ' + md3ContainerInk + ' 12%, ' + appTheme.colors.backgroundColor + ');'
                             + '  --md-sys-color-surface-tint:' + appTheme.colors.primaryTheme + ';'
                             // Inverse surfaces (snackbars, etc.)
                             + '  --md-sys-color-inverse-surface:' + appTheme.colors.bodyText + ';'
                             + '  --md-sys-color-inverse-on-surface:' + appTheme.colors.backgroundColor + ';'
                             // Outlines (borders, dividers, text-field strokes)
                             + '  --md-sys-color-outline:' + appTheme.colors.bodyText + ';'
-                            + '  --md-sys-color-outline-variant:' + appTheme.colors.bodyText + ';'
+                            + '  --md-sys-color-outline-variant: color-mix(in srgb, ' + appTheme.colors.bodyText + ' 25%, ' + appTheme.colors.backgroundColor + ');'
                             // Shadow & scrim
                             + '  --md-sys-color-shadow: #888888;'
                             + '  --md-sys-color-scrim: black;'
+                            // Standard icon button (transparent container)
+                            + '  --md-icon-button-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-focus-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-hover-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-pressed-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-disabled-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-hover-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-pressed-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-selected-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-selected-focus-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-selected-hover-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-selected-pressed-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-selected-hover-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-icon-button-selected-pressed-state-layer-color:' + appTheme.colors.icons + ';'
+                            // Filled icon button.
+                            + '  --md-filled-icon-button-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-selected-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-unselected-container-color: color-mix(in srgb, ' + appTheme.colors.icons + ' 12%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-filled-icon-button-disabled-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-focus-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-hover-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-pressed-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-disabled-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-hover-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-pressed-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-toggle-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-toggle-focus-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-toggle-hover-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-toggle-pressed-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-toggle-hover-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-toggle-pressed-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-icon-button-toggle-selected-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-toggle-selected-focus-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-toggle-selected-hover-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-toggle-selected-pressed-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-toggle-selected-hover-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-icon-button-toggle-selected-pressed-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            // Filled tonal icon button
+                            + '  --md-filled-tonal-icon-button-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-selected-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-unselected-container-color: color-mix(in srgb, ' + appTheme.colors.icons + ' 12%, ' + appTheme.colors.backgroundColor + ');'
+                            + '  --md-filled-tonal-icon-button-disabled-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-focus-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-hover-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-pressed-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-disabled-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-hover-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-pressed-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-focus-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-hover-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-pressed-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-hover-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-pressed-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-selected-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-selected-focus-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-selected-hover-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-selected-pressed-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-selected-hover-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-filled-tonal-icon-button-toggle-selected-pressed-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            // Outlined icon button
+                            + '  --md-outlined-icon-button-outline-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-disabled-outline-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-focus-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-hover-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-pressed-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-disabled-icon-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-hover-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-pressed-state-layer-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-selected-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-disabled-selected-container-color:' + appTheme.colors.icons + ';'
+                            + '  --md-outlined-icon-button-selected-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-outlined-icon-button-selected-focus-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-outlined-icon-button-selected-hover-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-outlined-icon-button-selected-pressed-icon-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-outlined-icon-button-selected-hover-state-layer-color:' + appTheme.colors.backgroundColor + ';'
+                            + '  --md-outlined-icon-button-selected-pressed-state-layer-color:' + appTheme.colors.backgroundColor + ';'
                             + '}'
                             + '*:not(i):not(.material-icons):not(.mdc-icon):not([class*="material-symbols"]):not(md-icon)'
                             + '{ font-family: \'' + appTheme.fontName + '\', sans-serif !important '
-                            + '}';
+                            + '}'
+                            + '.material-icons,[class*="material-symbols"],md-icon'
+                            + '{ color: ' + appTheme.colors.icons + ' !important;}'
+                            // toggle, and selected outlined. Unselected toggles keep the icons-colored
+                            + 'md-filled-icon-button:not([toggle]) md-icon,md-filled-icon-button:not([toggle]) .material-icons,md-filled-icon-button:not([toggle]) [class*="material-symbols"],'
+                            + 'md-filled-icon-button[selected] md-icon,md-filled-icon-button[selected] .material-icons,md-filled-icon-button[selected] [class*="material-symbols"],'
+                            + 'md-filled-tonal-icon-button:not([toggle]) md-icon,md-filled-tonal-icon-button:not([toggle]) .material-icons,md-filled-tonal-icon-button:not([toggle]) [class*="material-symbols"],'
+                            + 'md-filled-tonal-icon-button[selected] md-icon,md-filled-tonal-icon-button[selected] .material-icons,md-filled-tonal-icon-button[selected] [class*="material-symbols"],'
+                            + 'md-outlined-icon-button[selected] md-icon,md-outlined-icon-button[selected] .material-icons,md-outlined-icon-button[selected] [class*="material-symbols"]'
+                            + '{ color: ' + appTheme.colors.backgroundColor + ' !important;}';
 					} else if (enableMDTheme) {
 						css +=  ':root:root {'
                             + '  --mdc-typography-font-family: unquote("' + appTheme.fontName + ', sans-serif");'
