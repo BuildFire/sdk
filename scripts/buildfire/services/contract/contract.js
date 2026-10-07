@@ -159,5 +159,68 @@ buildfire.services.contract = {
 		} catch (e) {
 			callback('error executing contract function: ' + (e && e.message ? e.message : e));
 		}
+	},
+
+	/* --------------------------------------------------------------------------
+	 * Events: the "events" a plugin declares in its plugin.contract.json are the triggers
+	 * automations (workflows) listen for. A plugin announces one with events.send; the app
+	 * finds the workflows listening for it, tests their conditions, fills their
+	 * "{{eventData.x}}" references and runs their actions.
+	 * ------------------------------------------------------------------------ */
+	events: {
+		/**
+		 * List the events a plugin declares in its plugin.contract.json.
+		 * @param {Object} options At least one of pluginId, instanceId, or folderName must be provided.
+		 * @param {String} [options.pluginId] The id (type token) of the plugin that owns the contract.
+		 * @param {String} [options.instanceId] Instance id of the plugin.
+		 * @param {String} [options.folderName] The plugin's folder name; skips the instance lookup.
+		 * @param {Function} callback Node-style callback (err, events) — [{ name, displayName, description, data }].
+		 */
+		list: function (options, callback) {
+			if (!callback || typeof (callback) !== 'function') {
+				throw 'callback function is mandatory';
+			}
+
+			options = options || {};
+
+			if (typeof (options) !== 'object') {
+				return callback({ code: 'error', message: 'options must be an object' }, null);
+			}
+
+			if (!options.pluginId && !options.instanceId && !options.folderName) {
+				return callback({ code: 'error', message: 'pluginId, instanceId, or folderName is required' }, null);
+			}
+
+			var packet = new Packet(null, 'contract.listEvents', options);
+			buildfire._sendPacket(packet, callback);
+		},
+
+		/**
+		 * Announce that one of this plugin's declared events happened. Call it only after the action succeeded.
+		 * The event is attributed to the sending instance; the workflows listening for it run in the app.
+		 * @param {String} eventName The event's name, exactly as declared in plugin.contract.json.
+		 * @param {Object} [data] The event payload, matching the event's declared "data" block.
+		 * @param {Function} [callback] Node-style callback (err, results) — one { workflowId, status } per workflow run.
+		 */
+		send: function (eventName, data, callback) {
+			if (typeof (data) === 'function') {
+				callback = data;
+				data = {};
+			}
+
+			if (!eventName || typeof (eventName) !== 'string') {
+				if (callback) return callback({ code: 'error', message: 'eventName is required' }, null);
+				return;
+			}
+
+			if (data !== undefined && data !== null && typeof (data) !== 'object') {
+				if (callback) return callback({ code: 'error', message: 'data must be an object' }, null);
+				return;
+			}
+
+			var packet = new Packet(null, 'contract.sendEvent', { eventName: eventName, data: data || {} });
+			buildfire._sendPacket(packet, callback);
+		}
 	}
+
 };
