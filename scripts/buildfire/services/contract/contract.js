@@ -34,6 +34,71 @@ buildfire.services.contract = {
 	},
 
 	/**
+	 * Get a plugin's contract catalog — a light listing of its events and operations, read from
+	 * widget/contract/plugin.contract.catalog.json. Each operation carries its main fields, the names of
+	 * its parameters, and the filePath of its full definition (see getOperationByCatalog).
+	 * @param {Object} options At least one of pluginId, instanceId, or folderName must be provided.
+	 * @param {String} [options.pluginId] The id (type token) of the plugin that owns the contract.
+	 * @param {String} [options.instanceId] Instance id to scope the lookup to a specific instance.
+	 * @param {String} [options.folderName] The plugin's folder name. When provided, the app fetches the
+	 *                                       catalog directly and skips the instance lookup.
+	 * @param {Function} callback Node-style callback (err, res) invoked with { events, operations }.
+	 */
+	catalog: function (options, callback) {
+		if (!callback || typeof (callback) !== 'function') {
+			throw 'callback function is mandatory';
+		}
+
+		options = options || {};
+
+		if (typeof (options) !== 'object') {
+			return callback({ code: 'error', message: 'options must be an object' }, null);
+		}
+
+		if (!options.pluginId && !options.instanceId && !options.folderName) {
+			return callback({ code: 'error', message: 'pluginId, instanceId, or folderName is required' }, null);
+		}
+
+		var packet = new Packet(null, 'contract.catalog', options);
+		buildfire._sendPacket(packet, callback);
+	},
+
+	/**
+	 * Get one operation's full definition (every parameter in full, its callback and result shape),
+	 * read from the operation file its catalog entry points at.
+	 * @param {Object} options At least one of pluginId, instanceId, or folderName must be provided.
+	 * @param {String} [options.pluginId] The id (type token) of the plugin that owns the contract.
+	 * @param {String} [options.instanceId] Instance id to scope the lookup to a specific instance.
+	 * @param {String} [options.folderName] The plugin's folder name; skips the instance lookup.
+	 * @param {String} options.operationName The operation's name, as listed in the catalog.
+	 * @param {Object} [options.catalog] A catalog already returned by catalog(). Saves a request;
+	 *                                    when omitted, the app fetches the plugin's catalog itself.
+	 * @param {Function} callback Node-style callback (err, res) invoked with the operation.
+	 */
+	getOperationByCatalog: function (options, callback) {
+		if (!callback || typeof (callback) !== 'function') {
+			throw 'callback function is mandatory';
+		}
+
+		options = options || {};
+
+		if (typeof (options) !== 'object') {
+			return callback({ code: 'error', message: 'options must be an object' }, null);
+		}
+
+		if (!options.pluginId && !options.instanceId && !options.folderName) {
+			return callback({ code: 'error', message: 'pluginId, instanceId, or folderName is required' }, null);
+		}
+
+		if (!options.operationName) {
+			return callback({ code: 'error', message: 'operationName is required' }, null);
+		}
+
+		var packet = new Packet(null, 'contract.getOperationByCatalog', options);
+		buildfire._sendPacket(packet, callback);
+	},
+
+	/**
 	 * Invoke an operation by name. The app dispatches on the operation's declared "type":
 	 *   type: "function"  → runs in the target plugin's iframe
 	 *   type: "datastore" → runs in the app (builds the query from the operation's context)
