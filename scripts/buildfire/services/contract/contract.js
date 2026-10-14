@@ -46,7 +46,7 @@ buildfire.services.contract = {
 	 * @param {String} [options.pluginId] Optional plugin type token; passing it with folderName skips the instance lookup.
 	 * @param {String} [options.folderName] Optional plugin folder name; passing it with pluginId skips the instance lookup.
 	 * @param {String} options.functionName The operation to invoke.
-	 * @param {Object} [options.options] Parameters passed to the operation.
+	 * @param {Object} [options.parameters] Parameters passed to the operation.
 	 * @param {Function} callback Node-style callback (err, res) invoked with the result.
 	 */
 	invoke: function (options, callback) {
@@ -137,10 +137,14 @@ buildfire.services.contract = {
 	},
 
 	/**
-	 * Invoked by the app to run one of this plugin's contract operations.
-	 * Just calls window.widgetContract[functionName](params, callback) and lets the
-	 * plugin's own callback flow back to the caller.
-	 * @param {Object} options { functionName, options } — the function to run and its params.
+	 * Invoked by the host to run one of this plugin's contract operations. Just calls the named
+	 * function and lets the plugin's own callback flow back to the caller.
+	 *
+	 * Which namespace it looks in depends on where this frame was loaded: a control page implements
+	 * its operations on window.controlContract, a widget page on window.widgetContract. The path is
+	 * what decides — the same test the SDK already uses to tell the two apart elsewhere.
+	 *
+	 * @param {Object} options { functionName, parameters } — the function to run and its params.
 	 * @param {Function} callback Node-style callback relayed back to the caller plugin.
 	 */
 	_runFunction: function (options, callback) {
@@ -149,13 +153,17 @@ buildfire.services.contract = {
 		if (!options.functionName) {
 			return callback('functionName is required');
 		}
-		var operations = (typeof (window) !== 'undefined' && window.widgetContract) ? window.widgetContract : {};
+
+		var isControl = typeof (window) !== 'undefined' && window.location
+			&& window.location.pathname.indexOf('/control/') >= 0;
+		var namespace = isControl ? 'controlContract' : 'widgetContract';
+		var operations = (typeof (window) !== 'undefined' && window[namespace]) ? window[namespace] : {};
 		var handler = operations[options.functionName];
 		if (typeof (handler) !== 'function') {
-			return callback('contract function "' + options.functionName + '" is not implemented on Widget Contract');
+			return callback('contract function "' + options.functionName + '" is not implemented on window.' + namespace);
 		}
 		try {
-			handler(options.options || {}, callback);
+			handler(options.parameters || {}, callback);
 		} catch (e) {
 			callback('error executing contract function: ' + (e && e.message ? e.message : e));
 		}
