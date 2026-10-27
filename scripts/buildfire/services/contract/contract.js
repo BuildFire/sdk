@@ -232,5 +232,19 @@ buildfire.services.contract = {
 		} catch (e) {
 			callback('error executing contract function: ' + (e && e.message ? e.message : e));
 		}
+	},
+
+	events: {
+		list: function (options, callback) {
+			if (typeof callback == 'function') {
+				return callback(null, true);
+			}
+		},
+
+		send: function (eventName, data, callback) {
+			if (typeof callback == 'function') {
+				return callback(null, true);
+			}
+		}
 	}
 };
