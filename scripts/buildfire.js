@@ -2845,6 +2845,83 @@ var buildfire = {
 			buildfire._sendPacket(p);
 		}
 	}
+	/**
+	 * Drop data: an app-wide "drop box". Anyone can insert into it — no user needs to be logged in — while every
+	 * other operation needs the app's write key, which the app supplies. Records are kept for 30 days at most.
+	 *
+	 * Every method takes (…, tag, options, callback); tag and options may be left out:
+	 *   buildfire.dropData.insert({ ...data }, 'tagName', { checkDuplicate, expiresInMinutes }, (err, result) => {});
+	 */
+	, dropData: {
+		// (tag, options, callback) with tag and/or options left out
+		_args: function (tag, options, callback) {
+			if (typeof (tag) == 'function') {
+				callback = tag;
+				tag = '';
+				options = {};
+			} else if (typeof (options) == 'function') {
+				callback = options;
+				options = {};
+			}
+			return {tag: tag || '', options: options || {}, callback: typeof (callback) == 'function' ? callback : function () {}};
+		}
+		, _send: function (cmd, data, callback) {
+			buildfire._sendPacket(new Packet(null, 'dropData.' + cmd, data), callback);
+		}
+		/// options: { checkDuplicate?: refuse the insert when the tag already has a record,
+		///            expiresInMinutes?: remove the record that many minutes after it is inserted (result.expiresOn) }
+		, insert: function (obj, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			if (!obj || typeof (obj) != 'object' || Array.isArray(obj))
+				return args.callback({'code': 'error', 'message': 'the data should be an object'}, null);
+
+			var data = {tag: args.tag, obj: obj};
+			if (args.options.checkDuplicate) data.checkDuplicate = true;
+			if (args.options.expiresInMinutes !== undefined && args.options.expiresInMinutes !== null) data.expiresInMinutes = args.options.expiresInMinutes;
+			buildfire.dropData._send('insert', data, args.callback);
+		}
+		/// id: one record's id, or an array of ids (up to 50)
+		, getById: function (id, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			buildfire.dropData._send('get', Array.isArray(id) ? {tag: args.tag, ids: id} : {tag: args.tag, id: id}, args.callback);
+		}
+		/// searchOptions: { filter, sort, page, pageSize, skip, limit, recordCount, fields } as publicData.search takes them
+		, search: function (searchOptions, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			if (!searchOptions || typeof (searchOptions) != 'object') searchOptions = {};
+			if (!searchOptions.filter) searchOptions.filter = {};
+			buildfire.dropData._send('search', {tag: args.tag, obj: searchOptions}, args.callback);
+		}
+		/// params: { pipelineStages: [...] }, the first a $match on a buildfire index
+		, aggregate: function (params, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			if (!params || typeof (params) != 'object') params = {};
+			buildfire.dropData._send('aggregate', {tag: args.tag, obj: params}, args.callback);
+		}
+		/// options: { id?: replace that record (creating it when it is not there); without it a new record is inserted }
+		, save: function (obj, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			buildfire.dropData._send('save', {tag: args.tag, id: args.options.id, obj: obj}, args.callback);
+		}
+		, update: function (id, obj, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			buildfire.dropData._send('update', {tag: args.tag, id: id, obj: obj}, args.callback);
+		}
+		, searchAndUpdate: function (search, obj, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			buildfire.dropData._send('searchAndUpdate', {tag: args.tag, search: search, obj: obj}, args.callback);
+		}
+		, delete: function (id, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			buildfire.dropData._send('delete', {tag: args.tag, id: id}, args.callback);
+		}
+		, bulkDelete: function (ids, tag, options, callback) {
+			var args = buildfire.dropData._args(tag, options, callback);
+			if (!Array.isArray(ids) || !ids.length)
+				return args.callback({'code': 'error', 'message': 'ids should be a non-empty array'}, null);
+			buildfire.dropData._send('bulkDelete', {tag: args.tag, ids: ids}, args.callback);
+		}
+	}
 	, appData: {
 		get: function (tag, callback) {
 			if (!this._isTagValid(tag, callback)) return;
@@ -6123,6 +6200,9 @@ var buildfire = {
 		buildfire._cssInjection.handleCssLayoutInjection(pluginJson);
 	}
 };
+
+// buildfire.dropdata, as it is also written
+buildfire.dropdata = buildfire.dropData;
 
 window.parsedQuerystring = buildfire.parseQueryString();
 buildfire.fid = window.parsedQuerystring.fid;
