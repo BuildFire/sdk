@@ -4530,7 +4530,7 @@ var buildfire = {
 			};
 
 			var script = document.createElement('script');
-			script.src = 'plugin.contract.js';
+			script.src = 'contract/plugin.contract.js';
 			script.onload = settle;
 			script.onerror = function () {
 				console.error('this plugin provides no plugin.contract.js to run its contract operations');
