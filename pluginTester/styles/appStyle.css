@@ -5648,3 +5648,95 @@ body:not(.splash) #splashScreenPreview {
 .menu-body-container .menu-scroll {
 	margin-bottom: max(var(--bf-safe-area-inset-bottom), 30px)
 }
+/* Calendar picker rows inside richModal: choose which calendars an event is added to (deviceAPI.calendar.showCalendarPicker) */
+#richModal .calendar-picker-list {
+	/* full width rows: cancel the rich content side padding */
+	margin: 0 -24px;
+	padding: 0;
+	list-style: none;
+}
+
+#richModal .calendar-picker-list li {
+	position: relative;
+}
+
+/* hairline separators drawn in the theme's text color, so they work on any app background */
+#richModal .calendar-picker-list li::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 1px;
+	background-color: currentColor;
+	opacity: 0.2;
+	transform: scaleY(0.5);
+	pointer-events: none;
+}
+
+#richModal .calendar-picker-list label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 44px;
+	margin: 0;
+	padding: 10px 24px;
+	font-size: 16px;
+	font-weight: normal;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+}
+
+#richModal .calendar-picker-list label:active {
+	background-color: rgba(127, 127, 127, 0.15);
+}
+
+/* the real checkbox stays in the page for taps and accessibility, the checkmark shows its state */
+#richModal .calendar-picker-list input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+#richModal .calendar-picker-checkmark {
+	flex: 0 0 18px;
+	width: 18px;
+	height: 18px;
+	visibility: hidden;
+}
+
+/* the checkmark is drawn in currentColor, so primaryTheme colors it */
+#richModal .calendar-picker-checkmark::before {
+	content: '';
+	display: block;
+	width: 6px;
+	height: 12px;
+	margin: 1px 0 0 5px;
+	border: solid currentColor;
+	border-width: 0 2.5px 2.5px 0;
+	transform: rotate(45deg);
+}
+
+#richModal .calendar-picker-list input:checked + .calendar-picker-checkmark {
+	visibility: visible;
+}
+
+#richModal .calendar-picker-label {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	min-width: 0;
+}
+
+#richModal .calendar-picker-name,
+#richModal .calendar-picker-account {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* who syncs the calendar (e.g. "Google"), under the name when another app has a calendar with the same name */
+#richModal .calendar-picker-account {
+	font-size: 13px;
+	opacity: 0.6;
+}
