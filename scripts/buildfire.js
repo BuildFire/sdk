@@ -2849,7 +2849,7 @@ var buildfire = {
 	}
 	, policyBoundData: {
 		/// same API as publicData, every request is validated against the policy saved by the control panel for the tag
-		/// options.policy targets one policy (create under it, or only read / change its records). Without it records are created
+		/// options.policy targets one policy (create under it, or only read / change its records), 'default' targets the default policy. Without it records are created
 		/// under the default policy, search / aggregate / update / searchAndUpdate use every policy the user is allowed on, and
 		/// get / delete use the default policy. The policies are saved in the plugin datastore (buildfire.datastore) on the '<tag>##_policy_manifest' tags
 		_resolveTag: function (tag) {
