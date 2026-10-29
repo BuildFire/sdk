@@ -2849,6 +2849,8 @@ var buildfire = {
 	}
 	, policyBoundData: {
 		/// same API as publicData, every request is validated against the policy saved by the control panel for the tag
+		/// options.policy targets one policy (create under it, or only read / change its records), without it the
+		/// default policy is used. Tags ending with ##_policy_manifest are reserved for the saved policies
 		_resolveTag: function (tag) {
 			return typeof (tag) == 'string' ? tag : '';
 		}
@@ -2857,6 +2859,10 @@ var buildfire = {
 			if (typeof (options) == 'boolean') return {checkDuplicate: options};
 			if (options && typeof (options) == 'object') return options;
 			return {};
+		}
+		, _resolvePolicy: function (options) {
+			options = this._resolveOptions(options);
+			return typeof (options.policy) == 'string' && options.policy ? options.policy : undefined;
 		}
 		, _warnOnMissingIndex: function (filter, sort) {
 			if (filter && (!filter.$text || !filter.$text.$search) && Object.keys(filter).length > 0 && !buildfire._data._checkForIndex(filter, 0)) {
@@ -2873,19 +2879,27 @@ var buildfire = {
 				if (callback) callback(err, result);
 			});
 		}
-		, get: function (tag, callback) {
+		, get: function (tag, options, callback) {
+			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
+				callback = options;
+				options = {};
+			}
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
 				tag = '';
 			}
-			this._send('get', {tag: this._resolveTag(tag)}, callback);
+			this._send('get', {tag: this._resolveTag(tag), policy: this._resolvePolicy(options)}, callback);
 		}
-		, getById: function (id, tag, callback) {
+		, getById: function (id, tag, options, callback) {
+			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
+				callback = options;
+				options = {};
+			}
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
 				tag = '';
 			}
-			this._send('get', {tag: this._resolveTag(tag), id: id}, callback);
+			this._send('get', {tag: this._resolveTag(tag), id: id, policy: this._resolvePolicy(options)}, callback);
 		}
 		, save: function (obj, tag, options, callback) {
 			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
@@ -2896,7 +2910,7 @@ var buildfire = {
 				callback = tag;
 				tag = '';
 			}
-			this._send('save', {tag: this._resolveTag(tag), obj: obj, options: this._resolveOptions(options)}, callback, true);
+			this._send('save', {tag: this._resolveTag(tag), obj: obj, policy: this._resolvePolicy(options)}, callback, true);
 		}
 		, insert: function (obj, tag, options, callback) {
 			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
@@ -2908,7 +2922,7 @@ var buildfire = {
 				tag = '';
 			}
 			options = this._resolveOptions(options);
-			this._send('insert', {tag: this._resolveTag(tag), obj: obj, checkDuplicate: !!options.checkDuplicate, options: options}, callback, true);
+			this._send('insert', {tag: this._resolveTag(tag), obj: obj, checkDuplicate: !!options.checkDuplicate, policy: this._resolvePolicy(options)}, callback, true);
 
 			if (!obj || !obj._buildfire || !obj._buildfire.index) {
 				console.warn('WARNING: no index on inserted data! Please see https://sdk.buildfire.com/docs/indexed-fields');
@@ -2927,31 +2941,47 @@ var buildfire = {
 				if (callback) callback({'code': 'error', 'message': 'the data should be an array'}, null);
 				return;
 			}
-			this._send('bulkInsert', {tag: this._resolveTag(tag), obj: arrayObj, options: this._resolveOptions(options)}, callback, true);
+			this._send('bulkInsert', {tag: this._resolveTag(tag), obj: arrayObj, policy: this._resolvePolicy(options)}, callback, true);
 		}
-		, update: function (id, obj, tag, callback) {
+		, update: function (id, obj, tag, options, callback) {
+			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
+				callback = options;
+				options = {};
+			}
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
 				tag = '';
 			}
-			this._send('update', {tag: this._resolveTag(tag), id: id, obj: obj}, callback, true);
+			this._send('update', {tag: this._resolveTag(tag), id: id, obj: obj, policy: this._resolvePolicy(options)}, callback, true);
 		}
-		, searchAndUpdate: function (search, obj, tag, callback) {
+		, searchAndUpdate: function (search, obj, tag, options, callback) {
+			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
+				callback = options;
+				options = {};
+			}
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
 				tag = '';
 			}
-			this._send('searchAndUpdate', {tag: this._resolveTag(tag), search: search, obj: obj}, callback, true);
+			this._send('searchAndUpdate', {tag: this._resolveTag(tag), search: search, obj: obj, policy: this._resolvePolicy(options)}, callback, true);
 			this._warnOnMissingIndex(search, search && search.sort);
 		}
-		, delete: function (id, tag, callback) {
+		, delete: function (id, tag, options, callback) {
+			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
+				callback = options;
+				options = {};
+			}
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
 				tag = '';
 			}
-			this._send('delete', {tag: this._resolveTag(tag), id: id}, callback, true);
+			this._send('delete', {tag: this._resolveTag(tag), id: id, policy: this._resolvePolicy(options)}, callback, true);
 		}
-		, bulkDelete: function (ids, tag, callback) {
+		, bulkDelete: function (ids, tag, options, callback) {
+			if (typeof (options) == 'function' && typeof (callback) == 'undefined') {
+				callback = options;
+				options = {};
+			}
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
 				tag = '';
@@ -2964,8 +2994,9 @@ var buildfire = {
 				if (callback) callback({'code': 'error', 'message': 'the data should not be empty'}, null);
 				return;
 			}
-			this._send('bulkDelete', {tag: this._resolveTag(tag), ids: ids}, callback, true);
+			this._send('bulkDelete', {tag: this._resolveTag(tag), ids: ids, policy: this._resolvePolicy(options)}, callback, true);
 		}
+		/// options.policy limits the search to one policy
 		, search: function (options, tag, callback) {
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
@@ -2975,9 +3006,12 @@ var buildfire = {
 			if (typeof (options) == 'undefined') options = {filter: {}};
 			if (!options.filter) options.filter = {};
 
-			this._send('search', {tag: this._resolveTag(tag), obj: options}, callback);
+			var criteria = Object.assign({}, options);
+			delete criteria.policy;
+			this._send('search', {tag: this._resolveTag(tag), obj: criteria, policy: this._resolvePolicy(options)}, callback);
 			this._warnOnMissingIndex(options.filter, options.sort);
 		}
+		/// params.policy limits the aggregation to one policy
 		, aggregate: function (params, tag, callback) {
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
@@ -2986,7 +3020,9 @@ var buildfire = {
 			if (!params || typeof params !== 'object') {
 				params = {};
 			}
-			this._send('aggregate', {tag: this._resolveTag(tag), obj: params}, callback);
+			var pipeline = Object.assign({}, params);
+			delete pipeline.policy;
+			this._send('aggregate', {tag: this._resolveTag(tag), obj: pipeline, policy: this._resolvePolicy(params)}, callback);
 		}
 		/// control panel only
 		, savePolicy: function (policy, tag, callback) {
