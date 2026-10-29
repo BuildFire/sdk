@@ -2849,8 +2849,9 @@ var buildfire = {
 	}
 	, policyBoundData: {
 		/// same API as publicData, every request is validated against the policy saved by the control panel for the tag
-		/// options.policy targets one policy (create under it, or only read / change its records), without it the
-		/// default policy is used. Tags ending with ##_policy_manifest are reserved for the saved policies
+		/// options.policy targets one policy (create under it, or only read / change its records). Without it records are created
+		/// under the default policy, search / aggregate / update / searchAndUpdate use every policy the user is allowed on, and
+		/// get / delete use the default policy. The policies are saved in the plugin datastore (buildfire.datastore) on the '<tag>##_policy_manifest' tags
 		_resolveTag: function (tag) {
 			return typeof (tag) == 'string' ? tag : '';
 		}
@@ -2996,7 +2997,7 @@ var buildfire = {
 			}
 			this._send('bulkDelete', {tag: this._resolveTag(tag), ids: ids, policy: this._resolvePolicy(options)}, callback, true);
 		}
-		/// options.policy limits the search to one policy
+		/// options.policy limits the search to one policy, without it every policy the user can read is searched
 		, search: function (options, tag, callback) {
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
@@ -3011,7 +3012,7 @@ var buildfire = {
 			this._send('search', {tag: this._resolveTag(tag), obj: criteria, policy: this._resolvePolicy(options)}, callback);
 			this._warnOnMissingIndex(options.filter, options.sort);
 		}
-		/// params.policy limits the aggregation to one policy
+		/// params.policy limits the aggregation to one policy, without it every policy the user can read is used
 		, aggregate: function (params, tag, callback) {
 			if (typeof (tag) == 'function' && typeof (callback) == 'undefined') {
 				callback = tag;
