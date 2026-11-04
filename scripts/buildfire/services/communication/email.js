@@ -15,7 +15,7 @@ if (typeof (buildfire.services.communication.email) == 'undefined') buildfire.se
  * @param {string|string[]} [options.bcc]
  * @param {string} [options.contentType='custom'] - 'custom' or 'template'
  * @param {Object} options.content - { subject, body } for custom (body is HTML), { templateId, templateData } for template
- * @param {Object[]} [options.attachments] - [{ filename, type, content }], content is base64
+ * @param {Object[]} [options.attachments] - [{ filename, type, content }], content is a File or Blob; filename and type default to the File's own
  * @param {string} [options.fromName] - overrides the app's sender name
  * @param {string} [options.replyTo] - overrides the app's reply-to address
  */
