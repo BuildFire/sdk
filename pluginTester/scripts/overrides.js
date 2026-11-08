@@ -72,6 +72,19 @@ postMaster.servicePluginAPIs.service.tag = 'service';
 		postMaster.controlPluginAPI.sendMessage(null, packet);
 	};
 
+	// policyBoundData exists once app.min.js is rebuilt with policyBoundDatastoreAPI.js
+	if (postMaster.controlPluginAPI.policyBoundData && postMaster.widgetPluginAPI.policyBoundData) {
+		postMaster.controlPluginAPI.policyBoundData.onUpdate = function (updateObj) {
+			var packet = new Packet(null, 'policyBoundData.triggerOnUpdate', updateObj);
+			postMaster.widgetPluginAPI.sendMessage(null, packet);
+		};
+
+		postMaster.widgetPluginAPI.policyBoundData.onUpdate = function (updateObj) {
+			var packet = new Packet(null, 'policyBoundData.triggerOnUpdate', updateObj);
+			postMaster.controlPluginAPI.sendMessage(null, packet);
+		};
+	}
+
 	postMaster.controlPluginAPI.appData.onUpdate = function (updateObj) {
 		var packet = new Packet(null, 'appData.triggerOnUpdate', updateObj);
 		postMaster.widgetPluginAPI.sendMessage(null, packet);
