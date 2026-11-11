@@ -11,7 +11,12 @@ buildfire.services.contract = {
 	 * @param {String} [options.instanceId] Instance id to scope the lookup to a specific instance.
 	 * @param {String} [options.folderName] The plugin's folder name. When provided, the app fetches the
 	 *                                       contract directly and skips the instance lookup.
-	 * @param {String} [options.host] Optional filter — return only operations whose host matches ("plugin" | "generic").
+	 * @param {String|Array<String>} [options.hosts] Optional filter — return only operations declaring any
+	 *                                       one of these hosts: "generic", "widgetBackground",
+	 *                                       "widgetForeground", "controlBackground", "controlForeground".
+	 *                                       A single host may be passed as a string. An operation
+	 *                                       declaring none is "generic". Omitted returns the whole
+	 *                                       declaration.
 	 * @param {Function} callback Node-style callback (err, res) invoked with the list of operations.
 	 */
 	list: function (options, callback) {
@@ -103,6 +108,9 @@ buildfire.services.contract = {
 	 *   type: "function"  → runs in the target plugin's iframe
 	 *   type: "datastore" → runs in the app (builds the query from the operation's context)
 	 * The caller does not need to know which; it just names the operation.
+	 *
+	 * An operation declaring the other side's host is refused rather than handed over: a device has no
+	 * control side, so a widget calling a control operation could only ever work in the emulator.
 	 * @param {Object} options
 	 * @param {String} options.instanceId The target plugin instance id (pins the specific instance whose
 	 *                                     data/frame the operation runs against).
@@ -140,6 +148,7 @@ buildfire.services.contract = {
 	/**
 	 * Prepare (create or reuse) a server plugin frame ahead of time, so a later invoke of a
 	 * function-type operation on that instance runs against an already-loaded frame.
+	 * The frame is always prepared on the side this is called from, and its fid only works there.
 	 * @param {Object} options
 	 * @param {String} options.instanceId The instance id of the server plugin to prepare.
 	 * @param {Function} callback Node-style callback (err, data) where data holds the frame handle (e.g. { fid }).
@@ -166,6 +175,7 @@ buildfire.services.contract = {
 	/**
 	 * Destroy a server plugin frame previously created (via use, or on demand by invoke),
 	 * tearing down its iframe and freeing its resources.
+	 * Call it from the side that prepared the frame; the other side cannot see it.
 	 * @param {Object} options Identifies the frame to destroy: { fid } and/or { instanceId }.
 	 * @param {Function} [callback] Node-style callback (err, res).
 	 */
