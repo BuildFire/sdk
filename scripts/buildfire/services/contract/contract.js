@@ -237,6 +237,12 @@ buildfire.services.contract = {
 		if (typeof (handler) !== 'function') {
 			return callback('contract function "' + options.functionName + '" is not implemented on window.' + namespace);
 		}
+		// answers once however the function finishes: callback, returned Promise, return value, or throw —
+		// so a function that fails (or is async) never leaves the caller without an answer
+		if (typeof (buildfire._runContractFunction) === 'function') {
+			return buildfire._runContractFunction(handler, options.parameters, options.functionName, callback);
+		}
+		// an older buildfire.js without the helper
 		try {
 			handler(options.parameters || {}, callback);
 		} catch (e) {
