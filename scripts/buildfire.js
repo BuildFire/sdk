@@ -503,8 +503,18 @@ var buildfire = {
 
 			let callback = function (err, result) {
 				if (err) console.warn(e.data, err);
-				let newPacket = new Packet(packet.id, 'noop', result, err);
-				buildfire._parentPost(newPacket);
+				// Packet takes no error argument, so set it on the reply: without this every error answered
+				// here was dropped and the host saw (undefined, result) — a failure reported as a success
+				let newPacket = new Packet(packet.id, 'noop', result);
+				if (err) newPacket.error = buildfire._serializableError(err);
+				try {
+					buildfire._parentPost(newPacket);
+				} catch (postError) {
+					// the result could not be cloned for postMessage: answer with that error, never with nothing
+					var failed = new Packet(packet.id, 'noop', null);
+					failed.error = 'the result could not be sent back: ' + (postError && postError.message ? postError.message : postError);
+					buildfire._parentPost(failed);
+				}
 			};
 
 			obj.apply(parent, [packet.data, callback]);
@@ -575,6 +585,48 @@ var buildfire = {
 
 		buildfire._parentPost(packet,callback);
 	}
+	// An error as it can cross postMessage: an Error object arrives as {} or fails to clone, so it travels
+	// as its message. Plain values (strings, { code, message }) are kept as they are.
+	, _serializableError: function (err) {
+		if (!err) return err;
+		if (err instanceof Error) return err.message || String(err);
+		return err;
+	}
+
+	/**
+	 * Run one of this plugin's contract functions and answer exactly once, however it finishes:
+	 *   - it calls the callback it is given             → that (err, result)
+	 *   - it returns a Promise (an async function)      → its resolved value, or its rejection as the error
+	 *   - it takes no callback and returns a value      → that value
+	 *   - it throws                                     → the thrown error
+	 * A later second callback, or a promise settling after the callback already answered, is ignored.
+	 * @param {Function} handler the plugin's function (widgetContract / controlContract member)
+	 * @param {Object} parameters
+	 * @param {Function} callback (err, result) — err is always serializable
+	 */
+	, _runContractFunction: function (handler, parameters, functionName, callback) {
+		var answered = false;
+		var answer = function (err, result) {
+			if (answered) return;
+			answered = true;
+			callback(err ? buildfire._serializableError(err) : null, result === undefined ? null : result);
+		};
+		var returned;
+		try {
+			returned = handler(parameters || {}, answer);
+		} catch (e) {
+			return answer('error running contract function "' + functionName + '": ' + (e && e.message ? e.message : e));
+		}
+		if (returned && typeof (returned.then) === 'function') {
+			returned.then(function (result) { answer(null, result); }, function (err) {
+				answer(err || ('contract function "' + functionName + '" failed'));
+			});
+		} else if (handler.length < 2) {
+			// declares no callback parameter, so it can never call one: what it returned is its result
+			answer(null, returned);
+		}
+	}
+
 	,_parentPost: function (packet) {
 
 		function sanitize(data){
@@ -4594,7 +4646,9 @@ var buildfire = {
 		 * ordinary deeplink data for the plugin to interpret. The SDK dispatches it to
 		 * window.widgetContract so every plugin gets identical handling for free.
 		 *
-		 * Payload shape: { contractAction: { functionName: String, parameters: Object } }
+		 * Payload shape: { contractAction: { functionName: String, parameters: Object, callId?: String } }
+		 * When callId is present the outcome is reported back to the host (contract._returnActionResult)
+		 * so the caller of buildfire.services.contract.invoke receives the actual result.
 		 *
 		 * @param {Object} data parsed deeplink data
 		 * @returns {Boolean} true when the payload was a contract call (and was handled here)
@@ -4606,10 +4660,41 @@ var buildfire = {
 		 * @param {Function} [callback] (err, result) — errors are logged when no callback is given
 		 */
 		_runContractAction: function (options, callback) {
-			if (!callback) callback = function (err) { if (err) console.error(err); };
 			options = options || {};
-
 			var contractAction = options.deeplinkData && options.deeplinkData.contractAction;
+
+			// The caller is waiting on this operation's actual result: when the call carries a callId, report
+			// the outcome back to the host under it (contract._returnActionResult), which hands it to the
+			// caller's callback. Once only — a plugin that calls back twice must not answer twice.
+			var callId = contractAction && contractAction.callId;
+			var userCallback = callback;
+			var settled = false;
+			callback = function (err, result) {
+				if (settled) return;
+				settled = true;
+				if (err) console.error(err);
+				if (callId) {
+					// errors are plain values on the wire — an Error object would arrive as {}
+					var error = err ? buildfire._serializableError(err) : null;
+					try {
+						buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
+							callId: callId,
+							error: error,
+							result: result === undefined ? null : result
+						}));
+					} catch (postError) {
+						// a result postMessage cannot clone: report that, so the caller is not left waiting
+						buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
+							callId: callId,
+							error: 'contract function "' + contractAction.functionName + '" returned a result that cannot be sent back: '
+								+ (postError && postError.message ? postError.message : postError),
+							result: null
+						}));
+					}
+				}
+				if (typeof (userCallback) === 'function') userCallback(err, result);
+			};
+
 			if (!contractAction || !contractAction.functionName) return callback('no contract operation in this deeplink');
 
 			// Only what the plugin deliberately exposes can be called — a contract cannot reach arbitrary
@@ -4622,8 +4707,9 @@ var buildfire = {
 			// the namespace lives in plugin.contract.js, which a plugin has no reason to load on every page
 			// view, so fetch it first and come back here once
 			if (!window[namespace] && !buildfire.deeplink._contractScriptLoaded) {
+				// the original callback: the re-run wraps it again, and reports the result itself
 				return buildfire.deeplink._ensurePluginContractLoaded(null, function () {
-					buildfire.deeplink._runContractAction(options, callback);
+					buildfire.deeplink._runContractAction(options, userCallback);
 				});
 			}
 
@@ -4636,11 +4722,8 @@ var buildfire = {
 			// a function that reads its deeplink — how most plugins already take input — needs no changes
 			if (contractAction.parameters) buildfire.deeplink._data = contractAction.parameters;
 
-			try {
-				operation(contractAction.parameters || {}, callback);
-			} catch (e) {
-				callback('error running contract function "' + contractAction.functionName + '": ' + (e && e.message ? e.message : e));
-			}
+			// answers once however the function finishes: callback, returned Promise, return value, or throw
+			buildfire._runContractFunction(operation, contractAction.parameters, contractAction.functionName, callback);
 		},
 
 		// Make sure the plugin's own plugin.contract.js has been fetched — it defines
