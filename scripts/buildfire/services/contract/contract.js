@@ -120,6 +120,11 @@ buildfire.services.contract = {
 	 * @param {String} [options.folderName] Optional plugin folder name; passing it with pluginId skips the instance lookup.
 	 * @param {String} options.functionName The operation to invoke.
 	 * @param {Object} [options.parameters] Parameters passed to the operation.
+	 * @param {Array<String>|Object} [options.projection] Optional — which properties of the result come back.
+	 *        Leave it out for the whole result. Include only some: ["title", "data.address.city"] or
+	 *        { "title": 1, "data.address.city": 1 }; or leave some out: { "notes": 0 }. Paths are dot-separated and
+	 *        pass through arrays ("items.title" keeps each item's title), and a list result is projected entry by
+	 *        entry. Include and exclude cannot be mixed. An invalid projection fails the call before it runs.
 	 * @param {Function} callback Node-style callback (err, res) invoked with the result.
 	 */
 	invoke: function (options, callback) {
@@ -139,6 +144,10 @@ buildfire.services.contract = {
 
 		if (!options.instanceId && !options.fid) {
 			return callback({ code: 'error', message: 'instanceId or fid is required' }, null);
+		}
+
+		if (options.projection !== undefined && options.projection !== null && typeof (options.projection) !== 'object') {
+			return callback({ code: 'error', message: 'projection must be a list of property paths or an object of paths set to 1 or 0' }, null);
 		}
 
 		var packet = new Packet(null, 'contract.invoke', options);
