@@ -125,6 +125,9 @@ buildfire.services.contract = {
 	 *        { "title": 1, "data.address.city": 1 }; or leave some out: { "notes": 0 }. Paths are dot-separated and
 	 *        pass through arrays ("items.title" keeps each item's title), and a list result is projected entry by
 	 *        entry. Include and exclude cannot be mixed. An invalid projection fails the call before it runs.
+	 * @param {Number|null} [options.timeout] Optional — how many seconds to wait for the result before the call fails
+	 *        with a timeout error. null waits forever. Left out, a foreground operation (and a storage or firebase one)
+	 *        waits with no timeout, and a function run in the background gives up after 2 minutes.
 	 * @param {Function} callback Node-style callback (err, res) invoked with the result.
 	 */
 	invoke: function (options, callback) {
@@ -144,6 +147,10 @@ buildfire.services.contract = {
 
 		if (!options.instanceId && !options.fid) {
 			return callback({ code: 'error', message: 'instanceId or fid is required' }, null);
+		}
+
+		if (options.timeout !== undefined && options.timeout !== null && (typeof (options.timeout) !== 'number' || !(options.timeout > 0) || !isFinite(options.timeout))) {
+			return callback({ code: 'error', message: 'timeout must be a positive number of seconds, or null to wait with no timeout' }, null);
 		}
 
 		if (options.projection !== undefined && options.projection !== null && typeof (options.projection) !== 'object') {

@@ -4647,7 +4647,7 @@ var buildfire = {
 		 * window.widgetContract so every plugin gets identical handling for free.
 		 *
 		 * Payload shape: { contractAction: { functionName: String, parameters: Object, callId?: String } }
-		 * When callId is present the outcome is reported back to the host (contract._returnActionResult)
+		 * When callId is present the outcome is reported back to the host (contract._dispatchActionResult)
 		 * so the caller of buildfire.services.contract.invoke receives the actual result.
 		 *
 		 * @param {Object} data parsed deeplink data
@@ -4663,7 +4663,7 @@ var buildfire = {
 			var contractAction = options.deeplinkData && options.deeplinkData.contractAction;
 
 			// The caller is waiting on this operation's actual result: when the call carries a callId, report
-			// the outcome back to the host under it (contract._returnActionResult), which hands it to the
+			// the outcome back to the host under it (contract._dispatchActionResult), which hands it to the
 			// caller's callback. Once only — a plugin that calls back twice must not answer twice.
 			var callId = contractAction && contractAction.callId;
 			var settled = false;
@@ -4674,14 +4674,14 @@ var buildfire = {
 				// errors are plain values on the wire — an Error object would arrive as {}
 				var error = err ? buildfire._serializableError(err) : null;
 				try {
-					buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
+					buildfire._sendPacket(new Packet(null, 'contract._dispatchActionResult', {
 						callId: callId,
 						error: error,
 						result: result === undefined ? null : result
 					}));
 				} catch (postError) {
 					// a result postMessage cannot clone: report that, so the caller is not left waiting
-					buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
+					buildfire._sendPacket(new Packet(null, 'contract._dispatchActionResult', {
 						callId: callId,
 						error: 'contract function "' + contractAction.functionName + '" returned a result that cannot be sent back: '
 							+ (postError && postError.message ? postError.message : postError),
