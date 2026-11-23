@@ -4657,9 +4657,8 @@ var buildfire = {
 		 * Run a contract operation delivered in this frame's deeplink data.
 		 * @param {Object} options { deeplinkData } — the parsed deeplink data, which carries the call
 		 *                          under its reserved "contractAction" key
-		 * @param {Function} [callback] (err, result) — errors are logged when no callback is given
 		 */
-		_runContractAction: function (options, callback) {
+		_runContractAction: function (options) {
 			options = options || {};
 			var contractAction = options.deeplinkData && options.deeplinkData.contractAction;
 
@@ -4667,32 +4666,28 @@ var buildfire = {
 			// the outcome back to the host under it (contract._returnActionResult), which hands it to the
 			// caller's callback. Once only — a plugin that calls back twice must not answer twice.
 			var callId = contractAction && contractAction.callId;
-			var userCallback = callback;
 			var settled = false;
-			callback = function (err, result) {
-				if (settled) return;
+			const callback = function (err, result) {
+				if (settled || !callId) return;
 				settled = true;
 				if (err) console.error(err);
-				if (callId) {
-					// errors are plain values on the wire — an Error object would arrive as {}
-					var error = err ? buildfire._serializableError(err) : null;
-					try {
-						buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
-							callId: callId,
-							error: error,
-							result: result === undefined ? null : result
-						}));
-					} catch (postError) {
-						// a result postMessage cannot clone: report that, so the caller is not left waiting
-						buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
-							callId: callId,
-							error: 'contract function "' + contractAction.functionName + '" returned a result that cannot be sent back: '
-								+ (postError && postError.message ? postError.message : postError),
-							result: null
-						}));
-					}
+				// errors are plain values on the wire — an Error object would arrive as {}
+				var error = err ? buildfire._serializableError(err) : null;
+				try {
+					buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
+						callId: callId,
+						error: error,
+						result: result === undefined ? null : result
+					}));
+				} catch (postError) {
+					// a result postMessage cannot clone: report that, so the caller is not left waiting
+					buildfire._sendPacket(new Packet(null, 'contract._returnActionResult', {
+						callId: callId,
+						error: 'contract function "' + contractAction.functionName + '" returned a result that cannot be sent back: '
+							+ (postError && postError.message ? postError.message : postError),
+						result: null
+					}));
 				}
-				if (typeof (userCallback) === 'function') userCallback(err, result);
 			};
 
 			if (!contractAction || !contractAction.functionName) return callback('no contract operation in this deeplink');
@@ -4709,7 +4704,7 @@ var buildfire = {
 			if (!window[namespace] && !buildfire.deeplink._contractScriptLoaded) {
 				// the original callback: the re-run wraps it again, and reports the result itself
 				return buildfire.deeplink._ensurePluginContractLoaded(null, function () {
-					buildfire.deeplink._runContractAction(options, userCallback);
+					buildfire.deeplink._runContractAction(options);
 				});
 			}
 
