@@ -212,6 +212,84 @@ buildfire.services.contract = {
 		buildfire._sendPacket(packet, callback);
 	},
 
+	/**
+	 * The SDK dialog options an `image` or `action` parameter of an operation declares under "dialogOptions", over
+	 * the defaults the platform uses for it — ready to pass to buildfire.imageLib.showDialog (image) or
+	 * buildfire.actionItems.showDialog (action) when collecting that parameter's value from a user.
+	 *   image:  { showIcons (false), showFiles (true), showStockImages (true), showAiImages (true) }
+	 *   action: { showIcon (false), showTitle (false), allowNoAction (true), hideActionText (false),
+	 *             removePurchase (false), removePushNotifications (false), imgLibOptions: { showIcons (false) } }
+	 * Icons stay off unless the parameter asks for them. How many images can be picked is the parameter's maxValue,
+	 * not an option (multiSelection is left to the caller, or set by showParameterDialog).
+	 * @param {Object} parameter The parameter's declaration, as getOperationDefinition returns it.
+	 * @returns {Object|null} The options, or null for a parameter that is not an image or action.
+	 */
+	getDialogOptions: function (parameter) {
+		var defaults = {
+			image: { showIcons: false, showFiles: true, showStockImages: true, showAiImages: true },
+			action: {
+				showIcon: false, showTitle: false, allowNoAction: true, hideActionText: false,
+				removePurchase: false, removePushNotifications: false,
+				imgLibOptions: { showIcons: false }
+			}
+		}[String((parameter && parameter.type) || '').toLowerCase()];
+		if (!defaults) return null;
+		var declared = (parameter.dialogOptions && typeof (parameter.dialogOptions) === 'object') ? parameter.dialogOptions : {};
+		Object.keys(defaults).forEach(function (key) {
+			if (key === 'imgLibOptions') {
+				var imgLib = declared.imgLibOptions;
+				if (imgLib && typeof (imgLib) === 'object' && typeof (imgLib.showIcons) === 'boolean') defaults.imgLibOptions.showIcons = imgLib.showIcons;
+			} else if (typeof (declared[key]) === 'boolean') {
+				defaults[key] = declared[key];
+			}
+		});
+		return defaults;
+	},
+
+	/**
+	 * Collect an `image` or `action` parameter's value from the user with the SDK's own picker, opened with the
+	 * options the parameter declares (getDialogOptions). The value comes back as a list, ready to pass in invoke's
+	 * parameters: image URLs (and icon class names, where the parameter shows icons), or the one action item built.
+	 * Control pages only: the image library and the action item builder are control panel dialogs, which the app
+	 * does not have, so in a widget this fails at once rather than waiting on a dialog that never opens.
+	 * @param {Object} options
+	 * @param {Object} options.parameter The parameter's declaration, as getOperationDefinition returns it.
+	 * @param {Object} [options.actionItem] For an action: an action item to edit rather than build a new one.
+	 * @param {Function} callback Node-style callback (err, list). A cancelled dialog gives an empty list.
+	 */
+	showParameterDialog: function (options, callback) {
+		if (!callback || typeof (callback) !== 'function') {
+			throw 'callback function is mandatory';
+		}
+		if (!window.location || window.location.pathname.indexOf('/control/') < 0) {
+			return callback({ code: 'error', message: 'showParameterDialog is only available on a control page; the app has no image library or action item builder' }, null);
+		}
+		var parameter = options && options.parameter;
+		var dialogOptions = buildfire.services.contract.getDialogOptions(parameter);
+		if (!dialogOptions) {
+			return callback({ code: 'error', message: 'parameter must be an image or action parameter' }, null);
+		}
+
+		if (String(parameter.type).toLowerCase() === 'image') {
+			// several images only where the parameter takes more than one
+			dialogOptions.multiSelection = parameter.maxValue !== 1;
+			// the control panel's image library keeps the last call's options; a leftover mode must not carry over
+			dialogOptions.mode = null;
+			return buildfire.imageLib.showDialog(dialogOptions, function (err, result) {
+				if (err) return callback(err, null);
+				var picked = ((result && result.selectedFiles) || [])
+					.concat(dialogOptions.showIcons ? ((result && result.selectedIcons) || []) : []);
+				if (typeof (parameter.maxValue) === 'number') picked = picked.slice(0, parameter.maxValue);
+				callback(null, picked);
+			});
+		}
+
+		buildfire.actionItems.showDialog(options.actionItem || null, dialogOptions, function (err, actionItem) {
+			if (err) return callback(err, null);
+			callback(null, actionItem && typeof (actionItem) === 'object' ? [actionItem] : []);
+		});
+	},
+
 	/* --------------------------------------------------------------------------
 	 * Server side: a plugin that EXPOSES a contract implements its operations on
 	 * window.widgetContract (in plugin.contract.js). These two handlers are the thin
