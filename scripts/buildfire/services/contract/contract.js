@@ -128,7 +128,11 @@ buildfire.services.contract = {
 	 * @param {Number|null} [options.timeout] Optional — how many seconds to wait for the result before the call fails
 	 *        with a timeout error. null waits forever. Left out, a foreground operation (and a storage or firebase one)
 	 *        waits with no timeout, and a function run in the background gives up after 2 minutes.
-	 * @param {Function} callback Node-style callback (err, res) invoked with the result.
+	 * @param {Function} callback Node-style callback (err, res) invoked with the result. err is always a
+	 *        ContractOperationInvokeError: { message, code, context: { source, functionName } }, code one of
+	 *        ContractOperationInvokeError.CODES (notFound, validation, notSupported, notAllowed, unauthenticated,
+	 *        alreadyExists, conflict, limitExceeded, cancelled, timeout, notAvailable, network, invalidContract,
+	 *        invalidResult, internal, unknown).
 	 */
 	invoke: function (options, callback) {
 		if (!callback || typeof (callback) !== 'function') {
@@ -137,28 +141,47 @@ buildfire.services.contract = {
 
 		options = options || {};
 
+		var functionName = (typeof (options) === 'object' && options.functionName) || null;
+		var invalid = function (message) {
+			return callback(new ContractOperationInvokeError({
+				message: message,
+				code: ContractOperationInvokeError.CODES.VALIDATION,
+				context: { source: ContractOperationInvokeError.SOURCES.SDK, functionName: functionName }
+			}), null);
+		};
+
 		if (typeof (options) !== 'object') {
-			return callback({ code: 'error', message: 'options must be an object' }, null);
+			return invalid('options must be an object');
 		}
 
 		if (!options.functionName) {
-			return callback({ code: 'error', message: 'functionName is required' }, null);
+			return invalid('functionName is required');
 		}
 
 		if (!options.instanceId && !options.fid) {
-			return callback({ code: 'error', message: 'instanceId or fid is required' }, null);
+			return invalid('instanceId or fid is required');
 		}
 
 		if (options.timeout !== undefined && options.timeout !== null && (typeof (options.timeout) !== 'number' || !(options.timeout > 0) || !isFinite(options.timeout))) {
-			return callback({ code: 'error', message: 'timeout must be a positive number of seconds, or null to wait with no timeout' }, null);
+			return invalid('timeout must be a positive number of seconds, or null to wait with no timeout');
 		}
 
 		if (options.projection !== undefined && options.projection !== null && typeof (options.projection) !== 'object') {
-			return callback({ code: 'error', message: 'projection must be a list of property paths or an object of paths set to 1 or 0' }, null);
+			return invalid('projection must be a list of property paths or an object of paths set to 1 or 0');
 		}
 
 		var packet = new Packet(null, 'contract.invoke', options);
-		buildfire._sendPacket(packet, callback);
+		buildfire._sendPacket(packet, function (err, result) {
+			// the error crossed postMessage as plain data: rebuild it, so every failure the caller sees is
+			// an instance of ContractOperationInvokeError
+			if (err) {
+				return callback(ContractOperationInvokeError.from(err, {
+					source: ContractOperationInvokeError.SOURCES.APP,
+					functionName: functionName
+				}), null);
+			}
+			callback(null, result);
+		});
 	},
 
 	/**
@@ -320,7 +343,11 @@ buildfire.services.contract = {
 		options = options || {};
 		if (!callback) callback = function () {};
 		if (!options.functionName) {
-			return callback('functionName is required');
+			return callback(new ContractOperationInvokeError({
+				message: 'functionName is required',
+				code: ContractOperationInvokeError.CODES.VALIDATION,
+				context: { source: ContractOperationInvokeError.SOURCES.PLUGIN }
+			}).toJSON());
 		}
 
 		var isControl = typeof (window) !== 'undefined' && window.location
@@ -329,7 +356,11 @@ buildfire.services.contract = {
 		var operations = (typeof (window) !== 'undefined' && window[namespace]) ? window[namespace] : {};
 		var handler = operations[options.functionName];
 		if (typeof (handler) !== 'function') {
-			return callback('contract function "' + options.functionName + '" is not implemented on window.' + namespace);
+			return callback(new ContractOperationInvokeError({
+				message: 'contract function "' + options.functionName + '" is not implemented on window.' + namespace,
+				code: ContractOperationInvokeError.CODES.NOT_FOUND,
+				context: { source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: options.functionName }
+			}).toJSON());
 		}
 		// answers once however the function finishes: callback, returned Promise, return value, or throw —
 		// so a function that fails (or is async) never leaves the caller without an answer
@@ -338,9 +369,17 @@ buildfire.services.contract = {
 		}
 		// an older buildfire.js without the helper
 		try {
-			handler(options.parameters || {}, callback);
+			handler(options.parameters || {}, function (err, result) {
+				callback(err ? ContractOperationInvokeError.from(err, {
+					source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: options.functionName
+				}).toJSON() : null, result);
+			});
 		} catch (e) {
-			callback('error executing contract function: ' + (e && e.message ? e.message : e));
+			callback(new ContractOperationInvokeError({
+				message: 'error executing contract function: ' + (e && e.message ? e.message : e),
+				code: ContractOperationInvokeError.CODES.INTERNAL,
+				context: { source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: options.functionName }
+			}).toJSON());
 		}
 	},
 
