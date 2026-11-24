@@ -239,21 +239,21 @@ buildfire.services.contract = {
 	 * The SDK dialog options an `image` or `action` parameter of an operation declares under "dialogOptions", over
 	 * the defaults the platform uses for it — ready to pass to buildfire.imageLib.showDialog (image) or
 	 * buildfire.actionItems.showDialog (action) when collecting that parameter's value from a user.
-	 *   image:  { showIcons (false), showFiles (true), showStockImages (true), showAiImages (true) }
-	 *   action: { showIcon (false), showTitle (false), allowNoAction (true), hideActionText (false),
-	 *             removePurchase (false), removePushNotifications (false), imgLibOptions: { showIcons (false) } }
-	 * Icons stay off unless the parameter asks for them. How many images can be picked is the parameter's maxValue,
+	 *   image:  { showIcons (true), showFiles (true), showStockImages (true), showAiImages (true) }
+	 *   action: { showIcon (true), showTitle (false), allowNoAction (true), hideActionText (false),
+	 *             removePurchase (false), removePushNotifications (false), imgLibOptions: { showIcons (true, follows showIcon) } }
+	 * Icons are offered unless the parameter turns them off. How many images can be picked is the parameter's maxValue,
 	 * not an option (multiSelection is left to the caller, or set by showParameterDialog).
 	 * @param {Object} parameter The parameter's declaration, as getOperationDefinition returns it.
 	 * @returns {Object|null} The options, or null for a parameter that is not an image or action.
 	 */
 	getDialogOptions: function (parameter) {
 		var defaults = {
-			image: { showIcons: false, showFiles: true, showStockImages: true, showAiImages: true },
+			image: { showIcons: true, showFiles: true, showStockImages: true, showAiImages: true },
 			action: {
-				showIcon: false, showTitle: false, allowNoAction: true, hideActionText: false,
+				showIcon: true, showTitle: false, allowNoAction: true, hideActionText: false,
 				removePurchase: false, removePushNotifications: false,
-				imgLibOptions: { showIcons: false }
+				imgLibOptions: { showIcons: true }
 			}
 		}[String((parameter && parameter.type) || '').toLowerCase()];
 		if (!defaults) return null;
@@ -266,6 +266,10 @@ buildfire.services.contract = {
 				defaults[key] = declared[key];
 			}
 		});
+		// an action whose icon field is shown (declared or by default) offers icons in it too, unless it says otherwise
+		if (defaults.imgLibOptions && !(declared.imgLibOptions && typeof (declared.imgLibOptions.showIcons) === 'boolean')) {
+			defaults.imgLibOptions.showIcons = defaults.showIcon === true;
+		}
 		return defaults;
 	},
 
