@@ -120,7 +120,19 @@ buildfire.services.contract = {
 	 * @param {String} [options.folderName] Optional plugin folder name; passing it with pluginId skips the instance lookup.
 	 * @param {String} options.functionName The operation to invoke.
 	 * @param {Object} [options.parameters] Parameters passed to the operation.
-	 * @param {Function} callback Node-style callback (err, res) invoked with the result.
+	 * @param {Array<String>|Object} [options.projection] Optional — which properties of the result come back.
+	 *        Leave it out for the whole result. Include only some: ["title", "data.address.city"] or
+	 *        { "title": 1, "data.address.city": 1 }; or leave some out: { "notes": 0 }. Paths are dot-separated and
+	 *        pass through arrays ("items.title" keeps each item's title), and a list result is projected entry by
+	 *        entry. Include and exclude cannot be mixed. An invalid projection fails the call before it runs.
+	 * @param {Number|null} [options.timeout] Optional — how many seconds to wait for the result before the call fails
+	 *        with a timeout error. null waits forever. Left out, a foreground operation (and a storage or firebase one)
+	 *        waits with no timeout, and a function run in the background gives up after 2 minutes.
+	 * @param {Function} callback Node-style callback (err, res) invoked with the result. err is always a
+	 *        ContractOperationInvokeError: { message, code, context: { source, functionName } }, code one of
+	 *        ContractOperationInvokeError.CODES (notFound, validation, notSupported, notAllowed, unauthenticated,
+	 *        alreadyExists, conflict, limitExceeded, cancelled, timeout, notAvailable, network, invalidContract,
+	 *        invalidResult, internal, unknown).
 	 */
 	invoke: function (options, callback) {
 		if (!callback || typeof (callback) !== 'function') {
@@ -129,20 +141,47 @@ buildfire.services.contract = {
 
 		options = options || {};
 
+		var functionName = (typeof (options) === 'object' && options.functionName) || null;
+		var invalid = function (message) {
+			return callback(new ContractOperationInvokeError({
+				message: message,
+				code: ContractOperationInvokeError.CODES.VALIDATION,
+				context: { source: ContractOperationInvokeError.SOURCES.SDK, functionName: functionName }
+			}), null);
+		};
+
 		if (typeof (options) !== 'object') {
-			return callback({ code: 'error', message: 'options must be an object' }, null);
+			return invalid('options must be an object');
 		}
 
 		if (!options.functionName) {
-			return callback({ code: 'error', message: 'functionName is required' }, null);
+			return invalid('functionName is required');
 		}
 
 		if (!options.instanceId && !options.fid) {
-			return callback({ code: 'error', message: 'instanceId or fid is required' }, null);
+			return invalid('instanceId or fid is required');
+		}
+
+		if (options.timeout !== undefined && options.timeout !== null && (typeof (options.timeout) !== 'number' || !(options.timeout > 0) || !isFinite(options.timeout))) {
+			return invalid('timeout must be a positive number of seconds, or null to wait with no timeout');
+		}
+
+		if (options.projection !== undefined && options.projection !== null && typeof (options.projection) !== 'object') {
+			return invalid('projection must be a list of property paths or an object of paths set to 1 or 0');
 		}
 
 		var packet = new Packet(null, 'contract.invoke', options);
-		buildfire._sendPacket(packet, callback);
+		buildfire._sendPacket(packet, function (err, result) {
+			// the error crossed postMessage as plain data: rebuild it, so every failure the caller sees is
+			// an instance of ContractOperationInvokeError
+			if (err) {
+				return callback(ContractOperationInvokeError.from(err, {
+					source: ContractOperationInvokeError.SOURCES.APP,
+					functionName: functionName
+				}), null);
+			}
+			callback(null, result);
+		});
 	},
 
 	/**
@@ -196,6 +235,88 @@ buildfire.services.contract = {
 		buildfire._sendPacket(packet, callback);
 	},
 
+	/**
+	 * The SDK dialog options an `image` or `action` parameter of an operation declares under "dialogOptions", over
+	 * the defaults the platform uses for it — ready to pass to buildfire.imageLib.showDialog (image) or
+	 * buildfire.actionItems.showDialog (action) when collecting that parameter's value from a user.
+	 *   image:  { showIcons (true), showFiles (true), showStockImages (true), showAiImages (true) }
+	 *   action: { showIcon (true), showTitle (false), allowNoAction (true), hideActionText (false),
+	 *             removePurchase (false), removePushNotifications (false), imgLibOptions: { showIcons (true, follows showIcon) } }
+	 * Icons are offered unless the parameter turns them off. How many images can be picked is the parameter's maxValue,
+	 * not an option (multiSelection is left to the caller, or set by showParameterDialog).
+	 * @param {Object} parameter The parameter's declaration, as getOperationDefinition returns it.
+	 * @returns {Object|null} The options, or null for a parameter that is not an image or action.
+	 */
+	getDialogOptions: function (parameter) {
+		var defaults = {
+			image: { showIcons: true, showFiles: true, showStockImages: true, showAiImages: true },
+			action: {
+				showIcon: true, showTitle: false, allowNoAction: true, hideActionText: false,
+				removePurchase: false, removePushNotifications: false,
+				imgLibOptions: { showIcons: true }
+			}
+		}[String((parameter && parameter.type) || '').toLowerCase()];
+		if (!defaults) return null;
+		var declared = (parameter.dialogOptions && typeof (parameter.dialogOptions) === 'object') ? parameter.dialogOptions : {};
+		Object.keys(defaults).forEach(function (key) {
+			if (key === 'imgLibOptions') {
+				var imgLib = declared.imgLibOptions;
+				if (imgLib && typeof (imgLib) === 'object' && typeof (imgLib.showIcons) === 'boolean') defaults.imgLibOptions.showIcons = imgLib.showIcons;
+			} else if (typeof (declared[key]) === 'boolean') {
+				defaults[key] = declared[key];
+			}
+		});
+		// an action whose icon field is shown (declared or by default) offers icons in it too, unless it says otherwise
+		if (defaults.imgLibOptions && !(declared.imgLibOptions && typeof (declared.imgLibOptions.showIcons) === 'boolean')) {
+			defaults.imgLibOptions.showIcons = defaults.showIcon === true;
+		}
+		return defaults;
+	},
+
+	/**
+	 * Collect an `image` or `action` parameter's value from the user with the SDK's own picker, opened with the
+	 * options the parameter declares (getDialogOptions). The value comes back as a list, ready to pass in invoke's
+	 * parameters: image URLs (and icon class names, where the parameter shows icons), or the one action item built.
+	 * Control pages only: the image library and the action item builder are control panel dialogs, which the app
+	 * does not have, so in a widget this fails at once rather than waiting on a dialog that never opens.
+	 * @param {Object} options
+	 * @param {Object} options.parameter The parameter's declaration, as getOperationDefinition returns it.
+	 * @param {Object} [options.actionItem] For an action: an action item to edit rather than build a new one.
+	 * @param {Function} callback Node-style callback (err, list). A cancelled dialog gives an empty list.
+	 */
+	showParameterDialog: function (options, callback) {
+		if (!callback || typeof (callback) !== 'function') {
+			throw 'callback function is mandatory';
+		}
+		if (!window.location || window.location.pathname.indexOf('/control/') < 0) {
+			return callback({ code: 'error', message: 'showParameterDialog is only available on a control page; the app has no image library or action item builder' }, null);
+		}
+		var parameter = options && options.parameter;
+		var dialogOptions = buildfire.services.contract.getDialogOptions(parameter);
+		if (!dialogOptions) {
+			return callback({ code: 'error', message: 'parameter must be an image or action parameter' }, null);
+		}
+
+		if (String(parameter.type).toLowerCase() === 'image') {
+			// several images only where the parameter takes more than one
+			dialogOptions.multiSelection = parameter.maxValue !== 1;
+			// the control panel's image library keeps the last call's options; a leftover mode must not carry over
+			dialogOptions.mode = null;
+			return buildfire.imageLib.showDialog(dialogOptions, function (err, result) {
+				if (err) return callback(err, null);
+				var picked = ((result && result.selectedFiles) || [])
+					.concat(dialogOptions.showIcons ? ((result && result.selectedIcons) || []) : []);
+				if (typeof (parameter.maxValue) === 'number') picked = picked.slice(0, parameter.maxValue);
+				callback(null, picked);
+			});
+		}
+
+		buildfire.actionItems.showDialog(options.actionItem || null, dialogOptions, function (err, actionItem) {
+			if (err) return callback(err, null);
+			callback(null, actionItem && typeof (actionItem) === 'object' ? [actionItem] : []);
+		});
+	},
+
 	/* --------------------------------------------------------------------------
 	 * Server side: a plugin that EXPOSES a contract implements its operations on
 	 * window.widgetContract (in plugin.contract.js). These two handlers are the thin
@@ -226,7 +347,11 @@ buildfire.services.contract = {
 		options = options || {};
 		if (!callback) callback = function () {};
 		if (!options.functionName) {
-			return callback('functionName is required');
+			return callback(new ContractOperationInvokeError({
+				message: 'functionName is required',
+				code: ContractOperationInvokeError.CODES.VALIDATION,
+				context: { source: ContractOperationInvokeError.SOURCES.PLUGIN }
+			}).toJSON());
 		}
 
 		var isControl = typeof (window) !== 'undefined' && window.location
@@ -235,12 +360,30 @@ buildfire.services.contract = {
 		var operations = (typeof (window) !== 'undefined' && window[namespace]) ? window[namespace] : {};
 		var handler = operations[options.functionName];
 		if (typeof (handler) !== 'function') {
-			return callback('contract function "' + options.functionName + '" is not implemented on window.' + namespace);
+			return callback(new ContractOperationInvokeError({
+				message: 'contract function "' + options.functionName + '" is not implemented on window.' + namespace,
+				code: ContractOperationInvokeError.CODES.NOT_FOUND,
+				context: { source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: options.functionName }
+			}).toJSON());
 		}
+		// answers once however the function finishes: callback, returned Promise, return value, or throw —
+		// so a function that fails (or is async) never leaves the caller without an answer
+		if (typeof (buildfire._runContractFunction) === 'function') {
+			return buildfire._runContractFunction(handler, options.parameters, options.functionName, callback);
+		}
+		// an older buildfire.js without the helper
 		try {
-			handler(options.parameters || {}, callback);
+			handler(options.parameters || {}, function (err, result) {
+				callback(err ? ContractOperationInvokeError.from(err, {
+					source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: options.functionName
+				}).toJSON() : null, result);
+			});
 		} catch (e) {
-			callback('error executing contract function: ' + (e && e.message ? e.message : e));
+			callback(new ContractOperationInvokeError({
+				message: 'error executing contract function: ' + (e && e.message ? e.message : e),
+				code: ContractOperationInvokeError.CODES.INTERNAL,
+				context: { source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: options.functionName }
+			}).toJSON());
 		}
 	},
 

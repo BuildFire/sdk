@@ -7,7 +7,99 @@ function Packet(id, cmd, data) {
 	this.instanceId = null;
 }
 
+/**
+ * The error every failed contract operation invoke ends with (buildfire.services.contract.invoke).
+ *
+ *   new ContractOperationInvokeError({
+ *       message: 'error field length',
+ *       code: ContractOperationInvokeError.CODES.VALIDATION,
+ *       context: { source: ContractOperationInvokeError.SOURCES.PLUGIN }
+ *   });
+ *
+ * A plugin implementing an operation (window.widgetContract / window.controlContract) can fail it with one
+ * of these to give the caller a code; anything else it fails with (a string, an Error, a rejection, a throw)
+ * reaches the caller as one too, with code UNKNOWN.
+ *
+ * It crosses frames as plain data (toJSON) — postMessage drops the prototype — and is rebuilt into an
+ * instance on the caller's side (ContractOperationInvokeError.from), so `err instanceof
+ * ContractOperationInvokeError` holds for the caller.
+ */
+class ContractOperationInvokeError extends Error {
+	/**
+	 * @param {Object|String} [options] the options, or just the message
+	 * @param {String} [options.message]
+	 * @param {String} [options.code] one of ContractOperationInvokeError.CODES; UNKNOWN when left out or not one of them
+	 * @param {Object} [options.context] where it failed: { source, functionName, ... }; source defaults to PLUGIN
+	 */
+	constructor(options) {
+		if (typeof (options) === 'string') options = { message: options };
+		options = options || {};
+		super(options.message || 'contract operation failed');
+		this.name = 'ContractOperationInvokeError';
+		this.code = ContractOperationInvokeError.isCode(options.code) ? options.code : ContractOperationInvokeError.CODES.UNKNOWN;
+		this.context = Object.assign({ source: ContractOperationInvokeError.SOURCES.PLUGIN }, options.context || {});
+	}
 
+	// the plain shape it travels as between frames
+	toJSON() {
+		return { name: this.name, message: this.message, code: this.code, context: this.context };
+	}
+
+	static isCode(code) {
+		return Object.keys(ContractOperationInvokeError.CODES).some(function (key) {
+			return ContractOperationInvokeError.CODES[key] === code;
+		});
+	}
+
+	/**
+	 * Any error a contract invoke can end with, as a ContractOperationInvokeError: an instance is returned as
+	 * is, its wire shape ({ message, code, context }) is rebuilt, and anything else (a string, an Error) gets
+	 * code UNKNOWN. defaultContext fills only what the error does not already say.
+	 */
+	static from(err, defaultContext) {
+		if (!err) return err;
+		if (err instanceof ContractOperationInvokeError) return err;
+		var isObject = typeof (err) === 'object';
+		var message = typeof (err) === 'string' ? err
+			: (isObject && err.message) ? err.message
+				: (isObject ? JSON.stringify(err) : String(err));
+		return new ContractOperationInvokeError({
+			message: message,
+			code: isObject ? err.code : null,
+			context: Object.assign({}, defaultContext || {}, (isObject && err.context) || {})
+		});
+	}
+}
+
+// Generic, reusable codes — the same few for every operation of every plugin.
+// Kept in sync with ContractAPI.INVOKE_ERROR_CODES (app/scripts/framework/pluginAPI/contractAPI.js).
+ContractOperationInvokeError.CODES = Object.freeze({
+	NOT_FOUND: 'notFound',             // the instance, the operation, its function, or a record it looked up does not exist
+	VALIDATION: 'validation',          // the call or its parameters are invalid (missing, wrong type, length, count...)
+	NOT_SUPPORTED: 'notSupported',     // the operation declares something this platform cannot run (type, storage service, query)
+	NOT_ALLOWED: 'notAllowed',         // it may not run from here, or the user may not do it (wrong host, read-only store, permission denied)
+	UNAUTHENTICATED: 'unauthenticated', // it needs a logged in user and there is none, or sign-in failed
+	ALREADY_EXISTS: 'alreadyExists',   // what it would create already exists
+	CONFLICT: 'conflict',              // the data changed under it, or the request clashes with the current state
+	LIMIT_EXCEEDED: 'limitExceeded',   // a quota, rate or size limit was hit
+	CANCELLED: 'cancelled',            // the user (or the plugin) cancelled it, e.g. closed a foreground dialog
+	TIMEOUT: 'timeout',                // no result arrived within the time allowed
+	NOT_AVAILABLE: 'notAvailable',     // it cannot run right now (its frame failed to load or closed, a service is missing)
+	NETWORK: 'network',                // a request it depends on failed to go through
+	INVALID_CONTRACT: 'invalidContract', // the plugin's contract files are missing a field, malformed, or not valid JSON
+	INVALID_RESULT: 'invalidResult',   // it ran, but its result cannot be returned (not serializable, projection failed)
+	INTERNAL: 'internal',              // code threw while running it (the plugin's function, or the app's)
+	UNKNOWN: 'unknown'                 // failed without saying why (a plain string, an untyped rejection)
+});
+
+// Which side the error came from, in context.source.
+ContractOperationInvokeError.SOURCES = Object.freeze({
+	PLUGIN: 'plugin', // the plugin's own operation code
+	APP: 'app',       // the app / control panel running the call
+	SDK: 'sdk'        // the caller's SDK, before the call was sent
+});
+
+if (typeof (window) !== 'undefined') window.ContractOperationInvokeError = ContractOperationInvokeError;
 
 /// ref: https://github.com/BuildFire/sdk/wiki
 var buildfire = {
@@ -503,8 +595,18 @@ var buildfire = {
 
 			let callback = function (err, result) {
 				if (err) console.warn(e.data, err);
-				let newPacket = new Packet(packet.id, 'noop', result, err);
-				buildfire._parentPost(newPacket);
+				// Packet takes no error argument, so set it on the reply: without this every error answered
+				// here was dropped and the host saw (undefined, result) — a failure reported as a success
+				let newPacket = new Packet(packet.id, 'noop', result);
+				if (err) newPacket.error = buildfire._serializableError(err);
+				try {
+					buildfire._parentPost(newPacket);
+				} catch (postError) {
+					// the result could not be cloned for postMessage: answer with that error, never with nothing
+					var failed = new Packet(packet.id, 'noop', null);
+					failed.error = 'the result could not be sent back: ' + (postError && postError.message ? postError.message : postError);
+					buildfire._parentPost(failed);
+				}
 			};
 
 			obj.apply(parent, [packet.data, callback]);
@@ -575,6 +677,62 @@ var buildfire = {
 
 		buildfire._parentPost(packet,callback);
 	}
+	// An error as it can cross postMessage: an Error object arrives as {} or fails to clone, so it travels
+	// as its message. Plain values (strings, { code, message }) are kept as they are.
+	, _serializableError: function (err) {
+		if (!err) return err;
+		// keeps its code and context; the caller's SDK rebuilds the instance
+		if (err instanceof ContractOperationInvokeError) return err.toJSON();
+		if (err instanceof Error) return err.message || String(err);
+		return err;
+	}
+
+	/**
+	 * Run one of this plugin's contract functions and answer exactly once, however it finishes:
+	 *   - it calls the callback it is given             → that (err, result)
+	 *   - it returns a Promise (an async function)      → its resolved value, or its rejection as the error
+	 *   - it takes no callback and returns a value      → that value
+	 *   - it throws                                     → the thrown error
+	 * A later second callback, or a promise settling after the callback already answered, is ignored.
+	 * @param {Function} handler the plugin's function (widgetContract / controlContract member)
+	 * @param {Object} parameters
+	 * @param {Function} callback (err, result) — err is always serializable
+	 */
+	, _runContractFunction: function (handler, parameters, functionName, callback) {
+		var answered = false;
+		var answer = function (err, result) {
+			if (answered) return;
+			answered = true;
+			// however the plugin failed, the caller gets a ContractOperationInvokeError from the plugin;
+			// one the plugin built itself keeps its code
+			if (err) {
+				err = ContractOperationInvokeError.from(err, {
+					source: ContractOperationInvokeError.SOURCES.PLUGIN,
+					functionName: functionName
+				});
+			}
+			callback(err ? buildfire._serializableError(err) : null, result === undefined ? null : result);
+		};
+		var returned;
+		try {
+			returned = handler(parameters || {}, answer);
+		} catch (e) {
+			// a ContractOperationInvokeError thrown on purpose keeps its code; anything else thrown is a crash
+			return answer(e instanceof ContractOperationInvokeError ? e : new ContractOperationInvokeError({
+				message: 'error running contract function "' + functionName + '": ' + (e && e.message ? e.message : e),
+				code: ContractOperationInvokeError.CODES.INTERNAL
+			}));
+		}
+		if (returned && typeof (returned.then) === 'function') {
+			returned.then(function (result) { answer(null, result); }, function (err) {
+				answer(err || ('contract function "' + functionName + '" failed'));
+			});
+		} else if (handler.length < 2) {
+			// declares no callback parameter, so it can never call one: what it returned is its result
+			answer(null, returned);
+		}
+	}
+
 	,_parentPost: function (packet) {
 
 		function sanitize(data){
@@ -4594,7 +4752,9 @@ var buildfire = {
 		 * ordinary deeplink data for the plugin to interpret. The SDK dispatches it to
 		 * window.widgetContract so every plugin gets identical handling for free.
 		 *
-		 * Payload shape: { contractAction: { functionName: String, parameters: Object } }
+		 * Payload shape: { contractAction: { functionName: String, parameters: Object, callId?: String } }
+		 * When callId is present the outcome is reported back to the host (contract._dispatchActionResult)
+		 * so the caller of buildfire.services.contract.invoke receives the actual result.
 		 *
 		 * @param {Object} data parsed deeplink data
 		 * @returns {Boolean} true when the payload was a contract call (and was handled here)
@@ -4603,14 +4763,50 @@ var buildfire = {
 		 * Run a contract operation delivered in this frame's deeplink data.
 		 * @param {Object} options { deeplinkData } — the parsed deeplink data, which carries the call
 		 *                          under its reserved "contractAction" key
-		 * @param {Function} [callback] (err, result) — errors are logged when no callback is given
 		 */
-		_runContractAction: function (options, callback) {
-			if (!callback) callback = function (err) { if (err) console.error(err); };
+		_runContractAction: function (options) {
 			options = options || {};
-
 			var contractAction = options.deeplinkData && options.deeplinkData.contractAction;
-			if (!contractAction || !contractAction.functionName) return callback('no contract operation in this deeplink');
+
+			// The caller is waiting on this operation's actual result: when the call carries a callId, report
+			// the outcome back to the host under it (contract._dispatchActionResult), which hands it to the
+			// caller's callback. Once only — a plugin that calls back twice must not answer twice.
+			var callId = contractAction && contractAction.callId;
+			var settled = false;
+			const callback = function (err, result) {
+				if (settled || !callId) return;
+				settled = true;
+				if (err) console.error(err);
+				// errors are plain values on the wire — an Error object would arrive as {}
+				var error = err ? buildfire._serializableError(err) : null;
+				try {
+					buildfire._sendPacket(new Packet(null, 'contract._dispatchActionResult', {
+						callId: callId,
+						error: error,
+						result: result === undefined ? null : result
+					}));
+				} catch (postError) {
+					// a result postMessage cannot clone: report that, so the caller is not left waiting
+					buildfire._sendPacket(new Packet(null, 'contract._dispatchActionResult', {
+						callId: callId,
+						error: new ContractOperationInvokeError({
+							message: 'contract function "' + contractAction.functionName + '" returned a result that cannot be sent back: '
+								+ (postError && postError.message ? postError.message : postError),
+							code: ContractOperationInvokeError.CODES.INVALID_RESULT,
+							context: { source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: contractAction.functionName }
+						}).toJSON(),
+						result: null
+					}));
+				}
+			};
+
+			if (!contractAction || !contractAction.functionName) {
+				return callback(new ContractOperationInvokeError({
+					message: 'no contract operation in this deeplink',
+					code: ContractOperationInvokeError.CODES.VALIDATION,
+					context: { source: ContractOperationInvokeError.SOURCES.PLUGIN }
+				}));
+			}
 
 			// Only what the plugin deliberately exposes can be called — a contract cannot reach arbitrary
 			// globals. Which namespace depends on where this page was loaded: a control page implements its
@@ -4622,25 +4818,27 @@ var buildfire = {
 			// the namespace lives in plugin.contract.js, which a plugin has no reason to load on every page
 			// view, so fetch it first and come back here once
 			if (!window[namespace] && !buildfire.deeplink._contractScriptLoaded) {
+				// the original callback: the re-run wraps it again, and reports the result itself
 				return buildfire.deeplink._ensurePluginContractLoaded(null, function () {
-					buildfire.deeplink._runContractAction(options, callback);
+					buildfire.deeplink._runContractAction(options);
 				});
 			}
 
 			var operation = window[namespace] && window[namespace][contractAction.functionName];
 			if (typeof (operation) !== 'function') {
-				return callback('contract function "' + contractAction.functionName + '" was not found on window.' + namespace);
+				return callback(new ContractOperationInvokeError({
+					message: 'contract function "' + contractAction.functionName + '" was not found on window.' + namespace,
+					code: ContractOperationInvokeError.CODES.NOT_FOUND,
+					context: { source: ContractOperationInvokeError.SOURCES.PLUGIN, functionName: contractAction.functionName }
+				}));
 			}
 
 			// the parameters are published as this frame's deeplink data as well as passed as arguments, so
 			// a function that reads its deeplink — how most plugins already take input — needs no changes
 			if (contractAction.parameters) buildfire.deeplink._data = contractAction.parameters;
 
-			try {
-				operation(contractAction.parameters || {}, callback);
-			} catch (e) {
-				callback('error running contract function "' + contractAction.functionName + '": ' + (e && e.message ? e.message : e));
-			}
+			// answers once however the function finishes: callback, returned Promise, return value, or throw
+			buildfire._runContractFunction(operation, contractAction.parameters, contractAction.functionName, callback);
 		},
 
 		// Make sure the plugin's own plugin.contract.js has been fetched — it defines
