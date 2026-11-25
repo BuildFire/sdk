@@ -1,6 +1,6 @@
 {
   "name": "BuildFireSDK",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "This SDK helps in building BuildFire Plugins",
   "main": "index.js",
   "scripts": {
